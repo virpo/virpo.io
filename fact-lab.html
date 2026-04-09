@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fact Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Mono:wght@500;700&family=Manrope:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./fact-lab.css" />
+  </head>
+  <body>
+    <main class="lab-shell">
+      <header class="lab-header">
+        <a class="brand-box" href="/">virpo</a>
+
+        <section class="hero-box">
+          <p class="eyebrow">Fact Lab</p>
+          <h1>Rate 20 anniversary facts.</h1>
+          <p class="hero-copy">
+            Like if it feels broadly cool to normal humans. Dislike if it feels niche,
+            bureaucratic, grim, or too geek-insider.
+          </p>
+        </section>
+
+        <section class="action-box">
+          <div class="status-block">
+            <p class="status-label">Batch</p>
+            <p class="status-value" id="batch-id"></p>
+          </div>
+
+          <div class="status-block">
+            <p class="status-label">Rated</p>
+            <p class="status-value" id="progress-text">0 / 20</p>
+          </div>
+
+          <div class="action-row">
+            <button class="action-button" id="reroll-button" type="button">New 20</button>
+            <button class="action-button action-button--accent" id="copy-button" type="button">
+              Copy votes
+            </button>
+          </div>
+
+          <p class="tiny-note" id="copy-status">Paste the copied block back here.</p>
+        </section>
+      </header>
+
+      <section class="cards-grid" id="cards-grid" aria-live="polite"></section>
+    </main>
+
+    <script src="./fact-utils.js"></script>
+    <script src="./fact-lab.js"></script>
+  </body>
+</html>

@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Virpo</title>
+    <meta
+      name="description"
+      content="Peter Hraska. Design engineer. Slido for ten years. Side projects about maps, AI, music, places, and useful weird internet things."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Mono:wght@500;700&family=Manrope:wght@400;500;700;800&family=Silkscreen:wght@400;700&family=Syne:wght@500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="font-serif palette-cherry corners-round">
+    <main class="site-shell">
+      <section class="top-row">
+        <a class="box brand-box" href="/" aria-label="Virpo home">virpo</a>
+
+        <nav class="box menu-box" aria-label="Primary">
+          <button class="menu-pill is-active" data-focus="writing" type="button" aria-pressed="true">writing</button>
+          <button class="menu-pill" data-focus="projects" type="button" aria-pressed="false">projects</button>
+          <button class="menu-pill" data-focus="about" type="button" aria-pressed="false">about</button>
+        </nav>
+
+        <div class="box life-box" aria-label="Tiny game of life">
+          <canvas id="life-canvas" tabindex="0" aria-label="Interactive game of life board"></canvas>
+        </div>
+
+        <div class="life-actions">
+          <button
+            class="box theme-box life-action-box"
+            id="life-play-toggle"
+            type="button"
+            aria-label="Pause or play tiny game"
+            aria-pressed="false"
+          >
+            <span class="icon-slot" id="life-play-icon" aria-hidden="true"></span>
+          </button>
+
+          <button
+            class="box theme-box life-action-box"
+            id="life-reset"
+            type="button"
+            aria-label="Reset tiny game"
+          >
+            <span class="icon-slot" id="life-reset-icon" aria-hidden="true"></span>
+          </button>
+        </div>
+      </section>
+
+      <div class="content-flow">
+      <section class="columns">
+        <div class="column column--left">
+          <section class="box face-box" aria-label="Peter's face">
+            <div
+              class="face-tracker"
+              data-base-path="https://face.virpo.sk/faces/"
+              data-debug="false"
+            ></div>
+          </section>
+
+          <section class="box today-box">
+            <div class="today-head">
+              <p class="box-label">On This Day</p>
+              <p class="today-meta" id="today-meta"></p>
+            </div>
+            <h1 class="today-fact">
+              <span class="today-fact__emoji" id="today-emoji" aria-hidden="true"></span>
+              <span class="today-fact__text" id="today-fact"></span>
+            </h1>
+            <p class="today-date" id="today-date"></p>
+          </section>
+
+          <section class="box control-box" aria-label="Visual controls">
+            <div class="control-row">
+              <button
+                class="control-chip life-control-chip"
+                id="theme-toggle"
+                type="button"
+                aria-label="Toggle dark mode"
+                aria-pressed="false"
+              >
+                <span class="icon-slot icon-slot--small" id="theme-icon" aria-hidden="true"></span>
+              </button>
+              <button class="control-chip font-chip" data-font="font-pixel" type="button" aria-label="Pixel font">
+                <span class="font-sample font-sample--pixel">Aa</span>
+              </button>
+              <button class="control-chip font-chip" data-font="font-sans" type="button" aria-label="Sans font">
+                <span class="font-sample font-sample--sans">Aa</span>
+              </button>
+              <button class="control-chip font-chip" data-font="font-serif" type="button" aria-label="Serif font">
+                <span class="font-sample font-sample--serif">Aa</span>
+              </button>
+            </div>
+
+            <div class="control-row">
+              <button class="palette-chip palette-chip--cherry" data-palette="palette-cherry" type="button" aria-label="Cherry palette"></button>
+              <button class="palette-chip palette-chip--ember" data-palette="palette-ember" type="button" aria-label="Ember palette"></button>
+              <button class="palette-chip palette-chip--cobalt" data-palette="palette-cobalt" type="button" aria-label="Cobalt palette"></button>
+              <button class="palette-chip palette-chip--mint" data-palette="palette-mint" type="button" aria-label="Mint palette"></button>
+              <button class="palette-chip palette-chip--gold" data-palette="palette-gold" type="button" aria-label="Gold palette"></button>
+            </div>
+
+            <div class="control-row">
+              <button class="control-chip corner-chip" data-corners="corners-sharp" type="button" aria-label="Sharp corners">
+                <span class="corner-sample corner-sample--sharp"></span>
+              </button>
+              <button class="control-chip corner-chip" data-corners="corners-round" type="button" aria-label="Rounded corners">
+                <span class="corner-sample corner-sample--round"></span>
+              </button>
+              <button class="control-chip corner-chip" data-corners="corners-pixel" type="button" aria-label="Pixel corners">
+                <span class="corner-sample corner-sample--pixel"></span>
+              </button>
+            </div>
+          </section>
+
+        </div>
+
+        <div class="column column--right">
+          <section class="box writing-box is-focused" id="writing">
+            <p class="box-label">Writing</p>
+            <div class="post-stream">
+              <article class="post-row post-row--feature" data-year="2026">
+                <div class="post-row__meta">
+                  <span class="post-kind post-kind--essay">Essay</span>
+                  <time datetime="2026-04-07">Apr 7, 2026</time>
+                </div>
+                <h2 class="post-row__title">Design engineering belongs in serious products</h2>
+              </article>
+
+              <article class="post-row" data-year="2026">
+                <div class="post-row__meta">
+                  <span class="post-kind post-kind--note">Note</span>
+                  <time datetime="2026-03-28">Mar 28, 2026</time>
+                </div>
+                <h2 class="post-row__title">What ten years at Slido taught me about polish</h2>
+              </article>
+
+              <article class="post-row" data-year="2026">
+                <div class="post-row__meta">
+                  <span class="post-kind post-kind--link">Link</span>
+                  <time datetime="2026-03-18">Mar 18, 2026</time>
+                </div>
+                <h2 class="post-row__title">Three websites that still feel alive</h2>
+              </article>
+
+              <article class="post-row" data-year="2026">
+                <div class="post-row__meta">
+                  <span class="post-kind post-kind--essay">Essay</span>
+                  <time datetime="2026-03-04">Mar 4, 2026</time>
+                </div>
+                <h2 class="post-row__title">Useful AI beats magical AI every single time</h2>
+              </article>
+
+              <article class="post-row" data-year="2026">
+                <div class="post-row__meta">
+                  <span class="post-kind post-kind--note">Note</span>
+                  <time datetime="2026-02-18">Feb 18, 2026</time>
+                </div>
+                <h2 class="post-row__title">On interfaces that invite touch before thought</h2>
+              </article>
+            </div>
+          </section>
+
+          <section class="box about-box" id="about">
+            <p class="box-label">About</p>
+            <p class="about-copy">
+              Peter Hraska. Design engineer from Slovakia. Ten years at Slido. Side
+              projects about maps, AI, music, places, and useful weird little internet
+              toys.
+            </p>
+            <div class="about-links">
+              <a href="https://www.linkedin.com/in/hraska/">LinkedIn</a>
+              <a href="https://virpo.sk/projects-portfolio/">Old portfolio</a>
+              <a href="https://face.virpo.sk/">Face experiment</a>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="projects-shelf" id="projects">
+        <div class="section-lead">
+          <p class="box-label box-label--spotlight">Built Things</p>
+        </div>
+
+        <div class="project-gallery">
+          <a
+            class="box project-card project-card--zltastopa"
+            href="https://zltastopa.sk/"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Žltá Stopa"
+          >
+            <span class="project-card__media">
+              <img class="project-card__image" src="./assets/projects/zltastopa-sk-thumb.png" alt="" loading="lazy" />
+              <span class="project-card__badge">Investigative AI</span>
+              <span class="project-card__stamp">Hackathon win</span>
+            </span>
+            <span class="project-card__body">
+              <span class="project-card__title">Žltá Stopa</span>
+              <span class="project-card__text">Agentic kit for investigative journalists to interrogate public data. Built with a team of four, helping for free.</span>
+            </span>
+          </a>
+
+          <a
+            class="box project-card project-card--radio"
+            href="https://virpo.sk/wp-content/uploads/radio.jpg"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Mood Radio"
+          >
+            <span class="project-card__media">
+              <img class="project-card__image" src="./assets/projects/mood-radio.jpg" alt="" loading="lazy" />
+              <span class="project-card__badge">School project</span>
+              <span class="project-card__stamp">2013</span>
+            </span>
+            <span class="project-card__body">
+              <span class="project-card__title">Mood Radio</span>
+              <span class="project-card__text">Mood-based music picker from 2013. Basically pre-Spotify, still weirdly timeless.</span>
+            </span>
+          </a>
+
+          <a
+            class="box project-card project-card--youtldr"
+            href="https://youtldr.com/"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="YouTLDR"
+          >
+            <span class="project-card__media">
+              <img class="project-card__image" src="./assets/projects/youtldr-home.png" alt="" loading="lazy" />
+              <span class="project-card__badge">Anti-clickbait extension</span>
+              <span class="project-card__stamp">youtldr.com</span>
+            </span>
+            <span class="project-card__body">
+              <span class="project-card__title">YouTLDR</span>
+              <span class="project-card__text">Adds the missing summary to YouTube, so long clickbait collapses into one useful sentence.</span>
+            </span>
+          </a>
+        </div>
+      </section>
+      </div>
+    </main>
+
+    <script src="./fact-utils.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

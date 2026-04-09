@@ -1,0 +1,847 @@
+.module-lab-shell {
+  display: grid;
+  gap: 0.95rem;
+}
+
+.module-lab-head {
+  display: grid;
+  grid-template-columns: minmax(7rem, 9rem) minmax(0, 1fr);
+  gap: var(--box-gap);
+}
+
+.module-lab-title-box {
+  min-height: var(--header-box-height);
+  padding: 0.72rem 0.95rem;
+  display: grid;
+  align-content: center;
+  gap: 0.18rem;
+}
+
+.module-lab-title {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+}
+
+.module-lab-section {
+  display: grid;
+  gap: 0.95rem;
+}
+
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: var(--box-gap);
+}
+
+.module-card {
+  --module-piece-bg: color-mix(in srgb, var(--surface) 92%, white 8%);
+  --module-piece-soft: color-mix(in srgb, var(--module-piece-bg) 86%, var(--surface) 14%);
+  --module-strong: var(--accent);
+  --module-label: color-mix(in srgb, var(--module-strong) 62%, var(--surface) 38%);
+  min-height: 13.2rem;
+  padding: 0;
+  display: grid;
+  gap: 0.52rem;
+  align-content: start;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  color: var(--surface);
+}
+
+.module-card .box-label {
+  margin: 0;
+  color: var(--module-label);
+}
+
+.module-card__label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+}
+
+.module-credit-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  color: var(--module-label);
+  text-decoration: none;
+  opacity: 0.92;
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease,
+    color 140ms ease;
+}
+
+.module-credit-link:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.module-credit-link--yamanote {
+  color: var(--module-strong);
+}
+
+.module-card--pomodoro {
+  --module-piece-bg: color-mix(in srgb, var(--link-bg) 24%, var(--surface) 76%);
+  --module-strong: color-mix(in srgb, var(--accent-3) 80%, var(--ink) 20%);
+}
+
+.module-card--tokyo {
+  --module-piece-bg: color-mix(in srgb, var(--note-bg) 22%, var(--surface) 78%);
+  --module-strong: color-mix(in srgb, var(--accent-2) 78%, var(--ink) 22%);
+}
+
+.module-card--quest {
+  --module-piece-bg: color-mix(in srgb, var(--essay-bg) 23%, var(--surface) 77%);
+  --module-strong: color-mix(in srgb, var(--accent) 78%, var(--ink) 22%);
+}
+
+.module-card--radio {
+  --module-piece-bg: color-mix(in srgb, var(--link-bg) 18%, var(--surface) 82%);
+  --module-strong: color-mix(in srgb, var(--accent-3) 82%, var(--ink) 18%);
+}
+
+.module-card--yamanote {
+  --module-piece-bg: color-mix(in srgb, var(--note-bg) 18%, var(--surface) 82%);
+  --module-strong: color-mix(in srgb, var(--accent-2) 72%, var(--ink) 28%);
+}
+
+.module-card--window {
+  --module-piece-bg: color-mix(in srgb, var(--essay-bg) 16%, var(--surface) 84%);
+  --module-strong: color-mix(in srgb, var(--accent) 68%, var(--accent-2) 32%);
+}
+
+.module-piece,
+.module-card .module-mini-button,
+.module-card .pomodoro-mode {
+  appearance: none;
+  border: 2px solid var(--line);
+  border-radius: calc(var(--ui-radius) + 7px);
+  background: var(--module-piece-bg);
+  color: var(--ink);
+  transition:
+    transform 120ms ease,
+    background-color 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease;
+}
+
+.module-card .module-mini-button:hover,
+.module-card .pomodoro-mode:hover {
+  transform: translateY(-1px);
+}
+
+.module-mini-button {
+  display: grid;
+  place-items: center;
+  min-height: 2.25rem;
+  padding: 0;
+}
+
+.module-eye,
+.tokyo-now__eyebrow,
+.tokyo-now__city,
+.tokyo-now__condition,
+.tokyo-season__meta,
+.japan-radio__meta,
+.yamanote__eyebrow,
+.yamanote__meta,
+.window-seat__time,
+.window-seat__meta {
+  font-family: var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pomodoro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 3rem;
+  gap: var(--box-gap);
+  min-height: 8.7rem;
+}
+
+.pomodoro-main {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 0.72rem;
+  padding: 0.78rem 0.72rem;
+}
+
+.pomodoro-modes {
+  display: inline-grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.28rem;
+}
+
+.pomodoro-mode {
+  min-width: 2.2rem;
+  min-height: 1.7rem;
+  padding: 0 0.5rem;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.pomodoro-mode.is-active {
+  background: var(--module-strong);
+  color: #fff7ef;
+}
+
+.pomodoro-time {
+  font-family: var(--display);
+  font-size: clamp(2.2rem, 5vw, 3.15rem);
+  line-height: 0.82;
+  letter-spacing: -0.09em;
+}
+
+.pomodoro-pips {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.32rem;
+  width: min(11rem, 100%);
+}
+
+.pomodoro-pip {
+  display: block;
+  height: 0.48rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-3) 72%, var(--module-piece-bg) 28%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-3) 52%, transparent);
+}
+
+.pomodoro-pip.is-on {
+  background: var(--accent-3);
+  box-shadow: none;
+}
+
+.pomodoro-actions {
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: var(--box-gap);
+}
+
+.tokyo-now {
+  min-height: 8.8rem;
+  display: grid;
+}
+
+.tokyo-now__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(8.3rem, 0.82fr);
+  grid-template-areas:
+    "time weather"
+    "time season";
+  gap: var(--box-gap);
+}
+
+.tokyo-pane {
+  display: grid;
+}
+
+.tokyo-pane--time {
+  grid-area: time;
+  align-content: space-between;
+  padding: 0.82rem 0.9rem;
+}
+
+.tokyo-pane--weather {
+  grid-area: weather;
+  align-content: center;
+  justify-items: end;
+  gap: 0.18rem;
+  padding: 0.82rem 0.86rem;
+}
+
+.tokyo-pane--season {
+  grid-area: season;
+  grid-template-columns: 2.85rem minmax(0, 1fr);
+  gap: 0.58rem;
+  align-items: center;
+  padding: 0.62rem 0.7rem;
+}
+
+.tokyo-now__eyebrow {
+  color: color-mix(in srgb, var(--module-strong) 54%, var(--muted) 46%);
+  font-size: 0.64rem;
+  font-weight: 700;
+}
+
+.tokyo-now__time {
+  font-family: var(--display);
+  font-size: clamp(2.25rem, 4.8vw, 3.25rem);
+  line-height: 0.8;
+  letter-spacing: -0.09em;
+}
+
+.tokyo-now__time-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.tokyo-now__city,
+.tokyo-now__condition,
+.tokyo-season__meta,
+.japan-radio__meta,
+.yamanote__eyebrow,
+.yamanote__meta,
+.window-seat__time,
+.window-seat__meta {
+  color: var(--muted);
+  font-size: 0.69rem;
+}
+
+.tokyo-now__temp {
+  font-family: var(--display);
+  font-size: 1.78rem;
+  line-height: 0.82;
+  letter-spacing: -0.05em;
+}
+
+.tokyo-now__phase {
+  color: var(--module-strong);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tokyo-season__badge {
+  display: grid;
+  place-items: center;
+  width: 2.85rem;
+  height: 2.85rem;
+  border-radius: calc(var(--ui-radius) + 6px);
+  background: color-mix(in srgb, var(--module-strong) 14%, var(--module-piece-bg) 86%);
+  font-size: 1.35rem;
+}
+
+.tokyo-season__copy {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.tokyo-season__title {
+  font-family: var(--display);
+  font-size: 1.1rem;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+}
+
+.side-quest-machine {
+  min-height: 8.9rem;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.side-quest-machine__slots {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--box-gap);
+}
+
+.side-quest-slot {
+  position: relative;
+  overflow: hidden;
+  min-height: 5.8rem;
+}
+
+.side-quest-slot::before,
+.side-quest-slot::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0.92rem;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.side-quest-slot::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--module-piece-bg), transparent);
+}
+
+.side-quest-slot::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--module-piece-bg), transparent);
+}
+
+.side-quest-slot__reel {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: start;
+  transform: translateY(0);
+  transition: transform 900ms cubic-bezier(0.2, 0.8, 0.16, 1);
+}
+
+.side-quest-slot__item {
+  min-height: 5.8rem;
+  display: grid;
+  place-items: center;
+  padding: 0.7rem 0.62rem;
+  font-family: var(--display);
+  font-size: clamp(0.98rem, 1.92vw, 1.42rem);
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  text-align: center;
+}
+
+.side-quest-slot__item.is-compact {
+  font-size: clamp(0.82rem, 1.48vw, 1.02rem);
+}
+
+.side-quest-slot__item.is-tight {
+  font-size: clamp(0.72rem, 1.2vw, 0.88rem);
+}
+
+.side-quest-machine__foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--box-gap);
+  align-items: center;
+}
+
+.side-quest-machine__share,
+.side-quest-machine__button {
+  min-height: 2.45rem;
+}
+
+.side-quest-machine__share {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  padding: 0 0.7rem;
+  white-space: nowrap;
+}
+
+.side-quest-machine__share-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.side-quest-machine__share-mark {
+  width: 0.84rem;
+}
+
+.side-quest-machine__button {
+  min-width: 3rem;
+  padding: 0;
+  background: var(--module-strong);
+  color: #fff7ef;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--module-strong) 24%, transparent);
+}
+
+.japan-radio {
+  min-height: 8.9rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 4.5rem 3rem;
+  grid-template-areas:
+    "display speaker controls";
+  gap: var(--box-gap);
+}
+
+.japan-radio__display {
+  grid-area: display;
+  position: relative;
+  display: grid;
+  align-content: center;
+  padding: 0.82rem 0.86rem;
+  overflow: hidden;
+}
+
+.japan-radio__display::before,
+.japan-radio__display::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1.85rem;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.japan-radio__display::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--module-piece-bg), transparent);
+}
+
+.japan-radio__display::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--module-piece-bg), transparent);
+}
+
+.japan-radio__queue {
+  display: grid;
+  gap: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.japan-radio__line {
+  appearance: none;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--display);
+  letter-spacing: -0.05em;
+  font-size: clamp(1.26rem, 2.6vw, 1.7rem);
+  line-height: 0.9;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease,
+    color 180ms ease;
+}
+
+.japan-radio__line--prev,
+.japan-radio__line--next {
+  opacity: 0.36;
+  color: color-mix(in srgb, var(--ink) 52%, transparent);
+}
+
+.japan-radio__line--current {
+  cursor: default;
+}
+
+.japan-radio__line--prev:hover,
+.japan-radio__line--next:hover {
+  opacity: 0.68;
+  transform: translateX(0.08rem);
+}
+
+.japan-radio__speaker {
+  grid-area: speaker;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: end;
+  gap: 0.26rem;
+  padding: 0.7rem 0.5rem;
+}
+
+.sound-bar {
+  display: block;
+  height: 0.72rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-3) 68%, var(--module-piece-bg) 32%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-3) 46%, transparent);
+  transition: height 220ms ease, background-color 180ms ease;
+}
+
+.sound-bar.is-on {
+  background: var(--accent-3);
+  box-shadow: none;
+}
+
+.japan-radio__controls {
+  grid-area: controls;
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: var(--box-gap);
+}
+
+.japan-radio__youtube-host {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.yamanote {
+  min-height: 8.9rem;
+  display: grid;
+  gap: var(--box-gap);
+}
+
+.yamanote__map {
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  min-height: 5.85rem;
+  padding: 0;
+  scrollbar-width: none;
+}
+
+.yamanote__map::-webkit-scrollbar {
+  display: none;
+}
+
+.yamanote__lane {
+  position: relative;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 4.7rem;
+  column-gap: 0.85rem;
+  width: max-content;
+  min-width: 0;
+  height: 100%;
+  padding: 0.26rem 1rem 0.46rem;
+}
+
+.yamanote__track {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 0.92rem;
+  height: 3px;
+  background: color-mix(in srgb, var(--accent-2) 72%, var(--line) 28%);
+  border-radius: 999px;
+}
+
+.yamanote__station {
+  position: relative;
+  z-index: 1;
+  appearance: none;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: grid;
+  justify-items: center;
+  align-content: end;
+  color: var(--muted);
+  min-width: 0;
+  min-height: 5rem;
+  width: 4.7rem;
+  transition: transform 120ms ease, color 160ms ease;
+}
+
+.yamanote__station:hover {
+  transform: translateY(-1px);
+  color: var(--ink);
+}
+
+.yamanote__dot {
+  width: 0.82rem;
+  height: 0.82rem;
+  border-radius: 999px;
+  border: 3px solid var(--ink);
+  background: color-mix(in srgb, var(--surface) 86%, white 14%);
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--module-piece-bg) 82%, transparent);
+  transition: transform 120ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.yamanote__station.is-active .yamanote__dot {
+  background: var(--accent-2);
+  border-color: var(--accent-2);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-2) 18%, transparent);
+  transform: scale(1.06);
+}
+
+.yamanote__name {
+  position: absolute;
+  left: calc(50% + 0.12rem);
+  bottom: 1.18rem;
+  font-family: var(--mono);
+  font-size: 0.54rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  writing-mode: horizontal-tb;
+  color: color-mix(in srgb, var(--ink) 56%, var(--muted) 44%);
+  transform: rotate(-36deg);
+  transform-origin: left bottom;
+  min-height: auto;
+  max-width: none;
+  text-align: left;
+  display: block;
+}
+
+.yamanote__station.is-active .yamanote__name {
+  color: var(--ink);
+}
+
+.yamanote__foot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 3rem;
+  gap: var(--box-gap);
+}
+
+.yamanote__info {
+  display: grid;
+  align-content: center;
+  gap: 0.06rem;
+  padding: 0.58rem 0.8rem;
+}
+
+.yamanote__current {
+  font-family: var(--display);
+  font-size: clamp(1.38rem, 2.7vw, 1.82rem);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+}
+
+.yamanote__jp {
+  color: color-mix(in srgb, var(--accent-2) 82%, var(--ink) 18%);
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: none;
+}
+
+.yamanote__controls {
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: var(--box-gap);
+}
+
+.window-seat {
+  min-height: 8.9rem;
+}
+
+.window-seat__frame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 2130 / 1481;
+  min-height: 14rem;
+  padding: 0;
+  background:
+    radial-gradient(circle at 50% 44%, rgba(255, 246, 215, 0.16), transparent 38%),
+    #111;
+}
+
+.window-seat__aperture,
+.window-seat__glass,
+.window-seat__art {
+  position: absolute;
+  inset: 0;
+}
+
+.window-seat__aperture {
+  inset: 11.41% 15.21% 21.81% 14.69%;
+  overflow: hidden;
+  background: #090909;
+}
+
+.window-seat__video {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  transform: translateY(-7%) scale(1.92);
+  transform-origin: center center;
+  pointer-events: none;
+}
+
+.window-seat__glass {
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.14), transparent 18%, transparent 72%, rgba(255, 255, 255, 0.04)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 18%, transparent 80%, rgba(0, 0, 0, 0.08));
+  pointer-events: none;
+  z-index: 2;
+}
+
+.window-seat__art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+  pointer-events: none;
+  z-index: 3;
+}
+
+@media (max-width: 1100px) {
+  .japan-radio {
+    grid-template-columns: minmax(0, 1fr) 3rem;
+    grid-template-areas:
+      "display controls"
+      "speaker controls";
+  }
+
+  .japan-radio__speaker {
+    min-height: 2.75rem;
+  }
+}
+
+@media (max-width: 820px) {
+  .module-lab-head {
+    grid-template-columns: 1fr;
+  }
+
+  .module-card {
+    min-height: 12rem;
+  }
+
+  .pomodoro {
+    grid-template-columns: 1fr;
+  }
+
+  .tokyo-now__grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "time"
+      "weather"
+      "season";
+  }
+
+  .side-quest-machine__foot,
+  .japan-radio,
+  .yamanote__foot {
+    grid-template-columns: 1fr;
+  }
+
+  .side-quest-machine__foot,
+  .japan-radio,
+  .yamanote__foot {
+    grid-template-areas: none;
+  }
+
+  .japan-radio {
+    grid-template-areas:
+      "display"
+      "speaker"
+      "controls";
+  }
+
+  .japan-radio__controls,
+  .yamanote__controls,
+  .pomodoro-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
+  }
+
+  .side-quest-machine__share,
+  .side-quest-machine__button,
+  .japan-radio__controls .module-mini-button,
+  .yamanote__controls .module-mini-button,
+  .pomodoro-actions .module-mini-button {
+    min-height: 2.6rem;
+  }
+
+  .yamanote__map {
+    padding-bottom: 1.2rem;
+  }
+
+  .yamanote__map::-webkit-scrollbar {
+    display: none;
+  }
+}

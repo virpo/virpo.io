@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Virpo Module Lab</title>
+    <meta name="description" content="Small interactive bento pieces for the Virpo homepage." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Mono:wght@500;700&family=Manrope:wght@400;500;700;800&family=Silkscreen:wght@400;700&family=Syne:wght@500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./module-lab.css" />
+  </head>
+  <body class="font-serif palette-cherry corners-round">
+    <main class="site-shell module-lab-shell">
+      <section class="module-lab-head">
+        <a class="box brand-box" href="./" aria-label="Back to homepage">virpo</a>
+        <section class="box module-lab-title-box" aria-label="Module lab">
+          <p class="box-label">Small Pieces</p>
+          <h1 class="module-lab-title">Module lab</h1>
+        </section>
+      </section>
+
+      <section class="module-lab-section">
+        <div class="section-lead">
+          <p class="box-label box-label--spotlight">Requested</p>
+        </div>
+
+        <div class="module-grid">
+          <article class="module-card module-card--pomodoro" aria-label="Pomodoro module">
+            <p class="box-label">Pomodoro</p>
+            <div class="pomodoro" data-pomodoro>
+              <div class="pomodoro-main module-piece">
+                <div class="pomodoro-modes" role="tablist" aria-label="Pomodoro modes">
+                  <button class="pomodoro-mode" type="button" data-pomodoro-mode="10">10</button>
+                  <button class="pomodoro-mode is-active" type="button" data-pomodoro-mode="25">25</button>
+                  <button class="pomodoro-mode" type="button" data-pomodoro-mode="50">50</button>
+                </div>
+                <div class="pomodoro-time" data-pomodoro-time>25:00</div>
+                <div class="pomodoro-pips" aria-hidden="true">
+                  <span class="pomodoro-pip"></span>
+                  <span class="pomodoro-pip"></span>
+                  <span class="pomodoro-pip"></span>
+                  <span class="pomodoro-pip"></span>
+                </div>
+              </div>
+
+              <div class="pomodoro-actions">
+                <button class="box module-mini-button" type="button" data-pomodoro-toggle aria-label="Start or pause pomodoro">
+                  <span class="icon-slot" data-icon-slot="pomodoro-toggle"></span>
+                </button>
+                <button class="box module-mini-button" type="button" data-pomodoro-reset aria-label="Reset pomodoro">
+                  <span class="icon-slot" data-icon="reset"></span>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <article class="module-card module-card--tokyo" aria-label="Tokyo now module">
+            <p class="box-label">Tokyo Now</p>
+            <div class="tokyo-now" data-tokyo-now>
+              <div class="tokyo-now__grid">
+                <div class="tokyo-pane tokyo-pane--time module-piece">
+                  <div class="tokyo-now__eyebrow">Tokyo</div>
+                  <div class="tokyo-now__time" data-tokyo-time>00:00</div>
+                  <div class="tokyo-now__time-foot">
+                    <span class="tokyo-now__city">JST</span>
+                    <span class="tokyo-now__phase" data-tokyo-phase>Night</span>
+                  </div>
+                </div>
+                <div class="tokyo-pane tokyo-pane--weather module-piece">
+                  <div class="tokyo-now__eyebrow">Weather</div>
+                  <div class="tokyo-now__temp" data-tokyo-temp>--°</div>
+                  <div class="tokyo-now__condition" data-tokyo-condition>Loading</div>
+                </div>
+                <div class="tokyo-pane tokyo-pane--season module-piece">
+                  <span class="tokyo-season__badge" data-tokyo-season-badge>🌸</span>
+                  <div class="tokyo-season__copy">
+                    <span class="tokyo-now__eyebrow">Next nice thing</span>
+                    <span class="tokyo-season__title" data-tokyo-season-title>Cherry blossom window</span>
+                    <span class="tokyo-season__meta" data-tokyo-season-meta>in 0 days</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="module-card module-card--quest" aria-label="Side quest module">
+            <p class="box-label">Side Quest</p>
+            <div class="side-quest-machine" data-side-quest>
+              <div class="side-quest-machine__slots">
+                <div class="side-quest-slot module-piece">
+                  <div class="side-quest-slot__reel" data-slot-reel="verb"></div>
+                </div>
+                <div class="side-quest-slot module-piece">
+                  <div class="side-quest-slot__reel" data-slot-reel="place"></div>
+                </div>
+                <div class="side-quest-slot module-piece">
+                  <div class="side-quest-slot__reel" data-slot-reel="vibe"></div>
+                </div>
+              </div>
+
+              <div class="side-quest-machine__foot">
+                <a
+                  class="box module-mini-button side-quest-machine__share"
+                  href="https://x.com/intent/tweet"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Post side quest on X"
+                  data-side-quest-share
+                >
+                  <span class="side-quest-machine__share-label">Post to</span>
+                  <span class="icon-slot icon-slot--small side-quest-machine__share-mark" data-icon="x"></span>
+                </a>
+                <button class="box module-mini-button side-quest-machine__button" type="button" data-side-quest-roll aria-label="Roll side quest">
+                  <span class="icon-slot" data-icon="spark"></span>
+                </button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="module-lab-section">
+        <div class="section-lead">
+          <p class="box-label box-label--spotlight">Japan Corner</p>
+        </div>
+
+        <div class="module-grid">
+          <article class="module-card module-card--radio" aria-label="Japan sounds module">
+            <p class="box-label">Japan Sounds</p>
+            <div class="japan-radio" data-japan-sounds>
+              <div class="japan-radio__display module-piece">
+                <div class="japan-radio__queue" data-sound-queue>
+                  <button class="japan-radio__line japan-radio__line--prev" type="button" data-sound-step="-1" data-sound-prev>Summer crickets</button>
+                  <button class="japan-radio__line japan-radio__line--current" type="button" data-sound-current>FamilyMart entrance</button>
+                  <button class="japan-radio__line japan-radio__line--next" type="button" data-sound-step="1" data-sound-next>Door chime</button>
+                </div>
+              </div>
+
+              <div class="japan-radio__speaker module-piece" aria-hidden="true">
+                <span class="sound-bar"></span>
+                <span class="sound-bar"></span>
+                <span class="sound-bar"></span>
+                <span class="sound-bar"></span>
+                <span class="sound-bar"></span>
+              </div>
+
+              <div class="japan-radio__controls">
+                <button class="box module-mini-button japan-radio__play" type="button" data-sound-play aria-label="Play or pause Japan sounds">
+                  <span class="icon-slot" data-sound-play-icon></span>
+                </button>
+                <button class="box module-mini-button japan-radio__next" type="button" data-sound-next-button aria-label="Next Japan sound">
+                  <span class="icon-slot" data-icon="next"></span>
+                </button>
+              </div>
+              <div class="japan-radio__youtube-host" data-sound-youtube-host aria-hidden="true"></div>
+
+              <audio data-audio="familymart" preload="metadata" src="./audio/japan-familymart.mp3"></audio>
+              <audio data-audio="door" preload="metadata" src="./audio/japan-door-chime.ogg"></audio>
+              <audio data-audio="cuckoo" preload="metadata" src="./audio/japan-crosswalk-cuckoo.mp3"></audio>
+              <audio data-audio="piyo" preload="metadata" src="./audio/japan-crosswalk-piyo.mp3"></audio>
+              <audio data-audio="announce" preload="metadata" src="./audio/japan-mamonaku-shibuya.mp3"></audio>
+              <audio data-audio="crossing" preload="metadata" src="./audio/japan-rail-crossing.mp3"></audio>
+              <audio data-audio="crickets" preload="metadata" src="./audio/japan-summer-crickets.mp3"></audio>
+            </div>
+          </article>
+
+          <article class="module-card module-card--yamanote" aria-label="Yamanote line module">
+            <div class="module-card__label-row">
+              <p class="box-label">Yamanote Line</p>
+              <a
+                class="module-credit-link module-credit-link--yamanote"
+                href="https://github.com/morgansleeper/Yamanotes"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Yamanotes GitHub repository"
+              >
+                <span class="icon-slot icon-slot--small" data-icon="github"></span>
+              </a>
+            </div>
+            <div class="yamanote" data-yamanote>
+              <div class="yamanote__map module-piece" data-yamanote-map>
+                <div class="yamanote__lane" data-yamanote-lane></div>
+              </div>
+
+              <div class="yamanote__foot">
+                <div class="yamanote__info module-piece">
+                  <div class="yamanote__eyebrow">Now at</div>
+                  <div class="yamanote__current" data-yamanote-current>Tokyo</div>
+                  <div class="yamanote__jp" data-yamanote-jp>東京</div>
+                </div>
+
+                <div class="yamanote__controls">
+                  <button class="box module-mini-button" type="button" data-yamanote-toggle aria-label="Play or pause Yamanote melodies">
+                    <span class="icon-slot" data-yamanote-toggle-icon></span>
+                  </button>
+                  <button class="box module-mini-button" type="button" data-yamanote-next aria-label="Next Yamanote station">
+                    <span class="icon-slot" data-icon="next"></span>
+                  </button>
+                </div>
+              </div>
+
+              <audio data-yamanote-audio="tokyo" preload="metadata" src="./audio/sh3.mp3"></audio>
+              <audio data-yamanote-audio="kanda" preload="metadata" src="./audio/seseragi.mp3"></audio>
+              <audio data-yamanote-audio="akihabara" preload="metadata" src="./audio/ogawav1.mp3"></audio>
+              <audio data-yamanote-audio="ueno" preload="metadata" src="./audio/bellb.mp3"></audio>
+              <audio data-yamanote-audio="ikebukuro" preload="metadata" src="./audio/melody.mp3"></audio>
+              <audio data-yamanote-audio="shinjuku" preload="metadata" src="./audio/aratana.mp3"></audio>
+              <audio data-yamanote-audio="shibuya" preload="metadata" src="./audio/hananohorokobi.mp3"></audio>
+              <audio data-yamanote-audio="ebisu" preload="metadata" src="./audio/thirdman.mp3"></audio>
+            </div>
+          </article>
+
+          <article class="module-card module-card--window" aria-label="Window seat module">
+            <p class="box-label">Window Seat</p>
+            <div class="window-seat" data-window-seat>
+              <div class="window-seat__frame module-piece" data-window-scene>
+                <div class="window-seat__aperture" aria-hidden="true">
+                  <iframe
+                    class="window-seat__video"
+                    src="https://www.youtube-nocookie.com/embed/RMpM2Qu3QC8?start=20&autoplay=1&mute=1&controls=0&loop=1&playlist=RMpM2Qu3QC8&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1"
+                    title="Japanese Train ASMR - Mount Fuji to Tokyo side view"
+                    loading="eager"
+                    allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                  ></iframe>
+                </div>
+                <div class="window-seat__glass"></div>
+                <img class="window-seat__art" src="./assets/train-window.png" alt="" aria-hidden="true" />
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="./module-lab.js"></script>
+  </body>
+</html>
