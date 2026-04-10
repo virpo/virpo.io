@@ -835,7 +835,7 @@ function initializeJapanSounds() {
     element.addEventListener("click", async () => {
       const step = Number(element.dataset.soundStep || "0");
       if (!step) return;
-      await jumpTo(currentIndex + step, { autoplay: playing, restart: true });
+      await jumpTo(currentIndex + step, { autoplay: true, restart: true });
     });
   });
 

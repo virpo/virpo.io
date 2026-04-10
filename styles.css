@@ -65,6 +65,195 @@ a {
   gap: var(--box-gap);
 }
 
+.japan-shelf {
+  display: grid;
+  gap: 0.72rem;
+  margin: 0 0 var(--box-gap);
+  transition:
+    gap 220ms ease,
+    transform 260ms ease;
+}
+
+.japan-shelf__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  grid-template-areas:
+    "window sounds"
+    "window yamanote";
+  gap: var(--box-gap);
+  align-items: start;
+  transition:
+    grid-template-columns 260ms ease,
+    grid-template-areas 260ms ease;
+}
+
+.japan-shelf__stack {
+  display: grid;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--box-gap);
+  min-width: 0;
+  align-content: start;
+}
+
+.japan-shelf__stack > .japan-card--sounds,
+.japan-shelf__stack > .japan-card--yamanote,
+.japan-shelf__stack > .tokyo-home-box {
+  grid-area: auto;
+}
+
+.japan-card {
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.japan-card--window {
+  grid-area: window;
+}
+
+.japan-card--sounds {
+  grid-area: sounds;
+}
+
+.japan-card--yamanote {
+  grid-area: yamanote;
+}
+
+.japan-card--window .window-seat__frame {
+  min-height: 16.1rem;
+}
+
+.japan-card .box-label {
+  opacity: 0.9;
+}
+
+.tokyo-home-box {
+  min-height: 0;
+}
+
+.tokyo-home-box .tokyo-now {
+  min-height: 0;
+}
+
+.tokyo-home-box .tokyo-now__grid {
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "time"
+    "weather"
+    "season";
+}
+
+.tokyo-home-box .tokyo-pane--time {
+  gap: 0.56rem;
+}
+
+.tokyo-home-box .tokyo-now__time {
+  font-size: clamp(1.9rem, 3vw, 2.6rem);
+}
+
+.tokyo-home-box .tokyo-pane--weather {
+  justify-items: start;
+}
+
+.tokyo-home-box .tokyo-pane--season {
+  grid-template-columns: 2.45rem minmax(0, 1fr);
+}
+
+.tokyo-home-box .tokyo-season__badge {
+  width: 2.45rem;
+  height: 2.45rem;
+  font-size: 1.1rem;
+}
+
+.tokyo-home-box .tokyo-season__title {
+  font-size: 0.96rem;
+}
+
+.japan-card--sounds .japan-radio,
+.japan-card--yamanote .yamanote {
+  min-height: 7.6rem;
+  width: 100%;
+}
+
+.japan-card--sounds .japan-radio {
+  grid-template-columns: minmax(0, 1fr) 3.45rem 2.55rem;
+  column-gap: 0.08rem;
+}
+
+.japan-card--sounds .japan-radio__display {
+  min-height: 0;
+}
+
+.japan-card--sounds .japan-radio__line {
+  font-size: clamp(1.28rem, 2.1vw, 1.72rem);
+}
+
+.japan-card--sounds .japan-radio__speaker {
+  width: auto;
+  padding-left: 0.42rem;
+  padding-right: 0.34rem;
+}
+
+.japan-card--sounds .japan-radio__controls {
+  width: auto;
+}
+
+.japan-card--yamanote .yamanote__controls {
+  width: 2.8rem;
+}
+
+.japan-card--yamanote .yamanote__map {
+  min-height: 6.3rem;
+}
+
+.japan-card--yamanote .yamanote__foot {
+  grid-template-columns: minmax(0, 1fr) 2.8rem;
+}
+
+.japan-shelf.is-japan-mode {
+  gap: 0.95rem;
+}
+
+.japan-shelf.is-japan-mode .japan-shelf__grid {
+  grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.92fr);
+  grid-template-areas:
+    "window sounds"
+    "window yamanote";
+}
+
+.japan-shelf.is-japan-mode .japan-shelf__stack {
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+}
+
+.japan-shelf.is-japan-mode .japan-card--window .window-seat__frame {
+  min-height: 19rem;
+}
+
+.japan-shelf.is-japan-mode .tokyo-home-box .tokyo-now {
+  min-height: 8.9rem;
+}
+
+.japan-shelf.is-japan-mode .tokyo-home-box .tokyo-now__time {
+  font-size: clamp(2.15rem, 3vw, 2.9rem);
+}
+
+.japan-shelf.is-japan-mode .japan-card--sounds .japan-radio,
+.japan-shelf.is-japan-mode .japan-card--yamanote .yamanote {
+  min-height: 8.9rem;
+}
+
+.japan-shelf.is-japan-mode .japan-card--sounds .japan-radio {
+  grid-template-columns: minmax(0, 1fr) 4rem 2.72rem;
+  column-gap: 0.08rem;
+}
+
+.japan-shelf.is-japan-mode .japan-card--sounds .japan-radio__line {
+  font-size: clamp(1.62rem, 3vw, 2.28rem);
+}
+
 .top-row {
   display: grid;
   grid-template-columns: minmax(7rem, 9rem) minmax(18rem, 1fr) auto 3.7rem;
@@ -165,6 +354,11 @@ a {
 }
 
 .menu-pill.is-active {
+  background: var(--ink);
+  color: var(--surface);
+}
+
+body.is-japan-mode .menu-pill--japan {
   background: var(--ink);
   color: var(--surface);
 }
@@ -480,6 +674,14 @@ a {
   background: color-mix(in srgb, var(--surface) 22%, transparent);
 }
 
+.section-lead--japan::after {
+  background: color-mix(in srgb, var(--accent-2) 26%, transparent);
+}
+
+.japan-shelf.is-focused .section-lead::after {
+  background: color-mix(in srgb, var(--accent-2) 40%, transparent);
+}
+
 .box-label--spotlight {
   margin: 0;
   color: color-mix(in srgb, var(--accent) 70%, var(--surface) 30%);
@@ -704,6 +906,15 @@ a {
   text-transform: uppercase;
 }
 
+.post-row__status {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .post-kind {
   display: inline-flex;
   align-items: center;
@@ -742,6 +953,13 @@ a {
 
 .post-row--feature .post-row__title {
   font-size: clamp(1.7rem, 2.6vw, 2.4rem);
+}
+
+.post-row__deck {
+  max-width: 48ch;
+  margin: 0.52rem 0 0;
+  color: var(--muted);
+  line-height: 1.38;
 }
 
 .about-box {
@@ -856,6 +1074,14 @@ body.corners-pixel .palette-chip {
 }
 
 @media (max-width: 980px) {
+  .japan-shelf__grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "window"
+      "sounds"
+      "yamanote";
+  }
+
   .columns {
     grid-template-columns: minmax(15rem, 22rem) minmax(0, 1fr);
   }

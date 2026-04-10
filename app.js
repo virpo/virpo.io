@@ -7,7 +7,7 @@ const paletteModes = [
   "palette-gold",
 ];
 const cornerModes = ["corners-sharp", "corners-round", "corners-pixel"];
-const focusModes = ["writing", "projects", "about"];
+const focusModes = ["writing", "projects", "japan", "about"];
 const { buildFactHeadline } = window.factUtils;
 
 const state = {
@@ -126,6 +126,7 @@ async function initializeToday() {
 
 function applyState() {
   document.body.classList.toggle("theme-dark", state.theme === "dark");
+  document.body.classList.toggle("is-japan-mode", state.focus === "japan");
 
   fontModes.forEach((name) => document.body.classList.remove(name));
   paletteModes.forEach((name) => document.body.classList.remove(name));
@@ -243,13 +244,30 @@ function animateFlip(elements, mutate) {
 function initializeFocusMenu() {
   const contentFlow = document.querySelector(".content-flow");
   const columns = document.querySelector(".columns");
+  const leftColumn = document.querySelector(".column--left");
+  const controlBox = document.querySelector(".control-box");
+  const tokyoHomeBox = document.querySelector(".tokyo-home-box");
   const projectsShelf = document.querySelector(".projects-shelf");
   const rightColumn = document.querySelector(".column--right");
   const writingBox = document.querySelector(".writing-box");
   const aboutBox = document.querySelector(".about-box");
   const menuButtons = [...document.querySelectorAll(".menu-pill[data-focus]")];
+  const japanShelf = document.getElementById("japan-corner");
+  const japanStack = document.querySelector(".japan-shelf__stack");
 
-  if (!contentFlow || !columns || !projectsShelf || !rightColumn || !writingBox || !aboutBox || menuButtons.length === 0) {
+  if (
+    !contentFlow ||
+    !columns ||
+    !leftColumn ||
+    !controlBox ||
+    !tokyoHomeBox ||
+    !projectsShelf ||
+    !rightColumn ||
+    !writingBox ||
+    !aboutBox ||
+    !japanStack ||
+    menuButtons.length === 0
+  ) {
     return;
   }
 
@@ -263,18 +281,29 @@ function initializeFocusMenu() {
     writingBox.classList.toggle("is-focused", state.focus === "writing");
     aboutBox.classList.toggle("is-focused", state.focus === "about");
     projectsShelf.classList.toggle("is-focused", state.focus === "projects");
+    japanShelf?.classList.toggle("is-focused", state.focus === "japan");
+    document.body.classList.toggle("is-japan-mode", state.focus === "japan");
   };
 
   const applyFocusLayout = (animate = false) => {
-    const topLevelPanels = [columns, projectsShelf];
+    const topLevelPanels = [columns, japanShelf, projectsShelf, tokyoHomeBox].filter(Boolean);
     const rightPanels = [writingBox, aboutBox];
     const movePanels = () => {
-      if (state.focus === "projects") {
-        contentFlow.prepend(projectsShelf);
+      if (state.focus === "japan") {
+        japanStack.prepend(tokyoHomeBox);
+        contentFlow.append(japanShelf);
         contentFlow.append(columns);
-      } else {
-        contentFlow.prepend(columns);
         contentFlow.append(projectsShelf);
+      } else if (state.focus === "projects") {
+        controlBox.after(tokyoHomeBox);
+        contentFlow.append(projectsShelf);
+        contentFlow.append(columns);
+        contentFlow.append(japanShelf);
+      } else {
+        controlBox.after(tokyoHomeBox);
+        contentFlow.append(columns);
+        contentFlow.append(projectsShelf);
+        contentFlow.append(japanShelf);
       }
 
       if (state.focus === "about") {
@@ -294,6 +323,7 @@ function initializeFocusMenu() {
       movePanels();
     }
 
+    applyState();
     saveState();
   };
 

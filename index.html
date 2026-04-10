@@ -15,6 +15,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./module-lab.css" />
   </head>
   <body class="font-serif palette-cherry corners-round">
     <main class="site-shell">
@@ -24,6 +25,7 @@
         <nav class="box menu-box" aria-label="Primary">
           <button class="menu-pill is-active" data-focus="writing" type="button" aria-pressed="true">writing</button>
           <button class="menu-pill" data-focus="projects" type="button" aria-pressed="false">projects</button>
+          <button class="menu-pill menu-pill--japan" data-focus="japan" type="button" aria-pressed="false">japan</button>
           <button class="menu-pill" data-focus="about" type="button" aria-pressed="false">about</button>
         </nav>
 
@@ -62,18 +64,6 @@
               data-base-path="https://face.virpo.sk/faces/"
               data-debug="false"
             ></div>
-          </section>
-
-          <section class="box today-box">
-            <div class="today-head">
-              <p class="box-label">On This Day</p>
-              <p class="today-meta" id="today-meta"></p>
-            </div>
-            <h1 class="today-fact">
-              <span class="today-fact__emoji" id="today-emoji" aria-hidden="true"></span>
-              <span class="today-fact__text" id="today-fact"></span>
-            </h1>
-            <p class="today-date" id="today-date"></p>
           </section>
 
           <section class="box control-box" aria-label="Visual controls">
@@ -119,50 +109,75 @@
             </div>
           </section>
 
+          <article class="module-card module-card--tokyo tokyo-home-box" aria-label="Tokyo now module">
+            <p class="box-label">Tokyo Now</p>
+            <div class="tokyo-now" data-tokyo-now>
+              <div class="tokyo-now__grid">
+                <div class="tokyo-pane tokyo-pane--time module-piece">
+                  <div class="tokyo-now__eyebrow">Tokyo</div>
+                  <div class="tokyo-now__time" data-tokyo-time>00:00</div>
+                  <div class="tokyo-now__time-foot">
+                    <span class="tokyo-now__city">JST</span>
+                    <span class="tokyo-now__phase" data-tokyo-phase>Night</span>
+                  </div>
+                </div>
+                <div class="tokyo-pane tokyo-pane--weather module-piece">
+                  <div class="tokyo-now__eyebrow">Weather</div>
+                  <div class="tokyo-now__temp" data-tokyo-temp>--°</div>
+                  <div class="tokyo-now__condition" data-tokyo-condition>Loading</div>
+                </div>
+                <div class="tokyo-pane tokyo-pane--season module-piece">
+                  <span class="tokyo-season__badge" data-tokyo-season-badge>🌸</span>
+                  <div class="tokyo-season__copy">
+                    <span class="tokyo-now__eyebrow">Next nice thing</span>
+                    <span class="tokyo-season__title" data-tokyo-season-title>Cherry blossom window</span>
+                    <span class="tokyo-season__meta" data-tokyo-season-meta>in 0 days</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
         </div>
 
         <div class="column column--right">
           <section class="box writing-box is-focused" id="writing">
-            <p class="box-label">Writing</p>
+            <p class="box-label">Writing Soon</p>
             <div class="post-stream">
-              <article class="post-row post-row--feature" data-year="2026">
+              <article class="post-row post-row--feature" data-year="Now">
                 <div class="post-row__meta">
                   <span class="post-kind post-kind--essay">Essay</span>
-                  <time datetime="2026-04-07">Apr 7, 2026</time>
+                  <span class="post-row__status">Drafting now</span>
                 </div>
-                <h2 class="post-row__title">Design engineering belongs in serious products</h2>
+                <h2 class="post-row__title">Don’t Shout at Your AI Agent</h2>
+                <p class="post-row__deck">If it keeps making the same mistake, give it tools, checks, or memory. Anger is not a product strategy.</p>
               </article>
 
-              <article class="post-row" data-year="2026">
-                <div class="post-row__meta">
-                  <span class="post-kind post-kind--note">Note</span>
-                  <time datetime="2026-03-28">Mar 28, 2026</time>
-                </div>
-                <h2 class="post-row__title">What ten years at Slido taught me about polish</h2>
-              </article>
-
-              <article class="post-row" data-year="2026">
-                <div class="post-row__meta">
-                  <span class="post-kind post-kind--link">Link</span>
-                  <time datetime="2026-03-18">Mar 18, 2026</time>
-                </div>
-                <h2 class="post-row__title">Three websites that still feel alive</h2>
-              </article>
-
-              <article class="post-row" data-year="2026">
+              <article class="post-row" data-year="Soon">
                 <div class="post-row__meta">
                   <span class="post-kind post-kind--essay">Essay</span>
-                  <time datetime="2026-03-04">Mar 4, 2026</time>
+                  <span class="post-row__status">Soon</span>
                 </div>
-                <h2 class="post-row__title">Useful AI beats magical AI every single time</h2>
+                <h2 class="post-row__title">I Thought I Was a Design Engineer. I Was Wrong.</h2>
+                <p class="post-row__deck">The missing word was product. Design, engineering, and whatever else gets the thing over the line.</p>
               </article>
 
-              <article class="post-row" data-year="2026">
+              <article class="post-row" data-year="Soon">
                 <div class="post-row__meta">
                   <span class="post-kind post-kind--note">Note</span>
-                  <time datetime="2026-02-18">Feb 18, 2026</time>
+                  <span class="post-row__status">Soon</span>
                 </div>
-                <h2 class="post-row__title">On interfaces that invite touch before thought</h2>
+                <h2 class="post-row__title">Useful AI Beats Magical AI Every Single Time</h2>
+                <p class="post-row__deck">The best AI feature is rarely the flashiest one. It is the one that reliably saves people time.</p>
+              </article>
+
+              <article class="post-row" data-year="Soon">
+                <div class="post-row__meta">
+                  <span class="post-kind post-kind--note">Note</span>
+                  <span class="post-row__status">Soon</span>
+                </div>
+                <h2 class="post-row__title">What Ten Years at Slido Taught Me About Polish</h2>
+                <p class="post-row__deck">Mostly: work with people who care. Polish starts in culture long before it shows up in pixels.</p>
               </article>
             </div>
           </section>
@@ -170,9 +185,10 @@
           <section class="box about-box" id="about">
             <p class="box-label">About</p>
             <p class="about-copy">
-              Peter Hraska. Design engineer from Slovakia. Ten years at Slido. Side
-              projects about maps, AI, music, places, and useful weird little internet
-              toys.
+              Peter Hraska. Product engineer from Slovakia. Ten years at Slido. I care
+              about engineering, design, and product working nicely together. Otherwise,
+              what is the point of building anything? Side projects about maps, AI,
+              music, places, and useful weird little internet toys.
             </p>
             <div class="about-links">
               <a href="https://www.linkedin.com/in/hraska/">LinkedIn</a>
@@ -180,6 +196,121 @@
               <a href="https://face.virpo.sk/">Face experiment</a>
             </div>
           </section>
+        </div>
+      </section>
+
+      <section class="japan-shelf" id="japan-corner" aria-label="Japan Corner">
+        <div class="section-lead section-lead--japan">
+          <p class="box-label box-label--spotlight">Japan Corner</p>
+        </div>
+
+        <div class="japan-shelf__grid">
+          <article class="module-card module-card--window japan-card japan-card--window" aria-label="Window seat module">
+            <p class="box-label">Window Seat</p>
+            <div class="window-seat" data-window-seat>
+              <div class="window-seat__frame module-piece" data-window-scene>
+                <div class="window-seat__aperture" aria-hidden="true">
+                  <iframe
+                    class="window-seat__video"
+                    src="https://www.youtube-nocookie.com/embed/RMpM2Qu3QC8?start=20&autoplay=1&mute=1&controls=0&loop=1&playlist=RMpM2Qu3QC8&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1"
+                    title="Japanese Train ASMR - Mount Fuji to Tokyo side view"
+                    loading="eager"
+                    allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                  ></iframe>
+                </div>
+                <div class="window-seat__glass"></div>
+                <img class="window-seat__art" src="./assets/train-window.png" alt="" aria-hidden="true" />
+              </div>
+            </div>
+          </article>
+
+          <div class="japan-shelf__stack">
+            <article class="module-card module-card--radio japan-card japan-card--sounds" aria-label="Japan sounds module">
+              <p class="box-label">Japan Sounds</p>
+              <div class="japan-radio" data-japan-sounds>
+                <div class="japan-radio__display module-piece">
+                  <div class="japan-radio__queue" data-sound-queue>
+                    <button class="japan-radio__line japan-radio__line--prev" type="button" data-sound-step="-1" data-sound-prev>Summer crickets</button>
+                    <button class="japan-radio__line japan-radio__line--current" type="button" data-sound-current>FamilyMart entrance</button>
+                    <button class="japan-radio__line japan-radio__line--next" type="button" data-sound-step="1" data-sound-next>Door chime</button>
+                  </div>
+                </div>
+
+                <div class="japan-radio__speaker module-piece" aria-hidden="true">
+                  <span class="sound-bar"></span>
+                  <span class="sound-bar"></span>
+                  <span class="sound-bar"></span>
+                  <span class="sound-bar"></span>
+                  <span class="sound-bar"></span>
+                </div>
+
+                <div class="japan-radio__controls">
+                  <button class="box module-mini-button japan-radio__play" type="button" data-sound-play aria-label="Play or pause Japan sounds">
+                    <span class="icon-slot" data-sound-play-icon></span>
+                  </button>
+                  <button class="box module-mini-button japan-radio__next" type="button" data-sound-next-button aria-label="Next Japan sound">
+                    <span class="icon-slot" data-icon="next"></span>
+                  </button>
+                </div>
+                <div class="japan-radio__youtube-host" data-sound-youtube-host aria-hidden="true"></div>
+
+                <audio data-audio="familymart" preload="metadata" src="./audio/japan-familymart.mp3"></audio>
+                <audio data-audio="door" preload="metadata" src="./audio/japan-door-chime.ogg"></audio>
+                <audio data-audio="cuckoo" preload="metadata" src="./audio/japan-crosswalk-cuckoo.mp3"></audio>
+                <audio data-audio="piyo" preload="metadata" src="./audio/japan-crosswalk-piyo.mp3"></audio>
+                <audio data-audio="announce" preload="metadata" src="./audio/japan-mamonaku-shibuya.mp3"></audio>
+                <audio data-audio="crossing" preload="metadata" src="./audio/japan-rail-crossing.mp3"></audio>
+                <audio data-audio="crickets" preload="metadata" src="./audio/japan-summer-crickets.mp3"></audio>
+              </div>
+            </article>
+
+            <article class="module-card module-card--yamanote japan-card japan-card--yamanote" aria-label="Yamanote line module">
+              <div class="module-card__label-row">
+                <p class="box-label">Yamanote Line</p>
+                <a
+                  class="module-credit-link module-credit-link--yamanote"
+                  href="https://github.com/morgansleeper/Yamanotes"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Yamanotes GitHub repository"
+                >
+                  <span class="icon-slot icon-slot--small" data-icon="github"></span>
+                </a>
+              </div>
+              <div class="yamanote" data-yamanote>
+                <div class="yamanote__map module-piece" data-yamanote-map>
+                  <div class="yamanote__lane" data-yamanote-lane></div>
+                </div>
+
+                <div class="yamanote__foot">
+                  <div class="yamanote__info module-piece">
+                    <div class="yamanote__eyebrow">Now at</div>
+                    <div class="yamanote__current" data-yamanote-current>Tokyo</div>
+                    <div class="yamanote__jp" data-yamanote-jp>東京</div>
+                  </div>
+
+                  <div class="yamanote__controls">
+                    <button class="box module-mini-button" type="button" data-yamanote-toggle aria-label="Play or pause Yamanote melodies">
+                      <span class="icon-slot" data-yamanote-toggle-icon></span>
+                    </button>
+                    <button class="box module-mini-button" type="button" data-yamanote-next aria-label="Next Yamanote station">
+                      <span class="icon-slot" data-icon="next"></span>
+                    </button>
+                  </div>
+                </div>
+
+                <audio data-yamanote-audio="tokyo" preload="metadata" src="./audio/sh3.mp3"></audio>
+                <audio data-yamanote-audio="kanda" preload="metadata" src="./audio/seseragi.mp3"></audio>
+                <audio data-yamanote-audio="akihabara" preload="metadata" src="./audio/ogawav1.mp3"></audio>
+                <audio data-yamanote-audio="ueno" preload="metadata" src="./audio/bellb.mp3"></audio>
+                <audio data-yamanote-audio="ikebukuro" preload="metadata" src="./audio/melody.mp3"></audio>
+                <audio data-yamanote-audio="shinjuku" preload="metadata" src="./audio/aratana.mp3"></audio>
+                <audio data-yamanote-audio="shibuya" preload="metadata" src="./audio/hananohorokobi.mp3"></audio>
+                <audio data-yamanote-audio="ebisu" preload="metadata" src="./audio/thirdman.mp3"></audio>
+              </div>
+            </article>
+          </div>
         </div>
       </section>
 
@@ -248,6 +379,7 @@
     </main>
 
     <script src="./fact-utils.js"></script>
+    <script src="./module-lab.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>
