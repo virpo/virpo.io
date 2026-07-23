@@ -63,8 +63,10 @@
 - Route tests now exercise `generateStaticParams`, `generateMetadata`, and
   Article JSON-LD. `scripts/assert-static-output.mjs` checks all blog routes,
   SEO markers, semantic figure output, RSS items, sitemap URLs, and robots.
-- Local media validation rejects slash-plus-backslash protocol-relative forms
-  such as `/\evil.example/image.png`.
+- Local media validation rejects control characters and slash-plus-backslash
+  protocol-relative forms. It resolves candidates against `https://virpo.io`,
+  requires that exact origin and one leading pathname slash, and is covered by
+  tab, CR, LF, `/\evil.example/image.png`, and valid-local-path regressions.
 - The exact JSON-LD serializer used by article routes is regression-tested with
   `<` in both title and description; emitted script text contains `\u003c` and
   no raw payload delimiter.

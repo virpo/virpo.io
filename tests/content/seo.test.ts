@@ -32,6 +32,10 @@ describe("post frontmatter", () => {
     "https://example.com/image.png",
     "//example.com/image.png",
     "/\\evil.example/image.png",
+    "/\t/evil.example/image.png",
+    "/\r/evil.example/image.png",
+    "/\n/evil.example/image.png",
+    "/\r\n/evil.example/image.png",
   ])(
     "rejects non-local social image %s",
     (socialImage) => {
@@ -46,6 +50,22 @@ describe("post frontmatter", () => {
       ).toThrow();
     },
   );
+
+  it.each([
+    "/assets/blog/ai-build-day-1200.webp",
+    "/assets/blog/detective-skills.png",
+    "/images/social-card.png",
+  ])("accepts valid local social image %s", (socialImage) => {
+    expect(
+      parseFrontmatter({
+        title: "A complete post",
+        description: "A concrete description long enough for a useful search result.",
+        publishedAt: "2026-07-23",
+        tags: ["Making"],
+        socialImage,
+      }).socialImage,
+    ).toBe(socialImage);
+  });
 });
 
 describe("article discovery", () => {

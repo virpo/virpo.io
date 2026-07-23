@@ -1,3 +1,5 @@
+import { isLocalMediaUrl } from "./schema";
+
 type EstreeNode = {
   type?: string;
   body?: EstreeNode[];
@@ -36,8 +38,8 @@ function reject(detail: string): never {
 function requireBlogAsset(value: unknown, component: string): asserts value is string {
   if (
     typeof value !== "string" ||
-    !value.startsWith(BLOG_ASSET_PREFIX) ||
-    value.startsWith("//")
+    !isLocalMediaUrl(value) ||
+    !value.startsWith(BLOG_ASSET_PREFIX)
   ) {
     reject(`${component} sources outside ${BLOG_ASSET_PREFIX}`);
   }
