@@ -28,6 +28,16 @@ export type PostSource = PostSummary & {
   source: string;
 };
 
+export function getLatestPostDate(
+  posts: Array<Pick<PostSummary, "publishedAt" | "updatedAt">>,
+): Date | undefined {
+  return posts.reduce<Date | undefined>((latest, post) => {
+    const candidate =
+      post.updatedAt && post.updatedAt > post.publishedAt ? post.updatedAt : post.publishedAt;
+    return !latest || candidate > latest ? candidate : latest;
+  }, undefined);
+}
+
 function calculateReadingTime(source: string): ReadingTime {
   const words = source
     .replace(/<[^>]+>/g, " ")

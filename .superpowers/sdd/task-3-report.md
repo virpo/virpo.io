@@ -42,3 +42,23 @@
   could not be checked in this task. Static markup and CSS were verified
   directly. `/projects/` and `/#toys` are intentional continuation targets for
   Task 4.
+
+## Review fixes
+
+- Replaced standalone Markdown images with allowlisted block-level
+  `<ArticleImage>` components. Export checks reject `<p><figure>`,
+  `</figure></p>`, and empty paragraphs.
+- Removed the forced 3:4 crop from paired images; both pegboard photos retain
+  their intrinsic dimensions and natural ratios.
+- Changed 0.75 rem continuation-link text to ink on unchanged Kaki for a
+  measured 5.51:1 contrast ratio.
+- Added an AST allowlist for trusted, version-controlled repository MDX.
+  Imports, exports, free expressions, raw HTML, uncontrolled Markdown images,
+  inline JSX, unapproved components, and non-literal media props are rejected
+  before compilation.
+- Root-relative social images now reject protocol-relative `//` URLs.
+- RSS and aggregate sitemap dates now use the maximum publish/update date
+  across every post rather than relying on sorted position.
+- Route tests now exercise `generateStaticParams`, `generateMetadata`, and
+  Article JSON-LD. `scripts/assert-static-output.mjs` checks all blog routes,
+  SEO markers, semantic figure output, RSS items, sitemap URLs, and robots.

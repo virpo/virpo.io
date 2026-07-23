@@ -1,4 +1,8 @@
-import { getPostSummaries } from "../../lib/blog";
+import {
+  getLatestPostDate,
+  getPostSummaries,
+  type PostSummary,
+} from "../../lib/blog";
 
 const SITE_URL = "https://virpo.io";
 
@@ -13,8 +17,7 @@ function escapeXml(value: string): string {
 
 export const dynamic = "force-static";
 
-export function GET() {
-  const posts = getPostSummaries();
+export function buildRss(posts: PostSummary[]) {
   const items = posts
     .map((post) => {
       const url = `${SITE_URL}/blog/${post.slug}/`;
@@ -31,22 +34,27 @@ export function GET() {
     })
     .join("\n");
 
-  const xml = [
+  const latestPostDate = getLatestPostDate(posts);
+  return [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<rss version="2.0">',
     "  <channel>",
     "    <title>virpo · Peter Hraska</title>",
     `    <link>${SITE_URL}/blog/</link>`,
     "    <description>Short notes from Peter Hraska about making real things.</description>",
-    `    <lastBuildDate>${posts[0]?.publishedAt.toUTCString()}</lastBuildDate>`,
+    ...(latestPostDate
+      ? [`    <lastBuildDate>${latestPostDate.toUTCString()}</lastBuildDate>`]
+      : []),
     "    <language>en</language>",
     items,
     "  </channel>",
     "</rss>",
     "",
   ].join("\n");
+}
 
-  return new Response(xml, {
+export function GET() {
+  return new Response(buildRss(getPostSummaries()), {
     headers: {
       "Content-Type": "application/rss+xml; charset=utf-8",
     },

@@ -188,3 +188,12 @@ describe("site focus treatment", () => {
     },
   );
 });
+
+describe("article continuation contrast", () => {
+  it("keeps small footer-link text at 4.5:1 on the approved Kaki surface", () => {
+    expect(contrast(token("--ink"), token("--kaki"))).toBeGreaterThanOrEqual(4.5);
+    expect(globals).toMatch(
+      /\.articleExits a:hover,\s*\.articleExits a:focus-visible\s*{[^}]*background:\s*var\(--kaki\)[^}]*color:\s*var\(--ink\)/s,
+    );
+  });
+});

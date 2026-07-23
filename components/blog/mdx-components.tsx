@@ -1,10 +1,11 @@
 import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
+import { enforceTrustedMdxPolicy } from "../../lib/content/mdx-policy";
 import { ImagePair } from "./ImagePair";
-import { MdxImage } from "./MdxImage";
+import { ArticleImage } from "./MdxImage";
 
 export const mdxComponents = {
-  img: MdxImage,
+  ArticleImage,
   ImagePair,
 };
 
@@ -18,7 +19,7 @@ export function compilePostMdx(source: string) {
       blockJS: false,
       blockDangerousJS: true,
       mdxOptions: {
-        remarkPlugins: [remarkGfm],
+        remarkPlugins: [remarkGfm, enforceTrustedMdxPolicy],
       },
     },
   });

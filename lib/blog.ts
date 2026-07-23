@@ -1,5 +1,6 @@
 export {
   getPost,
+  getLatestPostDate,
   getPostSlugs,
   getPostSummaries,
   type PostSource,

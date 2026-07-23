@@ -5,7 +5,7 @@ const imageDimensions: Record<string, { width: number; height: number }> = {
   "/assets/blog/detective-skills.png": { width: 1602, height: 882 },
 };
 
-export function MdxImage({ src, alt = "", title, ...props }: ComponentPropsWithoutRef<"img">) {
+export function ArticleImage({ src, alt = "", title, ...props }: ComponentPropsWithoutRef<"img">) {
   const dimensions = typeof src === "string" ? imageDimensions[src] : undefined;
 
   return (

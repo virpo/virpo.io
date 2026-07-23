@@ -545,11 +545,6 @@ img {
   min-width: 0;
 }
 
-.articleImagePairItem img {
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-}
-
 .articleExits {
   display: grid;
   width: min(100%, 44rem);
@@ -574,7 +569,7 @@ img {
 .articleExits a:hover,
 .articleExits a:focus-visible {
   background: var(--kaki);
-  color: var(--white);
+  color: var(--ink);
 }
 
 @media (max-width: 1060px) {

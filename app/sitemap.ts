@@ -1,13 +1,16 @@
 import type { MetadataRoute } from "next";
-import { getPostSummaries } from "../lib/blog";
+import {
+  getLatestPostDate,
+  getPostSummaries,
+  type PostSummary,
+} from "../lib/blog";
 
 const SITE_URL = "https://virpo.io";
 
 export const dynamic = "force-static";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const posts = getPostSummaries();
-  const latestPostDate = posts[0]?.updatedAt ?? posts[0]?.publishedAt;
+export function buildSitemap(posts: PostSummary[]): MetadataRoute.Sitemap {
+  const latestPostDate = getLatestPostDate(posts);
 
   return [
     {
@@ -34,4 +37,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     })),
   ];
+}
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  return buildSitemap(getPostSummaries());
 }
