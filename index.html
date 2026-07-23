@@ -71,19 +71,16 @@
                 class="face-tracker"
                 data-base-path="https://face.virpo.sk/faces/"
               ></div>
-              <span class="face-hint">Peter Hraska · product engineer</span>
             </section>
 
             <section class="tile toy sound-toy" data-toy="sounds" data-sounds>
-              <div class="tile-heading">
-                <h2>Familiar Sounds</h2>
-                <span>Japan in 8 sec</span>
-              </div>
+              <div class="tile-heading"><h2>Familiar Japanese Sounds</h2></div>
               <div class="sound-body">
                 <button class="round-control" data-sound-prev type="button" aria-label="Previous sound">←</button>
-                <button class="sound-display" data-sound-play type="button" aria-label="Play familiar sound" aria-pressed="false">
-                  <span class="sound-bars" aria-hidden="true">
-                    <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                <button class="sound-display" data-sound-play type="button" aria-label="Play FamilyMart entrance" aria-pressed="false">
+                  <span class="sound-icon" aria-hidden="true">
+                    <svg data-sound-play-icon viewBox="0 0 24 24"><path d="m8 5 11 7L8 19V5Z"/></svg>
+                    <svg data-sound-pause-icon viewBox="0 0 24 24" hidden><path d="M7 5h4v14H7V5Zm6 0h4v14h-4V5Z"/></svg>
                   </span>
                   <strong data-sound-title>FamilyMart entrance</strong>
                   <span data-sound-state>press to play</span>
@@ -94,20 +91,18 @@
             </section>
 
             <section class="tile toy train-toy" data-toy="train" data-train>
-              <div class="tile-heading">
-                <h2>Window Seat</h2>
-                <button class="tiny-toggle" data-train-toggle type="button" aria-pressed="true">pause</button>
-              </div>
+              <div class="tile-heading"><h2>Window Seat</h2></div>
               <div class="train-window">
                 <iframe
                   data-train-frame
-                  src="https://www.youtube-nocookie.com/embed/RMpM2Qu3QC8?start=20&autoplay=1&mute=1&controls=0&loop=1&playlist=RMpM2Qu3QC8&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1"
+                  src="about:blank"
+                  data-train-src="https://www.youtube-nocookie.com/embed/RMpM2Qu3QC8?start=20&autoplay=1&mute=1&controls=0&loop=1&playlist=RMpM2Qu3QC8&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1"
                   title="Japanese train window from Mount Fuji to Tokyo"
                   loading="lazy"
                   allow="autoplay; encrypted-media; picture-in-picture"
                   referrerpolicy="strict-origin-when-cross-origin"
                 ></iframe>
-                <img src="./assets/train-window.png" alt="" aria-hidden="true" />
+                <img src="/assets/train-window.png" alt="" aria-hidden="true" />
                 <span class="train-glass" aria-hidden="true"></span>
               </div>
             </section>
@@ -129,101 +124,51 @@
           </aside>
 
           <section class="tile writing-tile" id="writing">
-            <div class="intro" id="about" data-intro tabindex="-1">
+            <div class="intro" id="about">
               <span class="section-label">Hello, I’m Peter</span>
               <h1>
                 Product engineer from Slovakia. I make useful things where
                 <em>product, design, and engineering</em> meet.
               </h1>
               <p>
-                Ten years at Slido. Now building products, small tools, and
-                occasionally a corner of the internet that makes a sound.
+                I work at Slido, now part of Cisco. I love building products, small tools,
+                and occasionally something weirdly useful.
               </p>
-              <div class="intro-links">
-                <a href="https://www.linkedin.com/in/hraska/">LinkedIn ↗</a>
-                <a href="https://virpo.sk/projects-portfolio/">Old portfolio ↗</a>
-                <a href="https://face.virpo.sk/">Face experiment ↗</a>
+              <div class="intro-links" aria-label="Peter elsewhere">
+                <a href="https://www.linkedin.com/in/hraska/" target="_blank" rel="noreferrer" aria-label="LinkedIn" title="LinkedIn">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 8.2H3.3V21h3.2V8.2ZM4.9 3A1.9 1.9 0 1 0 5 6.8 1.9 1.9 0 0 0 4.9 3ZM21 13.7c0-3.9-2.1-5.7-4.9-5.7a4.2 4.2 0 0 0-3.8 2.1V8.2H9.1V21h3.2v-6.3c0-1.7.3-3.3 2.4-3.3 2 0 2.1 1.9 2.1 3.4V21H20v-7.3Z"/></svg>
+                </a>
+                <a href="https://github.com/virpo" target="_blank" rel="noreferrer" aria-label="GitHub" title="GitHub">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.2 19.5v-2.3c-2.7.6-3.3-1.1-3.3-1.1-.4-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 0 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.8.8.1-.6.4-1.1.7-1.3-2.1-.2-4.4-1-4.4-4.7 0-1 .4-1.9 1-2.6-.1-.3-.4-1.3.1-2.6 0 0 .8-.3 2.7 1a9.2 9.2 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.3.2 2.3.1 2.6.7.7 1 1.6 1 2.6 0 3.7-2.3 4.5-4.4 4.7.4.3.7.9.7 1.8v2.7A10 10 0 0 0 12 2Z"/></svg>
+                </a>
               </div>
             </div>
 
             <div class="writing-list">
               <div class="writing-header">
-                <span class="section-label">Writing soon</span>
-                <span>notes from the workbench</span>
+                <span class="section-label">Latest writing</span>
+                <span class="writing-links">
+                  <a href="/projects/">Projects</a>
+                  <a href="/blog/">All posts →</a>
+                </span>
               </div>
-              <article class="post-row">
+              <a class="post-row" href="/blog/#a-different-kind-of-hackathon">
                 <span class="post-index">01</span>
-                <div>
-                  <h2>Don’t shout at your AI agent</h2>
-                  <p>Give it tools, checks, or memory. Anger is not a product strategy.</p>
-                </div>
-                <span class="post-status">drafting</span>
-              </article>
-              <article class="post-row">
+                <div><h2>A different kind of hackathon</h2><p>Twelve hours, tiny teams, real products.</p></div>
+                <span class="post-status">2 min</span>
+              </a>
+              <a class="post-row" href="/blog/#weird-use-of-ai-1">
                 <span class="post-index">02</span>
-                <div>
-                  <h2>I thought I was a design engineer. I was wrong.</h2>
-                  <p>The missing word was product.</p>
-                </div>
-                <span class="post-status">soon</span>
-              </article>
-              <article class="post-row">
+                <div><h2>Weird use of AI #1: A toy for my son</h2><p>An ugly sketch became something physical.</p></div>
+                <span class="post-status">1 min</span>
+              </a>
+              <a class="post-row" href="/blog/#weird-use-of-ai-3">
                 <span class="post-index">03</span>
-                <div>
-                  <h2>Useful AI beats magical AI</h2>
-                  <p>The best feature is usually the one that reliably saves time.</p>
-                </div>
-                <span class="post-status">soon</span>
-              </article>
-              <article class="post-row">
-                <span class="post-index">04</span>
-                <div>
-                  <h2>What ten years at Slido taught me about polish</h2>
-                  <p>It starts in culture long before it shows up in pixels.</p>
-                </div>
-                <span class="post-status">soon</span>
-              </article>
+                <div><h2>Weird use of AI #3: Detective skills for journalists</h2><p>Reusable research tools, not another SaaS.</p></div>
+                <span class="post-status">1 min</span>
+              </a>
             </div>
           </section>
-        </section>
-
-        <section class="projects-section" id="projects" aria-labelledby="projects-title">
-          <div class="tile projects-heading">
-            <h2 id="projects-title">Selected Projects</h2>
-            <span>six useful things</span>
-          </div>
-          <div class="project-grid">
-            <a class="project-card project-card--coral" href="https://youtldr.com/" target="_blank" rel="noreferrer">
-              <img src="./assets/projects/youtldr-home.png" alt="" />
-              <span class="project-copy"><strong>YouTLDR</strong><small>Anti-clickbait for YouTube</small></span>
-              <span class="project-number">01</span>
-            </a>
-            <a class="project-card project-card--yellow" href="https://zltastopa.sk/" target="_blank" rel="noreferrer">
-              <img src="./assets/projects/zltastopa-sk-thumb.png" alt="" />
-              <span class="project-copy"><strong>Žltá stopa</strong><small>Walking Slovakia, one trail at a time</small></span>
-              <span class="project-number">02</span>
-            </a>
-            <a class="project-card project-card--blue" href="https://virpo.sk/wp-content/uploads/radio.jpg" target="_blank" rel="noreferrer">
-              <img src="./assets/projects/mood-radio.jpg" alt="" />
-              <span class="project-copy"><strong>Mood Radio</strong><small>A tiny station for a specific feeling</small></span>
-              <span class="project-number">03</span>
-            </a>
-            <a class="project-card project-card--mint" href="https://github.com/virpo/pegboard" target="_blank" rel="noreferrer">
-              <img src="./assets/projects/pegboard.jpg" alt="" />
-              <span class="project-copy"><strong>Pegboard Toy</strong><small>From sketch to something you can play</small></span>
-              <span class="project-number">04</span>
-            </a>
-            <a class="project-card project-card--violet" href="https://aibuildweek.com/" target="_blank" rel="noreferrer">
-              <img src="./assets/projects/ai-build-week.jpg" alt="" />
-              <span class="project-copy"><strong>AI Build Week</strong><small>A week for making the useful thing real</small></span>
-              <span class="project-number">05</span>
-            </a>
-            <a class="project-card project-card--orange" href="https://github.com/virpo/cmux-deck" target="_blank" rel="noreferrer">
-              <img src="./assets/projects/cmux-deck.jpeg" alt="" />
-              <span class="project-copy"><strong>CMUX Deck</strong><small>Physical buttons for agent work</small></span>
-              <span class="project-number">06</span>
-            </a>
-          </div>
         </section>
       </div>
 

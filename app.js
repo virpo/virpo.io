@@ -147,7 +147,9 @@ function initializeSounds() {
   const stateLabel = root.querySelector("[data-sound-state]");
   const previous = root.querySelector("[data-sound-prev]");
   const next = root.querySelector("[data-sound-next]");
-  if (!audio || !display || !title || !stateLabel || !previous || !next) return;
+  const playIcon = root.querySelector("[data-sound-play-icon]");
+  const pauseIcon = root.querySelector("[data-sound-pause-icon]");
+  if (!audio || !display || !title || !stateLabel || !previous || !next || !playIcon || !pauseIcon) return;
 
   let index = 0;
   const isPlaying = () => !audio.paused && !audio.ended;
@@ -156,6 +158,8 @@ function initializeSounds() {
     display.classList.toggle("is-playing", playing);
     display.setAttribute("aria-pressed", String(playing));
     display.setAttribute("aria-label", `${playing ? "Pause" : "Play"} ${sounds[index].title}`);
+    playIcon.hidden = playing;
+    pauseIcon.hidden = !playing;
     stateLabel.textContent = playing ? "playing · press to pause" : "press to play";
   };
   const load = (nextIndex, autoplay = false) => {
@@ -185,145 +189,13 @@ function initializeSounds() {
 }
 
 function initializeTrain() {
-  const root = document.querySelector("[data-train]");
-  const frame = root?.querySelector("[data-train-frame]");
-  const toggle = root?.querySelector("[data-train-toggle]");
-  if (!root || !frame || !toggle) return;
-
-  const source = frame.src;
-  let running = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const render = () => {
-    root.classList.toggle("is-paused", !running);
-    toggle.textContent = running ? "pause" : "run";
-    toggle.setAttribute("aria-pressed", String(running));
-    frame.src = running ? source : "";
-  };
-
-  toggle.addEventListener("click", () => {
-    running = !running;
-    render();
-  });
-  render();
-}
-
-function initializeStudy() {
-  const root = document.querySelector("[data-study]");
-  const card = root?.querySelector("[data-study-card]");
-  const glyph = root?.querySelector("[data-study-glyph]");
-  const reading = root?.querySelector("[data-study-reading]");
-  const meaning = root?.querySelector("[data-study-meaning]");
-  const prompt = root?.querySelector("[data-study-prompt]");
-  const progress = root?.querySelector("[data-study-progress]");
-  if (!root || !card || !glyph || !reading || !meaning || !prompt || !progress) return;
-
-  const vocabulary = [
-    { glyph: "電車", reading: "でんしゃ", meaning: "train" },
-    { glyph: "駅", reading: "えき", meaning: "station" },
-    { glyph: "空", reading: "そら", meaning: "sky" },
-    { glyph: "雨", reading: "あめ", meaning: "rain" },
-    { glyph: "喫茶店", reading: "きっさてん", meaning: "coffee shop" },
-  ];
-  let index = 0;
-  try {
-    index = Number.parseInt(window.localStorage.getItem("virpo-study-index") || "0", 10);
-    if (!Number.isInteger(index) || index < 0 || index >= vocabulary.length) index = 0;
-  } catch {
-    index = 0;
-  }
-  let revealed = false;
-
-  const render = () => {
-    const item = vocabulary[index];
-    glyph.textContent = item.glyph;
-    reading.textContent = item.reading;
-    meaning.textContent = item.meaning;
-    progress.textContent = `${index + 1} / ${vocabulary.length}`;
-    card.classList.toggle("is-revealed", revealed);
-    prompt.textContent = revealed ? "tap for the next one" : "tap to reveal";
-    card.setAttribute(
-      "aria-label",
-      revealed ? `${item.glyph}, ${item.reading}, ${item.meaning}. Next card` : `Reveal reading for ${item.glyph}`,
-    );
-  };
-
-  card.addEventListener("click", () => {
-    if (!revealed) {
-      revealed = true;
-    } else {
-      index = (index + 1) % vocabulary.length;
-      revealed = false;
-      try {
-        window.localStorage.setItem("virpo-study-index", String(index));
-      } catch {
-        // Persistence is optional.
-      }
-    }
-    render();
-  });
-  render();
-}
-
-function initializeFocusMenu() {
-  const flow = document.querySelector(".content-flow");
-  const primary = document.getElementById("primary-field");
-  const projects = document.getElementById("projects");
-  const intro = document.querySelector("[data-intro]");
-  const buttons = [...document.querySelectorAll("[data-focus]")];
-  if (!flow || !primary || !projects || !intro || buttons.length === 0) return;
-
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let mode = "writing";
-  const flip = (elements, mutate) => {
-    const before = new Map(elements.map((element) => [element, element.getBoundingClientRect()]));
-    mutate();
-    if (prefersReducedMotion) return;
-    elements.forEach((element) => {
-      const first = before.get(element);
-      const last = element.getBoundingClientRect();
-      const x = first.left - last.left;
-      const y = first.top - last.top;
-      if (Math.abs(x) < 1 && Math.abs(y) < 1) return;
-      element.animate(
-        [{ transform: `translate(${x}px, ${y}px)` }, { transform: "translate(0, 0)" }],
-        { duration: 340, easing: "cubic-bezier(0.2, 0.8, 0.2, 1)" },
-      );
-    });
-  };
-  const apply = (nextMode, userInitiated = false) => {
-    mode = nextMode;
-    flip([primary, projects], () => {
-      if (mode === "projects") {
-        flow.prepend(projects);
-        projects.after(primary);
-      } else {
-        flow.prepend(primary);
-        primary.after(projects);
-      }
-    });
-    buttons.forEach((button) => {
-      button.setAttribute("aria-pressed", String(button.dataset.focus === mode));
-    });
-    document.body.dataset.focusMode = mode;
-
-    if (mode === "about" && userInitiated) {
-      intro.focus({ preventScroll: true });
-      intro.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
-    } else if (mode === "projects" && userInitiated) {
-      projects.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
-    } else if (mode === "writing" && userInitiated) {
-      primary.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
-    }
-  };
-
-  buttons.forEach((button) => {
-    button.addEventListener("click", () => apply(button.dataset.focus || "writing", true));
-  });
-  apply(mode, false);
+  const frame = document.querySelector("[data-train-frame]");
+  if (!frame) return;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!reducedMotion) frame.src = frame.dataset.trainSrc;
 }
 
 initializeBloomTicker();
 initializeFaceTracker();
 initializeSounds();
 initializeTrain();
-initializeStudy();
-initializeFocusMenu();

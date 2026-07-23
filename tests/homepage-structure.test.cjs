@@ -16,8 +16,27 @@ test("keeps the required toy order", () => {
   assert.ok(sounds > 0 && sounds < train && train < study);
 });
 
-test("renders six project cards", () => {
-  assert.equal((html.match(/class="project-card/g) || []).length, 6);
+test("contains three linked post previews and no project gallery", () => {
+  assert.equal((html.match(/class="post-row"/g) || []).length, 3);
+  assert.match(html, /href="\/projects\/"/);
+  assert.match(html, /href="\/blog\/#a-different-kind-of-hackathon"/);
+  assert.match(html, /href="\/blog\/#weird-use-of-ai-1"/);
+  assert.match(html, /href="\/blog\/#weird-use-of-ai-3"/);
+  assert.doesNotMatch(html, /class="projects-section"|class="project-card/);
+});
+
+test("uses current work copy and only LinkedIn and GitHub profile links", () => {
+  assert.match(html, /I work at Slido, now part of Cisco\./);
+  assert.match(html, /linkedin\.com\/in\/hraska/);
+  assert.match(html, /github\.com\/virpo/);
+  assert.doesNotMatch(html, /Old portfolio|Face experiment/);
+});
+
+test("removes unexplained and redundant controls", () => {
+  assert.doesNotMatch(html, /bloom-help|face-hint|data-train-toggle|Japan in 8 sec/);
+  assert.match(html, /Familiar Japanese Sounds/);
+  assert.match(html, /data-sound-play-icon/);
+  assert.match(html, /data-sound-pause-icon/);
 });
 
 test("contains no weather or visual configurator", () => {
@@ -28,19 +47,17 @@ test("keeps the approved bento tokens and responsive rules", () => {
   assert.match(css, /--gap:\s*3px/);
   assert.match(css, /--radius:\s*10px/);
   assert.match(css, /aspect-ratio:\s*1\s*\/\s*1/);
-  assert.match(css, /grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/);
   assert.match(css, /@media\s*\(max-width:\s*760px\)/);
 });
 
-test("initializes each approved interaction", () => {
+test("keeps only the current homepage initializers", () => {
   for (const name of [
     "initializeBloomTicker",
     "initializeFaceTracker",
     "initializeSounds",
     "initializeTrain",
-    "initializeStudy",
-    "initializeFocusMenu",
   ]) {
     assert.match(app, new RegExp(`function ${name}\\(`));
   }
+  assert.doesNotMatch(app, /function initializeFocusMenu\(/);
 });
