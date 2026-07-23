@@ -7,6 +7,7 @@ const pages = {
   blog: fs.readFileSync("blog/index.html", "utf8"),
   projects: fs.readFileSync("projects/index.html", "utf8"),
 };
+const styles = fs.readFileSync("styles.css", "utf8");
 
 test("all public routes use the shared identity and navigation", () => {
   for (const html of Object.values(pages)) {
@@ -31,4 +32,19 @@ test("all routes retain Tokyo time and bloom details", () => {
     assert.match(html, /data-bloom-trigger/);
     assert.match(html, /data-bloom-popover/);
   }
+});
+
+test("keeps the shared project grid responsive", () => {
+  assert.match(
+    styles,
+    /\.project-grid\s*\{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/s,
+  );
+  assert.match(
+    styles,
+    /@media\s*\(max-width:\s*760px\)[\s\S]*?\.project-grid\s*\{[^}]*grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/,
+  );
+  assert.match(
+    styles,
+    /@media\s*\(max-width:\s*440px\)[\s\S]*?\.project-grid\s*\{[^}]*grid-template-columns:\s*1fr/,
+  );
 });
