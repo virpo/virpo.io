@@ -96,48 +96,40 @@ img {
   letter-spacing: -0.04em;
 }
 
-.brand span:first-child {
-  font-size: 0.9em;
-  filter: saturate(0) brightness(8);
-  transform: rotate(-8deg);
-}
-
 .primary-nav {
   display: flex;
-  min-height: 70px;
+  min-width: 0;
   align-items: stretch;
-  padding: 0 0.35rem;
+  padding: 0 0.55rem;
 }
 
-.primary-nav button {
+.primary-nav a {
   position: relative;
-  padding: 0 0.9rem;
-  background: transparent;
-  cursor: pointer;
-  font-size: 0.9rem;
+  display: grid;
+  min-width: 0;
+  place-items: center;
+  padding: 0 1rem;
+  font-size: 0.83rem;
 }
 
-.primary-nav button::after {
+.primary-nav a::after {
   position: absolute;
-  right: 0.9rem;
+  right: 1rem;
   bottom: 14px;
-  left: 0.9rem;
+  left: 1rem;
   height: 3px;
-  border-radius: 4px;
   background: var(--accent);
   content: "";
   opacity: 0;
   transform: scaleX(0.4);
-  transition: opacity 150ms ease, transform 150ms ease;
+  transition: opacity 140ms ease, transform 140ms ease;
 }
 
-.primary-nav button[aria-pressed="true"]::after {
+.primary-nav a:hover::after,
+.primary-nav a:focus-visible::after,
+.primary-nav a[aria-current="page"]::after {
   opacity: 1;
   transform: scaleX(1);
-}
-
-.primary-nav button:hover {
-  color: var(--accent);
 }
 
 .bloom-ticker {
@@ -172,7 +164,7 @@ img {
 .bloom-trigger {
   display: grid;
   min-width: 0;
-  grid-template-columns: 3.2rem minmax(0, 1fr) 1.8rem;
+  grid-template-columns: 3.2rem minmax(0, 1fr);
   align-items: center;
   gap: 0.72rem;
   padding: 0.42rem 0.8rem;
@@ -224,16 +216,6 @@ img {
 .bloom-summary > span:last-child {
   color: var(--accent);
   font-size: 0.78rem;
-}
-
-.bloom-help {
-  display: grid;
-  width: 1.65rem;
-  height: 1.65rem;
-  place-items: center;
-  border: 2px solid var(--ink);
-  border-radius: 50%;
-  font-size: 0.76rem;
 }
 
 .bloom-popover {
@@ -884,32 +866,27 @@ body[data-focus-mode="about"] .intro {
   }
 
   .brand {
-    min-width: 112px;
+    min-width: 94px;
     min-height: 62px;
-    padding: 0 0.8rem;
-    font-size: 1.35rem;
-  }
-
-  .brand span:first-child {
-    display: inline;
-    font-size: 0.72em;
+    padding: 0 0.72rem;
+    font-size: 1.3rem;
   }
 
   .primary-nav {
     min-height: 62px;
-    padding: 0 0.1rem;
+    padding: 0;
   }
 
-  .primary-nav button {
+  .primary-nav a {
     flex: 1;
     padding: 0 0.35rem;
-    font-size: 0.73rem;
+    font-size: 0.69rem;
   }
 
-  .primary-nav button::after {
-    right: 0.45rem;
+  .primary-nav a::after {
+    right: 0.42rem;
     bottom: 10px;
-    left: 0.45rem;
+    left: 0.42rem;
   }
 
   .bloom-ticker {
@@ -927,7 +904,7 @@ body[data-focus-mode="about"] .intro {
   }
 
   .bloom-trigger {
-    grid-template-columns: 2.55rem minmax(0, 1fr) 1.6rem;
+    grid-template-columns: 2.55rem minmax(0, 1fr);
     gap: 0.55rem;
     padding: 0.35rem 0.55rem;
   }

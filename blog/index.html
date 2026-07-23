@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
+    <title>Writing · Peter Hraska</title>
+    <meta name="description" content="Short notes from Peter Hraska about making real things." />
+    <link rel="icon" type="image/svg+xml" href="/assets/brand-mark.svg" />
+    <link rel="apple-touch-icon" href="/assets/brand-mark.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="masthead">
+        <a class="tile brand" href="/" aria-label="Virpo home">
+          <span>virpo</span>
+        </a>
+        <nav class="tile primary-nav" aria-label="Primary">
+          <a href="/blog/" aria-current="page">Blog</a>
+          <a href="/projects/">Projects</a>
+          <a href="/#about">About</a>
+        </nav>
+        <section class="tile bloom-ticker" data-bloom-module aria-label="Tokyo time and seasonal bloom">
+          <div class="tokyo-clock">
+            <span class="ticker-kicker">Tokyo</span>
+            <time data-tokyo-time datetime="">00:00</time>
+          </div>
+          <button class="bloom-trigger" data-bloom-trigger type="button" aria-expanded="false" aria-controls="bloom-popover">
+            <span class="bloom-emoji" data-bloom-emoji aria-hidden="true">🌱</span>
+            <span class="bloom-summary">
+              <span class="ticker-kicker">Blooming next</span>
+              <strong data-bloom-name>Checking Japan</strong>
+              <span data-bloom-countdown>one moment</span>
+            </span>
+          </button>
+          <div class="bloom-popover" id="bloom-popover" data-bloom-popover hidden>
+            <span class="popover-arrow" aria-hidden="true"></span>
+            <p class="popover-kicker">Next in Japan</p>
+            <strong data-bloom-place>Somewhere in Japan</strong>
+            <span data-bloom-window>Typical bloom window</span>
+            <a data-bloom-source href="https://www.japan.travel/en/see-and-do/flowers/" target="_blank" rel="noreferrer">
+              Source ↗
+            </a>
+          </div>
+        </section>
+      </header>
+
+      <main class="page-main">
+        <header class="tile page-intro">
+          <span class="section-label">Writing</span>
+          <h1>Short notes about making real things.</h1>
+        </header>
+        <section class="post-feed" aria-label="Posts"></section>
+      </main>
+
+      <footer class="tile site-footer">
+        <span>Peter Hraska · Slovakia</span>
+        <span>Built with curiosity, 2026</span>
+      </footer>
+    </div>
+
+    <script src="/japan-data.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>
