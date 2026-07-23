@@ -164,7 +164,7 @@ img {
 .bloom-trigger {
   display: grid;
   min-width: 0;
-  grid-template-columns: 3.25rem minmax(0, 1fr);
+  grid-template-columns: 3.25rem minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.72rem;
   padding: 0.42rem 0.8rem;

@@ -50,6 +50,13 @@ test("keeps the approved bento tokens and responsive rules", () => {
   assert.match(css, /@media\s*\(max-width:\s*760px\)/);
 });
 
+test("keeps the bloom disclosure arrow on the desktop row", () => {
+  assert.match(
+    css,
+    /\.bloom-trigger\s*\{[^}]*grid-template-columns:\s*3\.25rem minmax\(0,\s*1fr\) auto/s,
+  );
+});
+
 test("keeps only the current homepage initializers", () => {
   for (const name of [
     "initializeBloomTicker",
