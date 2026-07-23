@@ -34,8 +34,8 @@ const shellTextPairs = [
   {
     name: "mobile wordmark",
     foreground: "--white",
-    background: "--brand-red-surface",
-    fontSizePx: 20.8,
+    background: "--brand-red",
+    fontSizePx: 24,
     fontWeight: 400,
   },
   {
@@ -148,10 +148,18 @@ describe("shell contrast", () => {
     },
   );
 
-  it("maps the derived contrast tokens to the actual small-text shell selectors", () => {
+  it("keeps the exact red tile and qualifies its mobile wordmark as large text", () => {
+    const brandMarkRules = [...globals.matchAll(/\.brandMark\s*{([^}]*)\}/g)];
+
+    expect(token("--brand-red")).toBe("#d0513e");
+    expect(globals).not.toContain("--brand-red-surface");
     expect(globals).toMatch(
-      /\.brand\s*{[^}]*background:\s*var\(--brand-red-surface\)[^}]*color:\s*var\(--white\)/s,
+      /\.brand\s*{[^}]*background:\s*var\(--brand-red\)[^}]*color:\s*var\(--white\)/s,
     );
+    expect(brandMarkRules.at(-1)?.[1]).toMatch(/font-size:\s*1\.5rem/);
+  });
+
+  it("maps the derived contrast tokens to the actual small-text shell selectors", () => {
     expect(globals).toMatch(
       /\.bloomSummary > span:last-child\s*{[^}]*color:\s*var\(--brand-red-text\)/s,
     );
@@ -167,4 +175,16 @@ describe("site focus treatment", () => {
       /:focus-visible\s*{[^}]*box-shadow:\s*inset 0 0 0 3px var\(--white\),\s*inset 0 0 0 6px var\(--focus\)/s,
     );
   });
+
+  it.each(["--white", "--paper", "--brand-red", "--kaki", "--ink"])(
+    "keeps at least one focus stripe at 3:1 against %s",
+    (surface) => {
+      const stripeRatios = [
+        contrast(token("--white"), token(surface)),
+        contrast(token("--focus"), token(surface)),
+      ];
+
+      expect(Math.max(...stripeRatios)).toBeGreaterThanOrEqual(3);
+    },
+  );
 });
