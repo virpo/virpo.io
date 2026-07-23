@@ -3,7 +3,10 @@
   --radius: 10px;
   --paper: #fff4df;
   --kaki: #d76538;
+  --kaki-text: #9b3f1e;
   --brand-red: #d0513e;
+  --brand-red-surface: #bd3e2d;
+  --brand-red-text: #a93425;
   --ink: #090909;
   --white: #ffffff;
   --yellow: #f4c84c;
@@ -91,7 +94,7 @@ img {
   align-items: center;
   justify-content: center;
   padding: 0 1.25rem;
-  background: var(--brand-red);
+  background: var(--brand-red-surface);
   color: var(--white);
 }
 
@@ -232,7 +235,7 @@ img {
 }
 
 .bloomSummary > span:last-child {
-  color: var(--brand-red);
+  color: var(--brand-red-text);
   font-size: 0.78rem;
 }
 
@@ -265,7 +268,7 @@ img {
 
 .popoverKicker {
   margin: 0;
-  color: var(--kaki);
+  color: var(--kaki-text);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 0.68rem;
   font-weight: 700;

@@ -26,7 +26,6 @@ export const metadata: Metadata = {
   title: { default: "virpo · Peter Hraska", template: "%s · virpo" },
   description: "Peter Hraska makes useful things where product, design, and engineering meet.",
   applicationName: "virpo",
-  alternates: { canonical: "/" },
   icons: {
     icon: "/assets/brand-mark.svg",
     apple: "/assets/brand-mark.svg",
@@ -36,7 +35,6 @@ export const metadata: Metadata = {
     siteName: "virpo",
     title: "virpo · Peter Hraska",
     description: "Peter Hraska makes useful things where product, design, and engineering meet.",
-    url: "/",
   },
   twitter: {
     card: "summary",
