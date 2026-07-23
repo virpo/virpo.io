@@ -930,38 +930,34 @@ Inside the project grid, add:
 <a class="project-card project-card--coral" href="https://youtldr.com/" target="_blank" rel="noreferrer">
   <img src="/assets/projects/youtldr-home.png" alt="YouTLDR homepage" />
   <span class="project-copy"><strong>YouTLDR</strong><small>Product · Browser extension</small></span>
-  <span class="project-number">01</span>
 </a>
 <a class="project-card project-card--yellow" href="https://zltastopa.sk/" target="_blank" rel="noreferrer">
   <img src="/assets/projects/zltastopa-sk-thumb.png" alt="Žltá stopa website" />
   <span class="project-copy"><strong>Žltá stopa</strong><small>Civic tech · Open data</small></span>
-  <span class="project-number">02</span>
 </a>
 <a class="project-card project-card--blue" href="https://virpo.sk/wp-content/uploads/radio.jpg" target="_blank" rel="noreferrer">
   <img src="/assets/projects/mood-radio.jpg" alt="Mood Radio" />
   <span class="project-copy"><strong>Mood Radio</strong><small>Hardware · Interaction</small></span>
-  <span class="project-number">03</span>
 </a>
 <a class="project-card project-card--mint" href="https://github.com/virpo/pegboard" target="_blank" rel="noreferrer">
   <img src="/assets/projects/pegboard.jpg" alt="Colorful 3D-printed pegboard toy" />
   <span class="project-copy"><strong>Pegboard Toy</strong><small>Physical toy · 3D printing</small></span>
-  <span class="project-number">04</span>
 </a>
 <a class="project-card project-card--violet" href="https://aibuildweek.com/" target="_blank" rel="noreferrer">
   <img src="/assets/projects/ai-build-week.jpg" alt="AI Build Week" />
   <span class="project-copy"><strong>AI Build Week</strong><small>Community · Event</small></span>
-  <span class="project-number">05</span>
 </a>
 <a class="project-card project-card--orange" href="https://github.com/virpo/cmux-deck" target="_blank" rel="noreferrer">
   <img src="/assets/projects/cmux-deck.jpeg" alt="Stream Deck showing agent status" />
   <span class="project-copy"><strong>CMUX Deck</strong><small>Hardware · Developer tool</small></span>
-  <span class="project-number">06</span>
 </a>
 ```
 
 - [ ] **Step 4: Keep the existing project visual language on its own page**
 
-Keep `.project-grid`, `.project-card`, `.project-copy`, `.project-number`, and color modifier rules. Remove selectors that depend on `.projects-section` or `body[data-focus-mode]`. Preserve:
+Keep `.project-grid`, `.project-card`, `.project-copy`, and color modifier
+rules. Delete `.project-number` and selectors that depend on
+`.projects-section` or `body[data-focus-mode]`. Preserve:
 
 ```css
 .project-grid {
