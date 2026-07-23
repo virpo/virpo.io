@@ -125,3 +125,27 @@ test("blog images prioritize the first hero and defer later imagery", () => {
     assert.match(deferred, /decoding="async"/);
   }
 });
+
+test("the project archive contains six complete linked projects", () => {
+  const cards = [...pages.projects.matchAll(/<a class="project-card[^"]*"[\s\S]*?<\/a>/g)];
+  assert.equal(cards.length, 6);
+  for (const [card] of cards) {
+    assert.match(card, /href="https?:\/\//);
+    assert.match(card, /<img src="\/assets\/projects\/[^"]+"/);
+    assert.match(card, /<strong>[^<]+<\/strong>/);
+    assert.match(card, /<small>[^<]+<\/small>/);
+  }
+});
+
+test("the project archive contains the current selected projects", () => {
+  for (const title of [
+    "YouTLDR",
+    "Žltá stopa",
+    "Mood Radio",
+    "Pegboard Toy",
+    "AI Build Week",
+    "CMUX Deck",
+  ]) {
+    assert.match(pages.projects, new RegExp(title));
+  }
+});
