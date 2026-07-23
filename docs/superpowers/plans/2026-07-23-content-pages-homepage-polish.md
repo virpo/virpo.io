@@ -57,7 +57,7 @@
 - Consumes: `window.VirpoJapanData` through the existing bloom hooks.
 - Produces: `/assets/brand-mark.svg` for both `rel="icon"` and `rel="apple-touch-icon"`.
 
-- [ ] **Step 1: Write failing route and navigation tests**
+- [x] **Step 1: Write failing route and navigation tests**
 
 Create `tests/content-pages.test.cjs`:
 
@@ -98,13 +98,13 @@ test("all routes retain Tokyo time and bloom details", () => {
 });
 ```
 
-- [ ] **Step 2: Run the route tests and verify RED**
+- [x] **Step 2: Run the route tests and verify RED**
 
 Run: `node --test tests/content-pages.test.cjs`
 
 Expected: FAIL because `blog/index.html`, `projects/index.html`, and `assets/brand-mark.svg` do not exist.
 
-- [ ] **Step 3: Create the brand mark**
+- [x] **Step 3: Create the brand mark**
 
 Create `assets/brand-mark.svg`:
 
@@ -122,7 +122,7 @@ Replace the data-URL favicon in every document with:
 <link rel="apple-touch-icon" href="/assets/brand-mark.svg" />
 ```
 
-- [ ] **Step 4: Replace the homepage masthead and add page shells**
+- [x] **Step 4: Replace the homepage masthead and add page shells**
 
 Use this masthead in `index.html`, with `aria-current="page"` on the brand:
 
@@ -209,7 +209,7 @@ On `projects/index.html`, put `aria-current="page"` on Projects and use:
 </main>
 ```
 
-- [ ] **Step 5: Change the primary navigation from buttons to links**
+- [x] **Step 5: Change the primary navigation from buttons to links**
 
 Replace the old `.primary-nav button` rules with:
 
@@ -281,7 +281,7 @@ Keep the brand red and remove `.brand span:first-child` emoji-specific rules. At
 }
 ```
 
-- [ ] **Step 6: Run tests and commit**
+- [x] **Step 6: Run tests and commit**
 
 Run: `node --test tests/content-pages.test.cjs`
 
@@ -307,7 +307,7 @@ git commit -m "feat: add virpo content routes and navigation"
 - Removes: `initializeFocusMenu()` and the old rotating `initializeStudy()`; Task 6 adds the real study controller.
 - Produces: `[data-sound-play-icon]`, `[data-sound-pause-icon]`, and a train iframe with `data-train-src`.
 
-- [ ] **Step 1: Replace obsolete homepage assertions with failing polish assertions**
+- [x] **Step 1: Replace obsolete homepage assertions with failing polish assertions**
 
 Replace the project-card and initializer tests in `tests/homepage-structure.test.cjs` with:
 
@@ -355,13 +355,13 @@ test("keeps only the current homepage initializers", () => {
 });
 ```
 
-- [ ] **Step 2: Run the homepage tests and verify RED**
+- [x] **Step 2: Run the homepage tests and verify RED**
 
 Run: `node --test tests/homepage-structure.test.cjs`
 
 Expected: FAIL on the project gallery, old links, redundant labels, missing sound icon hooks, and focus-menu initializer.
 
-- [ ] **Step 3: Update the face, introduction, links, and post previews**
+- [x] **Step 3: Update the face, introduction, links, and post previews**
 
 Remove `.face-hint` from the face tile. Use this introduction:
 
@@ -418,7 +418,7 @@ Replace the writing list with exactly three linked rows:
 
 Remove the entire `.projects-section`.
 
-- [ ] **Step 4: Make the bloom summary self-explanatory**
+- [x] **Step 4: Make the bloom summary self-explanatory**
 
 Remove `.bloom-help` from the HTML and change the popover kicker to `Next in Japan`. Keep the existing click, hover, focus, outside-click, and Escape handlers. Add:
 
@@ -456,7 +456,7 @@ At 760 px and below, keep the two content columns and hide only the decorative a
 }
 ```
 
-- [ ] **Step 5: Add explicit play and pause icons to Familiar Japanese Sounds**
+- [x] **Step 5: Add explicit play and pause icons to Familiar Japanese Sounds**
 
 Use one heading, and put both icon states inside the central control:
 
@@ -511,7 +511,7 @@ Style the icon:
 
 Delete `.sound-bars` markup, styles, and keyframes.
 
-- [ ] **Step 6: Remove the train toggle and improve the crop**
+- [x] **Step 6: Remove the train toggle and improve the crop**
 
 Replace the train heading and iframe with:
 
@@ -565,7 +565,7 @@ Replace the train crop and paused-state rules with:
 }
 ```
 
-- [ ] **Step 7: Increase the introduction green and polish profile controls**
+- [x] **Step 7: Increase the introduction green and polish profile controls**
 
 Set:
 
@@ -618,7 +618,7 @@ initializeSounds();
 initializeTrain();
 ```
 
-- [ ] **Step 8: Run tests and commit**
+- [x] **Step 8: Run tests and commit**
 
 Run: `node --test tests/homepage-structure.test.cjs tests/content-pages.test.cjs`
 
@@ -647,7 +647,7 @@ git commit -m "feat: polish homepage identity and japan toys"
 - Consumes homepage links created in Task 2.
 - Uses only locally stored real images.
 
-- [ ] **Step 1: Add failing article and asset assertions**
+- [x] **Step 1: Add failing article and asset assertions**
 
 Append to `tests/content-pages.test.cjs`:
 
@@ -684,13 +684,13 @@ test("every blog post uses local real imagery and one or two paragraphs", () => 
 });
 ```
 
-- [ ] **Step 2: Run the content tests and verify RED**
+- [x] **Step 2: Run the content tests and verify RED**
 
 Run: `node --test tests/content-pages.test.cjs`
 
 Expected: FAIL because the blog feed and local article assets are absent.
 
-- [ ] **Step 3: Copy the verified real images**
+- [x] **Step 3: Copy the verified real images**
 
 Run:
 
@@ -704,7 +704,7 @@ cp assets/projects/zltastopa-sk-thumb.png assets/blog/detective-skills.png
 
 Expected: `file assets/blog/*` reports three PNG/JPEG source images plus the paired pegboard image.
 
-- [ ] **Step 4: Add the three complete posts**
+- [x] **Step 4: Add the three complete posts**
 
 Inside `.post-feed`, add:
 
@@ -753,7 +753,7 @@ Inside `.post-feed`, add:
 </article>
 ```
 
-- [ ] **Step 5: Style the short-post feed**
+- [x] **Step 5: Style the short-post feed**
 
 Add:
 
@@ -861,7 +861,7 @@ Add:
 }
 ```
 
-- [ ] **Step 6: Run tests and commit**
+- [x] **Step 6: Run tests and commit**
 
 Run: `node --test tests/content-pages.test.cjs`
 
@@ -886,7 +886,7 @@ git commit -m "feat: publish first three short posts"
 - Produces: six `.project-card` links with one image, title, type, and destination each.
 - Keeps the grid extensible without a hard-coded row count.
 
-- [ ] **Step 1: Add failing project completeness tests**
+- [x] **Step 1: Add failing project completeness tests**
 
 Append:
 
@@ -916,13 +916,13 @@ test("the project archive contains the current selected projects", () => {
 });
 ```
 
-- [ ] **Step 2: Run the content tests and verify RED**
+- [x] **Step 2: Run the content tests and verify RED**
 
 Run: `node --test tests/content-pages.test.cjs`
 
 Expected: FAIL because the project grid is empty.
 
-- [ ] **Step 3: Add the six project cards**
+- [x] **Step 3: Add the six project cards**
 
 Inside the project grid, add:
 
@@ -953,7 +953,7 @@ Inside the project grid, add:
 </a>
 ```
 
-- [ ] **Step 4: Keep the existing project visual language on its own page**
+- [x] **Step 4: Keep the existing project visual language on its own page**
 
 Keep `.project-grid`, `.project-card`, `.project-copy`, and color modifier
 rules. Delete `.project-number` and selectors that depend on
@@ -979,7 +979,7 @@ rules. Delete `.project-number` and selectors that depend on
 }
 ```
 
-- [ ] **Step 5: Run tests and commit**
+- [x] **Step 5: Run tests and commit**
 
 Run: `node --test tests/content-pages.test.cjs`
 
@@ -1003,7 +1003,7 @@ git commit -m "feat: move selected work to projects archive"
 - State shape: `{ version: 1, level: "hiragana" | "katakana" | "kanji", cards: Record<string, { stage: number, dueAt: number, correct: number, wrong: number }> }`.
 - `getNextStudyCard` returns `{ card, nextDueAt }`; `card` is `null` when no card is due.
 
-- [ ] **Step 1: Write failing engine tests**
+- [x] **Step 1: Write failing engine tests**
 
 Create `tests/study-engine.test.cjs`:
 
@@ -1081,13 +1081,13 @@ test("Kanji cards expose writing and reading while keeping meaning separate", ()
 });
 ```
 
-- [ ] **Step 2: Run the engine tests and verify RED**
+- [x] **Step 2: Run the engine tests and verify RED**
 
 Run: `node --test tests/study-engine.test.cjs`
 
 Expected: FAIL because `study-engine.js` does not exist.
 
-- [ ] **Step 3: Create the UMD module and decks**
+- [x] **Step 3: Create the UMD module and decks**
 
 Start `study-engine.js` with:
 
@@ -1164,7 +1164,7 @@ Start `study-engine.js` with:
   const allCards = levels.flatMap((level) => decks[level]);
 ```
 
-- [ ] **Step 4: Implement normalization, progress, selection, and scoring**
+- [x] **Step 4: Implement normalization, progress, selection, and scoring**
 
 Complete the factory with:
 
@@ -1283,7 +1283,7 @@ Complete the factory with:
 });
 ```
 
-- [ ] **Step 5: Run tests and commit**
+- [x] **Step 5: Run tests and commit**
 
 Run: `node --test tests/study-engine.test.cjs`
 
@@ -1309,7 +1309,7 @@ git commit -m "feat: add local japanese study engine"
 - Persists: JSON state under `virpo-study-v1`.
 - Produces hooks: `[data-study-level]`, `[data-study-progress]`, `[data-study-due]`, `[data-study-card]`, `[data-study-writing]`, `[data-study-reading]`, `[data-study-meaning]`, `[data-study-actions]`, `[data-study-again]`, `[data-study-got-it]`, and `[data-study-reset]`.
 
-- [ ] **Step 1: Add failing study structure assertions**
+- [x] **Step 1: Add failing study structure assertions**
 
 Append to `tests/homepage-structure.test.cjs`:
 
@@ -1339,13 +1339,13 @@ test("contains the complete local study interface", () => {
 });
 ```
 
-- [ ] **Step 2: Run the homepage tests and verify RED**
+- [x] **Step 2: Run the homepage tests and verify RED**
 
 Run: `node --test tests/homepage-structure.test.cjs`
 
 Expected: FAIL because the new study markup and controller do not exist.
 
-- [ ] **Step 3: Replace the decorative study card with the learning UI**
+- [x] **Step 3: Replace the decorative study card with the learning UI**
 
 Use:
 
@@ -1383,7 +1383,7 @@ Immediately before the homepage `app.js` script, add:
 <script src="/app.js"></script>
 ```
 
-- [ ] **Step 4: Implement the study DOM controller**
+- [x] **Step 4: Implement the study DOM controller**
 
 Add this controller before the initializer calls in `app.js`:
 
@@ -1501,7 +1501,7 @@ function initializeStudy() {
 
 Call `initializeStudy()` after `initializeTrain()`.
 
-- [ ] **Step 5: Style reveal, rating, progress, and reset states**
+- [x] **Step 5: Style reveal, rating, progress, and reset states**
 
 Replace the old study reveal rules with:
 
@@ -1587,7 +1587,7 @@ Replace the old study reveal rules with:
 }
 ```
 
-- [ ] **Step 6: Run all automated tests and commit**
+- [x] **Step 6: Run all automated tests and commit**
 
 Run: `node --test tests/*.test.cjs`
 
@@ -1615,7 +1615,7 @@ git commit -m "feat: make japanese study a real learning toy"
 - Verifies the production HTML through `http://127.0.0.1:4173`.
 - Produces screenshots for Peter's final visual review.
 
-- [ ] **Step 1: Run the complete automated suite**
+- [x] **Step 1: Run the complete automated suite**
 
 Run:
 
@@ -1626,13 +1626,13 @@ git diff --check
 
 Expected: every test passes and `git diff --check` produces no output.
 
-- [ ] **Step 2: Start the static server**
+- [x] **Step 2: Start the static server**
 
 Run: `python3 -m http.server 4173`
 
 Expected: server listens on `http://127.0.0.1:4173`.
 
-- [ ] **Step 3: Open and capture all desktop routes**
+- [x] **Step 3: Open and capture all desktop routes**
 
 Using the Playwright skill wrapper:
 
@@ -1654,7 +1654,7 @@ Verify visually:
 - active navigation state matches each route;
 - bloom summary and Tokyo time fit the top-right tile.
 
-- [ ] **Step 4: Exercise every homepage interaction**
+- [x] **Step 4: Exercise every homepage interaction**
 
 On `/`:
 
@@ -1671,7 +1671,7 @@ On `/`:
 
 Expected: all controls have visible focus, no audio starts before play, no page throws an error, and every label matches the state.
 
-- [ ] **Step 5: Capture and inspect 390 px mobile**
+- [x] **Step 5: Capture and inspect 390 px mobile**
 
 Resize to `390 × 844`, capture each route, and save:
 
@@ -1691,7 +1691,7 @@ Verify:
 - project grid uses one column at 390 px;
 - `document.documentElement.scrollWidth === window.innerWidth`.
 
-- [ ] **Step 6: Verify reduced motion and clean console**
+- [x] **Step 6: Verify reduced motion and clean console**
 
 Emulate `prefers-reduced-motion: reduce`, reload `/`, and verify the train iframe remains `about:blank` with no visible motion toggle. Return to normal motion and verify `data-train-src` loads.
 
@@ -1699,7 +1699,7 @@ For all three pages, inspect the browser console and network panel.
 
 Expected: zero uncaught errors, zero failed same-origin assets, and no horizontal overflow.
 
-- [ ] **Step 7: Mark the plan complete and commit verification artifacts**
+- [x] **Step 7: Mark the plan complete and commit verification artifacts**
 
 Change every completed checkbox in this plan from `[ ]` to `[x]`, then run:
 
