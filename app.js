@@ -195,7 +195,155 @@ function initializeTrain() {
   if (!reducedMotion) frame.src = frame.dataset.trainSrc;
 }
 
+function initializeStudy() {
+  const root = document.querySelector("[data-study]");
+  const api = window.VirpoStudy;
+  if (!root || !api) return;
+
+  const storageKey = "virpo-study-v1";
+  const level = root.querySelector("[data-study-level]");
+  const progress = root.querySelector("[data-study-progress]");
+  const due = root.querySelector("[data-study-due]");
+  const cardButton = root.querySelector("[data-study-card]");
+  const writing = root.querySelector("[data-study-writing]");
+  const reading = root.querySelector("[data-study-reading]");
+  const meaning = root.querySelector("[data-study-meaning]");
+  const prompt = root.querySelector("[data-study-prompt]");
+  const actions = root.querySelector("[data-study-actions]");
+  const again = root.querySelector("[data-study-again]");
+  const gotIt = root.querySelector("[data-study-got-it]");
+  const rest = root.querySelector("[data-study-rest]");
+  const reset = root.querySelector("[data-study-reset]");
+  if (
+    ![
+      level,
+      progress,
+      due,
+      cardButton,
+      writing,
+      reading,
+      meaning,
+      prompt,
+      actions,
+      again,
+      gotIt,
+      rest,
+      reset,
+    ].every(Boolean)
+  ) {
+    return;
+  }
+
+  const labels = {
+    hiragana: "Hiragana",
+    katakana: "Katakana",
+    kanji: "Kanji",
+  };
+  let state;
+  let storageWarning = "";
+  try {
+    state = api.loadStudyState(window.localStorage.getItem(storageKey));
+  } catch {
+    state = api.createStudyState();
+    storageWarning = "Progress stays here until this tab closes.";
+  }
+  let current = null;
+  let revealed = false;
+  let wakeTimer = null;
+  let notice = "";
+
+  const persist = () => {
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(state));
+      storageWarning = "";
+    } catch {
+      storageWarning = "Progress stays here until this tab closes.";
+    }
+  };
+
+  const render = () => {
+    window.clearTimeout(wakeTimer);
+    const now = Date.now();
+    const stats = api.getStudyProgress(state, now);
+    const next = api.getNextStudyCard(state, now);
+    current = next.card;
+    root.dataset.studyLevel = state.level;
+    root.classList.toggle("is-revealed", revealed && Boolean(current));
+    level.textContent = labels[state.level];
+    progress.textContent = `${stats.mastered} / ${stats.total} learned`;
+    due.textContent = `${stats.due} due`;
+    actions.hidden = !revealed || !current;
+    cardButton.setAttribute("aria-expanded", String(revealed && Boolean(current)));
+
+    if (!current) {
+      const waitMs = Math.max(1_000, next.nextDueAt - now);
+      writing.textContent = "✓";
+      reading.textContent = "";
+      meaning.textContent = "";
+      reading.hidden = true;
+      meaning.hidden = true;
+      prompt.textContent = `next card in ${Math.ceil(waitMs / 60_000)} min`;
+      rest.textContent = storageWarning || "Saved here. Come back soon.";
+      cardButton.disabled = true;
+      cardButton.setAttribute("aria-label", "No Japanese Study card is due");
+      wakeTimer = window.setTimeout(render, Math.min(waitMs, 60_000));
+      return;
+    }
+
+    cardButton.disabled = false;
+    writing.textContent = current.writing;
+    reading.textContent = current.reading;
+    meaning.textContent = current.meaning;
+    reading.hidden = !revealed && current.level !== "kanji";
+    meaning.hidden = !revealed || current.level !== "kanji";
+    prompt.textContent = revealed ? "How did it go?" : "tap to reveal";
+    rest.textContent = notice || storageWarning;
+    notice = "";
+
+    const visibleReading =
+      current.level === "kanji" ? `, ${current.reading}` : "";
+    cardButton.setAttribute(
+      "aria-label",
+      revealed
+        ? `${current.writing}, ${current.reading}${current.meaning ? `, ${current.meaning}` : ""}`
+        : `${current.writing}${visibleReading}. Reveal answer`,
+    );
+  };
+
+  const score = (correct) => {
+    if (!current) return;
+    const previousLevel = state.level;
+    state = api.scoreStudyCard(state, current.id, correct, Date.now());
+    persist();
+    revealed = false;
+    if (state.level !== previousLevel) {
+      notice = `${labels[state.level]} unlocked.`;
+    }
+    render();
+  };
+
+  cardButton.addEventListener("click", () => {
+    if (!current || revealed) return;
+    revealed = true;
+    render();
+  });
+  again.addEventListener("click", () => score(false));
+  gotIt.addEventListener("click", () => score(true));
+  reset.addEventListener("click", () => {
+    if (!window.confirm("Reset all Japanese Study progress?")) return;
+    state = api.createStudyState();
+    persist();
+    revealed = false;
+    notice = "Progress reset.";
+    render();
+  });
+
+  persist();
+  render();
+}
+
 initializeBloomTicker();
 initializeFaceTracker();
 initializeSounds();
 initializeTrain();
+initializeStudy();

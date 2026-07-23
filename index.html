@@ -110,16 +110,40 @@
             <section class="tile toy study-toy" data-toy="study" data-study>
               <div class="tile-heading">
                 <h2>Japanese Study</h2>
-                <span data-study-progress>1 / 5</span>
+                <span data-study-level>Hiragana</span>
               </div>
-              <button class="study-card" data-study-card type="button" aria-label="Reveal Japanese reading">
-                <strong data-study-glyph>電車</strong>
-                <span class="study-answer" data-study-answer aria-live="polite">
-                  <span data-study-reading>でんしゃ</span>
-                  <span data-study-meaning>train</span>
-                </span>
+              <div class="study-meta">
+                <span data-study-progress>0 / 46 learned</span>
+                <span data-study-due>46 due</span>
+              </div>
+              <button
+                class="study-card"
+                data-study-card
+                type="button"
+                aria-label="Reveal answer"
+                aria-expanded="false"
+                aria-controls="study-actions"
+              >
+                <strong data-study-writing>あ</strong>
+                <span data-study-reading aria-live="polite" hidden>a</span>
+                <span data-study-meaning hidden></span>
                 <small data-study-prompt>tap to reveal</small>
               </button>
+              <div
+                class="study-actions"
+                data-study-actions
+                id="study-actions"
+                role="group"
+                aria-label="Rate this answer"
+                hidden
+              >
+                <button type="button" data-study-again>Again</button>
+                <button type="button" data-study-got-it>Got it</button>
+              </div>
+              <div class="study-footer">
+                <span data-study-rest aria-live="polite"></span>
+                <button type="button" class="study-reset" data-study-reset>Reset progress</button>
+              </div>
             </section>
           </aside>
 
@@ -179,6 +203,7 @@
     </main>
 
     <script src="./japan-data.js"></script>
-    <script src="./app.js"></script>
+    <script src="/study-engine.js"></script>
+    <script src="/app.js"></script>
   </body>
 </html>

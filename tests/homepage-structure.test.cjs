@@ -6,7 +6,7 @@ const css = fs.readFileSync("styles.css", "utf8");
 const app = fs.readFileSync("app.js", "utf8");
 
 test("loads the homepage data before app behavior", () => {
-  assert.ok(html.indexOf("./japan-data.js") < html.indexOf("./app.js"));
+  assert.ok(html.indexOf("./japan-data.js") < html.indexOf("/app.js"));
 });
 
 test("keeps the required toy order", () => {
@@ -63,8 +63,61 @@ test("keeps only the current homepage initializers", () => {
     "initializeFaceTracker",
     "initializeSounds",
     "initializeTrain",
+    "initializeStudy",
   ]) {
     assert.match(app, new RegExp(`function ${name}\\(`));
   }
   assert.doesNotMatch(app, /function initializeFocusMenu\(/);
+});
+
+test("loads the study engine immediately before homepage behavior", () => {
+  assert.match(
+    html,
+    /<script src="\/study-engine\.js"><\/script>\s*<script src="\/app\.js"><\/script>/,
+  );
+});
+
+test("contains one complete, accessible local study interface", () => {
+  const hooks = [
+    "data-study-level",
+    "data-study-progress",
+    "data-study-due",
+    "data-study-card",
+    "data-study-writing",
+    "data-study-reading",
+    "data-study-meaning",
+    "data-study-actions",
+    "data-study-again",
+    "data-study-got-it",
+    "data-study-reset",
+  ];
+
+  for (const hook of hooks) {
+    assert.equal((html.match(new RegExp(hook, "g")) || []).length, 1, hook);
+  }
+
+  assert.match(
+    html,
+    /<button\s+class="study-card"\s+data-study-card\s+type="button"\s+aria-label="Reveal answer"\s+aria-expanded="false"/,
+  );
+  assert.match(html, /aria-controls="study-actions"/);
+  assert.match(html, /data-study-reading aria-live="polite"/);
+  assert.match(
+    html,
+    /<div\b(?=[^>]*data-study-actions)(?=[^>]*\shidden(?:\s|>))[^>]*>/,
+  );
+  assert.match(html, /data-study-rest aria-live="polite"/);
+  assert.match(app, /const storageKey = "virpo-study-v1"/);
+  assert.match(app, /window\.localStorage\.getItem\(storageKey\)/);
+  assert.match(app, /window\.localStorage\.setItem\(storageKey,\s*JSON\.stringify\(state\)\)/);
+  assert.match(app, /window\.confirm\("Reset all Japanese Study progress\?"\)/);
+});
+
+test("implements the approved kana and Kanji reveal contract", () => {
+  assert.match(app, /reading\.hidden = !revealed && current\.level !== "kanji"/);
+  assert.match(app, /meaning\.hidden = !revealed \|\| current\.level !== "kanji"/);
+  assert.match(app, /revealed \? "How did it go\?" : "tap to reveal"/);
+  assert.match(app, /again\.addEventListener\("click", \(\) => score\(false\)\)/);
+  assert.match(app, /gotIt\.addEventListener\("click", \(\) => score\(true\)\)/);
+  assert.match(app, /initializeTrain\(\);\s*initializeStudy\(\);/);
 });
