@@ -18,6 +18,28 @@ function pngDimensions(path) {
   };
 }
 
+function contrastRatio(foreground, background) {
+  const luminance = (hex) => {
+    const channels = hex
+      .match(/[a-f\d]{2}/gi)
+      .map((channel) => parseInt(channel, 16) / 255)
+      .map((channel) =>
+        channel <= 0.03928
+          ? channel / 12.92
+          : ((channel + 0.055) / 1.055) ** 2.4,
+      );
+    return (
+      0.2126 * channels[0] +
+      0.7152 * channels[1] +
+      0.0722 * channels[2]
+    );
+  };
+  const values = [luminance(foreground), luminance(background)].sort(
+    (a, b) => b - a,
+  );
+  return (values[0] + 0.05) / (values[1] + 0.05);
+}
+
 test("all public routes use the shared identity and navigation", () => {
   for (const html of Object.values(pages)) {
     assert.match(html, /href="\/"[^>]*>[\s\S]*?<span>virpo<\/span>/);
@@ -122,6 +144,27 @@ test("coral copy uses the AA-safe dark accent without changing the brand tile", 
     );
   }
   assert.match(styles, /\.brand\s*\{[^}]*background:\s*var\(--accent\)/s);
+});
+
+test("uses the approved sky token and deep navy across public blue fields", () => {
+  assert.match(styles, /--sky:\s*#82bdf4/);
+  assert.doesNotMatch(styles, /--mint|#62d979|project-card--mint/);
+  assert.match(styles, /\.intro\s*\{[^}]*background:\s*var\(--sky\)/s);
+  assert.match(styles, /\.page-intro\s*\{[^}]*background:\s*var\(--sky\)/s);
+  assert.match(styles, /\.intro > p\s*\{[^}]*color:\s*#18324a/s);
+  assert.match(
+    styles,
+    /\.project-card--sky\s*\{\s*background:\s*var\(--sky\);\s*\}/s,
+  );
+  assert.match(pages.projects, /class="project-card project-card--sky"/);
+  assert.doesNotMatch(pages.projects, /project-card--mint/);
+});
+
+test("dark coral stays AA-readable on sky and white", () => {
+  assert.ok(contrastRatio("#8c2014", "#82bdf4") >= 4.5);
+  assert.ok(contrastRatio("#8c2014", "#ffffff") >= 4.5);
+  assert.equal(contrastRatio("#8c2014", "#82bdf4").toFixed(2), "4.52");
+  assert.equal(contrastRatio("#8c2014", "#ffffff").toFixed(2), "9.01");
 });
 
 test("blog images prioritize a responsive, dimensioned first hero and defer later imagery", () => {

@@ -8,7 +8,7 @@
   --muted: #656565;
   --peach: #f2a084;
   --yellow: #f6d85e;
-  --mint: #62d979;
+  --sky: #82bdf4;
   --blue: #9ecdf4;
   --violet: #c7b9ee;
   --focus: #3c78d8;
@@ -581,7 +581,7 @@ img {
   gap: 1rem;
   padding: clamp(2rem, 5vw, 5rem);
   border-bottom: var(--gap) solid #000;
-  background: var(--mint);
+  background: var(--sky);
 }
 
 .section-label {
@@ -609,7 +609,7 @@ img {
 .intro > p {
   max-width: 64ch;
   margin: 0;
-  color: #173d22;
+  color: #18324a;
   font-size: clamp(0.95rem, 1.35vw, 1.25rem);
   line-height: 1.45;
 }
@@ -728,7 +728,7 @@ img {
   min-height: 260px;
   align-content: end;
   padding: clamp(1.5rem, 5vw, 4rem);
-  background: var(--mint);
+  background: var(--sky);
 }
 
 .page-intro h1 {
@@ -876,7 +876,7 @@ img {
 .project-card--coral { background: #ef745e; }
 .project-card--yellow { background: var(--yellow); }
 .project-card--blue { background: var(--blue); }
-.project-card--mint { background: var(--mint); }
+.project-card--sky { background: var(--sky); }
 .project-card--violet { background: var(--violet); }
 .project-card--orange { background: #f3a465; }
 

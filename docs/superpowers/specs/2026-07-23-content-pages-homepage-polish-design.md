@@ -155,7 +155,7 @@ Replace the supporting copy with:
 > I work at Slido, now part of Cisco. I love building products, small tools,
 > and occasionally something weirdly useful.
 
-The introduction background becomes a more saturated green with similar visual
+The introduction background uses clear sky blue `#82bdf4` with similar visual
 confidence to the red brand tile. Contrast must remain AA-readable.
 
 The only profile links are:

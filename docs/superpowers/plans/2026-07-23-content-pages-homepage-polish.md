@@ -565,17 +565,17 @@ Replace the train crop and paused-state rules with:
 }
 ```
 
-- [x] **Step 7: Increase the introduction green and polish profile controls**
+- [x] **Step 7: Set the introduction sky blue and polish profile controls**
 
 Set:
 
 ```css
 :root {
-  --mint: #62d979;
+  --sky: #82bdf4;
 }
 
 .intro > p {
-  color: #173d22;
+  color: #18324a;
 }
 
 .intro-links a {
@@ -768,7 +768,7 @@ Add:
   min-height: 260px;
   align-content: end;
   padding: clamp(1.5rem, 5vw, 4rem);
-  background: var(--mint);
+  background: var(--sky);
 }
 
 .page-intro h1 {
@@ -939,7 +939,7 @@ Inside the project grid, add:
   <img src="/assets/projects/mood-radio.jpg" alt="Mood Radio" />
   <span class="project-copy"><strong>Mood Radio</strong><small>Hardware · Interaction</small></span>
 </a>
-<a class="project-card project-card--mint" href="https://github.com/virpo/pegboard" target="_blank" rel="noreferrer">
+<a class="project-card project-card--sky" href="https://github.com/virpo/pegboard" target="_blank" rel="noreferrer">
   <img src="/assets/projects/pegboard.jpg" alt="Colorful 3D-printed pegboard toy" />
   <span class="project-copy"><strong>Pegboard Toy</strong><small>Physical toy · 3D printing</small></span>
 </a>
@@ -1648,7 +1648,7 @@ PWCLI=/Users/hraska/.codex/skills/playwright/scripts/playwright_cli.sh
 
 Verify visually:
 
-- home has the untouched square face, saturated green introduction, three ordered toys, and three post links;
+- home has the untouched square face, clear sky-blue introduction, three ordered toys, and three post links;
 - blog images are real, meaningfully cropped, and each post remains one or two paragraphs;
 - projects render 3 × 2 with readable type labels;
 - active navigation state matches each route;
