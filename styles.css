@@ -2,6 +2,7 @@
   --gap: 3px;
   --radius: 10px;
   --accent: #d0513e;
+  --accent-dark: #8c2014;
   --ink: #090909;
   --surface: #ffffff;
   --muted: #656565;
@@ -288,7 +289,7 @@ img {
   display: grid;
   grid-template-columns: minmax(300px, 35%) minmax(0, 1fr);
   gap: var(--gap);
-  align-items: start;
+  align-items: stretch;
 }
 
 .toy-rail {
@@ -566,7 +567,10 @@ img {
 }
 
 .writing-tile {
+  display: grid;
+  height: 100%;
   min-height: 100%;
+  grid-template-rows: minmax(455px, 1.15fr) minmax(464px, 1fr);
   background: #fff;
 }
 
@@ -581,7 +585,7 @@ img {
 }
 
 .section-label {
-  color: var(--accent);
+  color: var(--accent-dark);
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -598,7 +602,7 @@ img {
 }
 
 .intro h1 em {
-  color: var(--accent);
+  color: var(--accent-dark);
   font-style: normal;
 }
 
@@ -639,6 +643,8 @@ img {
 }
 
 .writing-list {
+  display: grid;
+  grid-template-rows: auto repeat(3, minmax(138px, 1fr));
   background: #fff;
 }
 
@@ -683,7 +689,7 @@ img {
 
 .post-index {
   align-self: start;
-  color: var(--accent);
+  color: var(--accent-dark);
   font-size: 0.7rem;
 }
 
@@ -725,10 +731,6 @@ img {
   background: var(--mint);
 }
 
-.page-intro .section-label {
-  color: #8c2014;
-}
-
 .page-intro h1 {
   max-width: 16ch;
   margin: 0.45rem 0 0;
@@ -760,7 +762,7 @@ img {
 }
 
 .post-series {
-  color: var(--accent);
+  color: var(--accent-dark);
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -975,6 +977,15 @@ img {
   .toy-rail,
   .writing-tile {
     width: 100%;
+  }
+
+  .writing-tile {
+    display: block;
+    height: auto;
+  }
+
+  .writing-list {
+    display: block;
   }
 
   .intro {

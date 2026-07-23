@@ -96,9 +96,9 @@ It explains:
 - participants were placed into teams of two or three;
 - larger teams often spend more time communicating than building;
 - the teams shipped real work;
-- one team earned its first euro shortly after the event.
+- one team earned its first euro within two weeks of the event.
 
-The exact revenue amount and elapsed time must be verified before publication.
+The verified elapsed time for that first euro is within two weeks.
 The post uses a real AI Build Day group photo.
 
 ### Weird use of AI #1: A toy for my son

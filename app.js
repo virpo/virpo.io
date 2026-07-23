@@ -51,6 +51,7 @@ function initializeBloomTicker() {
   };
   const isOpen = () => trigger.getAttribute("aria-expanded") === "true";
   let pointerInitiatedFocus = false;
+  let suppressNextFocusOpen = false;
   let hoverTimer = null;
 
   trigger.addEventListener("pointerdown", () => {
@@ -71,6 +72,10 @@ function initializeBloomTicker() {
     if (event.pointerType === "mouse" && !root.contains(document.activeElement)) setOpen(false);
   });
   root.addEventListener("focusin", () => {
+    if (suppressNextFocusOpen) {
+      suppressNextFocusOpen = false;
+      return;
+    }
     if (!pointerInitiatedFocus) setOpen(true);
   });
   root.addEventListener("focusout", (event) => {
@@ -81,8 +86,12 @@ function initializeBloomTicker() {
   });
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && isOpen()) {
+      suppressNextFocusOpen = true;
       setOpen(false);
       trigger.focus();
+      window.setTimeout(() => {
+        suppressNextFocusOpen = false;
+      }, 0);
     }
   });
 
@@ -312,6 +321,8 @@ function initializeStudy() {
 
   const score = (correct) => {
     if (!current) return;
+    const shouldMoveFocus =
+      document.activeElement === again || document.activeElement === gotIt;
     const previousLevel = state.level;
     state = api.scoreStudyCard(state, current.id, correct, Date.now());
     persist();
@@ -320,6 +331,7 @@ function initializeStudy() {
       notice = `${labels[state.level]} unlocked.`;
     }
     render();
+    if (shouldMoveFocus && !cardButton.disabled) cardButton.focus();
   };
 
   cardButton.addEventListener("click", () => {

@@ -9,6 +9,15 @@ const pages = {
 };
 const styles = fs.readFileSync("styles.css", "utf8");
 
+function pngDimensions(path) {
+  const data = fs.readFileSync(path);
+  assert.equal(data.toString("ascii", 1, 4), "PNG");
+  return {
+    width: data.readUInt32BE(16),
+    height: data.readUInt32BE(20),
+  };
+}
+
 test("all public routes use the shared identity and navigation", () => {
   for (const html of Object.values(pages)) {
     assert.match(html, /href="\/"[^>]*>[\s\S]*?<span>virpo<\/span>/);
@@ -99,11 +108,23 @@ test("the mobile blog resets copy to the single column", () => {
   );
 });
 
-test("the blog intro label uses its AA-safe color", () => {
-  assert.match(styles, /\.page-intro\s+\.section-label\s*\{[^}]*color:\s*#8c2014/s);
+test("coral copy uses the AA-safe dark accent without changing the brand tile", () => {
+  assert.match(styles, /--accent-dark:\s*#8c2014/);
+  for (const selector of [
+    "\\.section-label",
+    "\\.intro h1 em",
+    "\\.post-index",
+    "\\.post-series",
+  ]) {
+    assert.match(
+      styles,
+      new RegExp(`${selector}\\s*\\{[^}]*color:\\s*var\\(--accent-dark\\)`, "s"),
+    );
+  }
+  assert.match(styles, /\.brand\s*\{[^}]*background:\s*var\(--accent\)/s);
 });
 
-test("blog images prioritize the first hero and defer later imagery", () => {
+test("blog images prioritize a responsive, dimensioned first hero and defer later imagery", () => {
   const imageTag = (source) => {
     const tag = pages.blog.match(new RegExp(`<img[^>]+src="${source}"[^>]*>`));
     assert.ok(tag);
@@ -113,7 +134,16 @@ test("blog images prioritize the first hero and defer later imagery", () => {
   const hero = imageTag("/assets/blog/ai-build-day.png");
   assert.match(hero, /fetchpriority="high"/);
   assert.match(hero, /decoding="async"/);
+  assert.match(hero, /width="1902"/);
+  assert.match(hero, /height="994"/);
   assert.doesNotMatch(hero, /loading="lazy"/);
+  assert.match(
+    pages.blog,
+    /<picture>[\s\S]*?<source[^>]+srcset="\/assets\/blog\/ai-build-day-1200\.webp 1200w"[^>]+type="image\/webp"[^>]*>[\s\S]*?<img[^>]+src="\/assets\/blog\/ai-build-day\.png"[\s\S]*?<\/picture>/,
+  );
+  const webpPath = "assets/blog/ai-build-day-1200.webp";
+  assert.ok(fs.existsSync(webpPath));
+  assert.ok(fs.statSync(webpPath).size < 600_000);
 
   for (const source of [
     "/assets/blog/pegboard-sketch.jpg",
@@ -124,6 +154,14 @@ test("blog images prioritize the first hero and defer later imagery", () => {
     assert.match(deferred, /loading="lazy"/);
     assert.match(deferred, /decoding="async"/);
   }
+});
+
+test("the hackathon post states the verified first-euro timing", () => {
+  assert.match(
+    pages.blog,
+    /one of them earned its first euro within two weeks\./,
+  );
+  assert.doesNotMatch(pages.blog, /earned its first euro just weeks later/);
 });
 
 test("the project archive contains six complete linked projects", () => {
@@ -196,4 +234,19 @@ test("project cards share a stable ratio and protect screenshot content", () => 
     assert.ok(card);
     assert.match(card, /class="project-card[^"]*project-card--contain/);
   }
+});
+
+test("the YouTLDR card uses its fresh 3:2 capture dimensions", () => {
+  const card = pages.projects.match(
+    /<a class="project-card[^"]*" href="https:\/\/youtldr\.com\/"[\s\S]*?<\/a>/,
+  );
+  assert.ok(card);
+  const image = card[0].match(
+    /<img src="\/assets\/projects\/youtldr-home\.png"[^>]+width="(\d+)" height="(\d+)"/,
+  );
+  assert.ok(image);
+  const markup = { width: Number(image[1]), height: Number(image[2]) };
+  const actual = pngDimensions("assets/projects/youtldr-home.png");
+  assert.deepEqual(markup, actual);
+  assert.deepEqual(actual, { width: 1200, height: 800 });
 });

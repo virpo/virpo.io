@@ -132,3 +132,26 @@ test("keeps secondary study actions touchable and visibly focused", () => {
     /\.study-actions \[data-study-got-it\]:focus-visible\s*\{[^}]*outline:\s*4px solid #173d22[^}]*outline-offset:\s*-4px/s,
   );
 });
+
+test("desktop writing stretches with the tall toy rail while mobile stays compact", () => {
+  assert.match(
+    css,
+    /\.primary-field\s*\{[^}]*align-items:\s*stretch/s,
+  );
+  assert.match(
+    css,
+    /\.writing-tile\s*\{[^}]*display:\s*grid[^}]*height:\s*100%[^}]*grid-template-rows:/s,
+  );
+  assert.match(
+    css,
+    /\.writing-list\s*\{[^}]*display:\s*grid[^}]*grid-template-rows:\s*auto repeat\(3,\s*minmax\(138px,\s*1fr\)\)/s,
+  );
+  assert.match(
+    css,
+    /@media\s*\(max-width:\s*760px\)[\s\S]*?\.writing-tile\s*\{[^}]*display:\s*block[^}]*height:\s*auto/s,
+  );
+  assert.match(
+    css,
+    /@media\s*\(max-width:\s*760px\)[\s\S]*?\.writing-list\s*\{[^}]*display:\s*block/s,
+  );
+});

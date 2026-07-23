@@ -719,7 +719,7 @@ Inside `.post-feed`, add:
   </figure>
   <div class="blog-copy">
     <p>Hackathons used to take a weekend. At AI Build Day we wanted to see whether fresh AI agents could compress that into twelve hours. We put people into teams of two or three—once you have five people, you spend more time explaining the work than doing it—and gave them a day to make something real.</p>
-    <p>They did. The teams shipped working products, and one of them earned its first euro just weeks later. That was the useful result: not a room full of demos, but proof that a tiny team with good tools can get from an idea to somebody paying surprisingly fast.</p>
+    <p>They did. The teams shipped working products, and one of them earned its first euro within two weeks. That was the useful result: not a room full of demos, but proof that a tiny team with good tools can get from an idea to somebody paying surprisingly fast.</p>
   </div>
 </article>
 
