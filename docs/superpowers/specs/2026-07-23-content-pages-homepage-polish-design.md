@@ -1,7 +1,7 @@
 # Virpo Content Pages and Homepage Polish Design
 
 **Date:** 2026-07-23
-**Status:** Approved direction, pending written-spec review
+**Status:** Approved by Peter on 2026-07-23
 **Identity:** 🔻
 
 ## Goal
