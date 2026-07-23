@@ -1,0 +1,80 @@
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { Masthead } from "../../components/site/Masthead";
+import { SiteShell } from "../../components/site/SiteShell";
+
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+});
+
+it("renders the shared virpo navigation and current route", () => {
+  render(<Masthead current="blog" />);
+
+  expect(screen.getByRole("link", { name: "Virpo home" })).toBeVisible();
+  expect(screen.getByRole("link", { name: "Blog" })).toHaveAttribute("aria-current", "page");
+  expect(screen.getByRole("link", { name: "Projects" })).toBeVisible();
+  expect(screen.getByRole("link", { name: "About" })).toBeVisible();
+});
+
+it("wraps page content with the shared masthead and footer", () => {
+  render(
+    <SiteShell current="projects">
+      <h1>Projects</h1>
+    </SiteShell>,
+  );
+
+  expect(screen.getByRole("heading", { name: "Projects" })).toBeVisible();
+  expect(screen.getByRole("contentinfo")).toHaveTextContent("Peter Hraska · Slovakia");
+});
+
+describe("bloom disclosure", () => {
+  it("opens on mouse hover and closes after the pointer leaves", () => {
+    vi.useFakeTimers();
+    render(<Masthead current="home" />);
+    const module = screen.getByLabelText("Tokyo time and seasonal bloom");
+    const trigger = screen.getByRole("button", { name: "Open Japan bloom details" });
+    const pointerOver = new MouseEvent("pointerover", { bubbles: true });
+    Object.defineProperty(pointerOver, "pointerType", { value: "mouse" });
+
+    fireEvent(trigger, pointerOver);
+    act(() => vi.advanceTimersByTime(140));
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("dialog", { name: "Japan bloom details" })).toBeVisible();
+
+    const pointerOut = new MouseEvent("pointerout", { bubbles: true });
+    Object.defineProperty(pointerOut, "pointerType", { value: "mouse" });
+    fireEvent(module, pointerOut);
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("closes on Escape from Source and returns focus without reopening", () => {
+    render(<Masthead current="home" />);
+    const trigger = screen.getByRole("button", { name: "Open Japan bloom details" });
+
+    fireEvent.focus(trigger);
+    const source = screen.getByRole("link", { name: "Source" });
+    source.focus();
+    fireEvent.keyDown(document, { key: "Escape" });
+
+    expect(trigger).toHaveFocus();
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("link", { name: "Source" })).not.toBeInTheDocument();
+  });
+
+  it("toggles on click and closes on an outside pointer press", () => {
+    render(
+      <div>
+        <Masthead current="projects" />
+        <button type="button">Outside</button>
+      </div>,
+    );
+    const trigger = screen.getByRole("button", { name: "Open Japan bloom details" });
+
+    fireEvent.click(trigger);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+
+    fireEvent.pointerDown(screen.getByRole("button", { name: "Outside" }));
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+  });
+});
