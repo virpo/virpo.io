@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { ArticleLayout } from "../../../components/blog/ArticleLayout";
 import { compilePostMdx } from "../../../components/blog/mdx-components";
 import { SiteShell } from "../../../components/site/SiteShell";
-import { getPost, getPostSlugs } from "../../../lib/blog";
+import { getPost, getPostSlugs, type PostSource } from "../../../lib/blog";
 
 const SITE_URL = "https://virpo.io";
 
@@ -51,17 +51,17 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   }
 }
 
-export default async function ArticlePage({ params }: ArticlePageProps) {
-  const { slug } = await params;
-  let post;
-
-  try {
-    post = getPost(slug);
-  } catch {
-    notFound();
-  }
-
-  const { content } = await compilePostMdx(post.source);
+export function serializeArticleJsonLd(
+  post: Pick<
+    PostSource,
+    | "slug"
+    | "title"
+    | "description"
+    | "publishedAt"
+    | "updatedAt"
+    | "socialImage"
+  >,
+) {
   const canonical = `${SITE_URL}/blog/${post.slug}/`;
   const structuredData = {
     "@context": "https://schema.org",
@@ -80,12 +80,27 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     image: post.socialImage ? new URL(post.socialImage, SITE_URL).toString() : undefined,
   };
 
+  return JSON.stringify(structuredData).replace(/</g, "\\u003c");
+}
+
+export default async function ArticlePage({ params }: ArticlePageProps) {
+  const { slug } = await params;
+  let post;
+
+  try {
+    post = getPost(slug);
+  } catch {
+    notFound();
+  }
+
+  const { content } = await compilePostMdx(post.source);
+
   return (
     <SiteShell current="blog">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
+          __html: serializeArticleJsonLd(post),
         }}
       />
       <ArticleLayout post={post}>{content}</ArticleLayout>

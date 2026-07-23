@@ -8,7 +8,7 @@ export const postFrontmatterSchema = z.object({
   tags: z.array(z.string().min(1)).min(1),
   socialImage: z
     .string()
-    .regex(/^\/(?!\/)/, "Expected a root-relative local image path")
+    .regex(/^\/(?![\\/])/, "Expected a root-relative local image path")
     .optional(),
   draft: z.boolean().default(false),
 });

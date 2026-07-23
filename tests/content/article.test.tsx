@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import ArticlePage, {
   generateMetadata,
   generateStaticParams,
+  serializeArticleJsonLd,
 } from "../../app/blog/[slug]/page";
 import { compilePostMdx } from "../../components/blog/mdx-components";
 import { getPost } from "../../lib/content/posts";
@@ -101,5 +102,29 @@ describe("article route SEO", () => {
       '"mainEntityOfPage":"https://virpo.io/blog/a-different-kind-of-hackathon/"',
     );
     expect(html).not.toContain("<p><figure");
+  });
+
+  it("escapes raw less-than characters through the route's JSON-LD serializer", () => {
+    const post = {
+      ...getPost("a-different-kind-of-hackathon"),
+      title: "Making < sharply",
+      description: "A concrete description with < in the source payload.",
+    };
+    const json = serializeArticleJsonLd(post);
+    const scriptHtml = renderToStaticMarkup(
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: json }}
+      />,
+    );
+
+    expect(json).toContain("\\u003c");
+    expect(scriptHtml).toContain("\\u003c");
+    expect(scriptHtml).not.toContain("Making < sharply");
+    expect(scriptHtml).not.toContain("description with <");
+    expect(JSON.parse(json)).toMatchObject({
+      headline: "Making < sharply",
+      description: "A concrete description with < in the source payload.",
+    });
   });
 });

@@ -24,7 +24,8 @@
 ## Verification
 
 - `npm test`
-- `npm run build`
+- `npm run test:build` (runs the full static build and
+  `scripts/assert-static-output.mjs`)
 - Static files checked:
   - `dist/blog/index.html`
   - `dist/blog/a-different-kind-of-hackathon/index.html`
@@ -62,3 +63,8 @@
 - Route tests now exercise `generateStaticParams`, `generateMetadata`, and
   Article JSON-LD. `scripts/assert-static-output.mjs` checks all blog routes,
   SEO markers, semantic figure output, RSS items, sitemap URLs, and robots.
+- Local media validation rejects slash-plus-backslash protocol-relative forms
+  such as `/\evil.example/image.png`.
+- The exact JSON-LD serializer used by article routes is regression-tested with
+  `<` in both title and description; emitted script text contains `\u003c` and
+  no raw payload delimiter.

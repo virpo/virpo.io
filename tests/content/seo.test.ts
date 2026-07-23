@@ -28,7 +28,11 @@ describe("post frontmatter", () => {
     expect(frontmatter.draft).toBe(false);
   });
 
-  it.each(["https://example.com/image.png", "//example.com/image.png"])(
+  it.each([
+    "https://example.com/image.png",
+    "//example.com/image.png",
+    "/\\evil.example/image.png",
+  ])(
     "rejects non-local social image %s",
     (socialImage) => {
       expect(() =>
