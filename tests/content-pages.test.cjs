@@ -48,3 +48,34 @@ test("keeps the shared project grid responsive", () => {
     /@media\s*\(max-width:\s*440px\)[\s\S]*?\.project-grid\s*\{[^}]*grid-template-columns:\s*1fr/,
   );
 });
+
+test("the blog contains three complete anchored posts", () => {
+  const ids = [
+    "a-different-kind-of-hackathon",
+    "weird-use-of-ai-1",
+    "weird-use-of-ai-3",
+  ];
+  for (const id of ids) assert.match(pages.blog, new RegExp(`id="${id}"`));
+  assert.equal((pages.blog.match(/class="tile blog-post"/g) || []).length, 3);
+  assert.match(pages.blog, /A different kind of hackathon/);
+  assert.match(pages.blog, /Weird use of AI #1: A toy for my son/);
+  assert.match(pages.blog, /Weird use of AI #3: Detective skills for journalists/);
+});
+
+test("every blog post uses local real imagery and one or two paragraphs", () => {
+  for (const source of [
+    "/assets/blog/ai-build-day.png",
+    "/assets/blog/pegboard-sketch.jpg",
+    "/assets/blog/pegboard-finished.jpg",
+    "/assets/blog/detective-skills.png",
+  ]) {
+    assert.match(pages.blog, new RegExp(source.replaceAll("/", "\\/")));
+    assert.ok(fs.existsSync(source.slice(1)));
+  }
+  const articles = [...pages.blog.matchAll(/<article class="tile blog-post"[\s\S]*?<\/article>/g)];
+  assert.equal(articles.length, 3);
+  for (const [article] of articles) {
+    const paragraphs = article.match(/<p>/g) || [];
+    assert.ok(paragraphs.length >= 1 && paragraphs.length <= 2);
+  }
+});
