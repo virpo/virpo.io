@@ -1689,7 +1689,7 @@ Verify:
 - study buttons are at least 44 px high;
 - paired pegboard images remain legible;
 - project grid uses one column at 390 px;
-- `document.documentElement.scrollWidth === window.innerWidth`.
+- `document.documentElement.scrollWidth === document.documentElement.clientWidth`.
 
 - [x] **Step 6: Verify reduced motion and clean console**
 
