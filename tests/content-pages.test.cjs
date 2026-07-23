@@ -63,19 +63,65 @@ test("the blog contains three complete anchored posts", () => {
 });
 
 test("every blog post uses local real imagery and one or two paragraphs", () => {
+  const articles = [...pages.blog.matchAll(/<article class="tile blog-post"[\s\S]*?<\/article>/g)];
+  assert.equal(articles.length, 3);
+  for (const [article] of articles) {
+    const blogCopy = article.match(/<div class="blog-copy">([\s\S]*?)<\/div>/);
+    assert.ok(blogCopy);
+    const paragraphs = blogCopy[1].match(/<p>[\s\S]*?<\/p>/g) || [];
+    assert.ok(paragraphs.length >= 1 && paragraphs.length <= 2);
+
+    const imageSources = [...article.matchAll(/<img[^>]+src="([^"]+)"/g)].map(
+      ([, source]) => source,
+    );
+    assert.ok(imageSources.length >= 1);
+    assert.doesNotMatch(article, /<img[^>]+src="https?:\/\//);
+    for (const source of imageSources) {
+      assert.match(source, /^\/assets\/blog\//);
+      assert.ok(fs.existsSync(source.slice(1)));
+    }
+  }
+});
+
+test("the desktop blog uses equal readable columns and places copy on the right", () => {
+  assert.match(
+    styles,
+    /\.blog-post\s*\{[^}]*grid-template-columns:\s*minmax\(360px,\s*1fr\)\s+minmax\(0,\s*1fr\)/s,
+  );
+  assert.match(styles, /\.blog-copy\s*\{[^}]*grid-column:\s*2/s);
+  assert.match(styles, /\.blog-post__header h2\s*\{[^}]*text-wrap:\s*balance/s);
+});
+
+test("the mobile blog resets copy to the single column", () => {
+  assert.match(
+    styles,
+    /@media\s*\(max-width:\s*760px\)[\s\S]*?\.blog-copy\s*\{[^}]*grid-column:\s*1/,
+  );
+});
+
+test("the blog intro label uses its AA-safe color", () => {
+  assert.match(styles, /\.page-intro\s+\.section-label\s*\{[^}]*color:\s*#8c2014/s);
+});
+
+test("blog images prioritize the first hero and defer later imagery", () => {
+  const imageTag = (source) => {
+    const tag = pages.blog.match(new RegExp(`<img[^>]+src="${source}"[^>]*>`));
+    assert.ok(tag);
+    return tag[0];
+  };
+
+  const hero = imageTag("/assets/blog/ai-build-day.png");
+  assert.match(hero, /fetchpriority="high"/);
+  assert.match(hero, /decoding="async"/);
+  assert.doesNotMatch(hero, /loading="lazy"/);
+
   for (const source of [
-    "/assets/blog/ai-build-day.png",
     "/assets/blog/pegboard-sketch.jpg",
     "/assets/blog/pegboard-finished.jpg",
     "/assets/blog/detective-skills.png",
   ]) {
-    assert.match(pages.blog, new RegExp(source.replaceAll("/", "\\/")));
-    assert.ok(fs.existsSync(source.slice(1)));
-  }
-  const articles = [...pages.blog.matchAll(/<article class="tile blog-post"[\s\S]*?<\/article>/g)];
-  assert.equal(articles.length, 3);
-  for (const [article] of articles) {
-    const paragraphs = article.match(/<p>/g) || [];
-    assert.ok(paragraphs.length >= 1 && paragraphs.length <= 2);
+    const deferred = imageTag(source);
+    assert.match(deferred, /loading="lazy"/);
+    assert.match(deferred, /decoding="async"/);
   }
 });

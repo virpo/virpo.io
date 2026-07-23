@@ -668,6 +668,10 @@ img {
   background: var(--mint);
 }
 
+.page-intro .section-label {
+  color: #8c2014;
+}
+
 .page-intro h1 {
   max-width: 16ch;
   margin: 0.45rem 0 0;
@@ -679,7 +683,7 @@ img {
 
 .blog-post {
   display: grid;
-  grid-template-columns: minmax(230px, 0.75fr) minmax(0, 1.25fr);
+  grid-template-columns: minmax(360px, 1fr) minmax(0, 1fr);
   overflow: hidden;
 }
 
@@ -695,6 +699,7 @@ img {
   font-weight: 400;
   letter-spacing: -0.035em;
   line-height: 0.98;
+  text-wrap: balance;
 }
 
 .post-series {
@@ -729,6 +734,7 @@ img {
 }
 
 .blog-copy {
+  grid-column: 2;
   align-self: end;
   font-family: system-ui, sans-serif;
   font-size: clamp(1rem, 1.45vw, 1.25rem);
@@ -932,6 +938,10 @@ img {
 
   .blog-post {
     grid-template-columns: 1fr;
+  }
+
+  .blog-copy {
+    grid-column: 1;
   }
 
   .blog-media--pair {
