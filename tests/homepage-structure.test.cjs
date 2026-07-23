@@ -121,3 +121,14 @@ test("implements the approved kana and Kanji reveal contract", () => {
   assert.match(app, /gotIt\.addEventListener\("click", \(\) => score\(true\)\)/);
   assert.match(app, /initializeTrain\(\);\s*initializeStudy\(\);/);
 });
+
+test("keeps secondary study actions touchable and visibly focused", () => {
+  assert.match(
+    css,
+    /\.study-reset\s*\{[^}]*min-height:\s*32px[^}]*padding:\s*0\s+0\.5rem/s,
+  );
+  assert.match(
+    css,
+    /\.study-actions \[data-study-got-it\]:focus-visible\s*\{[^}]*outline:\s*4px solid #173d22[^}]*outline-offset:\s*-4px/s,
+  );
+});

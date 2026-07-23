@@ -530,13 +530,19 @@ img {
   background: #72dc86;
 }
 
+.study-actions [data-study-got-it]:focus-visible {
+  outline: 4px solid #173d22;
+  outline-offset: -4px;
+}
+
 .study-card small {
   color: #655315;
   font-size: 0.61rem;
 }
 
 .study-footer {
-  min-height: 38px;
+  min-height: 40px;
+  padding-block: 0.25rem;
   border-top: 2px solid rgba(0, 0, 0, 0.14);
 }
 
@@ -546,8 +552,11 @@ img {
 }
 
 .study-reset {
+  display: inline-flex;
+  min-height: 32px;
   flex: none;
-  padding: 0;
+  align-items: center;
+  padding: 0 0.5rem;
   border: 0;
   border-bottom: 1px solid currentColor;
   background: transparent;
