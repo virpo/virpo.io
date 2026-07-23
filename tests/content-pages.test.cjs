@@ -199,6 +199,13 @@ test("blog images prioritize a responsive, dimensioned first hero and defer late
   }
 });
 
+test("the wide blog hero preserves its intrinsic image ratio", () => {
+  assert.match(
+    styles,
+    /\.blog-media--wide img\s*\{[^}]*width:\s*100%[^}]*height:\s*auto/s,
+  );
+});
+
 test("the hackathon post states the verified first-euro timing", () => {
   assert.match(
     pages.blog,

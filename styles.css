@@ -777,6 +777,7 @@ img {
 .blog-media--wide img {
   display: block;
   width: 100%;
+  height: auto;
   max-height: 680px;
   object-fit: cover;
 }
