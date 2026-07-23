@@ -129,11 +129,33 @@ test("blog images prioritize the first hero and defer later imagery", () => {
 test("the project archive contains six complete linked projects", () => {
   const cards = [...pages.projects.matchAll(/<a class="project-card[^"]*"[\s\S]*?<\/a>/g)];
   assert.equal(cards.length, 6);
-  for (const [card] of cards) {
+  for (const [index, [card]] of cards.entries()) {
     assert.match(card, /href="https?:\/\//);
-    assert.match(card, /<img src="\/assets\/projects\/[^"]+"/);
-    assert.match(card, /<strong>[^<]+<\/strong>/);
-    assert.match(card, /<small>[^<]+<\/small>/);
+
+    const images = card.match(/<img\b[^>]*>/g) || [];
+    const titles = card.match(/<strong>[^<]+<\/strong>/g) || [];
+    const types = card.match(/<small>[^<]+<\/small>/g) || [];
+    const copies = card.match(/<span class="project-copy">[\s\S]*?<\/span>/g) || [];
+    assert.equal(images.length, 1);
+    assert.equal(titles.length, 1);
+    assert.equal(types.length, 1);
+    assert.equal(copies.length, 1);
+
+    const imageSource = images[0].match(/src="(\/assets\/projects\/[^"]+)"/);
+    assert.ok(imageSource);
+    assert.ok(fs.existsSync(imageSource[1].slice(1)));
+    assert.match(images[0], /\bwidth="\d+"/);
+    assert.match(images[0], /\bheight="\d+"/);
+    assert.match(images[0], /\bdecoding="async"/);
+    if (index === 0) assert.doesNotMatch(images[0], /\bloading="lazy"/);
+    else assert.match(images[0], /\bloading="lazy"/);
+
+    const copy = copies[0].match(/<span class="project-copy">([\s\S]*?)<\/span>/);
+    assert.ok(copy);
+    assert.match(
+      copy[1],
+      /^\s*<strong>[^<]+<\/strong>\s*<small>[^<]+<\/small>\s*$/,
+    );
   }
 });
 
@@ -147,5 +169,31 @@ test("the project archive contains the current selected projects", () => {
     "CMUX Deck",
   ]) {
     assert.match(pages.projects, new RegExp(title));
+  }
+});
+
+test("project cards share a stable ratio and protect screenshot content", () => {
+  const cardRule = styles.match(/\.project-card\s*\{([^}]*)\}/);
+  const imageRule = styles.match(/\.project-card img\s*\{([^}]*)\}/);
+  assert.ok(cardRule);
+  assert.ok(imageRule);
+  assert.match(cardRule[1], /aspect-ratio:\s*3\s*\/\s*2/);
+  assert.doesNotMatch(cardRule[1], /min-height/);
+  assert.doesNotMatch(imageRule[1], /min-height/);
+  assert.doesNotMatch(
+    styles,
+    /\.project-card(?:\s*,\s*\.project-card img)?\s*\{[^}]*min-height/s,
+  );
+  assert.match(
+    styles,
+    /\.project-card--contain img\s*\{[^}]*object-fit:\s*contain/s,
+  );
+
+  const cards = [...pages.projects.matchAll(/<a class="project-card[^"]*"[\s\S]*?<\/a>/g)]
+    .map(([card]) => card);
+  for (const title of ["YouTLDR", "Žltá stopa", "AI Build Week"]) {
+    const card = cards.find((entry) => entry.includes(`<strong>${title}</strong>`));
+    assert.ok(card);
+    assert.match(card, /class="project-card[^"]*project-card--contain/);
   }
 });
