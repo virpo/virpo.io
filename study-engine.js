@@ -3,8 +3,8 @@
   if (typeof module === "object" && module.exports) module.exports = api;
   if (root) root.VirpoStudy = api;
 })(typeof globalThis !== "undefined" ? globalThis : this, function buildVirpoStudy() {
-  const levels = ["hiragana", "katakana", "kanji"];
-  const intervalsMs = [
+  const levels = Object.freeze(["hiragana", "katakana", "kanji"]);
+  const intervalsMs = Object.freeze([
     0,
     45 * 1000,
     5 * 60 * 1000,
@@ -12,10 +12,10 @@
     12 * 60 * 60 * 1000,
     2 * 24 * 60 * 60 * 1000,
     5 * 24 * 60 * 60 * 1000,
-  ];
+  ]);
   const retryMs = 25 * 1000;
 
-  const kanaRows = [
+  const kanaRows = Object.freeze([
     ["a", "あ", "ア"],
     ["i", "い", "イ"],
     ["u", "う", "ウ"],
@@ -62,60 +62,70 @@
     ["wa", "わ", "ワ"],
     ["wo", "を", "ヲ"],
     ["n", "ん", "ン"],
-  ];
+  ].map((row) => Object.freeze(row)));
 
-  const hiragana = kanaRows.map(([romaji, glyph]) => ({
-    id: `h-${romaji}`,
-    level: "hiragana",
-    writing: glyph,
-    reading: romaji,
-    meaning: "",
-  }));
-  const katakana = kanaRows.map(([romaji, , glyph]) => ({
-    id: `k-${romaji}`,
-    level: "katakana",
-    writing: glyph,
-    reading: romaji,
-    meaning: "",
-  }));
-  const kanji = [
-    ["densha", "電車", "でんしゃ", "train"],
-    ["eki", "駅", "えき", "station"],
-    ["kuruma", "車", "くるま", "car"],
-    ["jitensha", "自転車", "じてんしゃ", "bicycle"],
-    ["mizu", "水", "みず", "water"],
-    ["yama", "山", "やま", "mountain"],
-    ["kawa", "川", "かわ", "river"],
-    ["umi", "海", "うみ", "sea"],
-    ["sora", "空", "そら", "sky"],
-    ["ame", "雨", "あめ", "rain"],
-    ["asa", "朝", "あさ", "morning"],
-    ["yoru", "夜", "よる", "night"],
-    ["tomodachi", "友達", "ともだち", "friend"],
-    ["sensei", "先生", "せんせい", "teacher"],
-    ["gakkou", "学校", "がっこう", "school"],
-    ["gakusei", "学生", "がくせい", "student"],
-    ["eiga", "映画", "えいが", "movie"],
-    ["ongaku", "音楽", "おんがく", "music"],
-    ["ryokou", "旅行", "りょこう", "travel"],
-    ["mise", "店", "みせ", "shop"],
-    ["deguchi", "出口", "でぐち", "exit"],
-    ["iriguchi", "入口", "いりぐち", "entrance"],
-    ["kaimono", "買い物", "かいもの", "shopping"],
-    ["toshokan", "図書館", "としょかん", "library"],
-    ["raamen", "ラーメン", "ラーメン", "ramen"],
-    ["koohii", "コーヒー", "コーヒー", "coffee"],
-    ["kissa", "喫茶店", "きっさてん", "coffee shop"],
-  ].map(([id, writing, reading, meaning]) => ({
-    id: `v-${id}`,
-    level: "kanji",
-    writing,
-    reading,
-    meaning,
-  }));
+  function freezeCards(cards) {
+    return Object.freeze(cards.map((card) => Object.freeze(card)));
+  }
 
-  const decks = { hiragana, katakana, kanji };
-  const allCards = levels.flatMap((level) => decks[level]);
+  const hiragana = freezeCards(
+    kanaRows.map(([romaji, glyph]) => ({
+      id: `h-${romaji}`,
+      level: "hiragana",
+      writing: glyph,
+      reading: romaji,
+      meaning: "",
+    })),
+  );
+  const katakana = freezeCards(
+    kanaRows.map(([romaji, , glyph]) => ({
+      id: `k-${romaji}`,
+      level: "katakana",
+      writing: glyph,
+      reading: romaji,
+      meaning: "",
+    })),
+  );
+  const kanji = freezeCards(
+    [
+      ["densha", "電車", "でんしゃ", "train"],
+      ["eki", "駅", "えき", "station"],
+      ["kuruma", "車", "くるま", "car"],
+      ["jitensha", "自転車", "じてんしゃ", "bicycle"],
+      ["mizu", "水", "みず", "water"],
+      ["yama", "山", "やま", "mountain"],
+      ["kawa", "川", "かわ", "river"],
+      ["umi", "海", "うみ", "sea"],
+      ["sora", "空", "そら", "sky"],
+      ["ame", "雨", "あめ", "rain"],
+      ["asa", "朝", "あさ", "morning"],
+      ["yoru", "夜", "よる", "night"],
+      ["tomodachi", "友達", "ともだち", "friend"],
+      ["sensei", "先生", "せんせい", "teacher"],
+      ["gakkou", "学校", "がっこう", "school"],
+      ["gakusei", "学生", "がくせい", "student"],
+      ["eiga", "映画", "えいが", "movie"],
+      ["ongaku", "音楽", "おんがく", "music"],
+      ["ryokou", "旅行", "りょこう", "travel"],
+      ["mise", "店", "みせ", "shop"],
+      ["deguchi", "出口", "でぐち", "exit"],
+      ["iriguchi", "入口", "いりぐち", "entrance"],
+      ["kaimono", "買い物", "かいもの", "shopping"],
+      ["toshokan", "図書館", "としょかん", "library"],
+      ["hon", "本", "ほん", "book"],
+      ["tabemono", "食べ物", "たべもの", "food"],
+      ["kissa", "喫茶店", "きっさてん", "coffee shop"],
+    ].map(([id, writing, reading, meaning]) => ({
+      id: `v-${id}`,
+      level: "kanji",
+      writing,
+      reading,
+      meaning,
+    })),
+  );
+
+  const decks = Object.freeze({ hiragana, katakana, kanji });
+  const allCards = Object.freeze(levels.flatMap((level) => decks[level]));
   const cardsById = new Map(allCards.map((card) => [card.id, card]));
 
   function blankEntry() {

@@ -23,6 +23,28 @@ test("starts in Hiragana with every card due", () => {
   assert.equal(progress.due, decks.hiragana.length);
 });
 
+test("freezes exported deck configuration against consumer mutation", () => {
+  assert.equal(Object.isFrozen(levels), true);
+  assert.equal(Object.isFrozen(decks), true);
+
+  for (const deck of Object.values(decks)) {
+    assert.equal(Object.isFrozen(deck), true);
+    for (const card of deck) assert.equal(Object.isFrozen(card), true);
+  }
+
+  const first = decks.hiragana[0];
+  const originalLength = decks.hiragana.length;
+  assert.equal(Reflect.set(levels, 0, "broken"), false);
+  assert.equal(Reflect.set(decks, "hiragana", []), false);
+  assert.equal(Reflect.set(first, "reading", "broken"), false);
+  assert.throws(() => decks.hiragana.push({ id: "broken" }), TypeError);
+
+  const state = createStudyState();
+  assert.equal(decks.hiragana.length, originalLength);
+  assert.equal(getStudyProgress(state, 1_000).total, originalLength);
+  assert.equal(getNextStudyCard(state, 1_000).card.reading, "a");
+});
+
 test("Got it advances a card and Again returns it soon without mutating input", () => {
   const now = 1_000;
   const initial = createStudyState();
@@ -231,11 +253,17 @@ test("progress counts only the active level", () => {
   });
 });
 
-test("Kanji cards expose writing and reading while keeping meaning separate", () => {
-  const card = decks.kanji[0];
-
-  assert.ok(card.writing);
-  assert.ok(card.reading);
-  assert.ok(card.meaning);
-  assert.notEqual(card.writing, card.meaning);
+test("every Kanji card separates Kanji writing, Hiragana reading, and English meaning", () => {
+  for (const card of decks.kanji) {
+    assert.match(card.writing, /\p{Script=Han}/u, `${card.id} needs Kanji`);
+    assert.match(
+      card.reading,
+      /^[\p{Script=Hiragana}ー]+$/u,
+      `${card.id} needs a Hiragana reading`,
+    );
+    assert.match(card.meaning, /^[a-z][a-z ]*$/, `${card.id} needs English`);
+    assert.notEqual(card.writing, card.reading, `${card.id} writing and reading`);
+    assert.notEqual(card.writing, card.meaning, `${card.id} writing and meaning`);
+    assert.notEqual(card.reading, card.meaning, `${card.id} reading and meaning`);
+  }
 });
