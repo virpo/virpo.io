@@ -72,14 +72,13 @@ describe("homepage", () => {
     );
   });
 
-  it("replaces only the Study placeholder and preserves toy order", () => {
+  it("replaces all toy placeholders and preserves toy order", () => {
     const { container } = render(<HomePage />);
     const toyRail = container.querySelector(".toyRail");
 
-    expect(container.querySelectorAll("[data-toy-placeholder]")).toHaveLength(2);
-    expect(container.querySelector("[data-toy-placeholder='sounds']")).toBeVisible();
-    expect(container.querySelector("[data-toy-placeholder='window-seat']")).toBeVisible();
-    expect(container.querySelector("[data-toy-placeholder='study']")).toBeNull();
+    expect(container.querySelectorAll("[data-toy-placeholder]")).toHaveLength(0);
+    expect(container.querySelector("[data-sounds-toy]")).toBeVisible();
+    expect(container.querySelector("[data-window-seat-toy]")).toBeVisible();
     expect(container.querySelector("[data-study-toy]")).toBeVisible();
     expect(
       Array.from(toyRail?.children ?? [], (child) =>
@@ -93,23 +92,14 @@ describe("homepage", () => {
     ]);
   });
 
-  it("keeps temporary toys free of future audio, video, storage, and study engines", () => {
+  it("retires the temporary toy module after the media toys replace it", () => {
     const source = readFileSync(
-      resolve(process.cwd(), "components/home/ToyPlaceholders.tsx"),
+      resolve(process.cwd(), "app/page.tsx"),
       "utf8",
     );
 
-    for (const forbiddenMarker of [
-      "<audio",
-      "<iframe",
-      "AudioContext",
-      "localStorage",
-      "createStudyState",
-      "selectNextCard",
-      "scoreCard",
-      "STUDY_STORAGE_KEY",
-    ]) {
-      expect(source).not.toContain(forbiddenMarker);
-    }
+    expect(source).not.toContain("ToyPlaceholders");
+    expect(source).toContain("<SoundsToy />");
+    expect(source).toContain("<WindowSeatToy />");
   });
 });

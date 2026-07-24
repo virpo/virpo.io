@@ -2,11 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { FaceToy } from "../components/home/FaceToy";
 import { Intro } from "../components/home/Intro";
-import {
-  SoundsToyPlaceholder,
-  WindowSeatToyPlaceholder,
-} from "../components/home/ToyPlaceholders";
+import { SoundsToy } from "../components/toys/SoundsToy";
 import { StudyToy } from "../components/toys/StudyToy";
+import { WindowSeatToy } from "../components/toys/WindowSeatToy";
 import { WritingPreview } from "../components/home/WritingPreview";
 import { SiteShell } from "../components/site/SiteShell";
 import { getPostSummaries } from "../lib/blog";
@@ -31,8 +29,8 @@ export default function HomePage() {
         <div className="homeBento">
           <aside className="toyRail" id="toys" aria-label="Small Japan toys">
             <FaceToy />
-            <SoundsToyPlaceholder />
-            <WindowSeatToyPlaceholder />
+            <SoundsToy />
+            <WindowSeatToy />
             <StudyToy />
           </aside>
 
