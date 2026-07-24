@@ -13,7 +13,38 @@ Note: some prototype sounds now come from Freesound previews. Check license fit 
   Added on 2026-07-24 at Peter's request.
   Excerpts: `0–3.116667s`, `6.85–10.066667s`, `15.25–17.783333s`,
   and `17.783333–22.731995s`.
-  Notes: short local excerpts; the shipped page does not load TikTok.
+  Notes: the crossing, Yamanote, and crow moments use short crossfaded repeats
+  to reach 7.5s. FamilyMart combines the clean Panasonic chime below with the
+  clerk greeting from the final TikTok excerpt. The shipped page does not load
+  TikTok.
+
+- `audio/japan-tennoji-announcement.mp3`
+  Source page: https://freesound.org/people/timcam/sounds/381934/
+  Preview file used: https://cdn.freesound.org/previews/381/381934_392538-hq.mp3
+  License: CC0 https://creativecommons.org/publicdomain/zero/1.0/
+  Excerpt: `15.2–22.7s`
+  Notes: 48 kHz stereo source; exported as a 7.5s loudness-matched MP3.
+
+- `audio/japan-minminzemi.mp3`
+  Source page: https://commons.wikimedia.org/wiki/File:Singing_cicada_audio.ogg
+  Source file: https://commons.wikimedia.org/wiki/Special:Redirect/file/Singing%20cicada%20audio.ogg
+  License: CC BY-SA 4.0
+  Excerpt: `8.0–15.5s`
+  Notes: Minminzemi recorded in Shiki, Saitama; selected by Peter for its
+  anime-summer character and exported as a 7.5s loudness-matched MP3.
+
+- `audio/japan-departure-melody.mp3`
+  Source: `audio/aratana.mp3`, documented below
+  Excerpt: `0–7.5s`
+
+- `audio/japan-railway-crossing-long.mp3`
+  Source: `audio/japan-rail-crossing.mp3`, documented below
+  Excerpt: `3.5–11.0s`
+
+- `audio/japan-faregate-chime.mp3`
+- `audio/japan-crosswalk-cuckoo.mp3`
+  Notes: extended to 7.5s with a short crossfaded repeat and loudness-matched
+  with the rest of the sequence.
 
 - `audio/japan-door-chime.ogg`
   Source: existing local file copied from `audio/train-chime.ogg`

@@ -112,35 +112,45 @@ afterEach(() => {
 });
 
 describe("SoundsToy", () => {
-  it("uses the agreed 30–45 second Japan nostalgia sequence", () => {
+  it("uses the agreed longer, cleaner Japan nostalgia sequence", () => {
     expect(JAPAN_SOUNDS.map(({ title }) => title)).toEqual([
+      "FamilyMart welcome",
       "Closed crossing",
       "Yamanote approaching",
       "Park crows",
-      "FamilyMart welcome",
       "Departure melody",
-      "Station announcement",
+      "Tennoji announcement",
       "Fare gate",
       "Railway crossing",
       "Cuckoo crossing",
-      "Summer cicadas",
+      "Minminzemi",
     ]);
-    expect(JAPAN_SOUNDS.slice(0, 4).map(({ src }) => src)).toEqual([
+    expect(JAPAN_SOUNDS.map(({ src }) => src)).toEqual([
+      "/audio/japan-familymart-welcome.mp3",
       "/audio/japan-closed-crossing.mp3",
       "/audio/japan-yamanote-approaching.mp3",
       "/audio/japan-park-crows.mp3",
-      "/audio/japan-familymart-welcome.mp3",
+      "/audio/japan-departure-melody.mp3",
+      "/audio/japan-tennoji-announcement.mp3",
+      "/audio/japan-faregate-chime.mp3",
+      "/audio/japan-railway-crossing-long.mp3",
+      "/audio/japan-crosswalk-cuckoo.mp3",
+      "/audio/japan-minminzemi.mp3",
     ]);
     expect(JAPAN_SOUNDS.map(({ title }) => title).join(" ")).not.toMatch(
       /Don Quijote|Shinkansen|Fūrin/,
     );
 
+    for (const sound of JAPAN_SOUNDS) {
+      expect(sound.endAt - sound.startAt).toBeGreaterThanOrEqual(7);
+      expect(sound.endAt - sound.startAt).toBeLessThanOrEqual(8);
+    }
     const totalSeconds = JAPAN_SOUNDS.reduce(
       (total, sound) => total + sound.endAt - sound.startAt,
       0,
     );
-    expect(totalSeconds).toBeGreaterThanOrEqual(30);
-    expect(totalSeconds).toBeLessThanOrEqual(45);
+    expect(totalSeconds).toBeGreaterThanOrEqual(70);
+    expect(totalSeconds).toBeLessThanOrEqual(80);
   });
 
   it("shows one audio element, an idle waveform, and distinct playback controls", () => {
@@ -151,7 +161,7 @@ describe("SoundsToy", () => {
       "idle",
     );
     expect(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     ).toBeVisible();
     expect(screen.getByText("01 / 10")).toBeVisible();
     expect(screen.getByRole("button", { name: "Previous sound" })).toBeVisible();
@@ -185,9 +195,9 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     );
-    await screen.findByRole("button", { name: /pause closed crossing/i });
+    await screen.findByRole("button", { name: /pause familymart welcome/i });
 
     expect(order).toEqual([
       "resume",
@@ -210,7 +220,7 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     );
 
     expect(await screen.findByText(/playing.+waveform unavailable/i)).toBeVisible();
@@ -232,12 +242,12 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     );
 
     expect(await screen.findByText(/playing.+waveform unavailable/i)).toBeVisible();
     expect(
-      screen.getByRole("button", { name: /pause closed crossing/i }),
+      screen.getByRole("button", { name: /pause familymart welcome/i }),
     ).toHaveAttribute("aria-pressed", "true");
     expect(HTMLMediaElement.prototype.play).toHaveBeenCalledOnce();
     expect(close).not.toHaveBeenCalled();
@@ -250,7 +260,7 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     );
 
     expect(await screen.findByText(/playing.+waveform unavailable/i)).toBeVisible();
@@ -265,7 +275,7 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     );
 
     expect(await screen.findByText(/playing.+waveform unavailable/i)).toBeVisible();
@@ -282,7 +292,7 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     );
 
     expect(await screen.findByText(/playing.+waveform unavailable/i)).toBeVisible();
@@ -298,7 +308,7 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     );
 
     expect(await screen.findByText(/playing.+waveform unavailable/i)).toBeVisible();
@@ -319,12 +329,12 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     );
     fireEvent.click(screen.getByRole("button", { name: "Next sound" }));
     fireEvent.click(screen.getByRole("button", { name: "Next sound" }));
 
-    expect(screen.getByText("Park crows")).toBeVisible();
+    expect(screen.getByText("Yamanote approaching")).toBeVisible();
     expect(screen.getByRole("group", { name: "Sound navigation" })).toHaveAttribute(
       "aria-busy",
       "true",
@@ -343,7 +353,7 @@ describe("SoundsToy", () => {
     third.resolve();
 
     expect(
-      await screen.findByRole("button", { name: /pause park crows/i }),
+      await screen.findByRole("button", { name: /pause yamanote approaching/i }),
     ).toBeVisible();
     expect(screen.getByText("Playing")).toBeVisible();
     await waitFor(() =>
@@ -362,7 +372,7 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     );
     fireEvent.click(screen.getByRole("button", { name: "Next sound" }));
     first.reject(new Error("interrupted"));
@@ -372,7 +382,7 @@ describe("SoundsToy", () => {
     second.resolve();
 
     expect(
-      await screen.findByRole("button", { name: /pause yamanote approaching/i }),
+      await screen.findByRole("button", { name: /pause closed crossing/i }),
     ).toBeVisible();
     expect(screen.queryByText(/couldn’t play/i)).toBeNull();
   });
@@ -385,7 +395,7 @@ describe("SoundsToy", () => {
     const { container } = render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     );
     expect(await screen.findByText("Couldn’t play this sound")).toBeVisible();
     expect(screen.queryByText(/audio still plays/i)).toBeNull();
@@ -398,22 +408,22 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     );
-    await screen.findByRole("button", { name: /pause closed crossing/i });
+    await screen.findByRole("button", { name: /pause familymart welcome/i });
     fireEvent.click(
-      screen.getByRole("button", { name: /pause closed crossing/i }),
+      screen.getByRole("button", { name: /pause familymart welcome/i }),
     );
     latestContext.state = "suspended";
     resume.mockRejectedValueOnce(new Error("resume rejected"));
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     );
 
     expect(await screen.findByText("Audio unavailable")).toBeVisible();
     expect(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     ).toHaveAttribute("aria-pressed", "false");
     expect(screen.queryByText(/^Playing/)).toBeNull();
     expect(HTMLMediaElement.prototype.play).toHaveBeenCalledOnce();
@@ -427,11 +437,11 @@ describe("SoundsToy", () => {
     );
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     );
 
     expect(
-      await screen.findByRole("button", { name: /pause closed crossing/i }),
+      await screen.findByRole("button", { name: /pause familymart welcome/i }),
     ).toBeVisible();
     expect(screen.getByText("Playing")).toBeVisible();
   });
@@ -444,11 +454,11 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     );
 
     const pendingButton = screen.getByRole("button", {
-      name: /pause closed crossing/i,
+      name: /pause familymart welcome/i,
     });
     expect(pendingButton).toHaveAttribute("aria-pressed", "true");
     expect(pendingButton.querySelector("path")).toHaveAttribute(
@@ -458,7 +468,7 @@ describe("SoundsToy", () => {
 
     fireEvent.click(pendingButton);
     expect(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     ).toHaveAttribute("aria-pressed", "false");
     expect(screen.getByText("Paused · press play")).toBeVisible();
     await waitFor(() =>
@@ -469,7 +479,7 @@ describe("SoundsToy", () => {
       expect(HTMLMediaElement.prototype.pause).toHaveBeenCalled(),
     );
     expect(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     ).toHaveAttribute("aria-pressed", "false");
   });
 
@@ -488,42 +498,42 @@ describe("SoundsToy", () => {
     const audio = container.querySelector("audio") as HTMLAudioElement;
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     );
-    await screen.findByRole("button", { name: /pause closed crossing/i });
+    await screen.findByRole("button", { name: /pause familymart welcome/i });
 
-    audio.currentTime = 3.116667;
+    audio.currentTime = 7.5;
     fireEvent.timeUpdate(audio);
 
-    expect(await screen.findByText("Yamanote approaching")).toBeVisible();
+    expect(await screen.findByText("Closed crossing")).toBeVisible();
     expect(screen.getByText("02 / 10")).toBeVisible();
     expect(
-      await screen.findByRole("button", { name: /pause yamanote approaching/i }),
+      await screen.findByRole("button", { name: /pause closed crossing/i }),
     ).toBeVisible();
     expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(2);
   });
 
-  it("stops after Summer cicadas and restarts the sequence on the next play", async () => {
+  it("stops after Minminzemi and restarts the sequence on the next play", async () => {
     const { container } = render(<SoundsToy />);
     const audio = container.querySelector("audio") as HTMLAudioElement;
 
     fireEvent.click(screen.getByRole("button", { name: "Previous sound" }));
-    expect(await screen.findByText("Summer cicadas")).toBeVisible();
-    fireEvent.click(screen.getByRole("button", { name: /play summer cicadas/i }));
-    await screen.findByRole("button", { name: /pause summer cicadas/i });
+    expect(await screen.findByText("Minminzemi")).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: /play minminzemi/i }));
+    await screen.findByRole("button", { name: /pause minminzemi/i });
 
-    audio.currentTime = 5;
+    audio.currentTime = 7.5;
     fireEvent.timeUpdate(audio);
 
-    expect(await screen.findByText("Closed crossing")).toBeVisible();
+    expect(await screen.findByText("FamilyMart welcome")).toBeVisible();
     expect(screen.getByText("01 / 10")).toBeVisible();
     expect(screen.getByText("Press play")).toBeVisible();
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play closed crossing/i }),
+      screen.getByRole("button", { name: /play familymart welcome/i }),
     );
     expect(
-      await screen.findByRole("button", { name: /pause closed crossing/i }),
+      await screen.findByRole("button", { name: /pause familymart welcome/i }),
     ).toBeVisible();
   });
 
