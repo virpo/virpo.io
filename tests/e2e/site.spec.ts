@@ -108,7 +108,8 @@ test.describe("static route contracts", () => {
     await expect(page.locator(".blogIndex img")).toHaveCount(0);
     for (const post of await posts.all()) {
       await expect(post.locator("time")).toHaveCount(1);
-      await expect(post.locator("h2 a")).toHaveCount(1);
+      await expect(post.locator("xpath=ancestor::a[contains(@class,'blogListLink')]")).toHaveCount(1);
+      await expect(post.locator("a")).toHaveCount(0);
       await expect(post.locator(".articleTags li")).not.toHaveCount(0);
     }
   });

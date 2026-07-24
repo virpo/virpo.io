@@ -1185,8 +1185,21 @@ img {
   border-bottom: 2px solid var(--ink);
 }
 
-.blogList article {
+.blogListLink {
+  display: block;
   padding: clamp(1.5rem, 3.5vw, 2.8rem) 0;
+  transition: background 140ms ease, padding 140ms ease;
+}
+
+.blogListLink:hover,
+.blogListLink:focus-visible {
+  padding-right: 1rem;
+  padding-left: 1rem;
+  background: var(--white);
+}
+
+.blogListLink:active {
+  background: #fff9ee;
 }
 
 .blogListMeta,
@@ -1205,18 +1218,13 @@ img {
   line-height: 1.05;
 }
 
-.blogList h2 a {
-  text-decoration-color: transparent;
-  text-decoration-line: underline;
-  text-decoration-thickness: 0.12em;
-  text-underline-offset: 0.12em;
-  transition: color 140ms ease, text-decoration-color 140ms ease;
+.blogList h2 {
+  transition: color 140ms ease;
 }
 
-.blogList h2 a:hover,
-.blogList h2 a:focus-visible {
+.blogListLink:hover h2,
+.blogListLink:focus-visible h2 {
   color: var(--kaki-text);
-  text-decoration-color: var(--kaki);
 }
 
 .blogList article > p:not(.blogListMeta) {

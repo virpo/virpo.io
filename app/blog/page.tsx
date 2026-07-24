@@ -40,24 +40,30 @@ export default function BlogPage() {
         <ol className="blogList" aria-label="Posts">
           {posts.map((post) => (
             <li id={post.slug} key={post.slug}>
-              <article>
-                <p className="blogListMeta">
-                  <time dateTime={post.publishedAt.toISOString()}>
-                    {dateFormatter.format(post.publishedAt)}
-                  </time>
-                  <span aria-hidden="true">·</span>
-                  <span>{post.readingTime.label}</span>
-                </p>
-                <h2>
-                  <Link href={`/blog/${post.slug}/`}>{post.title}</Link>
-                </h2>
-                <p>{post.description}</p>
-                <ul className="articleTags" aria-label={`Tags for ${post.title}`}>
-                  {post.tags.map((tag) => (
-                    <li key={tag}>{tag}</li>
-                  ))}
-                </ul>
-              </article>
+              <Link
+                className="blogListLink"
+                href={`/blog/${post.slug}/`}
+              >
+                <article>
+                  <p className="blogListMeta">
+                    <time dateTime={post.publishedAt.toISOString()}>
+                      {dateFormatter.format(post.publishedAt)}
+                    </time>
+                    <span aria-hidden="true">·</span>
+                    <span>{post.readingTime.label}</span>
+                  </p>
+                  <h2>{post.title}</h2>
+                  <p>{post.description}</p>
+                  <ul
+                    className="articleTags"
+                    aria-label={`Tags for ${post.title}`}
+                  >
+                    {post.tags.map((tag) => (
+                      <li key={tag}>{tag}</li>
+                    ))}
+                  </ul>
+                </article>
+              </Link>
             </li>
           ))}
         </ol>
