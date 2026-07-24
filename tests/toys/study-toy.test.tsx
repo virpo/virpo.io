@@ -53,8 +53,11 @@ describe("StudyToy", () => {
     expect(within(card).getByText(selected?.reading ?? "")).not.toBeVisible();
     expect(screen.getByLabelText("0 of 46 stable")).toBeVisible();
     expect(screen.getByLabelText("46 due")).toBeVisible();
-    expect(document.querySelector(".studyBoard")).toBeVisible();
-    expect(document.querySelectorAll(".studyStat")).toHaveLength(2);
+    expect(document.querySelector(".studyConsole")).toBeVisible();
+    expect(document.querySelector(".studyStatusLine")).toBeVisible();
+    expect(document.querySelector(".studyStats")).toBeNull();
+    expect(document.querySelector(".studyStat")).toBeNull();
+    expect(document.querySelector(".studyProgressTrack")).toBeNull();
     expect(
       container.querySelector(".studyHeading .studyReset"),
     ).toBeVisible();
@@ -202,23 +205,29 @@ describe("StudyToy", () => {
     expect(setItem).toHaveBeenCalled();
   });
 
-  it("uses compact bento modules with readable controls and no Arial fallback", () => {
+  it("uses one compact console with readable controls and no Arial fallback", () => {
     const css = readFileSync(resolve(process.cwd(), "app/globals.css"), "utf8");
     const start = css.indexOf(".studyToy");
     const end = css.indexOf(".homeEditorial", start);
     const studyCss = css.slice(start, end);
-    const boardCss = studyCss.match(/\.studyBoard\s*\{([^}]*)}/s)?.[1] ?? "";
+    const consoleCss =
+      studyCss.match(/\.studyConsole\s*\{([^}]*)}/s)?.[1] ?? "";
 
-    expect(boardCss).toContain("background: var(--ink)");
-    expect(boardCss).toContain("gap: 3px");
+    expect(consoleCss).toContain("background: var(--yellow)");
     expect(studyCss).toMatch(
-      /\.studyStat\s*\{[^}]*background:\s*var\(--paper\);/s,
+      /\.studyStatusLine\s*\{[^}]*background:\s*transparent;/s,
     );
     expect(studyCss).toMatch(
-      /\.studyCard\s*\{[^}]*min-height:\s*44px;/s,
+      /\.studyCard\s*\{[^}]*min-height:\s*44px;[^}]*border:\s*3px solid var\(--ink\);[^}]*background:\s*var\(--paper\);/s,
     );
     expect(studyCss).toMatch(
       /\.studyActions button\s*\{[^}]*min-height:\s*44px;/s,
+    );
+    expect(studyCss).toMatch(
+      /\.studyReset\s*\{[^}]*width:\s*44px;[^}]*min-height:\s*44px;[^}]*border:\s*0;/s,
+    );
+    expect(studyCss).toMatch(
+      /\.studyReset::before\s*\{[^}]*inset:\s*4px;[^}]*border:\s*2px solid var\(--ink\);/s,
     );
     expect(studyCss).toMatch(
       /\.studyActions button:focus-visible\s*\{[^}]*outline:\s*3px solid var\(--focus\);[^}]*box-shadow:\s*none;/s,

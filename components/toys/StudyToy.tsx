@@ -144,10 +144,10 @@ export function StudyToy() {
         </div>
       </header>
 
-      <div className="studyBoard">
-        <div className="studyStats" aria-label="Study progress">
+      <div className="studyConsole">
+        <div className="studyStatusLine" aria-label="Study progress">
           <span
-            className="studyStat"
+            className="studyStatusValue"
             aria-label={`${progress.stable} of ${progress.total} stable`}
           >
             <span className="studyStatIcon" aria-hidden="true">
@@ -159,14 +159,12 @@ export function StudyToy() {
             </strong>
             <small>stable</small>
           </span>
-          <span className="studyProgressTrack">
-            <progress
-              aria-label={`${progress.stable} of ${progress.total} cards stable`}
-              max={progress.total}
-              value={progress.stable}
-            />
-          </span>
-          <span className="studyStat" aria-label={`${progress.due} due`}>
+          <progress
+            aria-label={`${progress.stable} of ${progress.total} cards stable`}
+            max={progress.total}
+            value={progress.stable}
+          />
+          <span className="studyStatusValue" aria-label={`${progress.due} due`}>
             <span className="studyStatIcon" aria-hidden="true">
               ↻
             </span>

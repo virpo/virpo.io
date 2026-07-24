@@ -613,7 +613,7 @@ img {
 }
 
 .studyToy .toyHeading {
-  border-bottom: 3px solid var(--ink);
+  border-bottom: 0;
   background: var(--yellow);
 }
 
@@ -624,7 +624,7 @@ img {
 .studyHeadingTools {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.25rem;
 }
 
 .studyLoading {
@@ -636,48 +636,44 @@ img {
   font-size: 1rem;
 }
 
-.studyBoard {
+.studyConsole {
   display: grid;
-  gap: 3px;
-  padding: 3px;
-  background: var(--ink);
+  gap: 0.45rem;
+  padding: 0 0.55rem 0.55rem;
+  background: var(--yellow);
 }
 
-.studyStats {
+.studyStatusLine {
   display: grid;
   grid-template-columns: max-content minmax(40px, 1fr) max-content;
-  gap: 3px;
-  background: var(--ink);
+  min-height: 44px;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.15rem 0.2rem;
+  background: transparent;
 }
 
-.studyStat,
-.studyProgressTrack {
-  background: var(--paper);
-}
-
-.studyStat {
+.studyStatusValue {
   display: flex;
-  min-height: 48px;
   align-items: center;
   gap: 0.3rem;
-  padding: 0.42rem 0.65rem;
-  background: var(--paper);
+  white-space: nowrap;
   font-size: 0.68rem;
   line-height: 1;
 }
 
-.studyStat strong {
+.studyStatusValue strong {
   font-size: 1.04rem;
   font-weight: 400;
 }
 
-.studyStat strong i {
+.studyStatusValue strong i {
   color: var(--muted);
   font-size: 0.68rem;
   font-style: normal;
 }
 
-.studyStat small {
+.studyStatusValue small {
   color: var(--muted);
   font-size: 0.62rem;
   text-transform: uppercase;
@@ -688,15 +684,9 @@ img {
   font-size: 0.9rem;
 }
 
-.studyProgressTrack {
-  display: grid;
-  min-width: 0;
-  align-items: center;
-  padding: 0 0.6rem;
-}
-
-.studyProgressTrack progress {
+.studyStatusLine progress {
   width: 100%;
+  min-width: 0;
   height: 7px;
   overflow: hidden;
   border: 0;
@@ -705,17 +695,17 @@ img {
   background: #ded5c5;
 }
 
-.studyProgressTrack progress::-webkit-progress-bar {
+.studyStatusLine progress::-webkit-progress-bar {
   border-radius: 999px;
   background: #ded5c5;
 }
 
-.studyProgressTrack progress::-webkit-progress-value {
+.studyStatusLine progress::-webkit-progress-value {
   border-radius: 999px;
   background: var(--brand-red);
 }
 
-.studyProgressTrack progress::-moz-progress-bar {
+.studyStatusLine progress::-moz-progress-bar {
   border-radius: 999px;
   background: var(--brand-red);
 }
@@ -729,7 +719,8 @@ img {
   align-content: center;
   gap: 0.18rem;
   padding: 0.55rem 1rem;
-  border-radius: 16px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
   background: var(--paper);
   cursor: pointer;
 }
@@ -762,12 +753,13 @@ img {
 .studyActions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 3px;
-  background: var(--ink);
+  gap: 0.45rem;
+  background: transparent;
 }
 
 .studyActions button {
   min-height: 44px;
+  border: 2px solid var(--ink);
   border-radius: 13px;
   background: var(--paper);
   font-size: 0.7rem;
@@ -791,6 +783,7 @@ img {
   align-items: center;
   margin: 0;
   padding: 0.5rem 0.7rem;
+  border: 2px solid var(--ink);
   border-radius: 13px;
   background: var(--paper);
   color: var(--muted);
@@ -798,21 +791,32 @@ img {
 }
 
 .studyReset {
+  position: relative;
   display: grid;
   width: 44px;
   min-height: 44px;
   place-items: center;
   padding: 0;
-  border: 2px solid var(--ink);
-  border-radius: 50%;
-  background: var(--white);
+  border: 0;
+  background: transparent;
   color: var(--ink);
   font: inherit;
   font-weight: 700;
   cursor: pointer;
 }
 
+.studyReset::before {
+  position: absolute;
+  inset: 4px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--white);
+  content: "";
+}
+
 .studyReset span {
+  position: relative;
+  z-index: 1;
   color: inherit;
   font-size: 1.05rem;
   line-height: 1;
@@ -824,7 +828,8 @@ img {
   place-items: center;
   align-content: center;
   gap: 0.3rem;
-  border-radius: 16px;
+  border: 3px solid var(--ink);
+  border-radius: 18px;
   background: var(--paper);
   color: var(--muted);
   font-size: 0.66rem;
