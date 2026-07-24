@@ -1,4 +1,3 @@
-import { allStudyCards } from "./decks";
 import { createStudyState, loadStudyState } from "./engine";
 import type { StudyState } from "./types";
 
@@ -27,16 +26,15 @@ function migrateLegacyStudyState(raw: string): StudyState {
       : {};
   const cards: Record<string, unknown> = {};
 
-  for (const card of allStudyCards) {
-    const saved = savedCards[card.id];
-    if (!saved || typeof saved !== "object") continue;
+  for (const [id, saved] of Object.entries(savedCards)) {
+    if (!saved || typeof saved !== "object" || Array.isArray(saved)) continue;
     const progress = saved as Record<string, unknown>;
     const correct = sanitizeCount(progress.correct);
     const numericStage = Number(progress.stage);
     const stage = Number.isFinite(numericStage) && numericStage >= 0
       ? sanitizeCount(numericStage, 6)
       : Math.min(correct, 6);
-    cards[card.id] = {
+    cards[id] = {
       stage,
       dueAt: sanitizeCount(progress.dueAt),
       correct,
@@ -64,12 +62,24 @@ export function loadStoredStudyState(
 ): StudyState {
   try {
     const current = storage.getItem(STUDY_STORAGE_KEY);
-    if (current !== null) return loadStudyState(current);
+    if (current !== null) {
+      const state = loadStudyState(current);
+      try {
+        saveStudyState(state, storage);
+      } catch {
+        // Keep the repaired in-memory state when storage is read-only.
+      }
+      return state;
+    }
 
     const legacy = storage.getItem(LEGACY_STUDY_STORAGE_KEY);
     const state =
       legacy === null ? createStudyState() : migrateLegacyStudyState(legacy);
-    saveStudyState(state, storage);
+    try {
+      saveStudyState(state, storage);
+    } catch {
+      // Migration still succeeds for this tab when storage is read-only.
+    }
     return state;
   } catch {
     return createStudyState();

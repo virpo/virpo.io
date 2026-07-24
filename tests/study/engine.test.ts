@@ -67,6 +67,57 @@ describe("study decks", () => {
       expect(card.reading).not.toBe(card.meaning);
     }
   });
+
+  it("freezes the exact four practical Kanji vocabulary buckets", () => {
+    const vocabulary = (cards: readonly StudyCard[]) =>
+      cards.map(({ id, writing, reading, meaning }) => [
+        id,
+        writing,
+        reading,
+        meaning,
+      ]);
+
+    expect(vocabulary(decks.kanji1)).toEqual([
+      ["v-mizu", "水", "みず", "water"],
+      ["v-yama", "山", "やま", "mountain"],
+      ["v-kawa", "川", "かわ", "river"],
+      ["v-umi", "海", "うみ", "sea"],
+      ["v-sora", "空", "そら", "sky"],
+      ["v-ame", "雨", "あめ", "rain"],
+      ["v-ki", "木", "き", "tree"],
+      ["v-mori", "森", "もり", "forest"],
+    ]);
+    expect(vocabulary(decks.kanji2)).toEqual([
+      ["v-hito", "人", "ひと", "person"],
+      ["v-tomodachi", "友達", "ともだち", "friend"],
+      ["v-sensei", "先生", "せんせい", "teacher"],
+      ["v-gakusei", "学生", "がくせい", "student"],
+      ["v-ookii", "大きい", "おおきい", "big"],
+      ["v-chiisai", "小さい", "ちいさい", "small"],
+      ["v-ue", "上", "うえ", "above"],
+      ["v-shita", "下", "した", "below"],
+    ]);
+    expect(vocabulary(decks.kanji3)).toEqual([
+      ["v-asa", "朝", "あさ", "morning"],
+      ["v-yoru", "夜", "よる", "night"],
+      ["v-ryokou", "旅行", "りょこう", "travel"],
+      ["v-deguchi", "出口", "でぐち", "exit"],
+      ["v-iriguchi", "入口", "いりぐち", "entrance"],
+      ["v-iku", "行く", "いく", "go"],
+      ["v-kuru", "来る", "くる", "come"],
+      ["v-kaeru", "帰る", "かえる", "return"],
+    ]);
+    expect(vocabulary(decks.kanji4)).toEqual([
+      ["v-eki", "駅", "えき", "station"],
+      ["v-densha", "電車", "でんしゃ", "train"],
+      ["v-tabemono", "食べ物", "たべもの", "food"],
+      ["v-nomimono", "飲み物", "のみもの", "drink"],
+      ["v-mise", "店", "みせ", "shop"],
+      ["v-gakkou", "学校", "がっこう", "school"],
+      ["v-hon", "本", "ほん", "book"],
+      ["v-kissa", "喫茶店", "きっさてん", "coffee shop"],
+    ]);
+  });
 });
 
 describe("study state", () => {
@@ -122,7 +173,39 @@ describe("study state", () => {
     });
     expect(loaded.recentCardIds).toEqual(["h-a", "h-i", "h-u"]);
     expect(loaded.unseenStreak).toBe(2);
-    expect(loaded.cards).not.toHaveProperty("unknown");
+    expect(loaded.cards.unknown).toEqual({
+      stage: 4,
+      dueAt: 5,
+      correct: 6,
+      wrong: 7,
+    });
+  });
+
+  it("sanitizes and round-trips orphaned card progress without activating it", () => {
+    const raw = {
+      version: 2,
+      cards: {
+        "retired-card": {
+          stage: 99,
+          dueAt: 12.8,
+          correct: "4.9",
+          wrong: -3,
+        },
+      },
+      recentCardIds: ["retired-card"],
+      unseenStreak: 0,
+    };
+
+    const loaded = loadStudyState(raw);
+    expect(loaded.cards["retired-card"]).toEqual({
+      stage: 6,
+      dueAt: 12,
+      correct: 4,
+      wrong: 0,
+    });
+    expect(loadStudyState(JSON.stringify(loaded))).toEqual(loaded);
+    expect(getStudyProgress(loaded, 1_000).total).toBe(46);
+    expect(loaded.recentCardIds).toEqual([]);
   });
 
   it("falls back to a fresh state for corrupt and future data", () => {

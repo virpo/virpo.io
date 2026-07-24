@@ -74,12 +74,23 @@ describe("homepage", () => {
 
   it("replaces only the Study placeholder and preserves toy order", () => {
     const { container } = render(<HomePage />);
+    const toyRail = container.querySelector(".toyRail");
 
     expect(container.querySelectorAll("[data-toy-placeholder]")).toHaveLength(2);
     expect(container.querySelector("[data-toy-placeholder='sounds']")).toBeVisible();
     expect(container.querySelector("[data-toy-placeholder='window-seat']")).toBeVisible();
     expect(container.querySelector("[data-toy-placeholder='study']")).toBeNull();
     expect(container.querySelector("[data-study-toy]")).toBeVisible();
+    expect(
+      Array.from(toyRail?.children ?? [], (child) =>
+        child.getAttribute("aria-label"),
+      ),
+    ).toEqual([
+      "Peter's interactive face",
+      "Familiar Japanese Sounds",
+      "Window Seat",
+      "Japanese Study",
+    ]);
   });
 
   it("keeps temporary toys free of future audio, video, storage, and study engines", () => {

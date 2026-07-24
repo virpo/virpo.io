@@ -32,7 +32,15 @@ describe("study storage", () => {
     expect(loadStoredStudyState(localStorage).cards["h-a"].correct).toBe(2);
   });
 
-  it("migrates matching legacy progress without changing the v1 value", () => {
+  it("migrates active and retired legacy progress without changing the v1 value", () => {
+    const retiredProgress = {
+      "v-kuruma": { stage: 1, dueAt: 11_000, correct: 1, wrong: 0 },
+      "v-jitensha": { stage: 2, dueAt: 22_000, correct: 2, wrong: 1 },
+      "v-eiga": { stage: 3, dueAt: 33_000, correct: 3, wrong: 2 },
+      "v-ongaku": { stage: 4, dueAt: 44_000, correct: 4, wrong: 3 },
+      "v-kaimono": { stage: 5, dueAt: 55_000, correct: 5, wrong: 4 },
+      "v-toshokan": { stage: 6, dueAt: 66_000, correct: 6, wrong: 5 },
+    };
     const legacy = JSON.stringify({
       version: 1,
       level: "katakana",
@@ -40,7 +48,7 @@ describe("study storage", () => {
         "h-a": { stage: 2, dueAt: 55_000, correct: 2, wrong: 1 },
         "k-a": { stage: 1, dueAt: 44_000, correct: 1, wrong: 3 },
         "v-mizu": { stage: 4, dueAt: 88_000, correct: 6, wrong: 2 },
-        "removed-card": { stage: 5, dueAt: 9, correct: 7, wrong: 1 },
+        ...retiredProgress,
       },
     });
     localStorage.setItem(LEGACY_STUDY_STORAGE_KEY, legacy);
@@ -65,11 +73,16 @@ describe("study storage", () => {
       correct: 6,
       wrong: 2,
     });
-    expect(migrated.cards).not.toHaveProperty("removed-card");
+    for (const [id, progress] of Object.entries(retiredProgress)) {
+      expect(migrated.cards[id]).toEqual(progress);
+    }
     expect(localStorage.getItem(LEGACY_STUDY_STORAGE_KEY)).toBe(legacy);
     expect(JSON.parse(localStorage.getItem(STUDY_STORAGE_KEY) ?? "{}")).toEqual(
       migrated,
     );
+
+    saveStudyState(migrated, localStorage);
+    expect(loadStoredStudyState(localStorage)).toEqual(migrated);
   });
 
   it("derives a safe stage from legacy correct ratings when stage is missing", () => {
@@ -98,8 +111,27 @@ describe("study storage", () => {
     localStorage.setItem(STUDY_STORAGE_KEY, "{broken");
     localStorage.setItem(LEGACY_STUDY_STORAGE_KEY, legacy);
 
-    expect(loadStoredStudyState(localStorage)).toEqual(createStudyState());
+    const repaired = loadStoredStudyState(localStorage);
+
+    expect(repaired).toEqual(createStudyState());
+    expect(JSON.parse(localStorage.getItem(STUDY_STORAGE_KEY) ?? "{}")).toEqual(
+      repaired,
+    );
     expect(localStorage.getItem(LEGACY_STUDY_STORAGE_KEY)).toBe(legacy);
+  });
+
+  it.each([
+    ["partial", JSON.stringify({ version: 2, cards: { "h-a": { correct: 2 } } })],
+    ["future", JSON.stringify({ version: 9, cards: {} })],
+  ])("rewrites %s v2 data as its normalized repair", (_kind, raw) => {
+    localStorage.setItem(STUDY_STORAGE_KEY, raw);
+
+    const repaired = loadStoredStudyState(localStorage);
+    const persisted = localStorage.getItem(STUDY_STORAGE_KEY);
+
+    expect(persisted).not.toBe(raw);
+    expect(JSON.parse(persisted ?? "{}")).toEqual(repaired);
+    expect(loadStoredStudyState(localStorage)).toEqual(repaired);
   });
 
   it("persists a repaired v2 snapshot", () => {

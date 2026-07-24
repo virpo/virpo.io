@@ -30,6 +30,15 @@ function sanitizeCount(value: unknown, maximum = Number.MAX_SAFE_INTEGER) {
   return Math.min(Math.floor(number), maximum);
 }
 
+function sanitizeProgress(saved: Record<string, unknown>): CardProgress {
+  return {
+    stage: sanitizeCount(saved.stage, INTERVALS_MS.length - 1),
+    dueAt: sanitizeCount(saved.dueAt),
+    correct: sanitizeCount(saved.correct),
+    wrong: sanitizeCount(saved.wrong),
+  };
+}
+
 function parseRawState(raw: unknown): Record<string, unknown> | null {
   try {
     const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
@@ -62,17 +71,17 @@ export function loadStudyState(raw: unknown): StudyState {
       ? (parsed.cards as Record<string, unknown>)
       : {};
 
-  for (const card of allStudyCards) {
-    const saved = savedCards[card.id];
-    if (!saved || typeof saved !== "object") continue;
-    const progress = saved as Record<string, unknown>;
-    fresh.cards[card.id] = {
-      stage: sanitizeCount(progress.stage, INTERVALS_MS.length - 1),
-      dueAt: sanitizeCount(progress.dueAt),
-      correct: sanitizeCount(progress.correct),
-      wrong: sanitizeCount(progress.wrong),
-    };
-  }
+  fresh.cards = Object.fromEntries([
+    ...Object.entries(fresh.cards),
+    ...Object.entries(savedCards)
+      .filter(
+        (entry): entry is [string, Record<string, unknown>] =>
+          Boolean(entry[1]) &&
+          typeof entry[1] === "object" &&
+          !Array.isArray(entry[1]),
+      )
+      .map(([id, saved]) => [id, sanitizeProgress(saved)] as const),
+  ]);
 
   const recent = Array.isArray(parsed.recentCardIds)
     ? parsed.recentCardIds

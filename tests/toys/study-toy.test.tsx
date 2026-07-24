@@ -1,4 +1,13 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { StudyToy } from "../../components/toys/StudyToy";
 import { allStudyCards, decks } from "../../lib/study/decks";
@@ -35,8 +44,13 @@ describe("StudyToy", () => {
     render(<StudyToy />);
 
     const card = await screen.findByRole("button", { name: /reveal answer/i });
+    const selected = decks.hiragana.find(
+      ({ writing }) => writing === card.querySelector("strong")?.textContent,
+    );
     expect(card).toBeVisible();
+    expect(selected).toBeDefined();
     expect(card.textContent).not.toContain("あ");
+    expect(within(card).getByText(selected?.reading ?? "")).not.toBeVisible();
     expect(screen.getByText(/0 \/ 46 stable/i)).toBeVisible();
     expect(screen.queryByRole("group", { name: /rate this answer/i })).toBeNull();
   });
@@ -132,5 +146,16 @@ describe("StudyToy", () => {
     expect(
       JSON.parse(localStorage.getItem(STUDY_STORAGE_KEY) ?? "{}").cards["h-a"],
     ).toEqual({ stage: 0, dueAt: 0, correct: 0, wrong: 0 });
+  });
+
+  it("keeps the mobile reveal cue legible and reset styled as a compact action", () => {
+    const css = readFileSync(resolve(process.cwd(), "app/globals.css"), "utf8");
+
+    expect(css).toMatch(
+      /\.studyCard small\s*\{[^}]*font-size:\s*0\.66rem;[^}]*font-weight:\s*700;/s,
+    );
+    expect(css).toMatch(
+      /\.studyReset\s*\{[^}]*min-height:\s*34px;[^}]*border:\s*1\.5px solid[^}]*border-radius:\s*999px;/s,
+    );
   });
 });
