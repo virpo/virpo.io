@@ -5,29 +5,58 @@ import { SoundWaveform } from "./SoundWaveform";
 
 export const JAPAN_SOUNDS = [
   {
-    title: "FamilyMart entrance",
-    src: "/audio/japan-familymart.mp3",
+    title: "Departure melody",
+    src: "/audio/aratana.mp3",
+    startAt: 0,
+    endAt: 4.6,
   },
-  { title: "Door chime", src: "/audio/japan-door-chime.ogg" },
+  {
+    title: "Station announcement",
+    src: "/audio/japan-station-announce.mp3",
+    startAt: 0,
+    endAt: 4.5,
+  },
+  {
+    title: "Fare gate",
+    src: "/audio/japan-faregate-chime.mp3",
+    startAt: 0,
+    endAt: 3.4,
+  },
+  {
+    title: "Railway crossing",
+    src: "/audio/japan-rail-crossing.mp3",
+    startAt: 3.5,
+    endAt: 8,
+  },
   {
     title: "Cuckoo crossing",
     src: "/audio/japan-crosswalk-cuckoo.mp3",
+    startAt: 0,
+    endAt: 4,
   },
   {
-    title: "Shibuya announcement",
-    src: "/audio/japan-mamonaku-shibuya.mp3",
-  },
-  {
-    title: "Rail crossing",
-    src: "/audio/japan-rail-crossing.mp3",
+    title: "FamilyMart entrance",
+    src: "/audio/japan-familymart.mp3",
+    startAt: 0,
+    endAt: 4.6,
   },
   {
     title: "Shinkansen passing",
     src: "/audio/japan-shinkansen-pass.mp3",
+    startAt: 1,
+    endAt: 5.5,
   },
   {
-    title: "Summer crickets",
+    title: "Summer cicadas",
     src: "/audio/japan-summer-crickets.mp3",
+    startAt: 0.5,
+    endAt: 5,
+  },
+  {
+    title: "Fūrin",
+    src: "/audio/wind-chime.ogg",
+    startAt: 1,
+    endAt: 5.5,
   },
 ] as const;
 
@@ -53,6 +82,7 @@ export function SoundsToy() {
   const operationTokenRef = useRef(0);
   const pendingOperationsRef = useRef(0);
   const desiredPlayingRef = useRef(false);
+  const autoAdvancingRef = useRef(false);
   const indexRef = useRef(0);
   const mountedRef = useRef(true);
   const [index, setIndex] = useState(0);
@@ -69,6 +99,7 @@ export function SoundsToy() {
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.src = JAPAN_SOUNDS[0].src;
+      audioRef.current.currentTime = JAPAN_SOUNDS[0].startAt;
     }
   }, []);
 
@@ -205,6 +236,13 @@ export function SoundsToy() {
     enqueueOperation(async () => {
       const audio = audioRef.current;
       if (!audio) return;
+      const segment = JAPAN_SOUNDS[indexRef.current];
+      if (
+        audio.currentTime < segment.startAt ||
+        audio.currentTime >= segment.endAt
+      ) {
+        audio.currentTime = segment.startAt;
+      }
       const canPlay = await ensureAudioGraph();
       if (!canPlay) {
         audio.pause();
@@ -269,18 +307,18 @@ export function SoundsToy() {
     enqueueOperation(async () => {
       const audio = audioRef.current;
       if (!audio) return;
-      audio.pause();
-      audio.src = JAPAN_SOUNDS[normalized].src;
-      audio.currentTime = 0;
-
-      if (!desiredPlayingRef.current) {
-        if (mountedRef.current && token === operationTokenRef.current) {
-          setStatus("Press play");
-        }
-        return;
-      }
-
       try {
+        audio.pause();
+        audio.src = JAPAN_SOUNDS[normalized].src;
+        audio.currentTime = JAPAN_SOUNDS[normalized].startAt;
+
+        if (!desiredPlayingRef.current) {
+          if (mountedRef.current && token === operationTokenRef.current) {
+            setStatus("Press play");
+          }
+          return;
+        }
+
         await audio.play();
         if (!desiredPlayingRef.current) {
           audio.pause();
@@ -298,24 +336,51 @@ export function SoundsToy() {
           setPlaying(false);
           setPlaybackError("Couldn’t play this sound");
         }
+      } finally {
+        autoAdvancingRef.current = false;
       }
     });
   }
 
-  function handleEnded() {
-    const nextIndex = (indexRef.current + 1) % JAPAN_SOUNDS.length;
+  function finishSequence() {
     operationTokenRef.current += 1;
     desiredPlayingRef.current = false;
+    autoAdvancingRef.current = false;
     setPlaybackDesired(false);
-    indexRef.current = nextIndex;
+    indexRef.current = 0;
     if (audioRef.current) {
-      audioRef.current.src = JAPAN_SOUNDS[nextIndex].src;
-      audioRef.current.currentTime = 0;
+      audioRef.current.pause();
+      audioRef.current.src = JAPAN_SOUNDS[0].src;
+      audioRef.current.currentTime = JAPAN_SOUNDS[0].startAt;
     }
     setPlaying(false);
     setPlaybackError(null);
     setStatus("Press play");
-    setIndex(nextIndex);
+    setIndex(0);
+  }
+
+  function advanceSequence() {
+    if (autoAdvancingRef.current) return;
+    if (indexRef.current === JAPAN_SOUNDS.length - 1) {
+      finishSequence();
+      return;
+    }
+    autoAdvancingRef.current = true;
+    selectSound(indexRef.current + 1);
+  }
+
+  function handleTimeUpdate() {
+    const audio = audioRef.current;
+    if (!audio || !desiredPlayingRef.current) return;
+    if (audio.currentTime >= JAPAN_SOUNDS[indexRef.current].endAt) {
+      advanceSequence();
+    }
+  }
+
+  function handleEnded() {
+    if (desiredPlayingRef.current) {
+      advanceSequence();
+    }
   }
 
   const visibleStatus =
@@ -330,7 +395,10 @@ export function SoundsToy() {
     >
       <header className="toyHeading soundsHeading">
         <h2>Familiar Japanese Sounds</h2>
-        <span>{JAPAN_SOUNDS.length} field recordings</span>
+        <span>
+          {String(index + 1).padStart(2, "0")} /{" "}
+          {String(JAPAN_SOUNDS.length).padStart(2, "0")}
+        </span>
       </header>
 
       <div className="soundsBody">
@@ -390,6 +458,18 @@ export function SoundsToy() {
       <audio
         ref={audioRef}
         preload="metadata"
+        onLoadedMetadata={() => {
+          const audio = audioRef.current;
+          const segment = JAPAN_SOUNDS[indexRef.current];
+          if (
+            audio &&
+            (audio.currentTime < segment.startAt ||
+              audio.currentTime >= segment.endAt)
+          ) {
+            audio.currentTime = segment.startAt;
+          }
+        }}
+        onTimeUpdate={handleTimeUpdate}
         onEnded={handleEnded}
         onError={() => {
           operationTokenRef.current += 1;

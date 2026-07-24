@@ -117,8 +117,9 @@ describe("SoundsToy", () => {
       "idle",
     );
     expect(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
+      screen.getByRole("button", { name: /play departure melody/i }),
     ).toBeVisible();
+    expect(screen.getByText("01 / 09")).toBeVisible();
     expect(screen.getByRole("button", { name: "Previous sound" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Next sound" })).toBeVisible();
     expect(container.querySelectorAll("audio")).toHaveLength(1);
@@ -150,9 +151,9 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
+      screen.getByRole("button", { name: /play departure melody/i }),
     );
-    await screen.findByRole("button", { name: /pause familymart entrance/i });
+    await screen.findByRole("button", { name: /pause departure melody/i });
 
     expect(order).toEqual([
       "resume",
@@ -175,7 +176,7 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
+      screen.getByRole("button", { name: /play departure melody/i }),
     );
 
     expect(await screen.findByText(/playing.+waveform unavailable/i)).toBeVisible();
@@ -197,12 +198,12 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
+      screen.getByRole("button", { name: /play departure melody/i }),
     );
 
     expect(await screen.findByText(/playing.+waveform unavailable/i)).toBeVisible();
     expect(
-      screen.getByRole("button", { name: /pause familymart entrance/i }),
+      screen.getByRole("button", { name: /pause departure melody/i }),
     ).toHaveAttribute("aria-pressed", "true");
     expect(HTMLMediaElement.prototype.play).toHaveBeenCalledOnce();
     expect(close).not.toHaveBeenCalled();
@@ -215,7 +216,7 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
+      screen.getByRole("button", { name: /play departure melody/i }),
     );
 
     expect(await screen.findByText(/playing.+waveform unavailable/i)).toBeVisible();
@@ -230,7 +231,7 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
+      screen.getByRole("button", { name: /play departure melody/i }),
     );
 
     expect(await screen.findByText(/playing.+waveform unavailable/i)).toBeVisible();
@@ -247,7 +248,7 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
+      screen.getByRole("button", { name: /play departure melody/i }),
     );
 
     expect(await screen.findByText(/playing.+waveform unavailable/i)).toBeVisible();
@@ -263,7 +264,7 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
+      screen.getByRole("button", { name: /play departure melody/i }),
     );
 
     expect(await screen.findByText(/playing.+waveform unavailable/i)).toBeVisible();
@@ -284,12 +285,12 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
+      screen.getByRole("button", { name: /play departure melody/i }),
     );
     fireEvent.click(screen.getByRole("button", { name: "Next sound" }));
     fireEvent.click(screen.getByRole("button", { name: "Next sound" }));
 
-    expect(screen.getByText("Cuckoo crossing")).toBeVisible();
+    expect(screen.getByText("Fare gate")).toBeVisible();
     expect(screen.getByRole("group", { name: "Sound navigation" })).toHaveAttribute(
       "aria-busy",
       "true",
@@ -308,7 +309,7 @@ describe("SoundsToy", () => {
     third.resolve();
 
     expect(
-      await screen.findByRole("button", { name: /pause cuckoo crossing/i }),
+      await screen.findByRole("button", { name: /pause fare gate/i }),
     ).toBeVisible();
     expect(screen.getByText("Playing")).toBeVisible();
     await waitFor(() =>
@@ -327,7 +328,7 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
+      screen.getByRole("button", { name: /play departure melody/i }),
     );
     fireEvent.click(screen.getByRole("button", { name: "Next sound" }));
     first.reject(new Error("interrupted"));
@@ -337,7 +338,7 @@ describe("SoundsToy", () => {
     second.resolve();
 
     expect(
-      await screen.findByRole("button", { name: /pause door chime/i }),
+      await screen.findByRole("button", { name: /pause station announcement/i }),
     ).toBeVisible();
     expect(screen.queryByText(/couldn’t play/i)).toBeNull();
   });
@@ -350,7 +351,7 @@ describe("SoundsToy", () => {
     const { container } = render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
+      screen.getByRole("button", { name: /play departure melody/i }),
     );
     expect(await screen.findByText("Couldn’t play this sound")).toBeVisible();
     expect(screen.queryByText(/audio still plays/i)).toBeNull();
@@ -363,22 +364,22 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
+      screen.getByRole("button", { name: /play departure melody/i }),
     );
-    await screen.findByRole("button", { name: /pause familymart entrance/i });
+    await screen.findByRole("button", { name: /pause departure melody/i });
     fireEvent.click(
-      screen.getByRole("button", { name: /pause familymart entrance/i }),
+      screen.getByRole("button", { name: /pause departure melody/i }),
     );
     latestContext.state = "suspended";
     resume.mockRejectedValueOnce(new Error("resume rejected"));
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
+      screen.getByRole("button", { name: /play departure melody/i }),
     );
 
     expect(await screen.findByText("Audio unavailable")).toBeVisible();
     expect(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
+      screen.getByRole("button", { name: /play departure melody/i }),
     ).toHaveAttribute("aria-pressed", "false");
     expect(screen.queryByText(/^Playing/)).toBeNull();
     expect(HTMLMediaElement.prototype.play).toHaveBeenCalledOnce();
@@ -392,11 +393,11 @@ describe("SoundsToy", () => {
     );
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
+      screen.getByRole("button", { name: /play departure melody/i }),
     );
 
     expect(
-      await screen.findByRole("button", { name: /pause familymart entrance/i }),
+      await screen.findByRole("button", { name: /pause departure melody/i }),
     ).toBeVisible();
     expect(screen.getByText("Playing")).toBeVisible();
   });
@@ -409,11 +410,11 @@ describe("SoundsToy", () => {
     render(<SoundsToy />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
+      screen.getByRole("button", { name: /play departure melody/i }),
     );
 
     const pendingButton = screen.getByRole("button", {
-      name: /pause familymart entrance/i,
+      name: /pause departure melody/i,
     });
     expect(pendingButton).toHaveAttribute("aria-pressed", "true");
     expect(pendingButton.querySelector("path")).toHaveAttribute(
@@ -423,7 +424,7 @@ describe("SoundsToy", () => {
 
     fireEvent.click(pendingButton);
     expect(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
+      screen.getByRole("button", { name: /play departure melody/i }),
     ).toHaveAttribute("aria-pressed", "false");
     expect(screen.getByText("Paused · press play")).toBeVisible();
     await waitFor(() =>
@@ -434,7 +435,7 @@ describe("SoundsToy", () => {
       expect(HTMLMediaElement.prototype.pause).toHaveBeenCalled(),
     );
     expect(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
+      screen.getByRole("button", { name: /play departure melody/i }),
     ).toHaveAttribute("aria-pressed", "false");
   });
 
@@ -446,6 +447,50 @@ describe("SoundsToy", () => {
       "data-reduced-motion",
       "true",
     );
+  });
+
+  it("automatically advances at a segment boundary and keeps playing", async () => {
+    const { container } = render(<SoundsToy />);
+    const audio = container.querySelector("audio") as HTMLAudioElement;
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /play departure melody/i }),
+    );
+    await screen.findByRole("button", { name: /pause departure melody/i });
+
+    audio.currentTime = 4.6;
+    fireEvent.timeUpdate(audio);
+
+    expect(await screen.findByText("Station announcement")).toBeVisible();
+    expect(screen.getByText("02 / 09")).toBeVisible();
+    expect(
+      await screen.findByRole("button", { name: /pause station announcement/i }),
+    ).toBeVisible();
+    expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(2);
+  });
+
+  it("stops after Fūrin and restarts the sequence on the next play", async () => {
+    const { container } = render(<SoundsToy />);
+    const audio = container.querySelector("audio") as HTMLAudioElement;
+
+    fireEvent.click(screen.getByRole("button", { name: "Previous sound" }));
+    expect(await screen.findByText("Fūrin")).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: /play fūrin/i }));
+    await screen.findByRole("button", { name: /pause fūrin/i });
+
+    audio.currentTime = 5.5;
+    fireEvent.timeUpdate(audio);
+
+    expect(await screen.findByText("Departure melody")).toBeVisible();
+    expect(screen.getByText("01 / 09")).toBeVisible();
+    expect(screen.getByText("Press play")).toBeVisible();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /play departure melody/i }),
+    );
+    expect(
+      await screen.findByRole("button", { name: /pause departure melody/i }),
+    ).toBeVisible();
   });
 
   it("keeps media source changes under one owner", () => {
