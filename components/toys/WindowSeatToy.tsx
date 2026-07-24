@@ -58,7 +58,6 @@ export function WindowSeatToy() {
     >
       <header className="toyHeading windowSeatHeading">
         <h2>Window Seat</h2>
-        <span>{reducedMotion ? "Still journey" : "Ambient loop"}</span>
       </header>
 
       <div className="windowSeatScene" data-testid="window-seat-still">
@@ -74,7 +73,7 @@ export function WindowSeatToy() {
             tabIndex={-1}
             aria-hidden="true"
             onLoad={handleFrameLoad}
-            style={{ pointerEvents: "none", transform: "none" }}
+            style={{ pointerEvents: "none" }}
           />
           {!reducedMotion && coverVisible ? (
             <span

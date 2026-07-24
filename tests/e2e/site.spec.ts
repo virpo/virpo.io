@@ -320,15 +320,25 @@ test("Sounds exposes waveform, play/pause, rapid next, and error fallback", asyn
   ).toHaveAttribute("aria-pressed", "false");
 });
 
-test("Window Seat stays unobstructed, unzoomed, and inert", async ({ page }) => {
+test("Window Seat fills its aperture and stays inert", async ({ page }) => {
   await blockThirdPartyTrain(page);
   await page.goto("/");
   const windowSeat = page.getByRole("region", { name: "Window Seat" });
   const frame = windowSeat.locator("iframe");
   await expect(frame).toHaveAttribute("src", /youtube-nocookie\.com/);
-  await expect(frame).toHaveCSS("transform", "none");
+  await expect(windowSeat.getByText("Ambient loop")).toHaveCount(0);
   await expect(frame).toHaveCSS("pointer-events", "none");
   await expect(frame).toHaveAttribute("tabindex", "-1");
+  const [apertureBox, frameBox] = await Promise.all([
+    windowSeat.locator(".windowSeatAperture").boundingBox(),
+    frame.boundingBox(),
+  ]);
+  expect(apertureBox).not.toBeNull();
+  expect(frameBox).not.toBeNull();
+  expect(Math.abs((frameBox?.height ?? 0) - (apertureBox?.height ?? 0))).toBeLessThan(
+    1,
+  );
+  expect(frameBox?.width ?? 0).toBeGreaterThan(apertureBox?.width ?? 0);
   for (const id of [
     "youtube-mask-top",
     "youtube-mask-bottom",

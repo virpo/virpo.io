@@ -37,6 +37,7 @@ describe("WindowSeatToy", () => {
     await waitFor(() => expect(frame).toHaveAttribute("src", "about:blank"));
     expect(screen.getByTestId("window-seat-still")).toBeVisible();
     expect(screen.queryByTestId("youtube-startup-cover")).toBeNull();
+    expect(screen.queryByText("Still journey")).toBeNull();
   });
 
   it("uses supported embed parameters without overstating branding or caption control", async () => {
@@ -65,10 +66,8 @@ describe("WindowSeatToy", () => {
     }
     expect(src.searchParams.has("modestbranding")).toBe(false);
     expect(src.searchParams.has("cc_load_policy")).toBe(false);
-    expect(frame).toHaveStyle({
-      pointerEvents: "none",
-      transform: "none",
-    });
+    expect(frame).toHaveStyle({ pointerEvents: "none" });
+    expect(screen.queryByText("Ambient loop")).toBeNull();
   });
 
   it("keeps the startup cover through YouTube's startup chrome", async () => {
@@ -88,7 +87,7 @@ describe("WindowSeatToy", () => {
     expect(screen.queryByTestId("youtube-startup-cover")).toBeNull();
   });
 
-  it("keeps Window Seat unzoomed and free of overlay masks", () => {
+  it("fills Window Seat by height and stays free of overlay masks", () => {
     const css = readFileSync(resolve(process.cwd(), "app/globals.css"), "utf8");
     const start = css.indexOf(".windowSeatToy");
     const end = css.indexOf(".studyToy", start);
@@ -103,7 +102,7 @@ describe("WindowSeatToy", () => {
     expect(screen.queryByTestId("youtube-subtitle-mask")).toBeNull();
     expect(screen.getByTestId("youtube-compass-mask")).toBeVisible();
     expect(windowSeatCss).toMatch(
-      /\.windowSeatVideo\s*\{[^}]*pointer-events:\s*none;[^}]*transform:\s*none;/s,
+      /\.windowSeatVideo\s*\{[^}]*position:\s*absolute;[^}]*top:\s*50%;[^}]*left:\s*50%;[^}]*width:\s*auto;[^}]*min-width:\s*100%;[^}]*height:\s*100%;[^}]*aspect-ratio:\s*16\s*\/\s*9;[^}]*pointer-events:\s*none;[^}]*transform:\s*translate\(-50%,\s*-50%\);/s,
     );
     expect(windowSeatCss).not.toMatch(/\.windowSeatMask/);
     expect(windowSeatCss).not.toMatch(/\.windowSeatSubtitleMask/);
@@ -114,7 +113,7 @@ describe("WindowSeatToy", () => {
       /data-reduced-motion="true"[^}]*windowSeatCompassMask[^}]*display:\s*none/s,
     );
     expect(windowSeatCss).not.toMatch(/windowSeatStartupReveal/);
-    expect(windowSeatCss).not.toMatch(/\bscale\s*\(|\bzoom\s*:/);
+    expect(windowSeatCss).not.toMatch(/\bzoom\s*:/);
   });
 
   it("uses only the approved warm palette for the generated still", () => {
