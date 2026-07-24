@@ -35,6 +35,13 @@ To inspect the already-built export manually:
 python3 -m http.server 4187 --bind 127.0.0.1 --directory dist
 ```
 
+## Deployment
+
+Pushes to `main` run the full test and static-build checks, then publish
+`dist/` to GitHub Pages through `.github/workflows/pages.yml`. The production
+custom domain is `virpo.io`; GitHub Pages owns HTTPS and redirects `www` to the
+apex domain once both DNS records are configured.
+
 ## Writing
 
 Posts live in `content/blog/*.mdx`. Add a file with validated frontmatter:
