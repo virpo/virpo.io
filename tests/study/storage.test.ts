@@ -103,6 +103,24 @@ describe("study storage", () => {
     expect(migrated.cards["h-i"].stage).toBe(6);
   });
 
+  it("rejects array-shaped legacy cards instead of migrating numeric ids", () => {
+    localStorage.setItem(
+      LEGACY_STUDY_STORAGE_KEY,
+      JSON.stringify({
+        version: 1,
+        cards: [{ stage: 4, dueAt: 5, correct: 6, wrong: 7 }],
+      }),
+    );
+
+    const migrated = loadStoredStudyState(localStorage);
+    const persisted = JSON.parse(
+      localStorage.getItem(STUDY_STORAGE_KEY) ?? "{}",
+    );
+
+    expect(migrated.cards).not.toHaveProperty("0");
+    expect(persisted.cards).not.toHaveProperty("0");
+  });
+
   it("repairs corrupt v2 data instead of mutating legacy state", () => {
     const legacy = JSON.stringify({
       version: 1,

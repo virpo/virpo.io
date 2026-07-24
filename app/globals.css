@@ -478,6 +478,10 @@ img {
   border-color: rgba(9, 9, 9, 0.16);
 }
 
+.studyHeading span {
+  font-size: 0.75rem;
+}
+
 .studyLoading {
   display: grid;
   min-height: 178px;
@@ -494,7 +498,7 @@ img {
   gap: 0.55rem;
   color: #5e4d12;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
 }
 
 .studyProgress {
@@ -560,13 +564,13 @@ img {
 .studyMeaning {
   color: #493b0e;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 0.74rem;
+  font-size: 0.75rem;
 }
 
 .studyCard small {
   color: #5e4d12;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: lowercase;
 }
@@ -585,13 +589,19 @@ img {
   border-radius: 999px;
   background: var(--paper);
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 700;
   cursor: pointer;
 }
 
 .studyActions .studyGotIt {
   background: var(--kaki);
+}
+
+.studyActions button:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 1px;
+  box-shadow: none;
 }
 
 .studyFooter {

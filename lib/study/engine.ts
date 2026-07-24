@@ -67,7 +67,9 @@ export function loadStudyState(raw: unknown): StudyState {
   if (!parsed || parsed.version !== 2) return fresh;
 
   const savedCards =
-    parsed.cards && typeof parsed.cards === "object"
+    parsed.cards &&
+    typeof parsed.cards === "object" &&
+    !Array.isArray(parsed.cards)
       ? (parsed.cards as Record<string, unknown>)
       : {};
 

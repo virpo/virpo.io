@@ -21,7 +21,9 @@ function migrateLegacyStudyState(raw: string): StudyState {
 
   const legacy = parsed as Record<string, unknown>;
   const savedCards =
-    legacy.cards && typeof legacy.cards === "object"
+    legacy.cards &&
+    typeof legacy.cards === "object" &&
+    !Array.isArray(legacy.cards)
       ? (legacy.cards as Record<string, unknown>)
       : {};
   const cards: Record<string, unknown> = {};

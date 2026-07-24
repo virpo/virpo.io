@@ -208,6 +208,18 @@ describe("study state", () => {
     expect(loaded.recentCardIds).toEqual([]);
   });
 
+  it("rejects array-shaped v2 card containers instead of persisting numeric ids", () => {
+    const loaded = loadStudyState({
+      version: 2,
+      cards: [{ stage: 4, dueAt: 5, correct: 6, wrong: 7 }],
+      recentCardIds: [],
+      unseenStreak: 0,
+    });
+
+    expect(loaded.cards).not.toHaveProperty("0");
+    expect(Object.keys(loaded.cards)).toHaveLength(allStudyCards.length);
+  });
+
   it("falls back to a fresh state for corrupt and future data", () => {
     expect(loadStudyState("{not-json")).toEqual(createStudyState());
     expect(loadStudyState({ version: 3, cards: {} })).toEqual(

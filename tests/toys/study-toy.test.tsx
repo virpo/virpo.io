@@ -148,14 +148,23 @@ describe("StudyToy", () => {
     ).toEqual({ stage: 0, dueAt: 0, correct: 0, wrong: 0 });
   });
 
-  it("keeps the mobile reveal cue legible and reset styled as a compact action", () => {
+  it("keeps Study microtype readable with compact, clear action focus", () => {
     const css = readFileSync(resolve(process.cwd(), "app/globals.css"), "utf8");
 
     expect(css).toMatch(
-      /\.studyCard small\s*\{[^}]*font-size:\s*0\.66rem;[^}]*font-weight:\s*700;/s,
+      /\.studyCard small\s*\{[^}]*font-size:\s*0\.75rem;[^}]*font-weight:\s*700;/s,
+    );
+    expect(css).toMatch(
+      /\.studyProgress,\s*\.studyFooter\s*\{[^}]*font-size:\s*0\.75rem;/s,
+    );
+    expect(css).toMatch(
+      /\.studyActions button\s*\{[^}]*font-size:\s*0\.75rem;/s,
     );
     expect(css).toMatch(
       /\.studyReset\s*\{[^}]*min-height:\s*34px;[^}]*border:\s*1\.5px solid[^}]*border-radius:\s*999px;/s,
+    );
+    expect(css).toMatch(
+      /\.studyActions button:focus-visible\s*\{[^}]*outline:\s*3px solid var\(--focus\);[^}]*box-shadow:\s*none;/s,
     );
   });
 });
