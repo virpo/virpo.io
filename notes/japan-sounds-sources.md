@@ -25,8 +25,9 @@ Note: some prototype sounds now come from Freesound previews. Check license fit 
   Source page: https://freesound.org/people/timcam/sounds/381934/
   Preview file used: https://cdn.freesound.org/previews/381/381934_392538-hq.mp3
   License: CC0 https://creativecommons.org/publicdomain/zero/1.0/
-  Excerpt: `15.2–22.7s`
-  Notes: 48 kHz stereo source; exported as a 7.5s loudness-matched MP3.
+  Excerpt: `15.2–23.7s`
+  Notes: 48 kHz stereo source; exported as an 8.5s loudness-matched MP3 so the
+  background sound after the announcement is audible.
 
 - `audio/japan-minminzemi.mp3`
   Source page: https://commons.wikimedia.org/wiki/File:Singing_cicada_audio.ogg

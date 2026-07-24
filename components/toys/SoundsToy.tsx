@@ -38,7 +38,7 @@ export const JAPAN_SOUNDS = [
     title: "Tennoji announcement",
     src: "/audio/japan-tennoji-announcement.mp3",
     startAt: 0,
-    endAt: 7.5,
+    endAt: 8.5,
   },
   {
     title: "Fare gate",

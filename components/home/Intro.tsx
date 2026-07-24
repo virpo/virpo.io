@@ -27,8 +27,8 @@ export function Intro() {
         <em>products and small tools.</em>
       </h1>
       <p className="introCopy">
-        I work at Slido. Slido was acquired by Cisco. I’m happiest where
-        product, design, and engineering meet.
+        I’ve worked at Slido for ten years. We became part of Cisco in 2021. I
+        always want to be where product, design, and engineering meet.
       </p>
       <div className="profileLinks" aria-label="Peter elsewhere">
         <a

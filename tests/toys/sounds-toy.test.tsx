@@ -145,6 +145,10 @@ describe("SoundsToy", () => {
         Number((endAt - startAt).toFixed(3)),
       ),
     ).toEqual([4.949, 3.217, 3.165]);
+    expect(
+      JAPAN_SOUNDS.find(({ title }) => title === "Tennoji announcement")
+        ?.endAt,
+    ).toBe(8.5);
     expect(JAPAN_SOUNDS.at(-1)?.endAt).toBeCloseTo(3.733, 3);
 
     const totalSeconds = JAPAN_SOUNDS.reduce(

@@ -36,7 +36,11 @@ describe("homepage", () => {
     const intro = screen.getByRole("region", { name: "About Peter" });
 
     expect(within(intro).getByText(/product engineer from Slovakia/i)).toBeVisible();
-    expect(within(intro).getByText(/Slido was acquired by Cisco/i)).toBeVisible();
+    expect(
+      within(intro).getByText(
+        /I’ve worked at Slido for ten years\. We became part of Cisco in 2021\. I always want to be where product, design, and engineering meet\./i,
+      ),
+    ).toBeVisible();
     expect(within(intro).getByText(/products and small tools/i)).toBeVisible();
     expect(within(intro).getAllByRole("link").map((link) => link.getAttribute("aria-label"))).toEqual([
       "LinkedIn",
