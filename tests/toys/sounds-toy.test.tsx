@@ -112,7 +112,7 @@ afterEach(() => {
 });
 
 describe("SoundsToy", () => {
-  it("uses the agreed longer, cleaner Japan nostalgia sequence", () => {
+  it("uses honest Japan nostalgia clips without padding short moments into loops", () => {
     expect(JAPAN_SOUNDS.map(({ title }) => title)).toEqual([
       "FamilyMart welcome",
       "Closed crossing",
@@ -124,6 +124,7 @@ describe("SoundsToy", () => {
       "Railway crossing",
       "Cuckoo crossing",
       "Minminzemi",
+      "Don Quijote",
     ]);
     expect(JAPAN_SOUNDS.map(({ src }) => src)).toEqual([
       "/audio/japan-familymart-welcome.mp3",
@@ -136,26 +137,32 @@ describe("SoundsToy", () => {
       "/audio/japan-railway-crossing-long.mp3",
       "/audio/japan-crosswalk-cuckoo.mp3",
       "/audio/japan-minminzemi.mp3",
+      "/audio/japan-don-quijote.mp3",
     ]);
     expect(JAPAN_SOUNDS.map(({ title }) => title).join(" ")).not.toMatch(
-      /Don Quijote|Shinkansen|Fūrin/,
+      /Shinkansen|Fūrin/,
     );
+    expect(
+      JAPAN_SOUNDS.slice(0, 4).map(({ endAt, startAt }) =>
+        Number((endAt - startAt).toFixed(3)),
+      ),
+    ).toEqual([4.949, 3.117, 3.217, 2.533]);
+    expect(JAPAN_SOUNDS.at(-1)?.endAt).toBeCloseTo(3.733, 3);
 
-    for (const sound of JAPAN_SOUNDS) {
-      expect(sound.endAt - sound.startAt).toBeGreaterThanOrEqual(7);
-      expect(sound.endAt - sound.startAt).toBeLessThanOrEqual(8);
-    }
     const totalSeconds = JAPAN_SOUNDS.reduce(
       (total, sound) => total + sound.endAt - sound.startAt,
       0,
     );
-    expect(totalSeconds).toBeGreaterThanOrEqual(70);
-    expect(totalSeconds).toBeLessThanOrEqual(80);
+    expect(totalSeconds).toBeGreaterThanOrEqual(50);
+    expect(totalSeconds).toBeLessThanOrEqual(61);
   });
 
   it("shows one audio element, an idle waveform, and distinct playback controls", () => {
     const { container } = render(<SoundsToy />);
 
+    expect(
+      screen.getByRole("region", { name: "Japan Sounds" }),
+    ).toBeVisible();
     expect(screen.getByLabelText("Sound waveform")).toHaveAttribute(
       "data-waveform-state",
       "idle",
@@ -163,7 +170,7 @@ describe("SoundsToy", () => {
     expect(
       screen.getByRole("button", { name: /play familymart welcome/i }),
     ).toBeVisible();
-    expect(screen.getByText("01 / 10")).toBeVisible();
+    expect(screen.getByText("01 / 11")).toBeVisible();
     expect(screen.getByRole("button", { name: "Previous sound" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Next sound" })).toBeVisible();
     expect(container.querySelectorAll("audio")).toHaveLength(1);
@@ -502,31 +509,31 @@ describe("SoundsToy", () => {
     );
     await screen.findByRole("button", { name: /pause familymart welcome/i });
 
-    audio.currentTime = 7.5;
+    audio.currentTime = JAPAN_SOUNDS[0].endAt;
     fireEvent.timeUpdate(audio);
 
     expect(await screen.findByText("Closed crossing")).toBeVisible();
-    expect(screen.getByText("02 / 10")).toBeVisible();
+    expect(screen.getByText("02 / 11")).toBeVisible();
     expect(
       await screen.findByRole("button", { name: /pause closed crossing/i }),
     ).toBeVisible();
     expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(2);
   });
 
-  it("stops after Minminzemi and restarts the sequence on the next play", async () => {
+  it("stops after Don Quijote and restarts the sequence on the next play", async () => {
     const { container } = render(<SoundsToy />);
     const audio = container.querySelector("audio") as HTMLAudioElement;
 
     fireEvent.click(screen.getByRole("button", { name: "Previous sound" }));
-    expect(await screen.findByText("Minminzemi")).toBeVisible();
-    fireEvent.click(screen.getByRole("button", { name: /play minminzemi/i }));
-    await screen.findByRole("button", { name: /pause minminzemi/i });
+    expect(await screen.findByText("Don Quijote")).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: /play don quijote/i }));
+    await screen.findByRole("button", { name: /pause don quijote/i });
 
-    audio.currentTime = 7.5;
+    audio.currentTime = JAPAN_SOUNDS.at(-1)?.endAt ?? 0;
     fireEvent.timeUpdate(audio);
 
     expect(await screen.findByText("FamilyMart welcome")).toBeVisible();
-    expect(screen.getByText("01 / 10")).toBeVisible();
+    expect(screen.getByText("01 / 11")).toBeVisible();
     expect(screen.getByText("Press play")).toBeVisible();
 
     fireEvent.click(

@@ -8,25 +8,25 @@ export const JAPAN_SOUNDS = [
     title: "FamilyMart welcome",
     src: "/audio/japan-familymart-welcome.mp3",
     startAt: 0,
-    endAt: 7.5,
+    endAt: 4.948662,
   },
   {
     title: "Closed crossing",
     src: "/audio/japan-closed-crossing.mp3",
     startAt: 0,
-    endAt: 7.5,
+    endAt: 3.116667,
   },
   {
     title: "Yamanote approaching",
     src: "/audio/japan-yamanote-approaching.mp3",
     startAt: 0,
-    endAt: 7.5,
+    endAt: 3.216667,
   },
   {
     title: "Park crows",
     src: "/audio/japan-park-crows.mp3",
     startAt: 0,
-    endAt: 7.5,
+    endAt: 2.533333,
   },
   {
     title: "Departure melody",
@@ -44,7 +44,7 @@ export const JAPAN_SOUNDS = [
     title: "Fare gate",
     src: "/audio/japan-faregate-chime.mp3",
     startAt: 0,
-    endAt: 7.5,
+    endAt: 6.2,
   },
   {
     title: "Railway crossing",
@@ -56,13 +56,19 @@ export const JAPAN_SOUNDS = [
     title: "Cuckoo crossing",
     src: "/audio/japan-crosswalk-cuckoo.mp3",
     startAt: 0,
-    endAt: 7.5,
+    endAt: 6,
   },
   {
     title: "Minminzemi",
     src: "/audio/japan-minminzemi.mp3",
     startAt: 0,
     endAt: 7.5,
+  },
+  {
+    title: "Don Quijote",
+    src: "/audio/japan-don-quijote.mp3",
+    startAt: 0,
+    endAt: 3.733333,
   },
 ] as const;
 
@@ -397,10 +403,10 @@ export function SoundsToy() {
     <section
       className="tile soundsToy"
       data-sounds-toy
-      aria-label="Familiar Japanese Sounds"
+      aria-label="Japan Sounds"
     >
       <header className="toyHeading soundsHeading">
-        <h2>Familiar Japanese Sounds</h2>
+        <h2>Japan Sounds</h2>
         <span>
           {String(index + 1).padStart(2, "0")} /{" "}
           {String(JAPAN_SOUNDS.length).padStart(2, "0")}

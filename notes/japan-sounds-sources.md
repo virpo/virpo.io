@@ -8,15 +8,16 @@ Note: some prototype sounds now come from Freesound previews. Check license fit 
 - `audio/japan-yamanote-approaching.mp3`
 - `audio/japan-park-crows.mp3`
 - `audio/japan-familymart-welcome.mp3`
+- `audio/japan-don-quijote.mp3`
   Source: https://www.tiktok.com/@japan_vision_/video/7574165962543467796
   Source title: `These sounds make me miss Japan`
   Added on 2026-07-24 at Peter's request.
-  Excerpts: `0–3.116667s`, `6.85–10.066667s`, `15.25–17.783333s`,
-  and `17.783333–22.731995s`.
-  Notes: the crossing, Yamanote, and crow moments use short crossfaded repeats
-  to reach 7.5s. FamilyMart combines the clean Panasonic chime below with the
-  clerk greeting from the final TikTok excerpt. The shipped page does not load
-  TikTok.
+  Excerpts: closed crossing `0–3.116667s`, Don Quijote `3.116667–6.85s`,
+  Yamanote `6.85–10.066667s`, park crows `15.25–17.783333s`, and
+  FamilyMart `17.783333–22.731995s`.
+  Notes: every moment is used once at its natural length. FamilyMart is the
+  original TikTok scene with the clerk greeting; it is not mixed with the
+  Panasonic chime below. The shipped page does not load TikTok.
 
 - `audio/japan-tennoji-announcement.mp3`
   Source page: https://freesound.org/people/timcam/sounds/381934/
@@ -43,8 +44,7 @@ Note: some prototype sounds now come from Freesound previews. Check license fit 
 
 - `audio/japan-faregate-chime.mp3`
 - `audio/japan-crosswalk-cuckoo.mp3`
-  Notes: extended to 7.5s with a short crossfaded repeat and loudness-matched
-  with the rest of the sequence.
+  Notes: original local clips play once without synthetic repeats.
 
 - `audio/japan-door-chime.ogg`
   Source: existing local file copied from `audio/train-chime.ogg`

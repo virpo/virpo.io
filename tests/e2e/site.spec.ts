@@ -253,7 +253,7 @@ test("mobile preserves face, Sounds, Window Seat, Study, intro, writing order", 
       .filter((label) =>
         [
           "Peter's interactive face",
-          "Familiar Japanese Sounds",
+          "Japan Sounds",
           "Window Seat",
           "Japanese Study",
           "About Peter",
@@ -263,7 +263,7 @@ test("mobile preserves face, Sounds, Window Seat, Study, intro, writing order", 
   );
   expect(labels).toEqual([
     "Peter's interactive face",
-    "Familiar Japanese Sounds",
+    "Japan Sounds",
     "Window Seat",
     "Japanese Study",
     "About Peter",
@@ -285,7 +285,7 @@ test("Sounds exposes waveform, play/pause, rapid next, and error fallback", asyn
   await blockThirdPartyTrain(page);
   await page.goto("/");
   const sounds = page.getByRole("region", {
-    name: "Familiar Japanese Sounds",
+    name: "Japan Sounds",
   });
   const waveform = sounds.getByRole("img", { name: "Sound waveform" });
   const audio = sounds.locator("audio");

@@ -11,7 +11,7 @@ describe("homepage", () => {
     const { container } = render(<HomePage />);
     const orderedLabels = [
       "Peter's interactive face",
-      "Familiar Japanese Sounds",
+      "Japan Sounds",
       "Window Seat",
       "Japanese Study",
       "About Peter",
@@ -95,7 +95,7 @@ describe("homepage", () => {
       ),
     ).toEqual([
       "Peter's interactive face",
-      "Familiar Japanese Sounds",
+      "Japan Sounds",
       "Window Seat",
       "Japanese Study",
     ]);
