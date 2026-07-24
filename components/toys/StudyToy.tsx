@@ -134,84 +134,109 @@ export function StudyToy() {
         <span>{groupLabels[currentGroup]}</span>
       </header>
 
-      <div className="studyProgress">
-        <span>
-          {progress.stable} / {progress.total} stable
-        </span>
-        <progress
-          aria-label={`${progress.stable} of ${progress.total} cards stable`}
-          max={progress.total}
-          value={progress.stable}
-        />
-        <span>{progress.due} due</span>
-      </div>
-
-      {selection.card ? (
-        <>
-          <button
-            ref={cardButtonRef}
-            className="studyCard"
-            type="button"
-            aria-expanded={revealed}
-            aria-label={
-              revealed
-                ? `${selection.card.writing}, ${selection.card.reading}${
-                    selection.card.meaning
-                      ? `, ${selection.card.meaning}`
-                      : ""
-                  }`
-                : `${selection.card.writing}${
-                    isKanji ? `, ${selection.card.reading}` : ""
-                  }. Reveal answer`
-            }
-            onClick={() => setRevealed(true)}
+      <div className="studyBoard">
+        <div className="studyStats" aria-label="Study progress">
+          <span
+            className="studyStat"
+            aria-label={`${progress.stable} of ${progress.total} stable`}
           >
-            <strong lang="ja">{selection.card.writing}</strong>
-            <span
-              className="studyReading"
-              lang={isKanji ? "ja" : "en"}
-              hidden={!isKanji && !revealed}
-            >
-              {selection.card.reading}
+            <span className="studyStatIcon" aria-hidden="true">
+              {progress.stable > 0 ? "★" : "☆"}
             </span>
-            <span className="studyMeaning" hidden={!isKanji || !revealed}>
-              {selection.card.meaning}
+            <strong>
+              {progress.stable}
+              <i aria-hidden="true">/{progress.total}</i>
+            </strong>
+            <small>stable</small>
+          </span>
+          <span className="studyProgressTrack">
+            <progress
+              aria-label={`${progress.stable} of ${progress.total} cards stable`}
+              max={progress.total}
+              value={progress.stable}
+            />
+          </span>
+          <span className="studyStat" aria-label={`${progress.due} due`}>
+            <span className="studyStatIcon" aria-hidden="true">
+              ↻
             </span>
-            <small>{revealed ? "How did it go?" : "Tap to reveal"}</small>
-          </button>
-
-          {revealed ? (
-            <div
-              className="studyActions"
-              role="group"
-              aria-label="Rate this answer"
-            >
-              <button type="button" onClick={() => rate(false)}>
-                Again
-              </button>
-              <button
-                className="studyGotIt"
-                type="button"
-                onClick={() => rate(true)}
-              >
-                Got it
-              </button>
-            </div>
-          ) : null}
-        </>
-      ) : (
-        <div className="studyRest" aria-live="polite">
-          <strong aria-hidden="true">✓</strong>
-          <span>{formatWait(selection.nextDueAt)}</span>
+            <strong>{progress.due}</strong>
+            <small>due</small>
+          </span>
         </div>
-      )}
 
-      <footer className="studyFooter">
-        <span aria-live="polite">{notice}</span>
-        <button className="studyReset" type="button" onClick={reset}>
-          Reset progress
-        </button>
-      </footer>
+        {selection.card ? (
+          <>
+            <button
+              ref={cardButtonRef}
+              className="studyCard"
+              type="button"
+              aria-expanded={revealed}
+              aria-label={
+                revealed
+                  ? `${selection.card.writing}, ${selection.card.reading}${
+                      selection.card.meaning
+                        ? `, ${selection.card.meaning}`
+                        : ""
+                    }`
+                  : `${selection.card.writing}${
+                      isKanji ? `, ${selection.card.reading}` : ""
+                    }. Reveal answer`
+              }
+              onClick={() => setRevealed(true)}
+            >
+              <strong lang="ja">{selection.card.writing}</strong>
+              <span
+                className="studyReading"
+                lang={isKanji ? "ja" : "en"}
+                hidden={!isKanji && !revealed}
+              >
+                {selection.card.reading}
+              </span>
+              <span className="studyMeaning" hidden={!isKanji || !revealed}>
+                {selection.card.meaning}
+              </span>
+              <small>{revealed ? "How did it go?" : "Tap to reveal"}</small>
+            </button>
+
+            {revealed ? (
+              <div
+                className="studyActions"
+                role="group"
+                aria-label="Rate this answer"
+              >
+                <button type="button" onClick={() => rate(false)}>
+                  Again
+                </button>
+                <button
+                  className="studyGotIt"
+                  type="button"
+                  onClick={() => rate(true)}
+                >
+                  Got it
+                </button>
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <div className="studyRest" aria-live="polite">
+            <strong aria-hidden="true">✓</strong>
+            <span>{formatWait(selection.nextDueAt)}</span>
+          </div>
+        )}
+
+        <footer className="studyFooter">
+          <span aria-live="polite">{notice}</span>
+          <button
+            className="studyReset"
+            type="button"
+            aria-label="Reset progress"
+            onClick={reset}
+          >
+            Reset
+          </button>
+        </footer>
+      </div>
     </section>
   );
 }

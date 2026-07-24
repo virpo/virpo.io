@@ -51,7 +51,10 @@ describe("StudyToy", () => {
     expect(selected).toBeDefined();
     expect(card.textContent).not.toContain("あ");
     expect(within(card).getByText(selected?.reading ?? "")).not.toBeVisible();
-    expect(screen.getByText(/0 \/ 46 stable/i)).toBeVisible();
+    expect(screen.getByLabelText("0 of 46 stable")).toBeVisible();
+    expect(screen.getByLabelText("46 due")).toBeVisible();
+    expect(document.querySelector(".studyBoard")).toBeVisible();
+    expect(document.querySelectorAll(".studyStat")).toHaveLength(2);
     expect(screen.queryByRole("group", { name: /rate this answer/i })).toBeNull();
   });
 
@@ -119,12 +122,12 @@ describe("StudyToy", () => {
     localStorage.setItem(LEGACY_STUDY_STORAGE_KEY, legacy);
 
     const first = render(<StudyToy />);
-    expect(await screen.findByText(/1 \/ 46 stable/i)).toBeVisible();
+    expect(await screen.findByLabelText("1 of 46 stable")).toBeVisible();
     expect(localStorage.getItem(LEGACY_STUDY_STORAGE_KEY)).toBe(legacy);
     first.unmount();
 
     render(<StudyToy />);
-    expect(await screen.findByText(/1 \/ 46 stable/i)).toBeVisible();
+    expect(await screen.findByLabelText("1 of 46 stable")).toBeVisible();
   });
 
   it("resets and persists fresh progress", async () => {
@@ -138,11 +141,11 @@ describe("StudyToy", () => {
     localStorage.setItem(STUDY_STORAGE_KEY, JSON.stringify(state));
     vi.spyOn(window, "confirm").mockReturnValue(true);
     render(<StudyToy />);
-    expect(await screen.findByText(/1 \/ 46 stable/i)).toBeVisible();
+    expect(await screen.findByLabelText("1 of 46 stable")).toBeVisible();
 
     fireEvent.click(screen.getByRole("button", { name: /reset progress/i }));
 
-    expect(await screen.findByText(/0 \/ 46 stable/i)).toBeVisible();
+    expect(await screen.findByLabelText("0 of 46 stable")).toBeVisible();
     expect(
       JSON.parse(localStorage.getItem(STUDY_STORAGE_KEY) ?? "{}").cards["h-a"],
     ).toEqual({ stage: 0, dueAt: 0, correct: 0, wrong: 0 });
@@ -193,23 +196,27 @@ describe("StudyToy", () => {
     expect(setItem).toHaveBeenCalled();
   });
 
-  it("keeps Study microtype readable with compact, clear action focus", () => {
+  it("uses compact bento modules with readable controls and no Arial fallback", () => {
     const css = readFileSync(resolve(process.cwd(), "app/globals.css"), "utf8");
+    const start = css.indexOf(".studyToy");
+    const end = css.indexOf(".homeEditorial", start);
+    const studyCss = css.slice(start, end);
+    const boardCss = studyCss.match(/\.studyBoard\s*\{([^}]*)}/s)?.[1] ?? "";
 
-    expect(css).toMatch(
-      /\.studyCard small\s*\{[^}]*font-size:\s*0\.75rem;[^}]*font-weight:\s*700;/s,
+    expect(boardCss).toContain("background: var(--ink)");
+    expect(boardCss).toContain("gap: 3px");
+    expect(studyCss).toMatch(
+      /\.studyStat\s*\{[^}]*background:\s*var\(--paper\);/s,
     );
-    expect(css).toMatch(
-      /\.studyProgress,\s*\.studyFooter\s*\{[^}]*font-size:\s*0\.75rem;/s,
+    expect(studyCss).toMatch(
+      /\.studyCard\s*\{[^}]*min-height:\s*44px;/s,
     );
-    expect(css).toMatch(
-      /\.studyActions button\s*\{[^}]*font-size:\s*0\.75rem;/s,
+    expect(studyCss).toMatch(
+      /\.studyActions button\s*\{[^}]*min-height:\s*44px;/s,
     );
-    expect(css).toMatch(
-      /\.studyReset\s*\{[^}]*min-height:\s*34px;[^}]*border:\s*1\.5px solid[^}]*border-radius:\s*999px;/s,
-    );
-    expect(css).toMatch(
+    expect(studyCss).toMatch(
       /\.studyActions button:focus-visible\s*\{[^}]*outline:\s*3px solid var\(--focus\);[^}]*box-shadow:\s*none;/s,
     );
+    expect(studyCss).not.toMatch(/Arial|Helvetica/);
   });
 });
