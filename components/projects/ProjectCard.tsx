@@ -21,7 +21,7 @@ export function ProjectCard({
         alt={project.image.alt}
         width={project.image.width}
         height={project.image.height}
-        loading={eager ? undefined : "lazy"}
+        loading={eager ? "eager" : "lazy"}
         decoding="async"
         style={project.image.position ? { objectPosition: project.image.position } : undefined}
       />

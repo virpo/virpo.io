@@ -8,10 +8,8 @@ import {
   WindowSeatToyPlaceholder,
 } from "../components/home/ToyPlaceholders";
 import { WritingPreview } from "../components/home/WritingPreview";
-import { ProjectCard } from "../components/projects/ProjectCard";
 import { SiteShell } from "../components/site/SiteShell";
 import { getPostSummaries } from "../lib/blog";
-import { projects } from "../lib/projects";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -46,7 +44,12 @@ export default function HomePage() {
             >
               <header className="sectionHeader">
                 <p className="sectionLabel">Latest writing</p>
-                <Link href="/blog/">All writing <span aria-hidden="true">→</span></Link>
+                <nav className="writingLinks" aria-label="Writing and projects">
+                  <Link href="/projects/">Projects</Link>
+                  <Link href="/blog/">
+                    All writing <span aria-hidden="true">→</span>
+                  </Link>
+                </nav>
               </header>
               <div className="writingList">
                 {posts.map((post) => (
@@ -56,21 +59,6 @@ export default function HomePage() {
             </section>
           </div>
         </div>
-
-        <section
-          className="selectedProjects"
-          aria-label="Selected projects"
-        >
-          <header className="tile sectionHeader selectedProjectsHeader">
-            <p className="sectionLabel">Selected work</p>
-            <Link href="/projects/">All projects <span aria-hidden="true">→</span></Link>
-          </header>
-          <div className="projectGrid projectGrid--teasers">
-            {projects.slice(0, 3).map((project) => (
-              <ProjectCard key={project.title} project={project} />
-            ))}
-          </div>
-        </section>
       </div>
     </SiteShell>
   );

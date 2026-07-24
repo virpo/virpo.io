@@ -4,6 +4,7 @@ import { resolve } from "node:path";
 const requiredFiles = [
   "dist/index.html",
   "dist/blog/index.html",
+  "dist/projects/index.html",
   "dist/blog/weird-use-of-ai-3/index.html",
   "dist/blog/weird-use-of-ai-1/index.html",
   "dist/blog/a-different-kind-of-hackathon/index.html",
@@ -39,6 +40,10 @@ const articleSlugs = [
   "a-different-kind-of-hackathon",
 ];
 
+const homeFile = "dist/index.html";
+const homeHtml = await readFile(resolve(homeFile), "utf8");
+assertExcludes(homeHtml, 'class="projectCard ', homeFile);
+
 for (const slug of articleSlugs) {
   const file = `dist/blog/${slug}/index.html`;
   const html = await readFile(resolve(file), "utf8");
@@ -56,6 +61,38 @@ for (const slug of articleSlugs) {
   for (const invalidMarkup of ["<p><figure", "</figure></p>", "<p></p>"]) {
     assertExcludes(html, invalidMarkup, file);
   }
+}
+
+const projectsFile = "dist/projects/index.html";
+const projectsHtml = await readFile(resolve(projectsFile), "utf8");
+assertIncludes(
+  projectsHtml,
+  'rel="canonical" href="https://virpo.io/projects/"',
+  projectsFile,
+);
+assertIncludes(
+  projectsHtml,
+  'property="og:url" content="https://virpo.io/projects/"',
+  projectsFile,
+);
+assertIncludes(projectsHtml, 'property="og:type" content="website"', projectsFile);
+assertIncludes(projectsHtml, 'name="twitter:card"', projectsFile);
+assertIncludes(projectsHtml, 'name="twitter:title"', projectsFile);
+
+const projectCardCount = (projectsHtml.match(/class="projectCard /g) ?? []).length;
+if (projectCardCount !== 6) {
+  throw new Error(`Expected ${projectsFile} to include 6 project cards`);
+}
+
+for (const media of [
+  "/assets/projects/youtldr-home.png",
+  "/assets/projects/zltastopa-sk-thumb.png",
+  "/assets/projects/mood-radio.jpg",
+  "/assets/projects/pegboard.jpg",
+  "/assets/projects/ai-build-week.jpg",
+  "/assets/projects/cmux-deck.jpeg",
+]) {
+  assertIncludes(projectsHtml, `src="${media}"`, projectsFile);
 }
 
 const rss = await readFile(resolve("dist/rss.xml"), "utf8");

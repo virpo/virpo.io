@@ -333,8 +333,7 @@ img {
 
 .homeFlow,
 .homeEditorial,
-.toyRail,
-.selectedProjects {
+.toyRail {
   display: grid;
   gap: var(--gap);
 }
@@ -603,15 +602,23 @@ img {
   border-bottom: 2px solid #e6ded4;
 }
 
-.sectionHeader > a {
+.sectionHeader > a,
+.writingLinks a {
   border-bottom: 1.5px solid currentColor;
   color: var(--muted);
   font-size: 0.69rem;
 }
 
 .sectionHeader > a:hover,
-.sectionHeader > a:focus-visible {
+.sectionHeader > a:focus-visible,
+.writingLinks a:hover,
+.writingLinks a:focus-visible {
   color: var(--kaki-text);
+}
+
+.writingLinks {
+  display: flex;
+  gap: 0.8rem;
 }
 
 .writingList {
@@ -688,11 +695,6 @@ img {
   padding-bottom: 0.12rem;
   border-bottom: 2px solid var(--kaki);
   color: var(--ink);
-}
-
-.selectedProjectsHeader {
-  border-bottom: 0;
-  background: var(--paper);
 }
 
 .projectGrid {
@@ -1168,10 +1170,6 @@ img {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .projectGrid--teasers .projectCard:last-child {
-    grid-column: 1 / -1;
-  }
-
   .siteFooter {
     align-items: flex-start;
     flex-direction: column;
@@ -1225,9 +1223,6 @@ img {
     grid-template-columns: 1fr;
   }
 
-  .projectGrid--teasers .projectCard:last-child {
-    grid-column: auto;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

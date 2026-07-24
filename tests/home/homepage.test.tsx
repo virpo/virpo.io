@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import HomePage from "../../app/page";
@@ -59,12 +61,12 @@ describe("homepage", () => {
     }
   });
 
-  it("links to three selected project teasers and the complete archive", () => {
-    render(<HomePage />);
-    const selectedWork = screen.getByRole("region", { name: "Selected projects" });
+  it("keeps projects on their own page behind a compact writing link", () => {
+    const { container } = render(<HomePage />);
+    const writing = screen.getByRole("region", { name: "Latest writing" });
 
-    expect(within(selectedWork).getAllByTestId("project-card")).toHaveLength(3);
-    expect(within(selectedWork).getByRole("link", { name: /all projects/i })).toHaveAttribute(
+    expect(container.querySelectorAll(".projectCard")).toHaveLength(0);
+    expect(within(writing).getByRole("link", { name: "Projects" })).toHaveAttribute(
       "href",
       expect.stringMatching(/^\/projects\/?$/),
     );
@@ -77,5 +79,25 @@ describe("homepage", () => {
     expect(container.querySelector("[data-toy-placeholder='sounds']")).toBeVisible();
     expect(container.querySelector("[data-toy-placeholder='window-seat']")).toBeVisible();
     expect(container.querySelector("[data-toy-placeholder='study']")).toBeVisible();
+  });
+
+  it("keeps temporary toys free of future audio, video, storage, and study engines", () => {
+    const source = readFileSync(
+      resolve(process.cwd(), "components/home/ToyPlaceholders.tsx"),
+      "utf8",
+    );
+
+    for (const forbiddenMarker of [
+      "<audio",
+      "<iframe",
+      "AudioContext",
+      "localStorage",
+      "createStudyState",
+      "selectNextCard",
+      "scoreCard",
+      "STUDY_STORAGE_KEY",
+    ]) {
+      expect(source).not.toContain(forbiddenMarker);
+    }
   });
 });
