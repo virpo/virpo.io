@@ -34,7 +34,7 @@ export const JAPAN_SOUNDS = [
 type AudioGraph = {
   context: AudioContext;
   source: MediaElementAudioSourceNode;
-  analyser: AnalyserNode;
+  analyser: AnalyserNode | null;
 };
 
 function audioContextConstructor() {
@@ -49,12 +49,20 @@ export function SoundsToy() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const graphRef = useRef<AudioGraph | null>(null);
   const graphUnavailableRef = useRef(false);
+  const operationQueueRef = useRef<Promise<void>>(Promise.resolve());
+  const operationTokenRef = useRef(0);
+  const pendingOperationsRef = useRef(0);
+  const desiredPlayingRef = useRef(false);
+  const indexRef = useRef(0);
+  const mountedRef = useRef(true);
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [status, setStatus] = useState("Press play");
+  const [playbackError, setPlaybackError] = useState<string | null>(null);
   const [waveformUnavailable, setWaveformUnavailable] = useState(false);
+  const [switching, setSwitching] = useState(false);
   const current = JAPAN_SOUNDS[index];
 
   useEffect(() => {
@@ -74,9 +82,12 @@ export function SoundsToy() {
 
   useEffect(
     () => () => {
+      mountedRef.current = false;
+      operationTokenRef.current += 1;
+      desiredPlayingRef.current = false;
       audioRef.current?.pause();
       graphRef.current?.source.disconnect?.();
-      graphRef.current?.analyser.disconnect?.();
+      graphRef.current?.analyser?.disconnect?.();
       void graphRef.current?.context.close();
     },
     [],
@@ -87,6 +98,14 @@ export function SoundsToy() {
       analyser.smoothingTimeConstant = reducedMotion ? 0 : 0.72;
     }
   }, [analyser, reducedMotion]);
+
+  function markWaveformUnavailable() {
+    graphUnavailableRef.current = true;
+    if (mountedRef.current) {
+      setAnalyser(null);
+      setWaveformUnavailable(true);
+    }
+  }
 
   async function ensureAudioGraph() {
     if (graphRef.current) {
@@ -100,91 +119,186 @@ export function SoundsToy() {
     const AudioContextClass = audioContextConstructor();
     const audio = audioRef.current;
     if (!AudioContextClass || !audio) {
-      graphUnavailableRef.current = true;
-      setWaveformUnavailable(true);
+      markWaveformUnavailable();
       return null;
     }
 
-    let context: AudioContext | null = null;
+    const context = new AudioContextClass();
+    let source: MediaElementAudioSourceNode | null = null;
+
     try {
-      context = new AudioContextClass();
-      const source = context.createMediaElementSource(audio);
+      if (context.state === "suspended") await context.resume();
+
       const nextAnalyser = context.createAnalyser();
       nextAnalyser.fftSize = 64;
       nextAnalyser.smoothingTimeConstant = reducedMotion ? 0 : 0.72;
-      source.connect(nextAnalyser);
-      nextAnalyser.connect(context.destination);
-      graphRef.current = {
-        context,
-        source,
-        analyser: nextAnalyser,
-      };
-      if (context.state === "suspended") await context.resume();
-      setWaveformUnavailable(false);
-      setAnalyser(nextAnalyser);
-      return nextAnalyser;
+      source = context.createMediaElementSource(audio);
+
+      try {
+        source.connect(nextAnalyser);
+        nextAnalyser.connect(context.destination);
+        graphRef.current = {
+          context,
+          source,
+          analyser: nextAnalyser,
+        };
+        if (mountedRef.current) {
+          setWaveformUnavailable(false);
+          setAnalyser(nextAnalyser);
+        }
+        return nextAnalyser;
+      } catch {
+        source.disconnect?.();
+        source.connect(context.destination);
+        graphRef.current = { context, source, analyser: null };
+        markWaveformUnavailable();
+        return null;
+      }
     } catch {
-      graphUnavailableRef.current = true;
-      setWaveformUnavailable(true);
-      void context?.close();
+      if (source) {
+        // Once a media element is captured it must remain attached to a live
+        // AudioContext. A direct route preserves audible playback.
+        try {
+          source.disconnect?.();
+          source.connect(context.destination);
+          graphRef.current = { context, source, analyser: null };
+        } catch {
+          graphRef.current = { context, source, analyser: null };
+        }
+      } else {
+        void context.close();
+      }
+      markWaveformUnavailable();
       return null;
     }
   }
 
-  async function play() {
-    const audio = audioRef.current;
-    if (!audio) return;
-    await ensureAudioGraph();
-    try {
-      await audio.play();
-      setPlaying(true);
-      setStatus("Playing");
-    } catch {
-      setPlaying(false);
-      setStatus("Couldn’t play this sound");
-    }
+  function enqueueOperation(operation: () => Promise<void>) {
+    pendingOperationsRef.current += 1;
+    setSwitching(true);
+    operationQueueRef.current = operationQueueRef.current
+      .catch(() => undefined)
+      .then(operation)
+      .catch(() => undefined)
+      .finally(() => {
+        pendingOperationsRef.current -= 1;
+        if (mountedRef.current && pendingOperationsRef.current === 0) {
+          setSwitching(false);
+        }
+      });
   }
 
-  function pause() {
-    audioRef.current?.pause();
-    setPlaying(false);
-    setStatus("Paused · press play");
-  }
+  function requestPlay() {
+    const token = ++operationTokenRef.current;
+    desiredPlayingRef.current = true;
+    setPlaybackError(null);
+    setStatus("Starting…");
 
-  async function selectSound(nextIndex: number) {
-    const audio = audioRef.current;
-    const normalized =
-      (nextIndex + JAPAN_SOUNDS.length) % JAPAN_SOUNDS.length;
-    const continuePlaying = playing;
-    setIndex(normalized);
-    setPlaying(false);
-    if (!audio) return;
-    audio.pause();
-    audio.src = JAPAN_SOUNDS[normalized].src;
-    audio.currentTime = 0;
-    if (continuePlaying) {
+    enqueueOperation(async () => {
+      const audio = audioRef.current;
+      if (!audio) return;
+      await ensureAudioGraph();
+
       try {
         await audio.play();
-        setPlaying(true);
-        setStatus("Playing");
+        if (!desiredPlayingRef.current) {
+          audio.pause();
+          return;
+        }
+        if (mountedRef.current && token === operationTokenRef.current) {
+          setPlaying(true);
+          setPlaybackError(null);
+          setStatus("Playing");
+        }
       } catch {
-        setStatus("Couldn’t play this sound");
+        if (mountedRef.current && token === operationTokenRef.current) {
+          desiredPlayingRef.current = false;
+          setPlaying(false);
+          setPlaybackError("Couldn’t play this sound");
+        }
       }
-    } else {
-      setStatus("Press play");
-    }
+    });
+  }
+
+  function requestPause() {
+    const token = ++operationTokenRef.current;
+    desiredPlayingRef.current = false;
+    audioRef.current?.pause();
+    setPlaying(false);
+    setPlaybackError(null);
+    setStatus("Paused · press play");
+
+    enqueueOperation(async () => {
+      audioRef.current?.pause();
+      if (mountedRef.current && token === operationTokenRef.current) {
+        setPlaying(false);
+      }
+    });
+  }
+
+  function selectSound(nextIndex: number) {
+    const normalized =
+      (nextIndex + JAPAN_SOUNDS.length) % JAPAN_SOUNDS.length;
+    const token = ++operationTokenRef.current;
+    indexRef.current = normalized;
+    setIndex(normalized);
+    setPlaying(false);
+    setPlaybackError(null);
+    setStatus(desiredPlayingRef.current ? "Switching…" : "Press play");
+
+    enqueueOperation(async () => {
+      const audio = audioRef.current;
+      if (!audio) return;
+      audio.pause();
+      audio.src = JAPAN_SOUNDS[normalized].src;
+      audio.currentTime = 0;
+
+      if (!desiredPlayingRef.current) {
+        if (mountedRef.current && token === operationTokenRef.current) {
+          setStatus("Press play");
+        }
+        return;
+      }
+
+      try {
+        await audio.play();
+        if (!desiredPlayingRef.current) {
+          audio.pause();
+          return;
+        }
+        if (mountedRef.current && token === operationTokenRef.current) {
+          setPlaying(true);
+          setPlaybackError(null);
+          setStatus("Playing");
+        }
+      } catch {
+        if (mountedRef.current && token === operationTokenRef.current) {
+          desiredPlayingRef.current = false;
+          setPlaying(false);
+          setPlaybackError("Couldn’t play this sound");
+        }
+      }
+    });
   }
 
   function handleEnded() {
-    const nextIndex = (index + 1) % JAPAN_SOUNDS.length;
+    const nextIndex = (indexRef.current + 1) % JAPAN_SOUNDS.length;
+    operationTokenRef.current += 1;
+    desiredPlayingRef.current = false;
+    indexRef.current = nextIndex;
     if (audioRef.current) {
       audioRef.current.src = JAPAN_SOUNDS[nextIndex].src;
       audioRef.current.currentTime = 0;
     }
     setPlaying(false);
+    setPlaybackError(null);
     setStatus("Press play");
     setIndex(nextIndex);
   }
+
+  const visibleStatus =
+    playbackError ??
+    (waveformUnavailable ? `${status} · waveform unavailable` : status);
 
   return (
     <section
@@ -203,7 +317,9 @@ export function SoundsToy() {
           type="button"
           aria-label={`${playing ? "Pause" : "Play"} ${current.title}`}
           aria-pressed={playing}
-          onClick={playing ? pause : play}
+          onClick={() =>
+            desiredPlayingRef.current ? requestPause() : requestPlay()
+          }
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             {playing ? (
@@ -223,24 +339,25 @@ export function SoundsToy() {
         <div className="soundMeta">
           <div>
             <strong>{current.title}</strong>
-            <span aria-live="polite">
-              {waveformUnavailable
-                ? "Live waveform unavailable · audio still plays"
-                : status}
-            </span>
+            <span aria-live="polite">{visibleStatus}</span>
           </div>
-          <div className="soundSteps">
+          <div
+            className="soundSteps"
+            role="group"
+            aria-label="Sound navigation"
+            aria-busy={switching}
+          >
             <button
               type="button"
               aria-label="Previous sound"
-              onClick={() => void selectSound(index - 1)}
+              onClick={() => selectSound(indexRef.current - 1)}
             >
               <span aria-hidden="true">←</span>
             </button>
             <button
               type="button"
               aria-label="Next sound"
-              onClick={() => void selectSound(index + 1)}
+              onClick={() => selectSound(indexRef.current + 1)}
             >
               <span aria-hidden="true">→</span>
             </button>
@@ -253,8 +370,10 @@ export function SoundsToy() {
         preload="metadata"
         onEnded={handleEnded}
         onError={() => {
+          operationTokenRef.current += 1;
+          desiredPlayingRef.current = false;
           setPlaying(false);
-          setStatus("Sound unavailable");
+          setPlaybackError("Sound unavailable");
         }}
       />
     </section>

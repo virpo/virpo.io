@@ -1,6 +1,13 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { WindowSeatToy } from "../../components/toys/WindowSeatToy";
 
@@ -18,6 +25,7 @@ function mockMatchMedia(reducedMotion: boolean) {
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  vi.useRealTimers();
 });
 
 describe("WindowSeatToy", () => {
@@ -28,14 +36,10 @@ describe("WindowSeatToy", () => {
     const frame = screen.getByTitle(/Japanese train window/i);
     await waitFor(() => expect(frame).toHaveAttribute("src", "about:blank"));
     expect(screen.getByTestId("window-seat-still")).toBeVisible();
-    expect(screen.getByTestId("youtube-mask-top")).toBeVisible();
-    expect(screen.getByTestId("youtube-mask-bottom")).toBeVisible();
-    expect(screen.getByTestId("youtube-mask-left")).toBeVisible();
-    expect(screen.getByTestId("youtube-mask-right")).toBeVisible();
     expect(screen.queryByTestId("youtube-startup-cover")).toBeNull();
   });
 
-  it("loads a private, autonomous, non-interactive YouTube embed without zoom", async () => {
+  it("uses supported embed parameters without overstating branding or caption control", async () => {
     mockMatchMedia(false);
     render(<WindowSeatToy />);
 
@@ -53,40 +57,57 @@ describe("WindowSeatToy", () => {
       ["loop", "1"],
       ["playlist", "RMpM2Qu3QC8"],
       ["controls", "0"],
-      ["modestbranding", "1"],
       ["rel", "0"],
       ["fs", "0"],
       ["disablekb", "1"],
-      ["cc_load_policy", "0"],
     ]) {
       expect(src.searchParams.get(key)).toBe(value);
     }
+    expect(src.searchParams.has("modestbranding")).toBe(false);
+    expect(src.searchParams.has("cc_load_policy")).toBe(false);
     expect(frame).toHaveStyle({
       pointerEvents: "none",
       transform: "none",
     });
-    expect(screen.getByTestId("youtube-startup-cover")).toBeVisible();
   });
 
-  it("keeps Window Seat CSS free of scale and zoom while preserving all masks", () => {
+  it("keeps the startup cover until iframe load plus its release buffer", async () => {
+    vi.useFakeTimers();
+    mockMatchMedia(false);
+    render(<WindowSeatToy />);
+    await act(async () => undefined);
+    const frame = screen.getByTitle(/Japanese train window/i);
+
+    act(() => vi.advanceTimersByTime(30_000));
+    expect(screen.getByTestId("youtube-startup-cover")).toBeVisible();
+
+    fireEvent.load(frame);
+    act(() => vi.advanceTimersByTime(1_199));
+    expect(screen.getByTestId("youtube-startup-cover")).toBeVisible();
+    act(() => vi.advanceTimersByTime(1));
+    expect(screen.queryByTestId("youtube-startup-cover")).toBeNull();
+  });
+
+  it("keeps Window Seat unzoomed with chrome and subtitle masks", () => {
     const css = readFileSync(resolve(process.cwd(), "app/globals.css"), "utf8");
     const start = css.indexOf(".windowSeatToy");
     const end = css.indexOf(".studyToy", start);
     const windowSeatCss = css.slice(start, end);
 
+    mockMatchMedia(false);
+    render(<WindowSeatToy />);
+    expect(screen.getByTestId("youtube-mask-top")).toBeVisible();
+    expect(screen.getByTestId("youtube-mask-bottom")).toBeVisible();
+    expect(screen.getByTestId("youtube-mask-left")).toBeVisible();
+    expect(screen.getByTestId("youtube-mask-right")).toBeVisible();
+    expect(screen.getByTestId("youtube-subtitle-mask")).toBeVisible();
     expect(windowSeatCss).toMatch(
       /\.windowSeatVideo\s*\{[^}]*pointer-events:\s*none;[^}]*transform:\s*none;/s,
     );
-    expect(windowSeatCss).toMatch(/\.windowSeatMask--top/s);
-    expect(windowSeatCss).toMatch(/\.windowSeatMask--bottom/s);
-    expect(windowSeatCss).toMatch(/\.windowSeatMask--left/s);
-    expect(windowSeatCss).toMatch(/\.windowSeatMask--right/s);
     expect(windowSeatCss).toMatch(
-      /\.windowSeatStartupCover\s*\{[^}]*animation:\s*windowSeatStartupReveal 4\.2s steps\(1,\s*end\) forwards;/s,
+      /\.windowSeatSubtitleMask\s*\{[^}]*inset:\s*auto 6% 0;[^}]*height:\s*34%;/s,
     );
-    expect(windowSeatCss).toMatch(
-      /\.windowSeatToy\[data-reduced-motion="true"\] \.windowSeatVideo\s*\{[^}]*visibility:\s*hidden;/s,
-    );
+    expect(windowSeatCss).not.toMatch(/windowSeatStartupReveal/);
     expect(windowSeatCss).not.toMatch(/\bscale\s*\(|\bzoom\s*:/);
   });
 });

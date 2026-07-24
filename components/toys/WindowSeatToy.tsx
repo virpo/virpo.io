@@ -1,16 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const TRAIN_VIDEO_ID = "RMpM2Qu3QC8";
 const TRAIN_VIDEO_URL =
   `https://www.youtube-nocookie.com/embed/${TRAIN_VIDEO_ID}` +
   `?start=20&autoplay=1&mute=1&controls=0&loop=1` +
-  `&playlist=${TRAIN_VIDEO_ID}&modestbranding=1&rel=0&playsinline=1` +
-  "&iv_load_policy=3&disablekb=1&fs=0&cc_load_policy=0";
+  `&playlist=${TRAIN_VIDEO_ID}&rel=0&playsinline=1` +
+  "&iv_load_policy=3&disablekb=1&fs=0";
 
 export function WindowSeatToy() {
   const [reducedMotion, setReducedMotion] = useState(true);
+  const [coverVisible, setCoverVisible] = useState(true);
+  const coverTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!window.matchMedia) {
@@ -18,11 +20,34 @@ export function WindowSeatToy() {
       return;
     }
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReducedMotion(query.matches);
+    const update = () => {
+      if (coverTimerRef.current !== null) {
+        window.clearTimeout(coverTimerRef.current);
+        coverTimerRef.current = null;
+      }
+      setReducedMotion(query.matches);
+      setCoverVisible(true);
+    };
     update();
     query.addEventListener?.("change", update);
-    return () => query.removeEventListener?.("change", update);
+    return () => {
+      query.removeEventListener?.("change", update);
+      if (coverTimerRef.current !== null) {
+        window.clearTimeout(coverTimerRef.current);
+      }
+    };
   }, []);
+
+  function handleFrameLoad() {
+    if (reducedMotion) return;
+    if (coverTimerRef.current !== null) {
+      window.clearTimeout(coverTimerRef.current);
+    }
+    coverTimerRef.current = window.setTimeout(() => {
+      setCoverVisible(false);
+      coverTimerRef.current = null;
+    }, 1_200);
+  }
 
   return (
     <section
@@ -48,6 +73,7 @@ export function WindowSeatToy() {
             referrerPolicy="strict-origin-when-cross-origin"
             tabIndex={-1}
             aria-hidden="true"
+            onLoad={handleFrameLoad}
             style={{ pointerEvents: "none", transform: "none" }}
           />
           <span
@@ -70,7 +96,12 @@ export function WindowSeatToy() {
             data-testid="youtube-mask-right"
             aria-hidden="true"
           />
-          {!reducedMotion ? (
+          <span
+            className="windowSeatMask windowSeatSubtitleMask"
+            data-testid="youtube-subtitle-mask"
+            aria-hidden="true"
+          />
+          {!reducedMotion && coverVisible ? (
             <span
               className="windowSeatStartupCover"
               data-testid="youtube-startup-cover"

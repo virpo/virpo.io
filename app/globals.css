@@ -588,6 +588,17 @@ img {
   background: linear-gradient(270deg, #0d0d0d, transparent);
 }
 
+.windowSeatSubtitleMask {
+  inset: auto 6% 0;
+  height: 34%;
+  background: linear-gradient(
+    180deg,
+    transparent 0 18%,
+    rgba(13, 13, 13, 0.94) 48%,
+    #0d0d0d 66%
+  );
+}
+
 .windowSeatStartupCover {
   position: absolute;
   z-index: 3;
@@ -596,7 +607,6 @@ img {
     linear-gradient(165deg, transparent 49%, #557b4f 50% 64%, transparent 65%),
     linear-gradient(var(--paper) 0 40%, #c9d6c3 40% 61%, #718c58 61%);
   pointer-events: none;
-  animation: windowSeatStartupReveal 4.2s steps(1, end) forwards;
 }
 
 .windowSeatToy[data-reduced-motion="true"] .windowSeatVideo {
@@ -605,13 +615,6 @@ img {
 
 .windowSeatToy[data-reduced-motion="true"] .windowSeatMask {
   display: none;
-}
-
-@keyframes windowSeatStartupReveal {
-  to {
-    visibility: hidden;
-    opacity: 0;
-  }
 }
 
 .windowSeatGlass,

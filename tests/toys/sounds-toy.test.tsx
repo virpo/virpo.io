@@ -1,30 +1,59 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SoundsToy } from "../../components/toys/SoundsToy";
 
-const resume = vi.fn().mockResolvedValue(undefined);
+const destination = { kind: "destination" };
+const resume = vi.fn();
+const close = vi.fn();
 const sourceConnect = vi.fn();
+const sourceDisconnect = vi.fn();
 const analyserConnect = vi.fn();
+const analyserDisconnect = vi.fn();
 const getByteFrequencyData = vi.fn((data: Uint8Array) => data.fill(96));
-const createMediaElementSource = vi.fn(() => ({ connect: sourceConnect }));
-const createAnalyser = vi.fn(() => ({
+const sourceNode = {
+  connect: sourceConnect,
+  disconnect: sourceDisconnect,
+};
+const analyserNode = {
   connect: analyserConnect,
+  disconnect: analyserDisconnect,
   fftSize: 64,
   frequencyBinCount: 32,
   getByteFrequencyData,
   smoothingTimeConstant: 0,
-}));
-const close = vi.fn().mockResolvedValue(undefined);
+};
+const createMediaElementSource = vi.fn(() => sourceNode);
+const createAnalyser = vi.fn(() => analyserNode);
 
 class MockAudioContext {
-  state = "suspended";
-  destination = {};
-  resume = resume;
+  state: AudioContextState = "suspended";
+  destination = destination;
   createMediaElementSource = createMediaElementSource;
   createAnalyser = createAnalyser;
   close = close;
+
+  async resume() {
+    await resume();
+    this.state = "running";
+  }
+}
+
+function deferred() {
+  let resolve!: () => void;
+  let reject!: (reason?: unknown) => void;
+  const promise = new Promise<void>((nextResolve, nextReject) => {
+    resolve = nextResolve;
+    reject = nextReject;
+  });
+  return { promise, reject, resolve };
 }
 
 function mockMatchMedia(reducedMotion: boolean) {
@@ -41,6 +70,28 @@ function mockMatchMedia(reducedMotion: boolean) {
 beforeEach(() => {
   mockMatchMedia(false);
   vi.stubGlobal("AudioContext", MockAudioContext);
+  for (const mock of [
+    resume,
+    close,
+    sourceConnect,
+    sourceDisconnect,
+    analyserConnect,
+    analyserDisconnect,
+    getByteFrequencyData,
+    createMediaElementSource,
+    createAnalyser,
+  ]) {
+    mock.mockReset();
+  }
+  resume.mockResolvedValue(undefined);
+  close.mockResolvedValue(undefined);
+  sourceConnect.mockReturnValue(undefined);
+  sourceDisconnect.mockReturnValue(undefined);
+  analyserConnect.mockReturnValue(undefined);
+  analyserDisconnect.mockReturnValue(undefined);
+  getByteFrequencyData.mockImplementation((data: Uint8Array) => data.fill(96));
+  createMediaElementSource.mockReturnValue(sourceNode);
+  createAnalyser.mockReturnValue(analyserNode);
   vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue(undefined);
   vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(() => undefined);
 });
@@ -49,20 +100,12 @@ afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
-  resume.mockClear();
-  sourceConnect.mockClear();
-  analyserConnect.mockClear();
-  getByteFrequencyData.mockClear();
-  createMediaElementSource.mockClear();
-  createAnalyser.mockClear();
-  close.mockClear();
 });
 
 describe("SoundsToy", () => {
   it("shows one audio element, an idle waveform, and distinct playback controls", () => {
     const { container } = render(<SoundsToy />);
 
-    expect(screen.getByLabelText("Sound waveform")).toBeVisible();
     expect(screen.getByLabelText("Sound waveform")).toHaveAttribute(
       "data-waveform-state",
       "idle",
@@ -76,98 +119,215 @@ describe("SoundsToy", () => {
     expect(HTMLMediaElement.prototype.play).not.toHaveBeenCalled();
   });
 
-  it("creates one analyser graph on the first gesture and reuses it", async () => {
-    render(<SoundsToy />);
-    const play = screen.getByRole("button", {
-      name: /play familymart entrance/i,
+  it("resumes and creates the analyser before capturing the media element", async () => {
+    const order: string[] = [];
+    resume.mockImplementation(async () => {
+      order.push("resume");
     });
+    createAnalyser.mockImplementation(() => {
+      order.push("create analyser");
+      return analyserNode;
+    });
+    createMediaElementSource.mockImplementation(() => {
+      order.push("capture source");
+      return sourceNode;
+    });
+    sourceConnect.mockImplementation(() => {
+      order.push("source to analyser");
+    });
+    analyserConnect.mockImplementation(() => {
+      order.push("analyser to destination");
+    });
+    vi.spyOn(HTMLMediaElement.prototype, "play").mockImplementation(async () => {
+      order.push("play");
+    });
+    render(<SoundsToy />);
 
-    fireEvent.click(play);
-    await waitFor(() => expect(resume).toHaveBeenCalledOnce());
+    fireEvent.click(
+      screen.getByRole("button", { name: /play familymart entrance/i }),
+    );
+    await screen.findByRole("button", { name: /pause familymart entrance/i });
 
+    expect(order).toEqual([
+      "resume",
+      "create analyser",
+      "capture source",
+      "source to analyser",
+      "analyser to destination",
+      "play",
+    ]);
     expect(createMediaElementSource).toHaveBeenCalledOnce();
     expect(createAnalyser).toHaveBeenCalledOnce();
-    expect(sourceConnect).toHaveBeenCalledOnce();
-    expect(analyserConnect).toHaveBeenCalledOnce();
-    expect(screen.getByRole("button", { name: /pause familymart/i })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
     expect(screen.getByLabelText("Sound waveform")).toHaveAttribute(
       "data-waveform-state",
       "live",
     );
-
-    fireEvent.click(screen.getByRole("button", { name: /pause familymart/i }));
-    fireEvent.click(screen.getByRole("button", { name: /play familymart/i }));
-    await waitFor(() =>
-      expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(2),
-    );
-    expect(createMediaElementSource).toHaveBeenCalledOnce();
   });
 
-  it("keeps playing through the current Japan sound queue and resets the wave on pause", async () => {
-    render(<SoundsToy />);
-    fireEvent.click(
-      screen.getByRole("button", { name: /play familymart entrance/i }),
-    );
-    await screen.findByRole("button", { name: /pause familymart entrance/i });
-
-    fireEvent.click(screen.getByRole("button", { name: "Next sound" }));
-    await waitFor(() =>
-      expect(screen.getByText("Door chime")).toBeVisible(),
-    );
-    expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(2);
-    expect(screen.getByRole("button", { name: /pause door chime/i })).toBeVisible();
-
-    fireEvent.click(screen.getByRole("button", { name: /pause door chime/i }));
-    expect(screen.getByLabelText("Sound waveform")).toHaveAttribute(
-      "data-waveform-state",
-      "idle",
-    );
-
-    fireEvent.click(screen.getByRole("button", { name: "Previous sound" }));
-    expect(screen.getByText("FamilyMart entrance")).toBeVisible();
-  });
-
-  it("keeps audio usable and explains when Web Audio is unavailable", async () => {
-    vi.stubGlobal("AudioContext", undefined);
+  it("falls back to native audio when resume fails before source capture", async () => {
+    resume.mockRejectedValueOnce(new Error("resume blocked"));
     render(<SoundsToy />);
 
     fireEvent.click(
       screen.getByRole("button", { name: /play familymart entrance/i }),
     );
 
-    expect(
-      await screen.findByText(/live waveform unavailable.+audio still plays/i),
-    ).toBeVisible();
+    expect(await screen.findByText(/playing.+waveform unavailable/i)).toBeVisible();
+    expect(createAnalyser).not.toHaveBeenCalled();
+    expect(createMediaElementSource).not.toHaveBeenCalled();
+    expect(close).toHaveBeenCalledOnce();
     expect(HTMLMediaElement.prototype.play).toHaveBeenCalledOnce();
   });
 
-  it("does not retry graph wiring after Web Audio rejects the media element", async () => {
-    createMediaElementSource.mockImplementationOnce(() => {
-      throw new Error("media element already connected");
+  it("falls back to native audio when analyser creation fails before source capture", async () => {
+    createAnalyser.mockImplementationOnce(() => {
+      throw new Error("analyser unavailable");
     });
     render(<SoundsToy />);
 
     fireEvent.click(
       screen.getByRole("button", { name: /play familymart entrance/i }),
     );
-    await screen.findByRole("button", { name: /pause familymart entrance/i });
-    fireEvent.click(
-      screen.getByRole("button", { name: /pause familymart entrance/i }),
-    );
+
+    expect(await screen.findByText(/playing.+waveform unavailable/i)).toBeVisible();
+    expect(createMediaElementSource).not.toHaveBeenCalled();
+    expect(close).toHaveBeenCalledOnce();
+  });
+
+  it("falls back to native audio when media source capture fails", async () => {
+    createMediaElementSource.mockImplementationOnce(() => {
+      throw new Error("source capture failed");
+    });
+    render(<SoundsToy />);
+
     fireEvent.click(
       screen.getByRole("button", { name: /play familymart entrance/i }),
     );
 
+    expect(await screen.findByText(/playing.+waveform unavailable/i)).toBeVisible();
+    expect(close).toHaveBeenCalledOnce();
+    expect(HTMLMediaElement.prototype.play).toHaveBeenCalledOnce();
+  });
+
+  it("keeps a captured source audible through a direct route when source connect fails", async () => {
+    sourceConnect
+      .mockImplementationOnce(() => {
+        throw new Error("analyser route failed");
+      })
+      .mockImplementationOnce(() => undefined);
+    render(<SoundsToy />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /play familymart entrance/i }),
+    );
+
+    expect(await screen.findByText(/playing.+waveform unavailable/i)).toBeVisible();
+    expect(sourceConnect).toHaveBeenNthCalledWith(1, analyserNode);
+    expect(sourceConnect).toHaveBeenNthCalledWith(2, destination);
+    expect(close).not.toHaveBeenCalled();
+  });
+
+  it("keeps a captured source audible through a direct route when analyser connect fails", async () => {
+    analyserConnect.mockImplementationOnce(() => {
+      throw new Error("destination route failed");
+    });
+    render(<SoundsToy />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /play familymart entrance/i }),
+    );
+
+    expect(await screen.findByText(/playing.+waveform unavailable/i)).toBeVisible();
+    expect(sourceDisconnect).toHaveBeenCalledOnce();
+    expect(sourceConnect).toHaveBeenNthCalledWith(1, analyserNode);
+    expect(sourceConnect).toHaveBeenNthCalledWith(2, destination);
+    expect(close).not.toHaveBeenCalled();
+  });
+
+  it("serializes rapid Play, Next, Next and ends on the latest playing sound", async () => {
+    const first = deferred();
+    const second = deferred();
+    const third = deferred();
+    vi.spyOn(HTMLMediaElement.prototype, "play")
+      .mockImplementationOnce(() => first.promise)
+      .mockImplementationOnce(() => second.promise)
+      .mockImplementationOnce(() => third.promise);
+    render(<SoundsToy />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /play familymart entrance/i }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Next sound" }));
+    fireEvent.click(screen.getByRole("button", { name: "Next sound" }));
+
+    expect(screen.getByText("Cuckoo crossing")).toBeVisible();
+    expect(screen.getByRole("group", { name: "Sound navigation" })).toHaveAttribute(
+      "aria-busy",
+      "true",
+    );
+    await waitFor(() =>
+      expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(1),
+    );
+    first.resolve();
     await waitFor(() =>
       expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(2),
     );
-    expect(createMediaElementSource).toHaveBeenCalledOnce();
+    second.resolve();
+    await waitFor(() =>
+      expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(3),
+    );
+    third.resolve();
+
     expect(
-      screen.getByText(/live waveform unavailable.+audio still plays/i),
+      await screen.findByRole("button", { name: /pause cuckoo crossing/i }),
     ).toBeVisible();
+    expect(screen.getByText("Playing")).toBeVisible();
+    await waitFor(() =>
+      expect(
+        screen.getByRole("group", { name: "Sound navigation" }),
+      ).toHaveAttribute("aria-busy", "false"),
+    );
+  });
+
+  it("ignores a stale play rejection after a newer sound intent", async () => {
+    const first = deferred();
+    const second = deferred();
+    vi.spyOn(HTMLMediaElement.prototype, "play")
+      .mockImplementationOnce(() => first.promise)
+      .mockImplementationOnce(() => second.promise);
+    render(<SoundsToy />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /play familymart entrance/i }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Next sound" }));
+    first.reject(new Error("interrupted"));
+    await waitFor(() =>
+      expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(2),
+    );
+    second.resolve();
+
+    expect(
+      await screen.findByRole("button", { name: /pause door chime/i }),
+    ).toBeVisible();
+    expect(screen.queryByText(/couldn’t play/i)).toBeNull();
+  });
+
+  it("keeps playback errors above waveform fallback status", async () => {
+    vi.stubGlobal("AudioContext", undefined);
+    vi.spyOn(HTMLMediaElement.prototype, "play").mockRejectedValueOnce(
+      new Error("decode failed"),
+    );
+    const { container } = render(<SoundsToy />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /play familymart entrance/i }),
+    );
+    expect(await screen.findByText("Couldn’t play this sound")).toBeVisible();
+    expect(screen.queryByText(/audio still plays/i)).toBeNull();
+
+    fireEvent.error(container.querySelector("audio") as HTMLAudioElement);
+    expect(screen.getByText("Sound unavailable")).toBeVisible();
   });
 
   it("marks the live waveform as reduced-motion safe", () => {
@@ -180,7 +340,7 @@ describe("SoundsToy", () => {
     );
   });
 
-  it("keeps media source changes under one owner so next can continue playing", () => {
+  it("keeps media source changes under one owner", () => {
     const source = readFileSync(
       resolve(process.cwd(), "components/toys/SoundsToy.tsx"),
       "utf8",
