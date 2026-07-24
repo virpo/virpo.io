@@ -88,7 +88,7 @@ describe("WindowSeatToy", () => {
     expect(screen.queryByTestId("youtube-startup-cover")).toBeNull();
   });
 
-  it("keeps Window Seat unzoomed with chrome and subtitle masks", () => {
+  it("keeps Window Seat unzoomed and free of overlay masks", () => {
     const css = readFileSync(resolve(process.cwd(), "app/globals.css"), "utf8");
     const start = css.indexOf(".windowSeatToy");
     const end = css.indexOf(".studyToy", start);
@@ -96,18 +96,17 @@ describe("WindowSeatToy", () => {
 
     mockMatchMedia(false);
     render(<WindowSeatToy />);
-    expect(screen.getByTestId("youtube-mask-top")).toBeVisible();
-    expect(screen.getByTestId("youtube-mask-bottom")).toBeVisible();
-    expect(screen.getByTestId("youtube-mask-left")).toBeVisible();
-    expect(screen.getByTestId("youtube-mask-right")).toBeVisible();
-    expect(screen.getByTestId("youtube-subtitle-mask")).toBeVisible();
+    expect(screen.queryByTestId("youtube-mask-top")).toBeNull();
+    expect(screen.queryByTestId("youtube-mask-bottom")).toBeNull();
+    expect(screen.queryByTestId("youtube-mask-left")).toBeNull();
+    expect(screen.queryByTestId("youtube-mask-right")).toBeNull();
+    expect(screen.queryByTestId("youtube-subtitle-mask")).toBeNull();
     expect(screen.getByTestId("youtube-compass-mask")).toBeVisible();
     expect(windowSeatCss).toMatch(
       /\.windowSeatVideo\s*\{[^}]*pointer-events:\s*none;[^}]*transform:\s*none;/s,
     );
-    expect(windowSeatCss).toMatch(
-      /\.windowSeatSubtitleMask\s*\{[^}]*inset:\s*auto 6% 0;[^}]*height:\s*34%;/s,
-    );
+    expect(windowSeatCss).not.toMatch(/\.windowSeatMask/);
+    expect(windowSeatCss).not.toMatch(/\.windowSeatSubtitleMask/);
     expect(windowSeatCss).toMatch(
       /\.windowSeatCompassMask\s*\{[^}]*position:\s*absolute;[^}]*z-index:\s*10;[^}]*background:\s*url\("\/assets\/train-window\.png"\)[^;]*;[^}]*mask-image:\s*radial-gradient\(/s,
     );

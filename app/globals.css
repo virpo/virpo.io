@@ -553,48 +553,6 @@ img {
   transform: none;
 }
 
-.windowSeatMask {
-  position: absolute;
-  z-index: 2;
-  display: block;
-  pointer-events: none;
-}
-
-.windowSeatMask--top {
-  inset: 0 0 auto;
-  height: 17%;
-  background: linear-gradient(#0d0d0d 0 54%, rgba(13, 13, 13, 0.88) 72%, transparent);
-}
-
-.windowSeatMask--bottom {
-  inset: auto 0 0;
-  height: 18%;
-  background: linear-gradient(transparent, rgba(13, 13, 13, 0.9) 38%, #0d0d0d 68%);
-}
-
-.windowSeatMask--left {
-  inset: 0 auto 0 0;
-  width: 4%;
-  background: linear-gradient(90deg, #0d0d0d, transparent);
-}
-
-.windowSeatMask--right {
-  inset: 0 0 0 auto;
-  width: 4%;
-  background: linear-gradient(270deg, #0d0d0d, transparent);
-}
-
-.windowSeatSubtitleMask {
-  inset: auto 6% 0;
-  height: 34%;
-  background: linear-gradient(
-    180deg,
-    transparent 0 18%,
-    rgba(13, 13, 13, 0.94) 48%,
-    #0d0d0d 66%
-  );
-}
-
 .windowSeatStartupCover {
   position: absolute;
   z-index: 3;
@@ -607,10 +565,6 @@ img {
 
 .windowSeatToy[data-reduced-motion="true"] .windowSeatVideo {
   visibility: hidden;
-}
-
-.windowSeatToy[data-reduced-motion="true"] .windowSeatMask {
-  display: none;
 }
 
 .windowSeatGlass,

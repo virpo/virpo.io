@@ -299,12 +299,12 @@ test("Sounds exposes waveform, play/pause, rapid next, and error fallback", asyn
   await expect.poll(() => audio.evaluate((node) => node.paused)).toBe(true);
   await expect(waveform).toHaveAttribute("data-waveform-state", "idle");
 
-  await sounds.getByRole("button", { name: /Play FamilyMart/ }).click();
+  await sounds.getByRole("button", { name: /Play Departure melody/ }).click();
   const next = sounds.getByRole("button", { name: "Next sound" });
   await next.click();
   await next.click();
   await next.click();
-  await expect(sounds.getByText("Shibuya announcement", { exact: true })).toBeVisible();
+  await expect(sounds.getByText("Railway crossing", { exact: true })).toBeVisible();
   await expect(
     sounds.getByRole("group", { name: "Sound navigation" }),
   ).toHaveAttribute("aria-busy", "false");
@@ -313,11 +313,11 @@ test("Sounds exposes waveform, play/pause, rapid next, and error fallback", asyn
   await audio.evaluate((node) => node.dispatchEvent(new Event("error")));
   await expect(sounds.getByText("Sound unavailable")).toBeVisible();
   await expect(
-    sounds.getByRole("button", { name: /Play Shibuya announcement/ }),
+    sounds.getByRole("button", { name: /Play Railway crossing/ }),
   ).toHaveAttribute("aria-pressed", "false");
 });
 
-test("Window Seat stays masked, unzoomed, and inert", async ({ page }) => {
+test("Window Seat stays unobstructed, unzoomed, and inert", async ({ page }) => {
   await blockThirdPartyTrain(page);
   await page.goto("/");
   const windowSeat = page.getByRole("region", { name: "Window Seat" });
@@ -332,10 +332,10 @@ test("Window Seat stays masked, unzoomed, and inert", async ({ page }) => {
     "youtube-mask-left",
     "youtube-mask-right",
     "youtube-subtitle-mask",
-    "youtube-compass-mask",
   ]) {
-    await expect(windowSeat.getByTestId(id)).toBeVisible();
+    await expect(windowSeat.getByTestId(id)).toHaveCount(0);
   }
+  await expect(windowSeat.getByTestId("youtube-compass-mask")).toBeVisible();
 });
 
 test("reduced motion leaves the train blank and makes no YouTube request", async ({

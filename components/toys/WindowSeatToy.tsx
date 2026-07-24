@@ -76,31 +76,6 @@ export function WindowSeatToy() {
             onLoad={handleFrameLoad}
             style={{ pointerEvents: "none", transform: "none" }}
           />
-          <span
-            className="windowSeatMask windowSeatMask--top"
-            data-testid="youtube-mask-top"
-            aria-hidden="true"
-          />
-          <span
-            className="windowSeatMask windowSeatMask--bottom"
-            data-testid="youtube-mask-bottom"
-            aria-hidden="true"
-          />
-          <span
-            className="windowSeatMask windowSeatMask--left"
-            data-testid="youtube-mask-left"
-            aria-hidden="true"
-          />
-          <span
-            className="windowSeatMask windowSeatMask--right"
-            data-testid="youtube-mask-right"
-            aria-hidden="true"
-          />
-          <span
-            className="windowSeatMask windowSeatSubtitleMask"
-            data-testid="youtube-subtitle-mask"
-            aria-hidden="true"
-          />
           {!reducedMotion && coverVisible ? (
             <span
               className="windowSeatStartupCover"
