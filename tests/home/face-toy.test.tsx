@@ -15,7 +15,7 @@ function mockFinePointer(matches: boolean) {
 }
 
 describe("FaceToy", () => {
-  it("tracks a fine pointer using the legacy quantized gaze images", () => {
+  it("rounds fine-pointer gaze to the nearest legacy 3-step image", () => {
     mockFinePointer(true);
     const { container } = render(<FaceToy />);
     const tracker = container.querySelector(".faceTracker");
@@ -35,10 +35,19 @@ describe("FaceToy", () => {
 
     const pointerMove = new Event("pointermove");
     Object.defineProperties(pointerMove, {
+      clientX: { value: 73 },
+      clientY: { value: 31 },
+    });
+    fireEvent(window, pointerMove);
+
+    expect(image).toHaveAttribute("src", getFaceImageUrl(6, 6));
+
+    const extremePointerMove = new Event("pointermove");
+    Object.defineProperties(extremePointerMove, {
       clientX: { value: 100 },
       clientY: { value: 0 },
     });
-    fireEvent(window, pointerMove);
+    fireEvent(window, extremePointerMove);
 
     expect(image).toHaveAttribute("src", getFaceImageUrl(15, 15));
   });
