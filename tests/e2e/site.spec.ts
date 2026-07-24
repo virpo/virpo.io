@@ -179,7 +179,7 @@ test("Tab order reaches navigation, Bloom, Source, and sound playback", async ({
     primary.getByRole("link", { name: "About", exact: true }),
     page.getByRole("button", { name: "Open Japan bloom details" }),
     page.getByRole("link", { name: /Source/ }),
-    page.getByRole("button", { name: /Play Departure melody/ }),
+    page.getByRole("button", { name: /Play Closed crossing/ }),
   ];
 
   for (const [index, target] of expected.entries()) {
@@ -192,12 +192,12 @@ test("Tab order reaches navigation, Bloom, Source, and sound playback", async ({
     }
   }
   await page.keyboard.press("Enter");
-  const pause = page.getByRole("button", { name: /Pause Departure melody/ });
+  const pause = page.getByRole("button", { name: /Pause Closed crossing/ });
   await expect(pause).toBeFocused();
   await expect(pause).toHaveAttribute("aria-pressed", "true");
   await page.keyboard.press("Enter");
   await expect(
-    page.getByRole("button", { name: /Play Departure melody/ }),
+    page.getByRole("button", { name: /Play Closed crossing/ }),
   ).toHaveAttribute("aria-pressed", "false");
 });
 
@@ -289,25 +289,27 @@ test("Sounds exposes waveform, play/pause, rapid next, and error fallback", asyn
   });
   const waveform = sounds.getByRole("img", { name: "Sound waveform" });
   const audio = sounds.locator("audio");
-  const play = sounds.getByRole("button", { name: /Play Departure melody/ });
+  const play = sounds.getByRole("button", { name: /Play Closed crossing/ });
 
   await expect(waveform).toHaveAttribute("data-waveform-state", "idle");
   await play.click();
   await expect(
-    sounds.getByRole("button", { name: /Pause Departure melody/ }),
+    sounds.getByRole("button", { name: /Pause Closed crossing/ }),
   ).toBeVisible();
   await expect.poll(() => audio.evaluate((node) => !node.paused)).toBe(true);
   await expect(waveform).toHaveAttribute("data-waveform-state", "live");
-  await sounds.getByRole("button", { name: /Pause Departure melody/ }).click();
+  await sounds.getByRole("button", { name: /Pause Closed crossing/ }).click();
   await expect.poll(() => audio.evaluate((node) => node.paused)).toBe(true);
   await expect(waveform).toHaveAttribute("data-waveform-state", "idle");
 
-  await sounds.getByRole("button", { name: /Play Departure melody/ }).click();
+  await sounds.getByRole("button", { name: /Play Closed crossing/ }).click();
   const next = sounds.getByRole("button", { name: "Next sound" });
   await next.click();
   await next.click();
   await next.click();
-  await expect(sounds.getByText("Railway crossing", { exact: true })).toBeVisible();
+  await expect(
+    sounds.getByText("FamilyMart welcome", { exact: true }),
+  ).toBeVisible();
   await expect(
     sounds.getByRole("group", { name: "Sound navigation" }),
   ).toHaveAttribute("aria-busy", "false");
@@ -316,7 +318,7 @@ test("Sounds exposes waveform, play/pause, rapid next, and error fallback", asyn
   await audio.evaluate((node) => node.dispatchEvent(new Event("error")));
   await expect(sounds.getByText("Sound unavailable")).toBeVisible();
   await expect(
-    sounds.getByRole("button", { name: /Play Railway crossing/ }),
+    sounds.getByRole("button", { name: /Play FamilyMart welcome/ }),
   ).toHaveAttribute("aria-pressed", "false");
 });
 
