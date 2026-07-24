@@ -69,19 +69,3 @@ export function WindowSeatToyPlaceholder() {
     </TemporaryToy>
   );
 }
-
-export function StudyToyPlaceholder() {
-  return (
-    <TemporaryToy
-      kind="study"
-      title="Japanese Study"
-      className="studyPlaceholder"
-    >
-      <div className="studyPreview">
-        <span>Hiragana · 0 learned</span>
-        <strong lang="ja">あ</strong>
-        <small>Interactive deck arrives next.</small>
-      </div>
-    </TemporaryToy>
-  );
-}

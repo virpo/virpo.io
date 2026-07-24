@@ -470,43 +470,167 @@ img {
   object-fit: contain;
 }
 
-.studyPlaceholder {
+.studyToy {
   background: var(--yellow);
 }
 
-.studyPlaceholder .toyHeading {
+.studyToy .toyHeading {
   border-color: rgba(9, 9, 9, 0.16);
 }
 
-.studyPreview {
+.studyLoading {
   display: grid;
-  min-height: 240px;
+  min-height: 178px;
   place-items: center;
-  align-content: space-between;
-  padding: 0.75rem 1rem 1rem;
+  color: #5e4d12;
+  font-family: system-ui, sans-serif;
+  font-size: 1rem;
 }
 
-.studyPreview > span,
-.studyPreview small {
-  justify-self: stretch;
+.studyProgress,
+.studyFooter {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
   color: #5e4d12;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 0.65rem;
 }
 
-.studyPreview > span {
-  padding-bottom: 0.65rem;
+.studyProgress {
+  min-height: 36px;
+  padding: 0.4rem 0.75rem;
   border-bottom: 1.5px solid rgba(9, 9, 9, 0.16);
 }
 
-.studyPreview strong {
+.studyProgress > span {
+  flex: none;
+}
+
+.studyProgress progress {
+  width: 100%;
+  height: 5px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  appearance: none;
+  background: rgba(9, 9, 9, 0.14);
+}
+
+.studyProgress progress::-webkit-progress-bar {
+  border-radius: 999px;
+  background: rgba(9, 9, 9, 0.14);
+}
+
+.studyProgress progress::-webkit-progress-value {
+  border-radius: 999px;
+  background: var(--ink);
+}
+
+.studyProgress progress::-moz-progress-bar {
+  border-radius: 999px;
+  background: var(--ink);
+}
+
+.studyCard {
+  display: grid;
+  width: 100%;
+  min-height: 140px;
+  place-items: center;
+  align-content: center;
+  gap: 0.25rem;
+  padding: 0.7rem 1rem;
+  background: var(--yellow);
+  cursor: pointer;
+}
+
+.studyCard > strong {
   font-family: system-ui, sans-serif;
-  font-size: clamp(4.8rem, 9vw, 7.6rem);
+  font-size: clamp(4.1rem, 7vw, 5.8rem);
+  font-weight: 800;
   line-height: 1;
 }
 
-.studyPreview small {
+.studyReading {
+  font-family: system-ui, sans-serif;
+  font-size: 0.96rem;
+  line-height: 1.1;
+}
+
+.studyMeaning {
+  color: #493b0e;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.74rem;
+}
+
+.studyCard small {
+  color: #5e4d12;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.59rem;
+  text-transform: lowercase;
+}
+
+.studyActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+  padding: 0.35rem 0.75rem 0.55rem;
+  border-top: 1.5px solid rgba(9, 9, 9, 0.16);
+}
+
+.studyActions button {
+  min-height: 36px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.studyActions .studyGotIt {
+  background: var(--kaki);
+}
+
+.studyFooter {
+  min-height: 38px;
+  justify-content: space-between;
+  padding: 0.25rem 0.75rem;
+  border-top: 1.5px solid rgba(9, 9, 9, 0.16);
+}
+
+.studyFooter > span {
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.studyReset {
+  min-height: 30px;
+  flex: none;
+  padding: 0 0.25rem;
+  border-bottom: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.studyRest {
+  display: grid;
+  min-height: 140px;
+  place-items: center;
+  align-content: center;
+  gap: 0.3rem;
+  color: #5e4d12;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.66rem;
   text-align: center;
+}
+
+.studyRest strong {
+  color: var(--ink);
+  font-size: 2.8rem;
 }
 
 .homeEditorial {

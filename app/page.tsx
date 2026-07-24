@@ -4,9 +4,9 @@ import { FaceToy } from "../components/home/FaceToy";
 import { Intro } from "../components/home/Intro";
 import {
   SoundsToyPlaceholder,
-  StudyToyPlaceholder,
   WindowSeatToyPlaceholder,
 } from "../components/home/ToyPlaceholders";
+import { StudyToy } from "../components/toys/StudyToy";
 import { WritingPreview } from "../components/home/WritingPreview";
 import { SiteShell } from "../components/site/SiteShell";
 import { getPostSummaries } from "../lib/blog";
@@ -33,7 +33,7 @@ export default function HomePage() {
             <FaceToy />
             <SoundsToyPlaceholder />
             <WindowSeatToyPlaceholder />
-            <StudyToyPlaceholder />
+            <StudyToy />
           </aside>
 
           <div className="homeEditorial">

@@ -72,13 +72,14 @@ describe("homepage", () => {
     );
   });
 
-  it("marks the temporary toy boundaries without duplicating their future engines", () => {
+  it("replaces only the Study placeholder and preserves toy order", () => {
     const { container } = render(<HomePage />);
 
-    expect(container.querySelectorAll("[data-toy-placeholder]")).toHaveLength(3);
+    expect(container.querySelectorAll("[data-toy-placeholder]")).toHaveLength(2);
     expect(container.querySelector("[data-toy-placeholder='sounds']")).toBeVisible();
     expect(container.querySelector("[data-toy-placeholder='window-seat']")).toBeVisible();
-    expect(container.querySelector("[data-toy-placeholder='study']")).toBeVisible();
+    expect(container.querySelector("[data-toy-placeholder='study']")).toBeNull();
+    expect(container.querySelector("[data-study-toy]")).toBeVisible();
   });
 
   it("keeps temporary toys free of future audio, video, storage, and study engines", () => {
