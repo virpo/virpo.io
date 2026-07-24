@@ -115,23 +115,25 @@ export function SoundsToy() {
           await graphRef.current.context.resume();
         } catch {
           markWaveformUnavailable();
+          return false;
         }
       }
-      return graphRef.current.analyser;
+      return true;
     }
-    if (graphUnavailableRef.current) return null;
+    if (graphUnavailableRef.current) return true;
 
     const AudioContextClass = audioContextConstructor();
     const audio = audioRef.current;
     if (!AudioContextClass || !audio) {
       markWaveformUnavailable();
-      return null;
+      return true;
     }
 
-    const context = new AudioContextClass();
+    let context: AudioContext | null = null;
     let source: MediaElementAudioSourceNode | null = null;
 
     try {
+      context = new AudioContextClass();
       if (context.state === "suspended") await context.resume();
 
       const nextAnalyser = context.createAnalyser();
@@ -151,16 +153,16 @@ export function SoundsToy() {
           setWaveformUnavailable(false);
           setAnalyser(nextAnalyser);
         }
-        return nextAnalyser;
+        return true;
       } catch {
         source.disconnect?.();
         source.connect(context.destination);
         graphRef.current = { context, source, analyser: null };
         markWaveformUnavailable();
-        return null;
+        return true;
       }
     } catch {
-      if (source) {
+      if (source && context) {
         // Once a media element is captured it must remain attached to a live
         // AudioContext. A direct route preserves audible playback.
         try {
@@ -171,10 +173,10 @@ export function SoundsToy() {
           graphRef.current = { context, source, analyser: null };
         }
       } else {
-        void context.close();
+        void context?.close();
       }
       markWaveformUnavailable();
-      return null;
+      return true;
     }
   }
 
@@ -203,7 +205,17 @@ export function SoundsToy() {
     enqueueOperation(async () => {
       const audio = audioRef.current;
       if (!audio) return;
-      await ensureAudioGraph();
+      const canPlay = await ensureAudioGraph();
+      if (!canPlay) {
+        audio.pause();
+        if (mountedRef.current && token === operationTokenRef.current) {
+          desiredPlayingRef.current = false;
+          setPlaybackDesired(false);
+          setPlaying(false);
+          setPlaybackError("Audio unavailable");
+        }
+        return;
+      }
 
       try {
         await audio.play();

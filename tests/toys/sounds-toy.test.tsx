@@ -185,6 +185,29 @@ describe("SoundsToy", () => {
     expect(HTMLMediaElement.prototype.play).toHaveBeenCalledOnce();
   });
 
+  it("falls back to native audio when AudioContext construction fails", async () => {
+    vi.stubGlobal(
+      "AudioContext",
+      class {
+        constructor() {
+          throw new Error("AudioContext unavailable");
+        }
+      },
+    );
+    render(<SoundsToy />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /play familymart entrance/i }),
+    );
+
+    expect(await screen.findByText(/playing.+waveform unavailable/i)).toBeVisible();
+    expect(
+      screen.getByRole("button", { name: /pause familymart entrance/i }),
+    ).toHaveAttribute("aria-pressed", "true");
+    expect(HTMLMediaElement.prototype.play).toHaveBeenCalledOnce();
+    expect(close).not.toHaveBeenCalled();
+  });
+
   it("falls back to native audio when analyser creation fails before source capture", async () => {
     createAnalyser.mockImplementationOnce(() => {
       throw new Error("analyser unavailable");
@@ -336,7 +359,7 @@ describe("SoundsToy", () => {
     expect(screen.getByText("Sound unavailable")).toBeVisible();
   });
 
-  it("continues playback when a reused graph cannot resume", async () => {
+  it("reports audio unavailable without playing when a captured graph cannot resume", async () => {
     render(<SoundsToy />);
 
     fireEvent.click(
@@ -353,13 +376,12 @@ describe("SoundsToy", () => {
       screen.getByRole("button", { name: /play familymart entrance/i }),
     );
 
+    expect(await screen.findByText("Audio unavailable")).toBeVisible();
     expect(
-      await screen.findByRole("button", { name: /pause familymart entrance/i }),
-    ).toBeVisible();
-    expect(
-      screen.getByText(/playing.+waveform unavailable/i),
-    ).toBeVisible();
-    expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(2);
+      screen.getByRole("button", { name: /play familymart entrance/i }),
+    ).toHaveAttribute("aria-pressed", "false");
+    expect(screen.queryByText(/^Playing/)).toBeNull();
+    expect(HTMLMediaElement.prototype.play).toHaveBeenCalledOnce();
   });
 
   it("restores its mounted guard across StrictMode effect replay", async () => {
