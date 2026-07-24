@@ -118,6 +118,11 @@ export function WindowSeatToy() {
           height="1481"
           aria-hidden="true"
         />
+        <span
+          className="windowSeatCompassMask"
+          data-testid="youtube-compass-mask"
+          aria-hidden="true"
+        />
       </div>
     </section>
   );

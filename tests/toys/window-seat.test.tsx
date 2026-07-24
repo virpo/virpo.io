@@ -101,11 +101,18 @@ describe("WindowSeatToy", () => {
     expect(screen.getByTestId("youtube-mask-left")).toBeVisible();
     expect(screen.getByTestId("youtube-mask-right")).toBeVisible();
     expect(screen.getByTestId("youtube-subtitle-mask")).toBeVisible();
+    expect(screen.getByTestId("youtube-compass-mask")).toBeVisible();
     expect(windowSeatCss).toMatch(
       /\.windowSeatVideo\s*\{[^}]*pointer-events:\s*none;[^}]*transform:\s*none;/s,
     );
     expect(windowSeatCss).toMatch(
       /\.windowSeatSubtitleMask\s*\{[^}]*inset:\s*auto 6% 0;[^}]*height:\s*34%;/s,
+    );
+    expect(windowSeatCss).toMatch(
+      /\.windowSeatCompassMask\s*\{[^}]*position:\s*absolute;[^}]*z-index:\s*10;[^}]*background:\s*url\("\/assets\/train-window\.png"\)[^;]*;[^}]*mask-image:\s*radial-gradient\(/s,
+    );
+    expect(windowSeatCss).not.toMatch(
+      /data-reduced-motion="true"[^}]*windowSeatCompassMask[^}]*display:\s*none/s,
     );
     expect(windowSeatCss).not.toMatch(/windowSeatStartupReveal/);
     expect(windowSeatCss).not.toMatch(/\bscale\s*\(|\bzoom\s*:/);

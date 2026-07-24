@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { StrictMode } from "react";
 import {
   cleanup,
   fireEvent,
@@ -32,6 +33,7 @@ const analyserNode = {
 };
 const createMediaElementSource = vi.fn(() => sourceNode);
 const createAnalyser = vi.fn(() => analyserNode);
+let latestContext: MockAudioContext;
 
 class MockAudioContext {
   state: AudioContextState = "suspended";
@@ -39,6 +41,10 @@ class MockAudioContext {
   createMediaElementSource = createMediaElementSource;
   createAnalyser = createAnalyser;
   close = close;
+
+  constructor() {
+    latestContext = this;
+  }
 
   async resume() {
     await resume();
@@ -328,6 +334,86 @@ describe("SoundsToy", () => {
 
     fireEvent.error(container.querySelector("audio") as HTMLAudioElement);
     expect(screen.getByText("Sound unavailable")).toBeVisible();
+  });
+
+  it("continues playback when a reused graph cannot resume", async () => {
+    render(<SoundsToy />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /play familymart entrance/i }),
+    );
+    await screen.findByRole("button", { name: /pause familymart entrance/i });
+    fireEvent.click(
+      screen.getByRole("button", { name: /pause familymart entrance/i }),
+    );
+    latestContext.state = "suspended";
+    resume.mockRejectedValueOnce(new Error("resume rejected"));
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /play familymart entrance/i }),
+    );
+
+    expect(
+      await screen.findByRole("button", { name: /pause familymart entrance/i }),
+    ).toBeVisible();
+    expect(
+      screen.getByText(/playing.+waveform unavailable/i),
+    ).toBeVisible();
+    expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(2);
+  });
+
+  it("restores its mounted guard across StrictMode effect replay", async () => {
+    render(
+      <StrictMode>
+        <SoundsToy />
+      </StrictMode>,
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /play familymart entrance/i }),
+    );
+
+    expect(
+      await screen.findByRole("button", { name: /pause familymart entrance/i }),
+    ).toBeVisible();
+    expect(screen.getByText("Playing")).toBeVisible();
+  });
+
+  it("shows a pressed pause control while start is pending and lets it cancel", async () => {
+    const pendingPlay = deferred();
+    vi.spyOn(HTMLMediaElement.prototype, "play").mockImplementationOnce(
+      () => pendingPlay.promise,
+    );
+    render(<SoundsToy />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /play familymart entrance/i }),
+    );
+
+    const pendingButton = screen.getByRole("button", {
+      name: /pause familymart entrance/i,
+    });
+    expect(pendingButton).toHaveAttribute("aria-pressed", "true");
+    expect(pendingButton.querySelector("path")).toHaveAttribute(
+      "d",
+      "M6 5h4v14H6V5Zm8 0h4v14h-4V5Z",
+    );
+
+    fireEvent.click(pendingButton);
+    expect(
+      screen.getByRole("button", { name: /play familymart entrance/i }),
+    ).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByText("Paused · press play")).toBeVisible();
+    await waitFor(() =>
+      expect(HTMLMediaElement.prototype.play).toHaveBeenCalledOnce(),
+    );
+    pendingPlay.resolve();
+    await waitFor(() =>
+      expect(HTMLMediaElement.prototype.pause).toHaveBeenCalled(),
+    );
+    expect(
+      screen.getByRole("button", { name: /play familymart entrance/i }),
+    ).toHaveAttribute("aria-pressed", "false");
   });
 
   it("marks the live waveform as reduced-motion safe", () => {

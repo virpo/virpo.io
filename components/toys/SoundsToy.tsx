@@ -57,6 +57,7 @@ export function SoundsToy() {
   const mountedRef = useRef(true);
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [playbackDesired, setPlaybackDesired] = useState(false);
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [status, setStatus] = useState("Press play");
@@ -80,8 +81,9 @@ export function SoundsToy() {
     return () => query.removeEventListener?.("change", update);
   }, []);
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
       mountedRef.current = false;
       operationTokenRef.current += 1;
       desiredPlayingRef.current = false;
@@ -89,9 +91,8 @@ export function SoundsToy() {
       graphRef.current?.source.disconnect?.();
       graphRef.current?.analyser?.disconnect?.();
       void graphRef.current?.context.close();
-    },
-    [],
-  );
+    };
+  }, []);
 
   useEffect(() => {
     if (analyser) {
@@ -110,7 +111,11 @@ export function SoundsToy() {
   async function ensureAudioGraph() {
     if (graphRef.current) {
       if (graphRef.current.context.state === "suspended") {
-        await graphRef.current.context.resume();
+        try {
+          await graphRef.current.context.resume();
+        } catch {
+          markWaveformUnavailable();
+        }
       }
       return graphRef.current.analyser;
     }
@@ -191,6 +196,7 @@ export function SoundsToy() {
   function requestPlay() {
     const token = ++operationTokenRef.current;
     desiredPlayingRef.current = true;
+    setPlaybackDesired(true);
     setPlaybackError(null);
     setStatus("Starting…");
 
@@ -213,6 +219,7 @@ export function SoundsToy() {
       } catch {
         if (mountedRef.current && token === operationTokenRef.current) {
           desiredPlayingRef.current = false;
+          setPlaybackDesired(false);
           setPlaying(false);
           setPlaybackError("Couldn’t play this sound");
         }
@@ -223,6 +230,7 @@ export function SoundsToy() {
   function requestPause() {
     const token = ++operationTokenRef.current;
     desiredPlayingRef.current = false;
+    setPlaybackDesired(false);
     audioRef.current?.pause();
     setPlaying(false);
     setPlaybackError(null);
@@ -274,6 +282,7 @@ export function SoundsToy() {
       } catch {
         if (mountedRef.current && token === operationTokenRef.current) {
           desiredPlayingRef.current = false;
+          setPlaybackDesired(false);
           setPlaying(false);
           setPlaybackError("Couldn’t play this sound");
         }
@@ -285,6 +294,7 @@ export function SoundsToy() {
     const nextIndex = (indexRef.current + 1) % JAPAN_SOUNDS.length;
     operationTokenRef.current += 1;
     desiredPlayingRef.current = false;
+    setPlaybackDesired(false);
     indexRef.current = nextIndex;
     if (audioRef.current) {
       audioRef.current.src = JAPAN_SOUNDS[nextIndex].src;
@@ -315,14 +325,14 @@ export function SoundsToy() {
         <button
           className="soundPlay"
           type="button"
-          aria-label={`${playing ? "Pause" : "Play"} ${current.title}`}
-          aria-pressed={playing}
+          aria-label={`${playbackDesired ? "Pause" : "Play"} ${current.title}`}
+          aria-pressed={playbackDesired}
           onClick={() =>
             desiredPlayingRef.current ? requestPause() : requestPlay()
           }
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            {playing ? (
+            {playbackDesired ? (
               <path d="M6 5h4v14H6V5Zm8 0h4v14h-4V5Z" />
             ) : (
               <path d="m8 5 11 7-11 7V5Z" />
@@ -372,6 +382,7 @@ export function SoundsToy() {
         onError={() => {
           operationTokenRef.current += 1;
           desiredPlayingRef.current = false;
+          setPlaybackDesired(false);
           setPlaying(false);
           setPlaybackError("Sound unavailable");
         }}
