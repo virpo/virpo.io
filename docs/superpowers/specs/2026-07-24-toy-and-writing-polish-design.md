@@ -58,6 +58,19 @@ The result should feel like a small game board inside the existing bento tile, n
 - Remove the redundant inline “Read” link; the card affordance and a small directional mark communicate navigation.
 - Keep the separate “Projects” and “All writing” header links.
 
+## Typography
+
+- Use the playful homepage display face consistently across homepage headings, labels, metadata, controls, and writing excerpts.
+- Japanese study glyphs may use a Japanese-capable rounded system face so kana and kanji remain correct and legible.
+- Do not carry the playful homepage type into article reading. Individual blog articles keep their narrow Source Serif body and Fraunces headings.
+
+## Blog List
+
+- Keep `/blog/` visually minimal and editorial.
+- Make each entire blog list item one semantic Next.js link, including its date, reading time, title, description, and tags.
+- Remove the title-only nested link.
+- Give the whole item visible hover, keyboard-focus, and pressed states without turning the list into a second homepage bento.
+
 ## Responsive Behavior
 
 - Desktop preserves the current homepage composition.
@@ -79,6 +92,7 @@ The result should feel like a small game board inside the existing bento tile, n
 - Unit tests cover automatic sound advancement, counter/title changes, pause/resume, manual navigation, and end-of-sequence restart.
 - Existing Study progression and persistence tests continue to pass; add DOM/style-contract tests for the new module structure where useful.
 - Homepage tests verify the entire writing card is a link and no nested links are introduced.
+- Blog index tests verify each entire list item is a link and article pages retain their readable serif typography.
 - Window Seat tests verify all gradient masks are absent and the embed remains non-interactive.
 - Run the full unit suite, static-export build validation, and Playwright end-to-end suite.
 - Inspect desktop and mobile screenshots in the real browser, including playing Sounds, loaded Window Seat, Study before and after reveal, and keyboard focus on writing cards.
