@@ -115,27 +115,25 @@ describe("SoundsToy", () => {
   it("uses honest Japan nostalgia clips without padding short moments into loops", () => {
     expect(JAPAN_SOUNDS.map(({ title }) => title)).toEqual([
       "FamilyMart welcome",
-      "Closed crossing",
       "Yamanote approaching",
       "Park crows",
+      "Cuckoo crossing",
       "Departure melody",
       "Tennoji announcement",
       "Fare gate",
       "Railway crossing",
-      "Cuckoo crossing",
       "Minminzemi",
       "Don Quijote",
     ]);
     expect(JAPAN_SOUNDS.map(({ src }) => src)).toEqual([
       "/audio/japan-familymart-welcome.mp3",
-      "/audio/japan-closed-crossing.mp3",
       "/audio/japan-yamanote-approaching.mp3",
       "/audio/japan-park-crows.mp3",
+      "/audio/japan-crosswalk-cuckoo.mp3",
       "/audio/japan-departure-melody.mp3",
       "/audio/japan-tennoji-announcement.mp3",
       "/audio/japan-faregate-chime.mp3",
       "/audio/japan-railway-crossing-long.mp3",
-      "/audio/japan-crosswalk-cuckoo.mp3",
       "/audio/japan-minminzemi.mp3",
       "/audio/japan-don-quijote.mp3",
     ]);
@@ -143,10 +141,10 @@ describe("SoundsToy", () => {
       /Shinkansen|Fūrin/,
     );
     expect(
-      JAPAN_SOUNDS.slice(0, 4).map(({ endAt, startAt }) =>
+      JAPAN_SOUNDS.slice(0, 3).map(({ endAt, startAt }) =>
         Number((endAt - startAt).toFixed(3)),
       ),
-    ).toEqual([4.949, 3.117, 3.217, 2.533]);
+    ).toEqual([4.949, 3.217, 3.165]);
     expect(JAPAN_SOUNDS.at(-1)?.endAt).toBeCloseTo(3.733, 3);
 
     const totalSeconds = JAPAN_SOUNDS.reduce(
@@ -170,7 +168,7 @@ describe("SoundsToy", () => {
     expect(
       screen.getByRole("button", { name: /play familymart welcome/i }),
     ).toBeVisible();
-    expect(screen.getByText("01 / 11")).toBeVisible();
+    expect(screen.getByText("01 / 10")).toBeVisible();
     expect(screen.getByRole("button", { name: "Previous sound" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Next sound" })).toBeVisible();
     expect(container.querySelectorAll("audio")).toHaveLength(1);
@@ -341,7 +339,7 @@ describe("SoundsToy", () => {
     fireEvent.click(screen.getByRole("button", { name: "Next sound" }));
     fireEvent.click(screen.getByRole("button", { name: "Next sound" }));
 
-    expect(screen.getByText("Yamanote approaching")).toBeVisible();
+    expect(screen.getByText("Park crows")).toBeVisible();
     expect(screen.getByRole("group", { name: "Sound navigation" })).toHaveAttribute(
       "aria-busy",
       "true",
@@ -360,7 +358,7 @@ describe("SoundsToy", () => {
     third.resolve();
 
     expect(
-      await screen.findByRole("button", { name: /pause yamanote approaching/i }),
+      await screen.findByRole("button", { name: /pause park crows/i }),
     ).toBeVisible();
     expect(screen.getByText("Playing")).toBeVisible();
     await waitFor(() =>
@@ -389,7 +387,7 @@ describe("SoundsToy", () => {
     second.resolve();
 
     expect(
-      await screen.findByRole("button", { name: /pause closed crossing/i }),
+      await screen.findByRole("button", { name: /pause yamanote approaching/i }),
     ).toBeVisible();
     expect(screen.queryByText(/couldn’t play/i)).toBeNull();
   });
@@ -512,10 +510,10 @@ describe("SoundsToy", () => {
     audio.currentTime = JAPAN_SOUNDS[0].endAt;
     fireEvent.timeUpdate(audio);
 
-    expect(await screen.findByText("Closed crossing")).toBeVisible();
-    expect(screen.getByText("02 / 11")).toBeVisible();
+    expect(await screen.findByText("Yamanote approaching")).toBeVisible();
+    expect(screen.getByText("02 / 10")).toBeVisible();
     expect(
-      await screen.findByRole("button", { name: /pause closed crossing/i }),
+      await screen.findByRole("button", { name: /pause yamanote approaching/i }),
     ).toBeVisible();
     expect(HTMLMediaElement.prototype.play).toHaveBeenCalledTimes(2);
   });
@@ -533,7 +531,7 @@ describe("SoundsToy", () => {
     fireEvent.timeUpdate(audio);
 
     expect(await screen.findByText("FamilyMart welcome")).toBeVisible();
-    expect(screen.getByText("01 / 11")).toBeVisible();
+    expect(screen.getByText("01 / 10")).toBeVisible();
     expect(screen.getByText("Press play")).toBeVisible();
 
     fireEvent.click(

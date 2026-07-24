@@ -11,12 +11,6 @@ export const JAPAN_SOUNDS = [
     endAt: 4.948662,
   },
   {
-    title: "Closed crossing",
-    src: "/audio/japan-closed-crossing.mp3",
-    startAt: 0,
-    endAt: 3.116667,
-  },
-  {
     title: "Yamanote approaching",
     src: "/audio/japan-yamanote-approaching.mp3",
     startAt: 0,
@@ -26,7 +20,13 @@ export const JAPAN_SOUNDS = [
     title: "Park crows",
     src: "/audio/japan-park-crows.mp3",
     startAt: 0,
-    endAt: 2.533333,
+    endAt: 3.16483,
+  },
+  {
+    title: "Cuckoo crossing",
+    src: "/audio/japan-crosswalk-cuckoo.mp3",
+    startAt: 0,
+    endAt: 6,
   },
   {
     title: "Departure melody",
@@ -51,12 +51,6 @@ export const JAPAN_SOUNDS = [
     src: "/audio/japan-railway-crossing-long.mp3",
     startAt: 0,
     endAt: 7.5,
-  },
-  {
-    title: "Cuckoo crossing",
-    src: "/audio/japan-crosswalk-cuckoo.mp3",
-    startAt: 0,
-    endAt: 6,
   },
   {
     title: "Minminzemi",

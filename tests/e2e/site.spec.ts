@@ -308,7 +308,7 @@ test("Sounds exposes waveform, play/pause, rapid next, and error fallback", asyn
   await next.click();
   await next.click();
   await expect(
-    sounds.getByText("Park crows", { exact: true }),
+    sounds.getByText("Cuckoo crossing", { exact: true }),
   ).toBeVisible();
   await expect(
     sounds.getByRole("group", { name: "Sound navigation" }),
@@ -318,7 +318,7 @@ test("Sounds exposes waveform, play/pause, rapid next, and error fallback", asyn
   await audio.evaluate((node) => node.dispatchEvent(new Event("error")));
   await expect(sounds.getByText("Sound unavailable")).toBeVisible();
   await expect(
-    sounds.getByRole("button", { name: /Play Park crows/ }),
+    sounds.getByRole("button", { name: /Play Cuckoo crossing/ }),
   ).toHaveAttribute("aria-pressed", "false");
 });
 

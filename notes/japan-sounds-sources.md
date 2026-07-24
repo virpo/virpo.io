@@ -17,7 +17,9 @@ Note: some prototype sounds now come from Freesound previews. Check license fit 
   FamilyMart `17.783333–22.731995s`.
   Notes: every moment is used once at its natural length. FamilyMart is the
   original TikTok scene with the clerk greeting; it is not mixed with the
-  Panasonic chime below. The shipped page does not load TikTok.
+  Panasonic chime below. The crow excerpt is gently time-stretched to 3.16s
+  without repeating it. Closed crossing is retained as an unused source asset.
+  The shipped page does not load TikTok.
 
 - `audio/japan-tennoji-announcement.mp3`
   Source page: https://freesound.org/people/timcam/sounds/381934/
