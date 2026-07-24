@@ -9,6 +9,7 @@ const assertionScript = readFileSync(
 
 describe("static build-output assertions", () => {
   it.each([
+    "dist/404.html",
     "dist/blog/index.html",
     "dist/projects/index.html",
     "dist/blog/weird-use-of-ai-3/index.html",

@@ -11,5 +11,8 @@ describe("package contract", () => {
     expect(packageJson.scripts["test:build"]).toBe(
       "npm run build && node scripts/assert-static-output.mjs",
     );
+    expect(packageJson.scripts["test:e2e"]).toBe(
+      "npm run build && playwright test",
+    );
   });
 });

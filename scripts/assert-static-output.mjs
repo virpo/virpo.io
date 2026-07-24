@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 
 const requiredFiles = [
   "dist/index.html",
+  "dist/404.html",
   "dist/blog/index.html",
   "dist/projects/index.html",
   "dist/blog/weird-use-of-ai-3/index.html",

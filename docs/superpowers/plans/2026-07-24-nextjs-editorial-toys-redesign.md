@@ -40,7 +40,7 @@
 **Interfaces:**
 - Produces: `npm run build` static output in `dist/`, `npm test` Vitest runner, absolute `/assets/*` and `/audio/*` public URLs.
 
-- [ ] **Step 1: Write the failing static-export configuration test**
+- [x] **Step 1: Write the failing static-export configuration test**
 
 ```ts
 // tests/config/static-export.test.ts
@@ -57,13 +57,13 @@ describe("static export", () => {
 });
 ```
 
-- [ ] **Step 2: Run the test and verify RED**
+- [x] **Step 2: Run the test and verify RED**
 
 Run: `npx vitest run tests/config/static-export.test.ts`
 
 Expected: FAIL because Next.js, Vitest, and `next.config.ts` do not exist.
 
-- [ ] **Step 3: Add the package and configuration**
+- [x] **Step 3: Add the package and configuration**
 
 ```json
 {
@@ -116,7 +116,7 @@ const config: NextConfig = {
 export default config;
 ```
 
-- [ ] **Step 4: Configure TypeScript and Vitest**
+- [x] **Step 4: Configure TypeScript and Vitest**
 
 ```ts
 // vitest.config.ts
@@ -139,7 +139,7 @@ export default defineConfig({
 import "@testing-library/jest-dom/vitest";
 ```
 
-- [ ] **Step 5: Create the minimal App Router shell**
+- [x] **Step 5: Create the minimal App Router shell**
 
 ```tsx
 // app/layout.tsx
@@ -164,7 +164,7 @@ export default function HomePage() {
 }
 ```
 
-- [ ] **Step 6: Move public assets and ignore local work artifacts**
+- [x] **Step 6: Move public assets and ignore local work artifacts**
 
 Run:
 
@@ -185,7 +185,7 @@ test-results/
 playwright-report/
 ```
 
-- [ ] **Step 7: Install, test, and build**
+- [x] **Step 7: Install, test, and build**
 
 Run:
 
@@ -197,7 +197,7 @@ npm run build
 
 Expected: configuration test passes and `dist/index.html` exists.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add package.json package-lock.json next.config.ts tsconfig.json next-env.d.ts vitest.config.ts app public .gitignore tests/config tests/setup.ts
@@ -224,7 +224,7 @@ git commit -m "build: migrate virpo to nextjs static export"
 **Interfaces:**
 - Produces: `<SiteShell current="home" | "blog" | "projects">`, pure `getBloomStatus(entries, now)`, Client Component `<BloomTicker />`.
 
-- [ ] **Step 1: Port bloom unit tests and add shell tests**
+- [x] **Step 1: Port bloom unit tests and add shell tests**
 
 ```tsx
 // tests/site/masthead.test.tsx
@@ -240,13 +240,13 @@ it("renders the shared virpo navigation and current route", () => {
 });
 ```
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 Run: `npm test -- tests/site/masthead.test.tsx tests/japan/bloom.test.ts`
 
 Expected: FAIL because shared components and modules do not exist.
 
-- [ ] **Step 3: Implement the shell**
+- [x] **Step 3: Implement the shell**
 
 `Masthead` renders the red virpo tile, white route navigation, and
 `BloomTicker`. `SiteShell` renders the black-gap wrapper and footer. Keep the
@@ -274,7 +274,7 @@ export function SiteShell({
 }
 ```
 
-- [ ] **Step 4: Add the approved tokens and responsive bento CSS**
+- [x] **Step 4: Add the approved tokens and responsive bento CSS**
 
 ```css
 :root {
@@ -294,7 +294,7 @@ export function SiteShell({
 Copy the verified masthead sizing and mobile rules, replacing the rejected sky
 field with paper and Kaki accents.
 
-- [ ] **Step 5: Run tests and browser smoke check**
+- [x] **Step 5: Run tests and browser smoke check**
 
 Run:
 
@@ -305,7 +305,7 @@ npm run build
 
 Expected: tests pass; static build contains one shared masthead.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add app components/site lib/japan tests/site tests/japan
@@ -339,7 +339,7 @@ git commit -m "feat: add kaki paper site shell"
 **Interfaces:**
 - Produces: `getPostSummaries(): PostSummary[]`, `getPost(slug): PostSource`, `getPostSlugs(): string[]`, statically generated blog/article/RSS/sitemap routes.
 
-- [ ] **Step 1: Write content discovery and SEO tests**
+- [x] **Step 1: Write content discovery and SEO tests**
 
 ```ts
 it("discovers three published posts in reverse chronological order", async () => {
@@ -357,13 +357,13 @@ it("rejects missing SEO frontmatter", () => {
 });
 ```
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 Run: `npm test -- tests/content/posts.test.ts tests/content/seo.test.ts`
 
 Expected: FAIL because content modules do not exist.
 
-- [ ] **Step 3: Implement validated post discovery**
+- [x] **Step 3: Implement validated post discovery**
 
 ```ts
 // lib/content/schema.ts
@@ -382,7 +382,7 @@ export const postFrontmatterSchema = z.object({
 calculates a word-count reading time, filters drafts in production, and sorts
 newest first.
 
-- [ ] **Step 4: Migrate the three posts to MDX**
+- [x] **Step 4: Migrate the three posts to MDX**
 
 Use the approved final copy. Keep the first-euro sentence as:
 
@@ -400,7 +400,7 @@ Use ordinary Markdown image syntax for single images and:
 />
 ```
 
-- [ ] **Step 5: Build the editorial article layout**
+- [x] **Step 5: Build the editorial article layout**
 
 Use Fraunces for title/headings and Source Serif 4 for article body. The route
 header contains title, date, and tags. Article content uses
@@ -417,17 +417,17 @@ At the bottom render:
 </nav>
 ```
 
-- [ ] **Step 6: Build list and SEO routes**
+- [x] **Step 6: Build list and SEO routes**
 
 `/blog/` renders a minimal list with date, title, description, tags, and reading
 time. `[slug]/page.tsx` uses `generateStaticParams` and `generateMetadata`.
 Render Article JSON-LD using `JSON.stringify` with `<` escaped.
 
-- [ ] **Step 7: Add RSS, sitemap, and robots**
+- [x] **Step 7: Add RSS, sitemap, and robots**
 
 Route handlers return static XML/text and include all three article URLs.
 
-- [ ] **Step 8: Test and build**
+- [x] **Step 8: Test and build**
 
 Run:
 
@@ -439,7 +439,7 @@ npm run build
 Expected: three article directories, `blog/index.html`, `rss.xml`,
 `sitemap.xml`, and `robots.txt` exist in `dist`.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add app/blog app/rss.xml app/sitemap.ts app/robots.ts components/blog content lib/content app/globals.css tests/content
@@ -466,7 +466,7 @@ git commit -m "feat: add editorial mdx blog"
 - Consumes: `getPostSummaries()`, typed `projects`.
 - Produces: complete static homepage and project archive; `#toys` anchor.
 
-- [ ] **Step 1: Write homepage and project tests**
+- [x] **Step 1: Write homepage and project tests**
 
 ```tsx
 it("renders richer writing previews rather than title-only rows", async () => {
@@ -484,31 +484,31 @@ it("renders all six typed project cards", () => {
 });
 ```
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 Run: `npm test -- tests/home tests/projects`
 
 Expected: FAIL because migrated pages/components do not exist.
 
-- [ ] **Step 3: Implement typed project data and page**
+- [x] **Step 3: Implement typed project data and page**
 
 Move the six final titles, types, links, alt text, image dimensions, fit mode,
 and deliberate identity emoji into `lib/projects.ts`. Render the existing 3/2/1
 grid and 3:2 image ratio.
 
-- [ ] **Step 4: Implement the homepage**
+- [x] **Step 4: Implement the homepage**
 
 Render the square Face Client Component, toy rail with `id="toys"`, short paper
 introduction, and the latest three posts. Each writing preview includes date or
 series, medium title, two-to-three-line description/excerpt, reading time, and
 route arrow.
 
-- [ ] **Step 5: Add responsive CSS**
+- [x] **Step 5: Add responsive CSS**
 
 Desktop writing rows stretch with the toy rail. Mobile switches to content
 height and preserves face → Sounds → Window Seat → Study → intro → writing.
 
-- [ ] **Step 6: Test, build, and commit**
+- [x] **Step 6: Test, build, and commit**
 
 Run:
 
@@ -537,7 +537,7 @@ git commit -m "feat: migrate homepage and projects"
 **Interfaces:**
 - Produces: `createStudyState()`, `loadStudyState(raw)`, `getStudyProgress(state, now)`, `selectNextCard(state, now, rng)`, `scoreCard(state, id, correct, now)`, `STUDY_STORAGE_KEY = "virpo-study-v2"`.
 
-- [ ] **Step 1: Write failing engine tests**
+- [x] **Step 1: Write failing engine tests**
 
 Cover:
 
@@ -564,13 +564,13 @@ it("unlocks the next Kanji bucket at 75 percent stable", () => {
 });
 ```
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 Run: `npm test -- tests/study`
 
 Expected: FAIL because the new engine does not exist.
 
-- [ ] **Step 3: Define decks and Kanji buckets**
+- [x] **Step 3: Define decks and Kanji buckets**
 
 Keep 46 Hiragana and 46 Katakana cards. Add four frozen Kanji vocabulary
 buckets of eight cards. Cards expose:
@@ -585,7 +585,7 @@ type StudyCard = {
 };
 ```
 
-- [ ] **Step 4: Implement state migration and repair**
+- [x] **Step 4: Implement state migration and repair**
 
 Version 2 state:
 
@@ -602,7 +602,7 @@ If v2 is absent, read `virpo-study-v1`, copy matching card progress, derive
 stages safely, write v2, and retain v1 without mutating it. Corrupt data falls
 back to a fresh state.
 
-- [ ] **Step 5: Implement randomized weighted selection**
+- [x] **Step 5: Implement randomized weighted selection**
 
 From active due cards:
 
@@ -615,14 +615,14 @@ From active due cards:
 Scoring schedules the existing intervals, updates recent IDs to the latest
 three, and never mutates input.
 
-- [ ] **Step 6: Build the compact Study Client Component**
+- [x] **Step 6: Build the compact Study Client Component**
 
 On mount load/migrate state. Persist after every score and reset. Kana hides
 reading until reveal. Kanji shows Hiragana reading before reveal and English
 meaning afterward. Buttons are compact 34–38 px pills. After rating, focus the
 next card.
 
-- [ ] **Step 7: Run focused tests and browser-check persistence**
+- [x] **Step 7: Run focused tests and browser-check persistence**
 
 Run:
 
@@ -634,7 +634,7 @@ npm run build
 In Playwright: rate cards, reload, confirm counts persist; seed 80% stable
 Hiragana and verify mixed Katakana; seed 80% Katakana and verify Kanji bucket 1.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add lib/study components/toys/StudyToy.tsx tests/study tests/toys/study-toy.test.tsx app/globals.css
@@ -656,7 +656,7 @@ git commit -m "feat: add randomized progressive japanese study"
 **Interfaces:**
 - Produces: Sounds with Web Audio analyser and separate play/pause; unzoomed YouTube no-cookie embed with UI masks.
 
-- [ ] **Step 1: Write failing component tests**
+- [x] **Step 1: Write failing component tests**
 
 ```tsx
 it("shows both waveform and play pause controls", () => {
@@ -674,13 +674,13 @@ it("keeps the train iframe unzoomed and hidden for reduced motion", () => {
 });
 ```
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 Run: `npm test -- tests/toys/sounds-toy.test.tsx tests/toys/window-seat.test.tsx`
 
 Expected: FAIL because components do not exist.
 
-- [ ] **Step 3: Implement audio-reactive waveform**
+- [x] **Step 3: Implement audio-reactive waveform**
 
 On the first play gesture:
 
@@ -695,7 +695,7 @@ Keep a separate circular play/pause button, title, previous, and next. Switching
 while playing calls `audio.play()` after the source changes. Before play, draw a
 quiet deterministic wave.
 
-- [ ] **Step 4: Implement Window Seat without zoom**
+- [x] **Step 4: Implement Window Seat without zoom**
 
 Use the existing no-cookie URL with `controls=0`, `modestbranding=1`, muted
 autoplay, loop playlist, captions disabled, and keyboard disabled. Keep
@@ -703,7 +703,7 @@ autoplay, loop playlist, captions disabled, and keyboard disabled. Keep
 the iframe and paper/gradient masks over the top and bottom YouTube chrome
 regions. Reduced motion keeps `about:blank`.
 
-- [ ] **Step 5: Test and visually verify**
+- [x] **Step 5: Test and visually verify**
 
 Run:
 
@@ -715,7 +715,7 @@ npm run build
 Browser: play audio and confirm bars react; pause freezes to idle; next keeps
 playing. Confirm no YouTube title/control text is visible at 1440 and 390.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add components/toys app/globals.css tests/toys
@@ -745,7 +745,7 @@ git commit -m "feat: polish japan sound and train toys"
 **Interfaces:**
 - Produces: one authoritative Next.js implementation, complete static export, final visual evidence.
 
-- [ ] **Step 1: Add end-to-end tests**
+- [x] **Step 1: Add end-to-end tests**
 
 `site.spec.ts` verifies:
 
@@ -763,18 +763,18 @@ git commit -m "feat: polish japan sound and train toys"
 - no same-origin failures or horizontal overflow;
 - reduced motion leaves train blank.
 
-- [ ] **Step 2: Run RED against incomplete migration**
+- [x] **Step 2: Run RED against incomplete migration**
 
 Run: `npm run test:e2e`
 
 Expected: any remaining route/content mismatch fails with an exact locator.
 
-- [ ] **Step 3: Remove legacy implementation**
+- [x] **Step 3: Remove legacy implementation**
 
 Delete the old root HTML/CSS/JS and obsolete CJS source-regex tests only after
 their behavior has equivalent Vitest/Playwright coverage.
 
-- [ ] **Step 4: Update README**
+- [x] **Step 4: Update README**
 
 Document:
 
@@ -789,7 +789,7 @@ npm run build
 Explain `content/blog/*.mdx`, static output in `dist/`, and the v1 → v2 Study
 storage migration.
 
-- [ ] **Step 5: Run complete verification**
+- [x] **Step 5: Run complete verification**
 
 Run:
 
@@ -803,13 +803,13 @@ git diff --check
 Expected: all pass; `dist/` contains homepage, blog list, three articles,
 projects, RSS, sitemap, robots, and 404.
 
-- [ ] **Step 6: Capture and inspect visuals**
+- [x] **Step 6: Capture and inspect visuals**
 
 Capture full-page desktop `1440 × 1000` and mobile `390 × 844` for home, blog,
 projects, and every article. Open every image and inspect typography, inline
 images, toy size, masks, and footer completion.
 
-- [ ] **Step 7: Mark plan complete and commit**
+- [x] **Step 7: Mark plan complete and commit**
 
 Change every finished checkbox to `[x]`.
 

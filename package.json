@@ -9,7 +9,7 @@
     "build": "next build",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test",
+    "test:e2e": "npm run build && playwright test",
     "test:build": "npm run build && node scripts/assert-static-output.mjs"
   },
   "dependencies": {
