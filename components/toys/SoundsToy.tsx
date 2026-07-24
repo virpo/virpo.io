@@ -5,6 +5,30 @@ import { SoundWaveform } from "./SoundWaveform";
 
 export const JAPAN_SOUNDS = [
   {
+    title: "Closed crossing",
+    src: "/audio/japan-closed-crossing.mp3",
+    startAt: 0,
+    endAt: 3.116667,
+  },
+  {
+    title: "Yamanote approaching",
+    src: "/audio/japan-yamanote-approaching.mp3",
+    startAt: 0,
+    endAt: 3.216667,
+  },
+  {
+    title: "Park crows",
+    src: "/audio/japan-park-crows.mp3",
+    startAt: 0,
+    endAt: 2.533333,
+  },
+  {
+    title: "FamilyMart welcome",
+    src: "/audio/japan-familymart-welcome.mp3",
+    startAt: 0,
+    endAt: 4.948662,
+  },
+  {
     title: "Departure melody",
     src: "/audio/aratana.mp3",
     startAt: 0,
@@ -35,28 +59,10 @@ export const JAPAN_SOUNDS = [
     endAt: 4,
   },
   {
-    title: "FamilyMart entrance",
-    src: "/audio/japan-familymart.mp3",
-    startAt: 0,
-    endAt: 4.6,
-  },
-  {
-    title: "Shinkansen passing",
-    src: "/audio/japan-shinkansen-pass.mp3",
-    startAt: 1,
-    endAt: 5.5,
-  },
-  {
     title: "Summer cicadas",
     src: "/audio/japan-summer-crickets.mp3",
     startAt: 0.5,
     endAt: 5,
-  },
-  {
-    title: "Fūrin",
-    src: "/audio/wind-chime.ogg",
-    startAt: 1,
-    endAt: 5.5,
   },
 ] as const;
 

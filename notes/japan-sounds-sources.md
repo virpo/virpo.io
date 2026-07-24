@@ -4,6 +4,17 @@ Downloaded on 2026-04-08 and updated on 2026-04-09 for module lab prototypes.
 
 Note: some prototype sounds now come from Freesound previews. Check license fit before shipping them publicly. The strongest replacement `cuckoo` is `CC0`; the current `piyo` and `Mamonaku Shibuya` candidates are `BY-NC`.
 
+- `audio/japan-closed-crossing.mp3`
+- `audio/japan-yamanote-approaching.mp3`
+- `audio/japan-park-crows.mp3`
+- `audio/japan-familymart-welcome.mp3`
+  Source: https://www.tiktok.com/@japan_vision_/video/7574165962543467796
+  Source title: `These sounds make me miss Japan`
+  Added on 2026-07-24 at Peter's request.
+  Excerpts: `0–3.116667s`, `6.85–10.066667s`, `15.25–17.783333s`,
+  and `17.783333–22.731995s`.
+  Notes: short local excerpts; the shipped page does not load TikTok.
+
 - `audio/japan-door-chime.ogg`
   Source: existing local file copied from `audio/train-chime.ogg`
   Original source: https://commons.wikimedia.org/wiki/Category:Sounds_of_rail_transport_in_Japan
