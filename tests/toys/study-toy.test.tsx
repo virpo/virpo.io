@@ -41,7 +41,7 @@ function makeStable(state: ReturnType<typeof createStudyState>, ids: string[]) {
 
 describe("StudyToy", () => {
   it("loads a randomized Kana card with its answer hidden", async () => {
-    render(<StudyToy />);
+    const { container } = render(<StudyToy />);
 
     const card = await screen.findByRole("button", { name: /reveal answer/i });
     const selected = decks.hiragana.find(
@@ -55,6 +55,10 @@ describe("StudyToy", () => {
     expect(screen.getByLabelText("46 due")).toBeVisible();
     expect(document.querySelector(".studyBoard")).toBeVisible();
     expect(document.querySelectorAll(".studyStat")).toHaveLength(2);
+    expect(
+      container.querySelector(".studyHeading .studyReset"),
+    ).toBeVisible();
+    expect(container.querySelector(".studyFooter")).toBeNull();
     expect(screen.queryByRole("group", { name: /rate this answer/i })).toBeNull();
   });
 
@@ -162,6 +166,7 @@ describe("StudyToy", () => {
     fireEvent.click(screen.getByRole("button", { name: "Got it" }));
 
     expect(await screen.findByText("Saved for this tab only.")).toBeVisible();
+    expect(document.querySelector(".studyNotice")).toBeVisible();
     expect(localStorage.getItem(STUDY_STORAGE_KEY)).toBe(raw);
   });
 
@@ -175,6 +180,7 @@ describe("StudyToy", () => {
     fireEvent.click(screen.getByRole("button", { name: /reset progress/i }));
 
     expect(await screen.findByText("Saved for this tab only.")).toBeVisible();
+    expect(document.querySelector(".studyNotice")).toBeVisible();
     expect(screen.queryByText("Progress reset.")).toBeNull();
     expect(localStorage.getItem(STUDY_STORAGE_KEY)).toBe(raw);
   });

@@ -62,6 +62,9 @@ export default function BlogPage() {
                       <li key={tag}>{tag}</li>
                     ))}
                   </ul>
+                  <span className="blogListArrow" aria-hidden="true">
+                    ↗
+                  </span>
                 </article>
               </Link>
             </li>

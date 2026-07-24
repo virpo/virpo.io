@@ -179,7 +179,7 @@ test("Tab order reaches navigation, Bloom, Source, and sound playback", async ({
     primary.getByRole("link", { name: "About", exact: true }),
     page.getByRole("button", { name: "Open Japan bloom details" }),
     page.getByRole("link", { name: /Source/ }),
-    page.getByRole("button", { name: /Play FamilyMart/ }),
+    page.getByRole("button", { name: /Play Departure melody/ }),
   ];
 
   for (const [index, target] of expected.entries()) {
@@ -192,12 +192,12 @@ test("Tab order reaches navigation, Bloom, Source, and sound playback", async ({
     }
   }
   await page.keyboard.press("Enter");
-  const pause = page.getByRole("button", { name: /Pause FamilyMart/ });
+  const pause = page.getByRole("button", { name: /Pause Departure melody/ });
   await expect(pause).toBeFocused();
   await expect(pause).toHaveAttribute("aria-pressed", "true");
   await page.keyboard.press("Enter");
   await expect(
-    page.getByRole("button", { name: /Play FamilyMart/ }),
+    page.getByRole("button", { name: /Play Departure melody/ }),
   ).toHaveAttribute("aria-pressed", "false");
 });
 
@@ -289,14 +289,16 @@ test("Sounds exposes waveform, play/pause, rapid next, and error fallback", asyn
   });
   const waveform = sounds.getByRole("img", { name: "Sound waveform" });
   const audio = sounds.locator("audio");
-  const play = sounds.getByRole("button", { name: /Play FamilyMart/ });
+  const play = sounds.getByRole("button", { name: /Play Departure melody/ });
 
   await expect(waveform).toHaveAttribute("data-waveform-state", "idle");
   await play.click();
-  await expect(sounds.getByRole("button", { name: /Pause FamilyMart/ })).toBeVisible();
+  await expect(
+    sounds.getByRole("button", { name: /Pause Departure melody/ }),
+  ).toBeVisible();
   await expect.poll(() => audio.evaluate((node) => !node.paused)).toBe(true);
   await expect(waveform).toHaveAttribute("data-waveform-state", "live");
-  await sounds.getByRole("button", { name: /Pause FamilyMart/ }).click();
+  await sounds.getByRole("button", { name: /Pause Departure melody/ }).click();
   await expect.poll(() => audio.evaluate((node) => node.paused)).toBe(true);
   await expect(waveform).toHaveAttribute("data-waveform-state", "idle");
 
@@ -406,7 +408,7 @@ test("Study randomizes, reveals, focuses, persists, migrates, and unlocks", asyn
     localStorage.setItem("virpo-study-v1", raw);
   }, legacy);
   await page.reload();
-  await expect(study.getByText(/1 \/ 46 stable/)).toBeVisible();
+  await expect(study.getByLabel("1 of 46 stable")).toBeVisible();
   expect(await page.evaluate(() => localStorage.getItem("virpo-study-v1"))).toBe(
     legacy,
   );

@@ -46,7 +46,7 @@ export function WindowSeatToy() {
     coverTimerRef.current = window.setTimeout(() => {
       setCoverVisible(false);
       coverTimerRef.current = null;
-    }, 1_200);
+    }, 4_000);
   }
 
   return (

@@ -21,6 +21,7 @@ describe("blog index", () => {
       expect(within(post).queryByRole("link")).toBeNull();
       expect(within(post).getByRole("heading", { level: 2 })).toBeVisible();
       expect(within(post).getByRole("list")).toBeVisible();
+      expect(post.querySelector(".blogListArrow")).toHaveTextContent("↗");
     }
   });
 });

@@ -618,6 +618,12 @@ img {
   font-size: 0.75rem;
 }
 
+.studyHeadingTools {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
 .studyLoading {
   display: grid;
   min-height: 178px;
@@ -776,35 +782,37 @@ img {
   box-shadow: none;
 }
 
-.studyFooter {
-  display: flex;
-  min-height: 48px;
+.studyNotice {
+  display: grid;
+  min-height: 44px;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.55rem;
-  padding: 0.25rem 0.4rem 0.25rem 0.7rem;
+  margin: 0;
+  padding: 0.5rem 0.7rem;
   border-radius: 13px;
   background: var(--paper);
   color: var(--muted);
   font-size: 0.66rem;
 }
 
-.studyFooter > span {
-  min-width: 0;
-  line-height: 1.2;
-}
-
 .studyReset {
+  display: grid;
+  width: 44px;
   min-height: 44px;
-  flex: none;
-  padding: 0 0.75rem;
+  place-items: center;
+  padding: 0;
   border: 2px solid var(--ink);
-  border-radius: 11px;
+  border-radius: 50%;
   background: var(--white);
-  color: inherit;
+  color: var(--ink);
   font: inherit;
   font-weight: 700;
   cursor: pointer;
+}
+
+.studyReset span {
+  color: inherit;
+  font-size: 1.05rem;
+  line-height: 1;
 }
 
 .studyRest {
@@ -1186,9 +1194,15 @@ img {
 }
 
 .blogListLink {
+  position: relative;
   display: block;
   padding: clamp(1.5rem, 3.5vw, 2.8rem) 0;
   transition: background 140ms ease, padding 140ms ease;
+}
+
+.blogList article {
+  position: relative;
+  padding-right: 3rem;
 }
 
 .blogListLink:hover,
@@ -1200,6 +1214,22 @@ img {
 
 .blogListLink:active {
   background: #fff9ee;
+}
+
+.blogListArrow {
+  position: absolute;
+  top: 50%;
+  right: 0.25rem;
+  color: var(--kaki-text);
+  font-family: var(--font-righteous), "Arial Rounded MT Bold", sans-serif;
+  font-size: 1.4rem;
+  transform: translateY(-50%);
+  transition: transform 140ms ease;
+}
+
+.blogListLink:hover .blogListArrow,
+.blogListLink:focus-visible .blogListArrow {
+  transform: translate(0.25rem, calc(-50% - 0.25rem));
 }
 
 .blogListMeta,

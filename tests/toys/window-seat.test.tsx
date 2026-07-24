@@ -71,7 +71,7 @@ describe("WindowSeatToy", () => {
     });
   });
 
-  it("keeps the startup cover until iframe load plus its release buffer", async () => {
+  it("keeps the startup cover through YouTube's startup chrome", async () => {
     vi.useFakeTimers();
     mockMatchMedia(false);
     render(<WindowSeatToy />);
@@ -82,7 +82,7 @@ describe("WindowSeatToy", () => {
     expect(screen.getByTestId("youtube-startup-cover")).toBeVisible();
 
     fireEvent.load(frame);
-    act(() => vi.advanceTimersByTime(1_199));
+    act(() => vi.advanceTimersByTime(3_999));
     expect(screen.getByTestId("youtube-startup-cover")).toBeVisible();
     act(() => vi.advanceTimersByTime(1));
     expect(screen.queryByTestId("youtube-startup-cover")).toBeNull();

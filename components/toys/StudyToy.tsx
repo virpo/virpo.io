@@ -131,7 +131,17 @@ export function StudyToy() {
     >
       <header className="toyHeading studyHeading">
         <h2>Japanese Study</h2>
-        <span>{groupLabels[currentGroup]}</span>
+        <div className="studyHeadingTools">
+          <span>{groupLabels[currentGroup]}</span>
+          <button
+            className="studyReset"
+            type="button"
+            aria-label="Reset progress"
+            onClick={reset}
+          >
+            <span aria-hidden="true">↺</span>
+          </button>
+        </div>
       </header>
 
       <div className="studyBoard">
@@ -225,17 +235,11 @@ export function StudyToy() {
           </div>
         )}
 
-        <footer className="studyFooter">
-          <span aria-live="polite">{notice}</span>
-          <button
-            className="studyReset"
-            type="button"
-            aria-label="Reset progress"
-            onClick={reset}
-          >
-            Reset
-          </button>
-        </footer>
+        {notice ? (
+          <p className="studyNotice" aria-live="polite">
+            {notice}
+          </p>
+        ) : null}
       </div>
     </section>
   );
