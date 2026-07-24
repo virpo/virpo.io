@@ -21,6 +21,7 @@ export type CardProgress = {
 export type StudyState = {
   version: 2;
   cards: Record<string, CardProgress>;
+  unlockedGroups: StudyGroup[];
   recentCardIds: string[];
   unseenStreak: number;
 };

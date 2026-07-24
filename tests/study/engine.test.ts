@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { allStudyCards, decks } from "../../lib/study/decks";
 import {
@@ -126,6 +128,7 @@ describe("study state", () => {
 
     expect(state).toMatchObject({
       version: 2,
+      unlockedGroups: ["hiragana"],
       recentCardIds: [],
       unseenStreak: 0,
     });
@@ -226,6 +229,38 @@ describe("study state", () => {
       createStudyState(),
     );
   });
+
+  it("upgrades v2 data without unlockedGroups by deriving earned groups", () => {
+    const legacyV2 = withStableCards(
+      withStableCards(createStudyState(), decks.hiragana.slice(0, 37)),
+      decks.katakana.slice(0, 37),
+    ) as StudyState & { unlockedGroups?: StudyState["unlockedGroups"] };
+    delete legacyV2.unlockedGroups;
+
+    const loaded = loadStudyState(legacyV2);
+
+    expect(loaded.unlockedGroups).toEqual([
+      "hiragana",
+      "katakana",
+      "kanji-1",
+    ]);
+    expect(loaded.cards["h-a"].correct).toBe(2);
+  });
+
+  it("sanitizes persisted unlocks into a monotonic group prefix", () => {
+    const loaded = loadStudyState({
+      ...createStudyState(),
+      unlockedGroups: ["kanji-3", "unknown", "kanji-3"],
+    });
+
+    expect(loaded.unlockedGroups).toEqual([
+      "hiragana",
+      "katakana",
+      "kanji-1",
+      "kanji-2",
+      "kanji-3",
+    ]);
+  });
 });
 
 describe("progressive unlocks", () => {
@@ -277,6 +312,28 @@ describe("progressive unlocks", () => {
     expect(getUnlockedGroups(state)).toContain("kanji-3");
     state = withStableCards(state, decks.kanji3.slice(0, 6));
     expect(getUnlockedGroups(state)).toContain("kanji-4");
+  });
+
+  it("uses deck-size-derived kana and Kanji thresholds", () => {
+    const source = readFileSync(
+      resolve(process.cwd(), "lib/study/engine.ts"),
+      "utf8",
+    );
+
+    expect(source).toContain("Math.ceil(cards.length * ratio)");
+    expect(source).not.toMatch(/stableCount\([^)]*\)\s*<\s*(37|6)\b/);
+  });
+
+  it("never relocks a persisted group when a deck later grows", () => {
+    const loaded = loadStudyState({
+      ...createStudyState(),
+      unlockedGroups: ["hiragana", "katakana"],
+    });
+
+    expect(getUnlockedGroups(loaded)).toEqual(["hiragana", "katakana"]);
+    expect(getStudyProgress(loaded).total).toBe(
+      decks.hiragana.length + decks.katakana.length,
+    );
   });
 
   it("reports progress across every unlocked group", () => {
@@ -409,6 +466,28 @@ describe("scoring", () => {
 
     expect(state.recentCardIds).toEqual(["h-a", "h-e", "h-u"]);
     expect(state.unseenStreak).toBe(0);
+  });
+
+  it("persists a newly earned unlock while scoring its threshold card", () => {
+    const state = withStableCards(
+      createStudyState(),
+      decks.hiragana.slice(0, Math.ceil(decks.hiragana.length * 0.8) - 1),
+    );
+    const thresholdCard =
+      decks.hiragana[Math.ceil(decks.hiragana.length * 0.8) - 1];
+    state.cards[thresholdCard.id] = {
+      stage: 1,
+      dueAt: 0,
+      correct: 1,
+      wrong: 0,
+    };
+
+    const advanced = scoreCard(state, thresholdCard.id, true, 1_000);
+
+    expect(advanced.unlockedGroups).toContain("katakana");
+    expect(loadStudyState(JSON.stringify(advanced)).unlockedGroups).toContain(
+      "katakana",
+    );
   });
 
   it("ignores unknown and locked cards while returning a normalized clone", () => {

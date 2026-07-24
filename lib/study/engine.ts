@@ -19,6 +19,14 @@ const INTERVALS_MS = Object.freeze([
   2 * 24 * HOUR,
   5 * 24 * HOUR,
 ]);
+const STUDY_GROUPS: readonly StudyGroup[] = Object.freeze([
+  "hiragana",
+  "katakana",
+  "kanji-1",
+  "kanji-2",
+  "kanji-3",
+  "kanji-4",
+]);
 
 function blankProgress(): CardProgress {
   return { stage: 0, dueAt: 0, correct: 0, wrong: 0 };
@@ -56,6 +64,7 @@ export function createStudyState(): StudyState {
     cards: Object.fromEntries(
       allStudyCards.map((card) => [card.id, blankProgress()]),
     ),
+    unlockedGroups: ["hiragana"],
     recentCardIds: [],
     unseenStreak: 0,
   };
@@ -97,6 +106,10 @@ export function loadStudyState(raw: unknown): StudyState {
     )
     .slice(0, 3);
   fresh.unseenStreak = sanitizeCount(parsed.unseenStreak);
+  fresh.unlockedGroups = mergeUnlockedGroups(
+    sanitizeUnlockedGroups(parsed.unlockedGroups),
+    deriveEarnedGroups(fresh),
+  );
 
   return fresh;
 }
@@ -109,24 +122,75 @@ function stableCount(state: StudyState, cards: readonly StudyCard[]) {
   return cards.filter((card) => isStableCard(state.cards[card.id])).length;
 }
 
-export function getUnlockedGroups(state: StudyState): StudyGroup[] {
+function stableThreshold(cards: readonly StudyCard[], ratio: number) {
+  return Math.ceil(cards.length * ratio);
+}
+
+function deriveEarnedGroups(state: StudyState): StudyGroup[] {
   const groups: StudyGroup[] = ["hiragana"];
-  if (stableCount(state, decks.hiragana) < 37) return groups;
+  if (
+    stableCount(state, decks.hiragana) <
+    stableThreshold(decks.hiragana, 0.8)
+  ) {
+    return groups;
+  }
 
   groups.push("katakana");
-  if (stableCount(state, decks.katakana) < 37) return groups;
+  if (
+    stableCount(state, decks.katakana) <
+    stableThreshold(decks.katakana, 0.8)
+  ) {
+    return groups;
+  }
 
   groups.push("kanji-1");
-  if (stableCount(state, decks.kanji1) < 6) return groups;
+  if (stableCount(state, decks.kanji1) < stableThreshold(decks.kanji1, 0.75)) {
+    return groups;
+  }
 
   groups.push("kanji-2");
-  if (stableCount(state, decks.kanji2) < 6) return groups;
+  if (stableCount(state, decks.kanji2) < stableThreshold(decks.kanji2, 0.75)) {
+    return groups;
+  }
 
   groups.push("kanji-3");
-  if (stableCount(state, decks.kanji3) < 6) return groups;
+  if (stableCount(state, decks.kanji3) < stableThreshold(decks.kanji3, 0.75)) {
+    return groups;
+  }
 
   groups.push("kanji-4");
   return groups;
+}
+
+function sanitizeUnlockedGroups(value: unknown): StudyGroup[] {
+  if (!Array.isArray(value)) return ["hiragana"];
+
+  const highest = value.reduce(
+    (index, group) =>
+      typeof group === "string"
+        ? Math.max(index, STUDY_GROUPS.indexOf(group as StudyGroup))
+        : index,
+    0,
+  );
+  return STUDY_GROUPS.slice(0, highest + 1);
+}
+
+function mergeUnlockedGroups(
+  persisted: readonly StudyGroup[],
+  earned: readonly StudyGroup[],
+): StudyGroup[] {
+  const highest = Math.max(
+    STUDY_GROUPS.indexOf(persisted.at(-1) ?? "hiragana"),
+    STUDY_GROUPS.indexOf(earned.at(-1) ?? "hiragana"),
+  );
+  return STUDY_GROUPS.slice(0, highest + 1);
+}
+
+export function getUnlockedGroups(state: StudyState): StudyGroup[] {
+  return mergeUnlockedGroups(
+    sanitizeUnlockedGroups(state.unlockedGroups),
+    deriveEarnedGroups(state),
+  );
 }
 
 function getActiveCards(state: StudyState) {
@@ -235,6 +299,7 @@ export function scoreCard(
     ...next.recentCardIds.filter((recentId) => recentId !== id),
   ].slice(0, 3);
   next.unseenStreak = wasUnseen ? next.unseenStreak + 1 : 0;
+  next.unlockedGroups = getUnlockedGroups(next);
 
   return next;
 }

@@ -3,15 +3,43 @@ import { z } from "zod";
 const SITE_ORIGIN = "https://virpo.io";
 const CONTROL_CHARACTERS = /[\u0000-\u001f\u007f]/;
 
-export function isLocalMediaUrl(value: string): boolean {
-  if (CONTROL_CHARACTERS.test(value) || !/^\/(?![\\/])/.test(value)) return false;
+function decodePathSegment(value: string) {
+  let decoded = value;
+  for (let pass = 0; pass < 4; pass += 1) {
+    const next = decodeURIComponent(decoded);
+    if (next === decoded) return decoded;
+    decoded = next;
+  }
+  return decoded;
+}
+
+export function normalizeLocalMediaUrl(value: string): string | null {
+  if (CONTROL_CHARACTERS.test(value) || !/^\/(?![\\/])/.test(value)) return null;
 
   try {
+    for (const segment of value.split(/[?#]/, 1)[0].split("/")) {
+      const decoded = decodePathSegment(segment);
+      if (
+        decoded === "." ||
+        decoded === ".." ||
+        decoded.includes("/") ||
+        decoded.includes("\\")
+      ) {
+        return null;
+      }
+    }
     const resolved = new URL(value, SITE_ORIGIN);
-    return resolved.origin === SITE_ORIGIN && /^\/(?!\/)/.test(resolved.pathname);
+    if (resolved.origin !== SITE_ORIGIN || !/^\/(?!\/)/.test(resolved.pathname)) {
+      return null;
+    }
+    return `${resolved.pathname}${resolved.search}${resolved.hash}`;
   } catch {
-    return false;
+    return null;
   }
+}
+
+export function isLocalMediaUrl(value: string): boolean {
+  return normalizeLocalMediaUrl(value) !== null;
 }
 
 export const postFrontmatterSchema = z.object({

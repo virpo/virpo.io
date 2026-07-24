@@ -23,6 +23,17 @@ export function ArticleLayout({
           <time dateTime={post.publishedAt.toISOString()}>
             {dateFormatter.format(post.publishedAt)}
           </time>
+          {post.updatedAt ? (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>
+                Updated{" "}
+                <time dateTime={post.updatedAt.toISOString()}>
+                  {dateFormatter.format(post.updatedAt)}
+                </time>
+              </span>
+            </>
+          ) : null}
           <span aria-hidden="true">·</span>
           <span>{post.readingTime.label}</span>
         </p>

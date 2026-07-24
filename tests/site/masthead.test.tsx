@@ -18,7 +18,7 @@ it("renders the shared virpo navigation and current route", () => {
 });
 
 it("wraps page content with the shared masthead and footer", () => {
-  render(
+  const { container } = render(
     <SiteShell current="projects">
       <h1>Projects</h1>
     </SiteShell>,
@@ -26,6 +26,13 @@ it("wraps page content with the shared masthead and footer", () => {
 
   expect(screen.getByRole("heading", { name: "Projects" })).toBeVisible();
   expect(screen.getByRole("contentinfo")).toHaveTextContent("Peter Hraska · Slovakia");
+  const shell = container.querySelector(".siteShell");
+  expect(shell?.children[0]?.tagName).toBe("HEADER");
+  expect(shell?.children[1]?.tagName).toBe("MAIN");
+  expect(shell?.children[2]?.tagName).toBe("FOOTER");
+  expect(screen.getByRole("main")).toContainElement(
+    screen.getByRole("heading", { name: "Projects" }),
+  );
 });
 
 describe("bloom disclosure", () => {

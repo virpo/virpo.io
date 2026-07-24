@@ -52,16 +52,23 @@ draft: false
 ```
 
 Use ordinary MDX prose plus the controlled `ArticleImage` and `ImagePair`
-components already used by the existing posts. `npm run test:build` catches
-invalid frontmatter, unsupported MDX, missing local media, and incomplete
-article metadata before deployment.
+components already used by the existing posts. Their media URLs must be
+canonical paths inside `/assets/blog/`; traversal and encoded traversal are
+rejected. `npm run test:build` catches invalid frontmatter, unsupported MDX,
+missing same-origin files or routes, and incomplete article metadata before
+deployment.
 
 ## Japanese Study storage
 
 Study progress is stored in `localStorage` as `virpo-study-v2`. On first load,
 an existing `virpo-study-v1` record is repaired and copied into v2 without
-modifying or deleting the v1 value. Malformed, partial, and future data falls
-back to a safe normalized state.
+modifying or deleting the v1 value. Current-version data is normalized and
+upgraded without losing card progress. Earned groups are persisted
+monotonically, so later deck growth cannot relock them.
+
+If a newer storage version is present, this build leaves its exact bytes
+untouched. Study remains usable for the current tab and reports
+`Saved for this tab only.`; scoring and reset never overwrite the newer data.
 
 ## Window Seat limitation
 

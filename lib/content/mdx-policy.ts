@@ -1,4 +1,4 @@
-import { isLocalMediaUrl } from "./schema";
+import { normalizeLocalMediaUrl } from "./schema";
 
 type EstreeNode = {
   type?: string;
@@ -38,7 +38,7 @@ function reject(detail: string): never {
 function requireBlogAsset(value: unknown, component: string): asserts value is string {
   if (
     typeof value !== "string" ||
-    !isLocalMediaUrl(value) ||
+    normalizeLocalMediaUrl(value) !== value ||
     !value.startsWith(BLOG_ASSET_PREFIX)
   ) {
     reject(`${component} sources outside ${BLOG_ASSET_PREFIX}`);

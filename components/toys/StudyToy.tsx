@@ -45,6 +45,7 @@ export function StudyToy() {
 
   useEffect(() => {
     const loaded = loadStoredStudyState();
+    persist(loaded);
     setState(loaded);
     setSelection(select(loaded));
   }, []);
@@ -90,10 +91,15 @@ export function StudyToy() {
 
   function persist(next: StudyState) {
     try {
-      saveStudyState(next);
+      if (!saveStudyState(next)) {
+        setNotice("Saved for this tab only.");
+        return false;
+      }
       setNotice("");
+      return true;
     } catch {
       setNotice("Saved for this tab only.");
+      return false;
     }
   }
 
@@ -110,11 +116,11 @@ export function StudyToy() {
   function reset() {
     if (!window.confirm("Reset all Japanese Study progress?")) return;
     const next = createStudyState();
-    persist(next);
+    const saved = persist(next);
     setState(next);
     setRevealed(false);
     setSelection(select(next));
-    setNotice("Progress reset.");
+    if (saved) setNotice("Progress reset.");
   }
 
   return (

@@ -72,11 +72,10 @@ describe("homepage", () => {
     );
   });
 
-  it("replaces all toy placeholders and preserves toy order", () => {
+  it("preserves the finished toy order", () => {
     const { container } = render(<HomePage />);
     const toyRail = container.querySelector(".toyRail");
 
-    expect(container.querySelectorAll("[data-toy-placeholder]")).toHaveLength(0);
     expect(container.querySelector("[data-sounds-toy]")).toBeVisible();
     expect(container.querySelector("[data-window-seat-toy]")).toBeVisible();
     expect(container.querySelector("[data-study-toy]")).toBeVisible();
@@ -92,13 +91,12 @@ describe("homepage", () => {
     ]);
   });
 
-  it("retires the temporary toy module after the media toys replace it", () => {
+  it("renders the finished media toys", () => {
     const source = readFileSync(
       resolve(process.cwd(), "app/page.tsx"),
       "utf8",
     );
 
-    expect(source).not.toContain("ToyPlaceholders");
     expect(source).toContain("<SoundsToy />");
     expect(source).toContain("<WindowSeatToy />");
   });

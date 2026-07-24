@@ -8,6 +8,7 @@ import ArticlePage, {
   serializeArticleJsonLd,
 } from "../../app/blog/[slug]/page";
 import { compilePostMdx } from "../../components/blog/mdx-components";
+import { ArticleLayout } from "../../components/blog/ArticleLayout";
 import { getPost } from "../../lib/content/posts";
 
 const globals = readFileSync(resolve(process.cwd(), "app/globals.css"), "utf8");
@@ -56,6 +57,32 @@ describe("trusted repository MDX boundary", () => {
     ["uncontrolled Markdown images", "![Group](/assets/blog/ai-build-day.png)"],
   ])("rejects %s before compilation", async (_label, source) => {
     await expect(compilePostMdx(source)).rejects.toThrow(/not allowed/i);
+  });
+
+  it.each([
+    "/assets/blog/../projects/ai-build-week.jpg",
+    "/assets/blog/%2e%2e/projects/ai-build-week.jpg",
+    "/assets/blog/%252e%252e/projects/ai-build-week.jpg",
+  ])("rejects traversing blog media URL %s", async (src) => {
+    await expect(
+      compilePostMdx(`<ArticleImage src="${src}" alt="No traversal" />`),
+    ).rejects.toThrow(/not allowed/i);
+  });
+});
+
+describe("article dates", () => {
+  it("renders an explicit updated date when frontmatter provides one", () => {
+    const post = {
+      ...getPost("a-different-kind-of-hackathon"),
+      updatedAt: new Date("2026-08-10T00:00:00.000Z"),
+    };
+    const html = renderToStaticMarkup(
+      <ArticleLayout post={post}>Copy.</ArticleLayout>,
+    );
+
+    expect(html).toContain("Updated");
+    expect(html).toContain('dateTime="2026-08-10T00:00:00.000Z"');
+    expect(html).toContain("August 10, 2026");
   });
 });
 

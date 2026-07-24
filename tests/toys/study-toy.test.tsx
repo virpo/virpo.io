@@ -148,6 +148,51 @@ describe("StudyToy", () => {
     ).toEqual({ stage: 0, dueAt: 0, correct: 0, wrong: 0 });
   });
 
+  it("keeps future-version bytes through scoring and reports tab-only progress", async () => {
+    const raw = '{"version":3,"cards":{},"opaque":"keep"}';
+    localStorage.setItem(STUDY_STORAGE_KEY, raw);
+    render(<StudyToy />);
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: /reveal answer/i }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Got it" }));
+
+    expect(await screen.findByText("Saved for this tab only.")).toBeVisible();
+    expect(localStorage.getItem(STUDY_STORAGE_KEY)).toBe(raw);
+  });
+
+  it("keeps future-version bytes through reset and reports tab-only progress", async () => {
+    const raw = '{"version":4,"cards":{},"opaque":"keep"}';
+    localStorage.setItem(STUDY_STORAGE_KEY, raw);
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(<StudyToy />);
+    await screen.findByRole("button", { name: /reveal answer/i });
+
+    fireEvent.click(screen.getByRole("button", { name: /reset progress/i }));
+
+    expect(await screen.findByText("Saved for this tab only.")).toBeVisible();
+    expect(screen.queryByText("Progress reset.")).toBeNull();
+    expect(localStorage.getItem(STUDY_STORAGE_KEY)).toBe(raw);
+  });
+
+  it("does not replace a storage failure warning with reset success copy", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    const setItem = vi
+      .spyOn(Storage.prototype, "setItem")
+      .mockImplementation(() => {
+        throw new DOMException("Storage blocked", "QuotaExceededError");
+      });
+    render(<StudyToy />);
+    await screen.findByRole("button", { name: /reveal answer/i });
+
+    fireEvent.click(screen.getByRole("button", { name: /reset progress/i }));
+
+    expect(await screen.findByText("Saved for this tab only.")).toBeVisible();
+    expect(screen.queryByText("Progress reset.")).toBeNull();
+    expect(setItem).toHaveBeenCalled();
+  });
+
   it("keeps Study microtype readable with compact, clear action focus", () => {
     const css = readFileSync(resolve(process.cwd(), "app/globals.css"), "utf8");
 

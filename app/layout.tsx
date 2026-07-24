@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   applicationName: "virpo",
   icons: {
     icon: "/assets/brand-mark.svg",
-    apple: "/assets/brand-mark.svg",
+    apple: "/assets/apple-touch-icon.png",
   },
   openGraph: {
     type: "website",

@@ -117,4 +117,19 @@ describe("WindowSeatToy", () => {
     expect(windowSeatCss).not.toMatch(/windowSeatStartupReveal/);
     expect(windowSeatCss).not.toMatch(/\bscale\s*\(|\bzoom\s*:/);
   });
+
+  it("uses only the approved warm palette for the generated still", () => {
+    const css = readFileSync(resolve(process.cwd(), "app/globals.css"), "utf8");
+    const still = css.match(/\.windowSeatStill\s*\{([^}]*)}/s)?.[1] ?? "";
+    const startup =
+      css.match(/\.windowSeatStartupCover\s*\{([^}]*)}/s)?.[1] ?? "";
+
+    for (const rule of [still, startup]) {
+      expect(rule).toContain("var(--paper)");
+      expect(rule).toContain("var(--kaki)");
+      expect(rule).toContain("var(--brand-red)");
+      expect(rule).toContain("var(--peach)");
+      expect(rule).not.toMatch(/#557b4f|#c9d6c3|#718c58/i);
+    }
+  });
 });

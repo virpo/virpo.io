@@ -122,20 +122,6 @@ const shellTextPairs = [
     fontSizePx: 10.88,
     fontWeight: 400,
   },
-  {
-    name: "placeholder label",
-    foreground: "--ink",
-    background: "--paper",
-    fontSizePx: 13.12,
-    fontWeight: 700,
-  },
-  {
-    name: "large Kaki placeholder title",
-    foreground: "--kaki",
-    background: "--paper",
-    fontSizePx: 64,
-    fontWeight: 400,
-  },
 ] as const;
 
 describe("shell contrast", () => {

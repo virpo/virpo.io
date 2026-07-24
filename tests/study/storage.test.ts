@@ -138,10 +138,11 @@ describe("study storage", () => {
     expect(localStorage.getItem(LEGACY_STUDY_STORAGE_KEY)).toBe(legacy);
   });
 
-  it.each([
-    ["partial", JSON.stringify({ version: 2, cards: { "h-a": { correct: 2 } } })],
-    ["future", JSON.stringify({ version: 9, cards: {} })],
-  ])("rewrites %s v2 data as its normalized repair", (_kind, raw) => {
+  it("rewrites partial v2 data as its normalized repair", () => {
+    const raw = JSON.stringify({
+      version: 2,
+      cards: { "h-a": { correct: 2 } },
+    });
     localStorage.setItem(STUDY_STORAGE_KEY, raw);
 
     const repaired = loadStoredStudyState(localStorage);
@@ -152,11 +153,27 @@ describe("study storage", () => {
     expect(loadStoredStudyState(localStorage)).toEqual(repaired);
   });
 
+  it("loads future data for this tab without changing its raw bytes", () => {
+    const raw = '{"version":9,"cards":{"future":{"correct":99}},"opaque":"keep"}';
+    localStorage.setItem(STUDY_STORAGE_KEY, raw);
+
+    expect(loadStoredStudyState(localStorage)).toEqual(createStudyState());
+    expect(localStorage.getItem(STUDY_STORAGE_KEY)).toBe(raw);
+  });
+
+  it("refuses to save over a newer stored version", () => {
+    const raw = '{"version":3,"cards":{},"opaque":"keep"}';
+    localStorage.setItem(STUDY_STORAGE_KEY, raw);
+
+    expect(saveStudyState(createStudyState(), localStorage)).toBe(false);
+    expect(localStorage.getItem(STUDY_STORAGE_KEY)).toBe(raw);
+  });
+
   it("persists a repaired v2 snapshot", () => {
     const state = createStudyState();
     state.cards["h-a"].correct = 1;
 
-    saveStudyState(state, localStorage);
+    expect(saveStudyState(state, localStorage)).toBe(true);
 
     expect(JSON.parse(localStorage.getItem(STUDY_STORAGE_KEY) ?? "{}")).toEqual(
       state,

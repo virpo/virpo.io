@@ -10,10 +10,10 @@ export function SiteShell({
   children: ReactNode;
 }) {
   return (
-    <main className="siteShell">
+    <div className="siteShell">
       <Masthead current={current} />
-      {children}
+      <main>{children}</main>
       <SiteFooter />
-    </main>
+    </div>
   );
 }

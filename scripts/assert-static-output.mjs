@@ -1,5 +1,6 @@
 import { access, readFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { validateStaticReferences } from "./validate-static-references.mjs";
 
 const requiredFiles = [
   "dist/index.html",
@@ -22,6 +23,8 @@ for (const file of requiredFiles) {
     throw new Error(`Expected static export at ${outputPath}`);
   }
 }
+
+await validateStaticReferences(resolve("dist"));
 
 function assertIncludes(source, marker, file) {
   if (!source.includes(marker)) {

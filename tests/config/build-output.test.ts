@@ -52,4 +52,8 @@ describe("static build-output assertions", () => {
   it("requires exactly six exported project cards", () => {
     expect(assertionScript).toContain("projectCardCount !== 6");
   });
+
+  it("validates every exported same-origin HTML reference", () => {
+    expect(assertionScript).toContain("validateStaticReferences");
+  });
 });

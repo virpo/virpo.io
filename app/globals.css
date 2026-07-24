@@ -370,10 +370,6 @@ img {
   object-fit: cover;
 }
 
-.toyPlaceholder {
-  background: var(--white);
-}
-
 .toyHeading {
   display: flex;
   min-height: 46px;
@@ -532,8 +528,8 @@ img {
   z-index: 0;
   inset: 0;
   background:
-    linear-gradient(165deg, transparent 49%, #557b4f 50% 64%, transparent 65%),
-    linear-gradient(var(--paper) 0 40%, #c9d6c3 40% 61%, #718c58 61%);
+    linear-gradient(165deg, transparent 49%, var(--brand-red) 50% 64%, transparent 65%),
+    linear-gradient(var(--paper) 0 40%, var(--peach) 40% 61%, var(--kaki) 61%);
 }
 
 .windowSeatAperture {
@@ -604,8 +600,8 @@ img {
   z-index: 3;
   inset: 0;
   background:
-    linear-gradient(165deg, transparent 49%, #557b4f 50% 64%, transparent 65%),
-    linear-gradient(var(--paper) 0 40%, #c9d6c3 40% 61%, #718c58 61%);
+    linear-gradient(165deg, transparent 49%, var(--brand-red) 50% 64%, transparent 65%),
+    linear-gradient(var(--paper) 0 40%, var(--peach) 40% 61%, var(--kaki) 61%);
   pointer-events: none;
 }
 

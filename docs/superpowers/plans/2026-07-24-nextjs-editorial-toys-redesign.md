@@ -697,11 +697,14 @@ quiet deterministic wave.
 
 - [x] **Step 4: Implement Window Seat without zoom**
 
-Use the existing no-cookie URL with `controls=0`, `modestbranding=1`, muted
-autoplay, loop playlist, captions disabled, and keyboard disabled. Keep
-`transform: none` and `pointer-events: none`. Render illustrated window above
-the iframe and paper/gradient masks over the top and bottom YouTube chrome
-regions. Reduced motion keeps `about:blank`.
+Use the no-cookie URL with supported parameters: `controls=0`, muted autoplay,
+loop playlist, related-video limitation, fullscreen disabled, and keyboard
+controls disabled. `modestbranding` is deprecated, and omitting
+`cc_load_policy=1` does not guarantee captions stay hidden, so do not claim
+either as an embed-level guarantee. Keep `transform: none` and
+`pointer-events: none`. Render the illustrated window plus explicit
+top/bottom/side/subtitle/compass masks over verified YouTube chrome regions.
+Reduced motion keeps `about:blank`.
 
 - [x] **Step 5: Test and visually verify**
 

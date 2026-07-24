@@ -56,7 +56,24 @@ export function saveStudyState(
   state: StudyState,
   storage: Storage = window.localStorage,
 ) {
+  const current = storage.getItem(STUDY_STORAGE_KEY);
+  if (current !== null && hasNewerVersion(current)) return false;
   storage.setItem(STUDY_STORAGE_KEY, JSON.stringify(loadStudyState(state)));
+  return true;
+}
+
+function hasNewerVersion(raw: string) {
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    return (
+      Boolean(parsed) &&
+      typeof parsed === "object" &&
+      typeof (parsed as { version?: unknown }).version === "number" &&
+      (parsed as { version: number }).version > 2
+    );
+  } catch {
+    return false;
+  }
 }
 
 export function loadStoredStudyState(
@@ -66,6 +83,7 @@ export function loadStoredStudyState(
     const current = storage.getItem(STUDY_STORAGE_KEY);
     if (current !== null) {
       const state = loadStudyState(current);
+      if (hasNewerVersion(current)) return state;
       try {
         saveStudyState(state, storage);
       } catch {
