@@ -160,7 +160,6 @@ img {
 
 .tickerKicker {
   color: var(--muted);
-  font-family: Arial, Helvetica, sans-serif;
   font-size: 0.64rem;
   font-weight: 700;
   letter-spacing: 0.09em;
@@ -268,7 +267,6 @@ img {
 .popoverKicker {
   margin: 0;
   color: var(--kaki-text);
-  font-family: Arial, Helvetica, sans-serif;
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -281,7 +279,6 @@ img {
 
 .bloomPopover > span:not(.popoverArrow) {
   color: var(--muted);
-  font-family: Arial, Helvetica, sans-serif;
   font-size: 0.78rem;
 }
 
@@ -324,7 +321,6 @@ img {
 
 .pagePlaceholder p {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -392,7 +388,6 @@ img {
 
 .toyHeading span {
   color: var(--muted);
-  font-family: Arial, Helvetica, sans-serif;
   font-size: 0.62rem;
   text-align: right;
 }
@@ -475,7 +470,6 @@ img {
 
 .soundMeta > div:first-child > span {
   color: #5e392b;
-  font-family: Arial, Helvetica, sans-serif;
   font-size: 0.66rem;
   font-weight: 700;
 }
@@ -847,7 +841,6 @@ img {
 .sectionLabel {
   margin: 0;
   color: var(--kaki-text);
-  font-family: Arial, Helvetica, sans-serif;
   font-size: 0.69rem;
   font-weight: 700;
   letter-spacing: 0.09em;
@@ -873,7 +866,6 @@ img {
   max-width: 58ch;
   margin: 0;
   color: var(--muted);
-  font-family: Arial, Helvetica, sans-serif;
   font-size: clamp(0.92rem, 1.3vw, 1.12rem);
   line-height: 1.5;
 }
@@ -911,7 +903,8 @@ img {
   display: grid;
   min-height: 0;
   grid-template-rows: auto 1fr;
-  background: var(--white);
+  gap: var(--gap);
+  background: var(--ink);
 }
 
 .sectionHeader {
@@ -921,7 +914,7 @@ img {
   justify-content: space-between;
   gap: 1rem;
   padding: 0.8rem 1rem;
-  border-bottom: 2px solid #e6ded4;
+  background: var(--white);
 }
 
 .sectionHeader > a,
@@ -946,24 +939,37 @@ img {
 .writingList {
   display: grid;
   grid-template-rows: repeat(3, minmax(180px, 1fr));
+  gap: var(--gap);
+  background: var(--ink);
+}
+
+.writingPreviewLink {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  border-radius: 9px;
+  background: var(--white);
+  transition: background 140ms ease, transform 140ms ease;
 }
 
 .writingPreview {
   display: grid;
+  min-height: 100%;
   min-width: 0;
   align-content: center;
   gap: 0.48rem;
   padding: clamp(1.1rem, 2.5vw, 2rem) clamp(1rem, 3vw, 2.5rem);
-  border-bottom: 2px solid #e6ded4;
-  transition: background 140ms ease;
 }
 
-.writingPreview:last-child {
-  border-bottom: 0;
-}
-
-.writingPreview:hover {
+.writingPreviewLink:hover,
+.writingPreviewLink:focus-visible {
   background: #fff9ee;
+  transform: translateY(-2px);
+}
+
+.writingPreviewLink:active {
+  transform: translateY(0);
 }
 
 .writingMeta,
@@ -973,7 +979,6 @@ img {
   justify-content: space-between;
   gap: 1rem;
   color: var(--kaki-text);
-  font-family: Arial, Helvetica, sans-serif;
   font-size: 0.66rem;
   font-weight: 700;
   letter-spacing: 0.045em;
@@ -996,7 +1001,6 @@ img {
   margin: 0;
   overflow: hidden;
   color: var(--muted);
-  font-family: Arial, Helvetica, sans-serif;
   font-size: clamp(0.78rem, 1vw, 0.94rem);
   line-height: 1.45;
   -webkit-box-orient: vertical;
@@ -1010,13 +1014,9 @@ img {
   text-transform: none;
 }
 
-.writingRoute a {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding-bottom: 0.12rem;
-  border-bottom: 2px solid var(--kaki);
-  color: var(--ink);
+.writingRoute > span:last-child {
+  color: var(--kaki-text);
+  font-size: 1rem;
 }
 
 .projectGrid {
@@ -1080,7 +1080,6 @@ img {
 .projectCopy small {
   margin-top: 0.28rem;
   color: rgba(255, 255, 255, 0.8);
-  font-family: Arial, Helvetica, sans-serif;
   font-size: 0.68rem;
 }
 

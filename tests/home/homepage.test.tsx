@@ -53,12 +53,22 @@ describe("homepage", () => {
     expect(within(writing).getByText(/teams shipped working products/i)).toBeVisible();
     for (const preview of previews) {
       expect(within(preview).getByText(/min read/i)).toBeVisible();
-      expect(within(preview).getByRole("link", { name: /read/i })).toHaveAttribute(
+      expect(preview.closest("a")).toHaveAttribute(
         "href",
         expect.stringMatching(/^\/blog\/[^#]+\/?$/),
       );
+      expect(within(preview).queryByRole("link")).toBeNull();
+      expect(within(preview).queryByText(/^Read$/)).toBeNull();
       expect(within(preview).getByTestId("writing-excerpt").textContent?.length).toBeGreaterThan(70);
     }
+  });
+
+  it("uses the playful display face throughout homepage content", () => {
+    const css = readFileSync(resolve(process.cwd(), "app/globals.css"), "utf8");
+    const homepageCss = css.slice(0, css.indexOf(".blogIndex"));
+
+    expect(homepageCss).not.toMatch(/font-family:\s*Arial,\s*Helvetica/);
+    expect(homepageCss).not.toMatch(/font-family:\s*var\(--font-(?:fraunces|source-serif)\)/);
   });
 
   it("keeps projects on their own page behind a compact writing link", () => {

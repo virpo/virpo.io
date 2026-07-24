@@ -21,26 +21,23 @@ export function WritingPreview({ post }: { post: PostSummary }) {
   const excerpt = homepageExcerpts[post.slug] ?? post.description;
 
   return (
-    <article className="writingPreview">
-      <div className="writingMeta">
-        <span>{post.tags[0]}</span>
-        <time dateTime={post.publishedAt.toISOString()}>
-          {dateFormatter.format(post.publishedAt)}
-        </time>
-      </div>
-      <h2>{post.title}</h2>
-      <p className="writingExcerpt" data-testid="writing-excerpt">
-        {excerpt}
-      </p>
-      <div className="writingRoute">
-        <span>{post.readingTime.label}</span>
-        <Link
-          href={`/blog/${post.slug}/`}
-          aria-label={`Read ${post.title}`}
-        >
-          Read <span aria-hidden="true">↗</span>
-        </Link>
-      </div>
-    </article>
+    <Link className="writingPreviewLink" href={`/blog/${post.slug}/`}>
+      <article className="writingPreview">
+        <div className="writingMeta">
+          <span>{post.tags[0]}</span>
+          <time dateTime={post.publishedAt.toISOString()}>
+            {dateFormatter.format(post.publishedAt)}
+          </time>
+        </div>
+        <h2>{post.title}</h2>
+        <p className="writingExcerpt" data-testid="writing-excerpt">
+          {excerpt}
+        </p>
+        <div className="writingRoute">
+          <span>{post.readingTime.label}</span>
+          <span aria-hidden="true">↗</span>
+        </div>
+      </article>
+    </Link>
   );
 }
