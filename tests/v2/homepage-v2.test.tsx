@@ -14,6 +14,29 @@ describe("homepage v2", () => {
     expect(existsSync(resolve(process.cwd(), "app/v2/page.tsx"))).toBe(true);
   });
 
+  it("lays the three toys out as one desktop row beneath the hero", () => {
+    const styles = readFileSync(
+      resolve(process.cwd(), "app/v2/v2.module.css"),
+      "utf8",
+    );
+
+    expect(styles).toMatch(
+      /\.toyGrid\s*{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/s,
+    );
+  });
+
+  it("keeps compact toy labels inside their generated artwork", () => {
+    const styles = readFileSync(
+      resolve(process.cwd(), "app/v2/v2.module.css"),
+      "utf8",
+    );
+
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyHeading h2\)\s*{[^}]*display:\s*none/s,
+    );
+    expect(styles).toContain("font-size: clamp(0.48rem, 0.75vw, 0.68rem)");
+  });
+
   it("makes Peter, the Japan toys, and worthwhile writing obvious", () => {
     const { container } = render(<HomePageV2 />);
 

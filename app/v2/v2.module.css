@@ -212,8 +212,15 @@
 .writing {
   display: grid;
   gap: var(--v2-gap);
-  padding-top: clamp(2.8rem, 7vw, 6rem);
   background: var(--v2-cream);
+}
+
+.toys {
+  padding-top: clamp(1.8rem, 3.5vw, 3rem);
+}
+
+.writing {
+  padding-top: clamp(2.8rem, 7vw, 6rem);
 }
 
 .sectionHeading {
@@ -258,9 +265,10 @@
 
 .toyGrid {
   display: grid;
-  width: min(100%, 1120px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 100%;
   gap: var(--v2-gap);
-  margin: 0 auto;
+  padding: 0 var(--v2-gap) var(--v2-gap);
 }
 
 .radio,
@@ -277,9 +285,9 @@
 
 .radio :global(.soundsToy) {
   position: relative;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 3 / 2;
   overflow: hidden;
-  background: url("/assets/v2/radio.png") center / cover no-repeat;
+  background: #ef8e70 url("/assets/v2/radio.png") center / contain no-repeat;
   image-rendering: pixelated;
 }
 
@@ -335,7 +343,7 @@
 .radio :global(.soundMeta strong) {
   color: #f6b34c;
   font-family: var(--font-righteous), sans-serif;
-  font-size: clamp(0.62rem, 1.25vw, 1rem);
+  font-size: clamp(0.48rem, 0.75vw, 0.68rem);
   font-weight: 400;
   text-shadow: 0 0 5px rgba(246, 179, 76, 0.4);
 }
@@ -403,31 +411,39 @@
 }
 
 .window :global(.windowSeatToy) {
-  display: grid;
-  grid-template-columns: minmax(0, 1.9fr) minmax(260px, 1fr);
+  position: relative;
+  aspect-ratio: 3 / 2;
   background: var(--v2-paper);
 }
 
 .window :global(.windowSeatScene) {
-  grid-column: 1;
-  grid-row: 1;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
 }
 
 .window :global(.windowSeatHeading) {
+  position: absolute;
+  z-index: 12;
+  right: 5%;
+  bottom: 5%;
   display: grid;
-  grid-column: 2;
-  grid-row: 1;
+  width: 43%;
   min-height: 0;
   place-content: center;
   justify-items: start;
-  gap: 1rem;
-  padding: clamp(2rem, 5vw, 4.5rem);
-  border: 0;
-  background: var(--v2-paper);
+  gap: 0.5rem;
+  padding: clamp(0.7rem, 1.4vw, 1.15rem);
+  border: 2px solid var(--v2-ink);
+  border-radius: 12px;
+  background: rgba(255, 253, 248, 0.94);
+  box-shadow: 4px 4px 0 var(--v2-ink);
 }
 
 .window :global(.windowSeatHeading h2) {
-  font-size: clamp(1.7rem, 3.2vw, 3.1rem);
+  font-size: clamp(1rem, 1.75vw, 1.65rem);
 }
 
 .window :global(.windowSeatHeading)::after {
@@ -435,15 +451,15 @@
   color: var(--v2-muted);
   content: "A quiet moment on the train.";
   font-family: var(--font-source-serif), Georgia, serif;
-  font-size: clamp(1rem, 1.6vw, 1.35rem);
+  font-size: clamp(0.72rem, 1.05vw, 0.95rem);
   line-height: 1.4;
 }
 
 .study :global(.studyToy) {
   position: relative;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 3 / 2;
   overflow: hidden;
-  background: url("/assets/v2/study-paper.png") center / cover no-repeat;
+  background: var(--v2-yellow) url("/assets/v2/study-paper.png") center / contain no-repeat;
   image-rendering: pixelated;
 }
 
@@ -461,7 +477,7 @@
 }
 
 .study :global(.studyHeading h2) {
-  font-size: clamp(0.85rem, 1.55vw, 1.25rem);
+  display: none;
 }
 
 .study :global(.studyHeadingTools) {
@@ -513,7 +529,7 @@
 }
 
 .study :global(.studyCard > strong) {
-  font-size: clamp(4rem, 10vw, 7.8rem);
+  font-size: clamp(3rem, 7vw, 6rem);
 }
 
 .study :global(.studyReading) {
@@ -705,10 +721,6 @@
     width: min(100%, 460px);
   }
 
-  .window :global(.windowSeatToy) {
-    grid-template-columns: minmax(0, 1.6fr) minmax(220px, 1fr);
-  }
-
   .writingGrid {
     grid-template-columns: 1fr 1fr;
   }
@@ -776,6 +788,10 @@
     margin: 0;
   }
 
+  .toyGrid {
+    grid-template-columns: 1fr;
+  }
+
   .radio :global(.soundsToy),
   .study :global(.studyToy) {
     aspect-ratio: 3 / 2;
@@ -784,6 +800,10 @@
 
   .radio :global(.soundMeta) {
     top: 25.5%;
+  }
+
+  .radio :global(.soundMeta strong) {
+    font-size: clamp(0.62rem, 2.5vw, 0.9rem);
   }
 
   .radio :global(.soundWaveform) {
@@ -795,6 +815,8 @@
   }
 
   .window :global(.windowSeatToy) {
+    display: grid;
+    aspect-ratio: auto;
     grid-template-columns: 1fr;
   }
 
@@ -804,12 +826,22 @@
   }
 
   .window :global(.windowSeatScene) {
+    position: relative;
+    inset: auto;
+    width: auto;
+    height: auto;
+    aspect-ratio: 2130 / 1481;
     grid-row: 1;
   }
 
   .window :global(.windowSeatHeading) {
+    position: static;
     grid-row: 2;
+    width: auto;
     padding: 1.5rem;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
   }
 
   .window :global(.windowSeatHeading h2) {
