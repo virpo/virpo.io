@@ -38,23 +38,43 @@ describe("homepage v2", () => {
     expect(styles).toMatch(
       /\.study\s+:global\(\.studyHeading h2\)\s*{[^}]*display:\s*none/s,
     );
-    expect(styles).toContain("font-size: clamp(0.48rem, 0.75vw, 0.68rem)");
+    expect(styles).toContain("font-size: clamp(0.42rem, 0.6vw, 0.58rem)");
   });
 
-  it("uses a tiny Daruma label, removes the Window Seat caption, and aligns radio controls", () => {
+  it("starts directly with the toys, removes the Window Seat caption, and aligns radio controls", () => {
     const { container } = render(<HomePageV2 />);
     const styles = readFileSync(
       resolve(process.cwd(), "app/v2/v2.module.css"),
       "utf8",
     );
 
-    expect(container.querySelector('[data-v2-daruma][src="/assets/v2/daruma.png"]')).toBeVisible();
+    expect(container.querySelector("[data-v2-daruma]")).not.toBeInTheDocument();
+    expect(screen.queryByText("Small Japan toys")).not.toBeInTheDocument();
+    expect(styles).toMatch(/\.toys\s*{[^}]*padding-top:\s*0/s);
     expect(styles).toMatch(
       /\.window\s+:global\(\.windowSeatHeading\)\s*{[^}]*display:\s*none/s,
     );
-    expect(styles).toContain("top: 59.5%");
+    expect(styles).toContain("top: 60.7%");
     expect(styles).toContain("left: 10%");
     expect(within(screen.getByRole("region", { name: "Small Japan toys" })).getByText("Click me")).toBeVisible();
+  });
+
+  it("keeps the Study chrome quiet and the desktop hero tiles equal-height", () => {
+    const styles = readFileSync(
+      resolve(process.cwd(), "app/v2/v2.module.css"),
+      "utf8",
+    );
+
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyHeadingTools\s*>\s*span\)\s*{[^}]*display:\s*none/s,
+    );
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyReset::before\)\s*{[^}]*clip-path:\s*polygon/s,
+    );
+    expect(styles).toMatch(/\.intro\s*{[^}]*height:\s*460px/s);
+    expect(styles).toMatch(
+      /@media\s*\(max-width:\s*980px\)[\s\S]*?\.intro\s*{[^}]*height:\s*auto/s,
+    );
   });
 
   it("shows a fuller bloom list in the v2 disclosure", () => {

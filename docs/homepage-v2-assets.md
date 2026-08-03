@@ -16,7 +16,7 @@ Safe overlay area: approximately 42–76% from the left and 27–55% from the to
 Path: `public/assets/v2/study-paper.png`  
 Current size: 1536 × 1024 PNG
 
-Prompt direction: a wide cozy Japanese pixel-art study desk, mustard-yellow background, large blank cream spiral notebook on the left, green pencil and blue eraser on the right, with five small progress boxes. No writing, letters, UI, display, or console.
+Prompt direction: a wide cozy Japanese pixel-art study desk, mustard-yellow background, large blank cream spiral notebook on the left, green pencil and blue eraser on the right. No writing, letters, progress boxes, UI, display, or console.
 
 Safe overlay area: approximately 10–65% from the left and 14–78% from the top. The current kana, reading, answer, and grading controls are HTML placed on the blank notebook.
 

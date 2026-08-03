@@ -36,7 +36,7 @@ it("wraps page content with the shared masthead and footer", () => {
 });
 
 describe("bloom disclosure", () => {
-  it("opens on mouse hover and closes after the pointer leaves", () => {
+  it("opens on mouse hover and closes shortly after the pointer leaves", () => {
     vi.useFakeTimers();
     render(<Masthead current="home" />);
     const module = screen.getByLabelText("Tokyo time and seasonal bloom");
@@ -52,7 +52,33 @@ describe("bloom disclosure", () => {
     const pointerOut = new MouseEvent("pointerout", { bubbles: true });
     Object.defineProperty(pointerOut, "pointerType", { value: "mouse" });
     fireEvent(module, pointerOut);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    act(() => vi.advanceTimersByTime(160));
     expect(trigger).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("stays open while the pointer crosses the gap into bloom details", () => {
+    vi.useFakeTimers();
+    render(<Masthead current="home" />);
+    const module = screen.getByLabelText("Tokyo time and seasonal bloom");
+    const trigger = screen.getByRole("button", { name: "Open Japan bloom details" });
+    const pointerOver = new MouseEvent("pointerover", { bubbles: true });
+    Object.defineProperty(pointerOver, "pointerType", { value: "mouse" });
+
+    fireEvent(trigger, pointerOver);
+    act(() => vi.advanceTimersByTime(140));
+
+    const pointerOut = new MouseEvent("pointerout", { bubbles: true });
+    Object.defineProperty(pointerOut, "pointerType", { value: "mouse" });
+    fireEvent(module, pointerOut);
+    act(() => vi.advanceTimersByTime(80));
+
+    const pointerBack = new MouseEvent("pointerover", { bubbles: true });
+    Object.defineProperty(pointerBack, "pointerType", { value: "mouse" });
+    fireEvent(screen.getByRole("dialog", { name: "Japan bloom details" }), pointerBack);
+    act(() => vi.advanceTimersByTime(160));
+
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
   });
 
   it("closes on Escape from Source and returns focus without reopening", () => {

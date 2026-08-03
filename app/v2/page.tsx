@@ -56,17 +56,6 @@ export default function HomePageV2() {
         </section>
 
         <section className={styles.toys} data-v2-toys aria-label="Small Japan toys">
-          <header className={`${styles.sectionHeading} ${styles.toySectionHeading}`}>
-            <img
-              data-v2-daruma
-              src="/assets/v2/daruma.png"
-              alt=""
-              width="96"
-              height="96"
-              aria-hidden="true"
-            />
-            <p>Small Japan toys</p>
-          </header>
           <div className={styles.toyGrid}>
             <div className={styles.radio} data-v2-toy="radio">
               <SoundsToy />

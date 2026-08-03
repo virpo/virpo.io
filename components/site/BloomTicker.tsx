@@ -27,6 +27,7 @@ export function BloomTicker({ showSeasonList = false }: { showSeasonList?: boole
   const pointerInitiatedFocus = useRef(false);
   const suppressNextFocusOpen = useRef(false);
   const hoverTimer = useRef<number | null>(null);
+  const closeTimer = useRef<number | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [now, setNow] = useState<Date | null>(null);
 
@@ -65,6 +66,7 @@ export function BloomTicker({ showSeasonList = false }: { showSeasonList?: boole
   useEffect(
     () => () => {
       if (hoverTimer.current) window.clearTimeout(hoverTimer.current);
+      if (closeTimer.current) window.clearTimeout(closeTimer.current);
     },
     [],
   );
@@ -89,6 +91,7 @@ export function BloomTicker({ showSeasonList = false }: { showSeasonList?: boole
       className="tile bloomTicker"
       aria-label="Tokyo time and seasonal bloom"
       onFocusCapture={() => {
+        if (closeTimer.current) window.clearTimeout(closeTimer.current);
         if (suppressNextFocusOpen.current) {
           suppressNextFocusOpen.current = false;
           return;
@@ -98,10 +101,17 @@ export function BloomTicker({ showSeasonList = false }: { showSeasonList?: boole
       onBlurCapture={(event) => {
         if (!rootRef.current?.contains(event.relatedTarget as Node | null)) close();
       }}
+      onPointerEnter={(event) => {
+        if (event.pointerType === "mouse" && closeTimer.current) {
+          window.clearTimeout(closeTimer.current);
+          closeTimer.current = null;
+        }
+      }}
       onPointerLeave={(event) => {
         if (hoverTimer.current) window.clearTimeout(hoverTimer.current);
         if (event.pointerType === "mouse" && !rootRef.current?.contains(document.activeElement)) {
-          close();
+          if (closeTimer.current) window.clearTimeout(closeTimer.current);
+          closeTimer.current = window.setTimeout(close, 160);
         }
       }}
     >
