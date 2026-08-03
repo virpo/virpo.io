@@ -27,6 +27,12 @@ describe("homepage v2", () => {
     expect(styles).toMatch(
       /\.toyGrid\s*{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/s,
     );
+    expect(styles).toMatch(
+      /\.toys\s*{[^}]*padding:\s*var\(--v2-gap\)\s+0\s+0[^}]*border-radius:\s*var\(--v2-radius\)/s,
+    );
+    expect(styles).toMatch(
+      /\.writing\s*{[^}]*border-radius:\s*var\(--v2-radius\)[^}]*overflow:\s*hidden/s,
+    );
   });
 
   it("keeps compact toy labels inside their generated artwork", () => {
@@ -39,6 +45,15 @@ describe("homepage v2", () => {
       /\.study\s+:global\(\.studyHeading h2\)\s*{[^}]*display:\s*none/s,
     );
     expect(styles).toContain("font-size: clamp(0.42rem, 0.6vw, 0.58rem)");
+    expect(styles).toMatch(
+      /\.radio\s+:global\(\.soundMeta\)\s*{[^}]*top:\s*34%/s,
+    );
+    expect(styles).toMatch(
+      /\.radio\s+:global\(\.soundWaveform\)\s*{[^}]*top:\s*43%/s,
+    );
+    expect(styles).toMatch(
+      /\.window\s+:global\(\.windowSeatVideo\)\s*{[^}]*top:\s*57\.5%[^}]*height:\s*136%/s,
+    );
   });
 
   it("starts directly with the toys, removes the Window Seat caption, and aligns radio controls", () => {
@@ -50,7 +65,9 @@ describe("homepage v2", () => {
 
     expect(container.querySelector("[data-v2-daruma]")).not.toBeInTheDocument();
     expect(screen.queryByText("Small Japan toys")).not.toBeInTheDocument();
-    expect(styles).toMatch(/\.toys\s*{[^}]*padding-top:\s*0/s);
+    expect(styles).toMatch(
+      /\.toys\s*{[^}]*padding:\s*var\(--v2-gap\)\s+0\s+0/s,
+    );
     expect(styles).toMatch(
       /\.window\s+:global\(\.windowSeatHeading\)\s*{[^}]*display:\s*none/s,
     );
@@ -69,7 +86,13 @@ describe("homepage v2", () => {
       /\.study\s+:global\(\.studyHeadingTools\s*>\s*span\)\s*{[^}]*display:\s*none/s,
     );
     expect(styles).toMatch(
-      /\.study\s+:global\(\.studyReset::before\)\s*{[^}]*clip-path:\s*polygon/s,
+      /\.study\s+:global\(\.studyReset\)\s*{[^}]*border:\s*2px\s+solid\s+var\(--v2-ink\)[^}]*border-radius:\s*50%/s,
+    );
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyReset span\)\s*{[^}]*background:\s*url\("\/assets\/v2\/reset-pixel\.svg"\)/s,
+    );
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyCard:hover\)\s*{[^}]*background:\s*transparent/s,
     );
     expect(styles).toMatch(/\.intro\s*{[^}]*height:\s*460px/s);
     expect(styles).toMatch(

@@ -39,3 +39,10 @@ Current size: 96 × 96 transparent PNG
 Prompt direction: one tiny friendly red Daruma in crisp 16-bit Japanese pixel art, front-facing, centered, warm cream face, simple black-and-gold details, and a transparent background. It is deliberately small and acts as the quiet label for the Japan-toys row.
 
 `daruma-source.png` preserves the original generation and `daruma-large.png` preserves the cleaned high-resolution intermediate.
+
+## `reset-pixel.svg`
+
+Path: `public/assets/v2/reset-pixel.svg`
+Current size: 16 × 16 crisp-edge SVG
+
+The tiny black undo arrow is kept as a separate pixel glyph so the Study button stays round, legible, and easy to replace without touching the interactive component.

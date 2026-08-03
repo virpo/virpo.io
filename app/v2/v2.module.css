@@ -285,11 +285,15 @@
 }
 
 .toys {
-  padding-top: 0;
+  padding: var(--v2-gap) 0 0;
+  overflow: hidden;
+  border-radius: var(--v2-radius);
 }
 
 .writing {
-  padding-top: clamp(2.8rem, 7vw, 6rem);
+  padding: clamp(1.8rem, 3.5vw, 3rem) 0 clamp(1.6rem, 3vw, 2.5rem);
+  border-radius: var(--v2-radius);
+  overflow: hidden;
 }
 
 .sectionHeading {
@@ -392,11 +396,11 @@
 
 .radio :global(.soundMeta) {
   position: absolute;
-  top: 31%;
+  top: 34%;
   left: 42.5%;
   display: block;
   width: 32%;
-  height: 48%;
+  height: 45%;
 }
 
 .radio :global(.soundMeta > div:first-child) {
@@ -427,7 +431,7 @@
 .radio :global(.soundWaveform) {
   --sound-wave-color: #e36a36;
   position: absolute;
-  top: 45%;
+  top: 43%;
   left: 43.8%;
   width: 29.5%;
   height: 8%;
@@ -459,7 +463,7 @@
 
 .radio :global(.soundSteps) {
   position: absolute;
-  top: 63%;
+  top: 60.5%;
   right: 0;
   left: 0;
   display: block;
@@ -503,6 +507,11 @@
   width: 100%;
   height: 100%;
   aspect-ratio: auto;
+}
+
+.window :global(.windowSeatVideo) {
+  top: 57.5%;
+  height: 136%;
 }
 
 .window :global(.windowSeatHeading) {
@@ -573,37 +582,42 @@
 
 .study :global(.studyReset) {
   display: grid;
-  width: 38px;
-  min-height: 38px;
-  height: 38px;
+  width: 34px;
+  min-height: 34px;
+  height: 34px;
   place-items: center;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+  border: 2px solid var(--v2-ink);
+  border-radius: 50%;
+  background: var(--v2-paper);
+  box-shadow: 2px 2px 0 rgba(17, 16, 14, 0.72);
   cursor: pointer;
-  filter: drop-shadow(2px 2px 0 var(--v2-ink));
+  filter: none;
+  transition: box-shadow 90ms ease, transform 90ms ease;
 }
 
-.study :global(.studyReset::before) {
-  inset: 1px;
-  border: 3px solid var(--v2-ink);
-  border-radius: 0;
-  background: var(--v2-paper);
-  clip-path: polygon(
-    25% 0,
-    75% 0,
-    100% 25%,
-    100% 75%,
-    75% 100%,
-    25% 100%,
-    0 75%,
-    0 25%
-  );
+.study :global(.studyReset::before),
+.study :global(.studyReset::after) {
+  display: none;
 }
 
 .study :global(.studyReset span) {
-  font-family: var(--font-righteous), monospace;
-  font-size: 0.9rem;
+  width: 17px;
+  height: 17px;
+  background: url("/assets/v2/reset-pixel.svg") center / contain no-repeat;
+  color: transparent;
+  font-size: 0;
+  image-rendering: pixelated;
+}
+
+.study :global(.studyReset:hover),
+.study :global(.studyReset:focus-visible) {
+  box-shadow: 3px 3px 0 rgba(17, 16, 14, 0.72);
+  transform: translate(-1px, -1px);
+}
+
+.study :global(.studyReset:active) {
+  box-shadow: none;
+  transform: translate(2px, 2px);
 }
 
 .study :global(.studyConsole) {
@@ -632,7 +646,7 @@
 }
 
 .study :global(.studyCard:hover) {
-  background: rgba(244, 198, 77, 0.08);
+  background: transparent;
 }
 
 .study :global(.studyCard > strong) {
@@ -742,10 +756,6 @@
   position: absolute;
   right: 4%;
   bottom: 3%;
-}
-
-.writing {
-  padding-bottom: clamp(2rem, 5vw, 4rem);
 }
 
 .writingGrid {
@@ -935,7 +945,7 @@
   }
 
   .radio :global(.soundMeta) {
-    top: 31%;
+    top: 34%;
   }
 
   .radio :global(.soundMeta strong) {
@@ -943,7 +953,7 @@
   }
 
   .radio :global(.soundWaveform) {
-    top: 45%;
+    top: 43%;
   }
 
   .radio :global(.soundPlay) {
@@ -1039,11 +1049,11 @@
   }
 
   .radio :global(.soundMeta) {
-    top: 31%;
+    top: 34%;
   }
 
   .radio :global(.soundWaveform) {
-    top: 45%;
+    top: 43%;
   }
 
   .study :global(.studyHeading h2) {
