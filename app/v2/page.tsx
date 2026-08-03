@@ -8,6 +8,7 @@ import { WindowSeatToy } from "../../components/toys/WindowSeatToy";
 import { V2Masthead } from "../../components/v2/V2Masthead";
 import { V2WritingPreview } from "../../components/v2/V2WritingPreview";
 import { getPostSummaries } from "../../lib/blog";
+import styles from "./v2.module.css";
 
 export const metadata: Metadata = {
   title: "Homepage v2 preview",
@@ -26,13 +27,15 @@ export default function HomePageV2() {
   const posts = getPostSummaries().slice(0, 3);
 
   return (
-    <div data-v2-home>
-      <V2Masthead />
-      <main>
-        <section data-v2-hero>
-          <FaceToy />
-          <div id="about" aria-label="About Peter">
-            <p>Hello, I’m Peter.</p>
+    <div className={styles.page} data-v2-home>
+      <V2Masthead className={styles.masthead} />
+      <main className={styles.main}>
+        <section className={styles.hero} data-v2-hero>
+          <div className={styles.face}>
+            <FaceToy />
+          </div>
+          <div className={styles.intro} id="about" aria-label="About Peter">
+            <p className={styles.eyebrow}>Hello, I’m Peter.</p>
             <h1>
               Product engineer from Slovakia. I make products and small tools.
             </h1>
@@ -41,7 +44,7 @@ export default function HomePageV2() {
               2021. I always want to be where product, design, and engineering
               meet.
             </p>
-            <div aria-label="Peter elsewhere">
+            <div className={styles.links} aria-label="Peter elsewhere">
               <a href="https://www.linkedin.com/in/hraska/" target="_blank" rel="noreferrer">
                 LinkedIn
               </a>
@@ -52,27 +55,33 @@ export default function HomePageV2() {
           </div>
         </section>
 
-        <section data-v2-toys aria-label="Small Japan toys">
-          <header>
+        <section className={styles.toys} data-v2-toys aria-label="Small Japan toys">
+          <header className={styles.sectionHeading}>
             <p>Small Japan toys</p>
+            <span>Three tiny reasons to stay a little longer.</span>
           </header>
-          <div data-v2-toy="radio">
-            <SoundsToy />
-          </div>
-          <div data-v2-toy="window-seat">
-            <WindowSeatToy />
-          </div>
-          <div data-v2-toy="study">
-            <StudyToy />
+          <div className={styles.toyGrid}>
+            <div className={styles.radio} data-v2-toy="radio">
+              <SoundsToy />
+            </div>
+            <div className={styles.window} data-v2-toy="window-seat">
+              <WindowSeatToy />
+            </div>
+            <div className={styles.study} data-v2-toy="study">
+              <StudyToy />
+            </div>
           </div>
         </section>
 
-        <section data-v2-writing aria-label="Latest writing">
-          <header>
-            <p>Latest writing</p>
+        <section className={styles.writing} data-v2-writing aria-label="Latest writing">
+          <header className={styles.sectionHeading}>
+            <div>
+              <p>Latest writing</p>
+              <span>Short notes from making real things.</span>
+            </div>
             <Link href="/blog/">All writing →</Link>
           </header>
-          <div>
+          <div className={styles.writingGrid}>
             {posts.map((post) => (
               <V2WritingPreview key={post.slug} post={post} />
             ))}

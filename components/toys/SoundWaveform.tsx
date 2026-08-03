@@ -30,7 +30,11 @@ function paintBars(
 
   context.setTransform(ratio, 0, 0, ratio, 0, 0);
   context.clearRect(0, 0, width, height);
-  context.fillStyle = "#090909";
+  const configuredColor = window
+    .getComputedStyle(canvas)
+    .getPropertyValue("--sound-wave-color")
+    .trim();
+  context.fillStyle = configuredColor || "#090909";
 
   const gap = Math.max(3, width * 0.012);
   const barWidth = Math.max(3, (width - gap * (BAR_COUNT - 1)) / BAR_COUNT);
