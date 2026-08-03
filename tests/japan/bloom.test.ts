@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { getBloomStatus, getTokyoParts, type BloomEntry } from "../../lib/japan/bloom";
+import {
+  getBloomStatus,
+  getBloomTimeline,
+  getTokyoParts,
+  type BloomEntry,
+} from "../../lib/japan/bloom";
+import { bloomEntries } from "../../lib/japan/bloom-data";
 
 const sunflower: BloomEntry = {
   id: "sunflower",
@@ -58,6 +64,29 @@ describe("getBloomStatus", () => {
       days: null,
       label: "Seasonal guide unavailable",
     });
+  });
+});
+
+describe("getBloomTimeline", () => {
+  it("returns everything blooming now followed by the nearest upcoming blooms", () => {
+    const timeline = getBloomTimeline(
+      bloomEntries,
+      new Date("2026-08-03T00:00:00Z"),
+      4,
+    );
+
+    expect(timeline.map(({ bloom }) => bloom.id)).toEqual([
+      "lotus",
+      "sunflower",
+      "cosmos",
+      "chrysanthemum",
+    ]);
+    expect(timeline.map(({ status }) => status)).toEqual([
+      "active",
+      "active",
+      "upcoming",
+      "upcoming",
+    ]);
   });
 });
 

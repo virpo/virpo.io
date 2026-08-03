@@ -56,9 +56,16 @@ export default function HomePageV2() {
         </section>
 
         <section className={styles.toys} data-v2-toys aria-label="Small Japan toys">
-          <header className={styles.sectionHeading}>
+          <header className={`${styles.sectionHeading} ${styles.toySectionHeading}`}>
+            <img
+              data-v2-daruma
+              src="/assets/v2/daruma.png"
+              alt=""
+              width="96"
+              height="96"
+              aria-hidden="true"
+            />
             <p>Small Japan toys</p>
-            <span>Three tiny reasons to stay a little longer.</span>
           </header>
           <div className={styles.toyGrid}>
             <div className={styles.radio} data-v2-toy="radio">
@@ -68,7 +75,7 @@ export default function HomePageV2() {
               <WindowSeatToy />
             </div>
             <div className={styles.study} data-v2-toy="study">
-              <StudyToy />
+              <StudyToy promptLabel="Click me" />
             </div>
           </div>
         </section>

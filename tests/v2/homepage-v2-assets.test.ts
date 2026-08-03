@@ -6,6 +6,7 @@ const assets = [
   "public/assets/v2/radio.png",
   "public/assets/v2/study-paper.png",
   "public/assets/v2/bloom-lotus.png",
+  "public/assets/v2/daruma.png",
 ];
 
 describe("homepage v2 pixel assets", () => {
@@ -23,6 +24,7 @@ describe("homepage v2 pixel assets", () => {
     expect(guide).toContain("radio.png");
     expect(guide).toContain("study-paper.png");
     expect(guide).toContain("bloom-lotus.png");
+    expect(guide).toContain("daruma.png");
     expect(guide).toContain("Safe overlay area");
   });
 });

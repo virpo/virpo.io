@@ -13,7 +13,7 @@ export function V2Masthead({ className }: { className?: string }) {
         <Link href="/projects/">Projects</Link>
         <Link href="/v2/#about">About</Link>
       </nav>
-      <BloomTicker />
+      <BloomTicker showSeasonList />
     </header>
   );
 }

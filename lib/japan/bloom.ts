@@ -36,6 +36,11 @@ export type BloomStatus =
       label: string;
     };
 
+export type BloomTimelineItem = Extract<
+  BloomStatus,
+  { status: "active" | "upcoming" }
+>;
+
 export function getTokyoParts(date = new Date()): TokyoParts {
   const formatter = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Tokyo",
@@ -149,4 +154,19 @@ export function getBloomStatus(
     days,
     label: `in ${days} day${days === 1 ? "" : "s"}`,
   };
+}
+
+export function getBloomTimeline(
+  entries: readonly BloomEntry[],
+  now = new Date(),
+  limit = 4,
+): BloomTimelineItem[] {
+  return entries
+    .map((entry) => getBloomStatus([entry], now))
+    .filter((status): status is BloomTimelineItem => status.status !== "unavailable")
+    .sort((left, right) => {
+      if (left.status !== right.status) return left.status === "active" ? -1 : 1;
+      return left.days - right.days;
+    })
+    .slice(0, Math.max(0, limit));
 }

@@ -35,7 +35,7 @@ function formatWait(nextDueAt: number) {
   return `Next card in ${minutes} min`;
 }
 
-export function StudyToy() {
+export function StudyToy({ promptLabel = "Tap to reveal" }: { promptLabel?: string }) {
   const [state, setState] = useState<StudyState | null>(null);
   const [selection, setSelection] = useState<StudySelection | null>(null);
   const [revealed, setRevealed] = useState(false);
@@ -204,7 +204,9 @@ export function StudyToy() {
               <span className="studyMeaning" hidden={!isKanji || !revealed}>
                 {selection.card.meaning}
               </span>
-              <small>{revealed ? "How did it go?" : "Tap to reveal"}</small>
+              <small className={revealed ? undefined : "studyPrompt"}>
+                {revealed ? "How did it go?" : promptLabel}
+              </small>
             </button>
 
             {revealed ? (

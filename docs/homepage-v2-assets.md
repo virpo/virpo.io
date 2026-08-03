@@ -30,3 +30,12 @@ Prompt direction: one pink lotus in crisp 16-bit Japanese pixel art with a few g
 Safe overlay area: none. Keep the flower centered with transparent corners. Bloom name, place, days, and Tokyo time remain semantic HTML next to it.
 
 `bloom-lotus-large.png` is the full-resolution transparent intermediate. It is kept only to make later cleanup or resizing easier.
+
+## `daruma.png`
+
+Path: `public/assets/v2/daruma.png`
+Current size: 96 × 96 transparent PNG
+
+Prompt direction: one tiny friendly red Daruma in crisp 16-bit Japanese pixel art, front-facing, centered, warm cream face, simple black-and-gold details, and a transparent background. It is deliberately small and acts as the quiet label for the Japan-toys row.
+
+`daruma-source.png` preserves the original generation and `daruma-large.png` preserves the cleaned high-resolution intermediate.

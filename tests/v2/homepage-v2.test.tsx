@@ -1,10 +1,14 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { cleanup, render, screen, within } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import HomePageV2 from "../../app/v2/page";
+import { V2Masthead } from "../../components/v2/V2Masthead";
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+});
 
 describe("homepage v2", () => {
   it("lives on a separate route without replacing the original homepage", () => {
@@ -35,6 +39,40 @@ describe("homepage v2", () => {
       /\.study\s+:global\(\.studyHeading h2\)\s*{[^}]*display:\s*none/s,
     );
     expect(styles).toContain("font-size: clamp(0.48rem, 0.75vw, 0.68rem)");
+  });
+
+  it("uses a tiny Daruma label, removes the Window Seat caption, and aligns radio controls", () => {
+    const { container } = render(<HomePageV2 />);
+    const styles = readFileSync(
+      resolve(process.cwd(), "app/v2/v2.module.css"),
+      "utf8",
+    );
+
+    expect(container.querySelector('[data-v2-daruma][src="/assets/v2/daruma.png"]')).toBeVisible();
+    expect(styles).toMatch(
+      /\.window\s+:global\(\.windowSeatHeading\)\s*{[^}]*display:\s*none/s,
+    );
+    expect(styles).toContain("top: 59.5%");
+    expect(styles).toContain("left: 10%");
+    expect(within(screen.getByRole("region", { name: "Small Japan toys" })).getByText("Click me")).toBeVisible();
+  });
+
+  it("shows a fuller bloom list in the v2 disclosure", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-08-03T00:00:00Z"));
+    render(<V2Masthead />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Open Japan bloom details" }),
+    );
+    const dialog = screen.getByRole("dialog", { name: "Japan bloom details" });
+    const list = within(dialog).getByRole("list", {
+      name: "What is blooming in Japan",
+    });
+
+    expect(within(list).getAllByRole("listitem")).toHaveLength(4);
+    expect(within(list).getByText("Sunflowers")).toBeVisible();
+    expect(within(list).getByText("Cosmos")).toBeVisible();
   });
 
   it("makes Peter, the Japan toys, and worthwhile writing obvious", () => {

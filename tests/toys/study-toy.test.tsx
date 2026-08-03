@@ -40,6 +40,12 @@ function makeStable(state: ReturnType<typeof createStudyState>, ids: string[]) {
 }
 
 describe("StudyToy", () => {
+  it("accepts a v2 arcade prompt without changing the default deck", async () => {
+    render(<StudyToy promptLabel="Click me" />);
+
+    expect(await screen.findByText("Click me")).toBeVisible();
+  });
+
   it("loads a randomized Kana card with its answer hidden", async () => {
     const { container } = render(<StudyToy />);
 
