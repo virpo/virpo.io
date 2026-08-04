@@ -5,7 +5,24 @@ import { useEffect, useRef } from "react";
 const BAR_COUNT = 24;
 
 function idleEnergy(index: number) {
-  return 0.13 + ((index * 7) % 6) * 0.055 + Math.sin(index * 1.7) * 0.035;
+  const mirroredIndex = Math.min(index, BAR_COUNT - 1 - index);
+  return (
+    0.13 +
+    ((mirroredIndex * 7) % 6) * 0.055 +
+    Math.sin(mirroredIndex * 1.7) * 0.035
+  );
+}
+
+export function symmetricFrequencyBin(
+  index: number,
+  barCount: number,
+  binCount: number,
+) {
+  if (barCount <= 2 || binCount <= 1) return 0;
+  const center = (barCount - 1) / 2;
+  const distance = Math.max(0, Math.abs(index - center) - 0.5);
+  const furthest = Math.max(1, center - 0.5);
+  return Math.min(binCount - 1, Math.round((distance / furthest) * (binCount - 1)));
 }
 
 function paintBars(
@@ -42,7 +59,7 @@ function paintBars(
 
   for (let index = 0; index < BAR_COUNT; index += 1) {
     const bin = values
-      ? values[Math.floor((index / BAR_COUNT) * values.length)] / 255
+      ? values[symmetricFrequencyBin(index, BAR_COUNT, values.length)] / 255
       : idleEnergy(index);
     const target = Math.max(0.1, Math.min(1, bin));
     smoothed[index] = reducedMotion

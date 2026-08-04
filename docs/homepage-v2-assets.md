@@ -9,7 +9,7 @@ Current size: 1536 × 1024 PNG
 
 Prompt direction: a wide 1990s Japanese pixel-art coral radio on a warm cream shelf, small maneki-neko on the left, bonsai on the right, large speaker, knobs and three physical playback buttons. The upper-right display must be plain black with no text, icons, waveform, reflections, or decoration.
 
-Safe overlay area: approximately 42–76% from the left and 27–55% from the top. The live title and waveform are HTML inside that black display. Keep the three lower controls unobstructed so the invisible accessible click targets can align with them.
+Measured black-display bounds: 43.16–76.50% from the left and 31.74–54.20% from the top. The live title and mirrored audio-reactive waveform share one normalized HTML coordinate frame inside that aperture. Keep the three lower controls unobstructed so the invisible accessible click targets can align with them.
 
 ## `study-paper.png`
 
@@ -18,7 +18,7 @@ Current size: 1536 × 1024 PNG
 
 Prompt direction: a wide cozy Japanese pixel-art study desk, mustard-yellow background, large blank cream spiral notebook on the left, green pencil and blue eraser on the right. No writing, letters, progress boxes, UI, display, or console.
 
-Safe overlay area: approximately 10–65% from the left and 14–78% from the top. The current kana, reading, answer, and grading controls are HTML placed on the blank notebook.
+Measured paper bounds: 7.23–77.54% from the left and 9.57–82.23% from the top. The current kana, reading, answer, and grading controls use one normalized frame centered on those bounds; progress stays below the paper and clears the pencil tip.
 
 ## `bloom-lotus.png`
 

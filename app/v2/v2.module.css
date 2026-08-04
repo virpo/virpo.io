@@ -85,6 +85,7 @@
 }
 
 .masthead :global(.bloomTicker) {
+  grid-column: auto;
   grid-template-columns: 106px minmax(0, 1fr);
   background: var(--v2-paper);
 }
@@ -377,12 +378,38 @@
   border-radius: var(--v2-radius);
 }
 
+.radio :global(.soundsToy::after),
+.window :global(.windowSeatToy::after),
+.study :global(.studyToy::after) {
+  position: absolute;
+  z-index: 30;
+  inset: 0;
+  border-radius: inherit;
+  content: "";
+  pointer-events: none;
+}
+
+.radio :global(.soundsToy::after) {
+  border: 2px solid var(--v2-radio-border);
+}
+
+.window :global(.windowSeatToy::after) {
+  border: 2px solid var(--v2-window-border);
+}
+
+.study :global(.studyToy::after) {
+  border: 2px solid var(--v2-study-border);
+}
+
 .radio :global(.soundsToy) {
+  --radio-screen-x: 44.1%;
+  --radio-screen-y: 37%;
+  --radio-screen-width: 31.4%;
+  --radio-screen-height: 15.5%;
   position: relative;
   aspect-ratio: 3 / 2;
   overflow: hidden;
   background: #ef8e70 url("/assets/v2/radio.png") center / contain no-repeat;
-  box-shadow: inset 0 0 0 2px var(--v2-radio-border);
   container-type: inline-size;
   image-rendering: pixelated;
 }
@@ -419,13 +446,13 @@
 
 .radio :global(.soundDisplay) {
   position: absolute;
-  top: 36%;
-  left: 44%;
+  top: var(--radio-screen-y);
+  left: var(--radio-screen-x);
   display: grid;
-  width: 30%;
-  height: 16%;
+  width: var(--radio-screen-width);
+  height: var(--radio-screen-height);
   grid-template-rows: auto 1fr;
-  gap: 4%;
+  gap: 6%;
 }
 
 .radio :global(.soundReadout) {
@@ -436,12 +463,15 @@
 }
 
 .radio :global(.soundDisplay strong) {
+  overflow: hidden;
   color: #f6b34c;
   font-family: var(--font-righteous), sans-serif;
   font-size: clamp(0.44rem, 1.65cqw, 1rem);
   font-weight: 400;
   line-height: 1.05;
   text-shadow: 0 0 5px rgba(246, 179, 76, 0.4);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .radio :global(.soundReadout > span) {
@@ -520,8 +550,8 @@
 .window :global(.windowSeatToy) {
   position: relative;
   aspect-ratio: 3 / 2;
+  overflow: hidden;
   background: var(--v2-paper);
-  box-shadow: inset 0 0 0 2px var(--v2-window-border);
 }
 
 .window :global(.windowSeatScene) {
@@ -569,11 +599,14 @@
 }
 
 .study :global(.studyToy) {
+  --study-page-x: 7%;
+  --study-page-y: 13%;
+  --study-page-width: 70%;
+  --study-page-height: 65%;
   position: relative;
   aspect-ratio: 3 / 2;
   overflow: hidden;
   background: var(--v2-yellow) url("/assets/v2/study-paper.png") center / contain no-repeat;
-  box-shadow: inset 0 0 0 2px var(--v2-study-border);
   container-type: inline-size;
   image-rendering: pixelated;
 }
@@ -657,11 +690,11 @@
 
 .study :global(.studyCard) {
   position: absolute;
-  top: 13%;
-  left: 7%;
+  top: var(--study-page-y);
+  left: var(--study-page-x);
   display: grid;
-  width: 60%;
-  height: 52%;
+  width: var(--study-page-width);
+  height: var(--study-page-height);
   min-height: 0;
   gap: 0.08rem;
   padding: 0.5rem;
@@ -708,9 +741,9 @@
   position: absolute;
   right: auto;
   bottom: 2.3%;
-  left: 13%;
+  left: 12.5%;
   display: grid;
-  width: 45%;
+  width: 47%;
   min-height: 0;
   grid-template-columns: max-content minmax(40px, 1fr) max-content;
   align-items: center;
@@ -764,8 +797,8 @@
   z-index: 8;
   top: 59%;
   bottom: auto;
-  left: 13%;
-  width: 48%;
+  left: 16%;
+  width: 52%;
 }
 
 .study :global(.studyActions button) {
@@ -789,9 +822,9 @@
 .study :global(.studyRest) {
   position: absolute;
   top: 31%;
-  left: 15%;
+  left: 16%;
   display: grid;
-  width: 42%;
+  width: 52%;
   place-items: center;
   gap: 0.5rem;
 }
@@ -1051,16 +1084,16 @@
   }
 
   .study :global(.studyCard) {
-    top: 13%;
-    left: 7%;
-    width: 60%;
-    height: 52%;
+    top: var(--study-page-y);
+    left: var(--study-page-x);
+    width: var(--study-page-width);
+    height: var(--study-page-height);
   }
 
   .study :global(.studyStatusLine) {
     right: auto;
-    left: 12%;
-    width: 45%;
+    left: 12.5%;
+    width: 47%;
   }
 
   .writingGrid {

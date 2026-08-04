@@ -33,6 +33,9 @@ describe("homepage v2", () => {
     expect(styles).toMatch(
       /\.writing\s*{[^}]*border-radius:\s*var\(--v2-radius\)[^}]*overflow:\s*hidden/s,
     );
+    expect(styles).toMatch(
+      /\.masthead\s+:global\(\.bloomTicker\)\s*{[^}]*grid-column:\s*auto/s,
+    );
   });
 
   it("keeps compact toy labels inside their generated artwork", () => {
@@ -45,7 +48,10 @@ describe("homepage v2", () => {
       /\.study\s+:global\(\.studyHeading h2\)\s*{[^}]*display:\s*none/s,
     );
     expect(styles).toMatch(
-      /\.radio\s+:global\(\.soundDisplay\)\s*{[^}]*top:\s*36%[^}]*left:\s*44%[^}]*width:\s*30%/s,
+      /\.radio\s+:global\(\.soundsToy\)\s*{[^}]*--radio-screen-x:\s*44\.1%[^}]*--radio-screen-y:\s*37%[^}]*--radio-screen-width:\s*31\.4%/s,
+    );
+    expect(styles).toMatch(
+      /\.radio\s+:global\(\.soundDisplay\)\s*{[^}]*top:\s*var\(--radio-screen-y\)[^}]*left:\s*var\(--radio-screen-x\)[^}]*width:\s*var\(--radio-screen-width\)/s,
     );
     expect(styles).toMatch(
       /\.radio\s+:global\(\.soundDisplay \.soundWaveform\)\s*{[^}]*inset:[^}]*width:\s*100%/s,
@@ -92,13 +98,16 @@ describe("homepage v2", () => {
     );
 
     expect(styles).toMatch(
-      /\.radio\s+:global\(\.soundsToy\)\s*{[^}]*box-shadow:\s*inset 0 0 0 2px var\(--v2-radio-border\)/s,
+      /\.radio\s+:global\(\.soundsToy::after\)[\s\S]*?border:\s*2px solid var\(--v2-radio-border\)/s,
     );
     expect(styles).toMatch(
-      /\.window\s+:global\(\.windowSeatToy\)\s*{[^}]*box-shadow:\s*inset 0 0 0 2px var\(--v2-window-border\)/s,
+      /\.window\s+:global\(\.windowSeatToy::after\)[\s\S]*?border:\s*2px solid var\(--v2-window-border\)/s,
     );
     expect(styles).toMatch(
-      /\.study\s+:global\(\.studyToy\)\s*{[^}]*box-shadow:\s*inset 0 0 0 2px var\(--v2-study-border\)/s,
+      /\.study\s+:global\(\.studyToy::after\)[\s\S]*?border:\s*2px solid var\(--v2-study-border\)/s,
+    );
+    expect(styles).toMatch(
+      /\.radio\s+:global\(\.soundsToy::after\),[\s\S]*?z-index:\s*30[^}]*pointer-events:\s*none/s,
     );
   });
 
@@ -118,13 +127,19 @@ describe("homepage v2", () => {
       /\.study\s+:global\(\.studyReset span\)\s*{[^}]*background:\s*url\("\/assets\/v2\/reset-pixel\.svg"\)/s,
     );
     expect(styles).toMatch(
-      /\.study\s+:global\(\.studyCard\)\s*{[^}]*top:\s*13%[^}]*left:\s*7%[^}]*width:\s*60%/s,
+      /\.study\s+:global\(\.studyToy\)\s*{[^}]*--study-page-x:\s*7%[^}]*--study-page-y:\s*13%[^}]*--study-page-width:\s*70%[^}]*--study-page-height:\s*65%/s,
+    );
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyCard\)\s*{[^}]*top:\s*var\(--study-page-y\)[^}]*left:\s*var\(--study-page-x\)[^}]*width:\s*var\(--study-page-width\)[^}]*height:\s*var\(--study-page-height\)/s,
     );
     expect(styles).toMatch(
       /\.study\s+:global\(\.studyCard > strong\)\s*{[^}]*18cqw/s,
     );
     expect(styles).toMatch(
       /\.study\s+:global\(\.studyActions\)\s*{[^}]*top:\s*59%/s,
+    );
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyStatusLine\)\s*{[^}]*left:\s*12\.5%[^}]*width:\s*47%/s,
     );
     expect(styles).toMatch(
       /\.study\s+:global\(\.studyStatusLine progress::-webkit-progress-bar\)\s*{[^}]*background:\s*#f8e2a3/s,
