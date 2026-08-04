@@ -17,10 +17,21 @@ const excerpts: Record<string, string> = {
     "Journalists turned repeated investigative research into reusable skills an AI agent can carry between contracts, companies, ownership records, and real cases.",
 };
 
-export function V2WritingPreview({ post }: { post: PostSummary }) {
+export function V2WritingPreview({
+  post,
+  featured = false,
+}: {
+  post: PostSummary;
+  featured?: boolean;
+}) {
   return (
-    <Link href={`/blog/${post.slug}/`} data-v2-writing-link>
+    <Link
+      href={`/blog/${post.slug}/`}
+      data-v2-writing-link
+      data-v2-writing-featured={featured || undefined}
+    >
       <article>
+        {featured ? <span data-v2-writing-featured-label>Newest</span> : null}
         <div data-v2-writing-meta>
           <span>{post.tags[0]}</span>
           <time dateTime={post.publishedAt.toISOString()}>

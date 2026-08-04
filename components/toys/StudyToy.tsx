@@ -137,6 +137,7 @@ export function StudyToy({ promptLabel = "Tap to reveal" }: { promptLabel?: stri
             className="studyReset"
             type="button"
             aria-label="Reset progress"
+            title="Reset progress"
             onClick={reset}
           >
             <span aria-hidden="true">↺</span>

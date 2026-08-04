@@ -44,12 +44,11 @@ describe("homepage v2", () => {
     expect(styles).toMatch(
       /\.study\s+:global\(\.studyHeading h2\)\s*{[^}]*display:\s*none/s,
     );
-    expect(styles).toContain("font-size: clamp(0.42rem, 0.6vw, 0.58rem)");
     expect(styles).toMatch(
-      /\.radio\s+:global\(\.soundMeta\)\s*{[^}]*top:\s*34%/s,
+      /\.radio\s+:global\(\.soundDisplay\)\s*{[^}]*top:\s*36%[^}]*left:\s*44%[^}]*width:\s*30%/s,
     );
     expect(styles).toMatch(
-      /\.radio\s+:global\(\.soundWaveform\)\s*{[^}]*top:\s*43%/s,
+      /\.radio\s+:global\(\.soundDisplay \.soundWaveform\)\s*{[^}]*inset:[^}]*width:\s*100%/s,
     );
     expect(styles).toMatch(
       /\.window\s+:global\(\.windowSeatVideo\)\s*{[^}]*top:\s*57\.5%[^}]*height:\s*136%/s,
@@ -73,7 +72,34 @@ describe("homepage v2", () => {
     );
     expect(styles).toContain("top: 60.7%");
     expect(styles).toContain("left: 10%");
+    const sounds = within(
+      screen.getByRole("region", { name: "Small Japan toys" }),
+    ).getByRole("region", { name: "Japan Sounds" });
+    const display = sounds.querySelector("[data-sound-display]");
+    expect(display).toContainElement(
+      within(sounds).getByRole("img", { name: "Sound waveform" }),
+    );
+    expect(display).not.toContainElement(
+      within(sounds).getByRole("button", { name: "Next sound" }),
+    );
     expect(within(screen.getByRole("region", { name: "Small Japan toys" })).getByText("Click me")).toBeVisible();
+  });
+
+  it("frames each toy with its own restrained accent", () => {
+    const styles = readFileSync(
+      resolve(process.cwd(), "app/v2/v2.module.css"),
+      "utf8",
+    );
+
+    expect(styles).toMatch(
+      /\.radio\s+:global\(\.soundsToy\)\s*{[^}]*box-shadow:\s*inset 0 0 0 2px var\(--v2-radio-border\)/s,
+    );
+    expect(styles).toMatch(
+      /\.window\s+:global\(\.windowSeatToy\)\s*{[^}]*box-shadow:\s*inset 0 0 0 2px var\(--v2-window-border\)/s,
+    );
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyToy\)\s*{[^}]*box-shadow:\s*inset 0 0 0 2px var\(--v2-study-border\)/s,
+    );
   });
 
   it("keeps the Study chrome quiet and the desktop hero tiles equal-height", () => {
@@ -92,11 +118,23 @@ describe("homepage v2", () => {
       /\.study\s+:global\(\.studyReset span\)\s*{[^}]*background:\s*url\("\/assets\/v2\/reset-pixel\.svg"\)/s,
     );
     expect(styles).toMatch(
+      /\.study\s+:global\(\.studyCard\)\s*{[^}]*top:\s*13%[^}]*left:\s*7%[^}]*width:\s*60%/s,
+    );
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyCard > strong\)\s*{[^}]*18cqw/s,
+    );
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyActions\)\s*{[^}]*top:\s*59%/s,
+    );
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyStatusLine progress::-webkit-progress-bar\)\s*{[^}]*background:\s*#f8e2a3/s,
+    );
+    expect(styles).toMatch(
       /\.study\s+:global\(\.studyCard:hover\)\s*{[^}]*background:\s*transparent/s,
     );
     expect(styles).toMatch(/\.intro\s*{[^}]*height:\s*460px/s);
     expect(styles).toMatch(
-      /@media\s*\(max-width:\s*980px\)[\s\S]*?\.intro\s*{[^}]*height:\s*auto/s,
+      /@media\s*\(max-width:\s*820px\)[\s\S]*?\.intro\s*{[^}]*height:\s*auto/s,
     );
   });
 
@@ -116,6 +154,15 @@ describe("homepage v2", () => {
     expect(within(list).getAllByRole("listitem")).toHaveLength(4);
     expect(within(list).getByText("Sunflowers")).toBeVisible();
     expect(within(list).getByText("Cosmos")).toBeVisible();
+    const bloomImages = Array.from(
+      list.querySelectorAll<HTMLImageElement>(".bloomSeasonEmoji img"),
+    );
+    expect(bloomImages).toHaveLength(4);
+    expect(
+      bloomImages.every((image) =>
+        image.getAttribute("src")?.startsWith("/assets/v2/blooms/"),
+      ),
+    ).toBe(true);
   });
 
   it("makes Peter, the Japan toys, and worthwhile writing obvious", () => {
@@ -149,6 +196,11 @@ describe("homepage v2", () => {
     const writing = screen.getByRole("region", { name: "Latest writing" });
     const articles = within(writing).getAllByRole("article");
     expect(articles).toHaveLength(3);
+    expect(
+      writing.querySelector('[data-v2-writing-featured="true"]'),
+    ).toContainElement(articles[0]);
+    expect(within(articles[0]).getByText("Newest")).toBeVisible();
+    expect(writing.querySelector("img")).not.toBeInTheDocument();
     expect(
       within(writing).getByRole("heading", {
         name: /Detective skills for journalists/i,

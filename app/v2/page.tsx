@@ -78,8 +78,8 @@ export default function HomePageV2() {
             <Link href="/blog/">All writing →</Link>
           </header>
           <div className={styles.writingGrid}>
-            {posts.map((post) => (
-              <V2WritingPreview key={post.slug} post={post} />
+            {posts.map((post, index) => (
+              <V2WritingPreview key={post.slug} post={post} featured={index === 0} />
             ))}
           </div>
         </section>

@@ -474,6 +474,21 @@ img {
   font-weight: 700;
 }
 
+.soundDisplay {
+  display: grid;
+  min-width: 0;
+  height: 84px;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0.18rem;
+}
+
+.soundDisplay .soundWaveform {
+  height: 100%;
+  min-height: 0;
+}
+
 .soundSteps {
   display: flex;
   gap: 0.32rem;

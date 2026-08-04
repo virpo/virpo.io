@@ -11,6 +11,7 @@ const sunflower: BloomEntry = {
   id: "sunflower",
   name: "Sunflowers",
   emoji: "🌻",
+  pixelArt: "/assets/v2/blooms/sunflower.png",
   startMonth: 7,
   startDay: 27,
   endMonth: 8,

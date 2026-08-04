@@ -4,6 +4,7 @@ export type BloomEntry = {
   id: string;
   name: string;
   emoji: string;
+  pixelArt: string;
   startMonth: number;
   startDay: number;
   endMonth: number;
@@ -76,6 +77,7 @@ function isValidBloom(entry: BloomEntry): boolean {
     typeof entry.id === "string" &&
     typeof entry.name === "string" &&
     typeof entry.emoji === "string" &&
+    typeof entry.pixelArt === "string" &&
     Number.isInteger(entry.startMonth) &&
     Number.isInteger(entry.startDay) &&
     Number.isInteger(entry.endMonth) &&

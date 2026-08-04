@@ -36,6 +36,14 @@ it("wraps page content with the shared masthead and footer", () => {
 });
 
 describe("bloom disclosure", () => {
+  it("uses the cohesive pixel flower set when requested", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-08-04T00:00:00Z"));
+    const { container } = render(<Masthead current="home" />);
+
+    expect(container.querySelector(".bloomEmoji img")).not.toBeInTheDocument();
+  });
+
   it("opens on mouse hover and closes shortly after the pointer leaves", () => {
     vi.useFakeTimers();
     render(<Masthead current="home" />);

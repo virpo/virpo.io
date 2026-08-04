@@ -9,7 +9,18 @@ const assets = [
   "public/assets/v2/bloom-lotus.png",
   "public/assets/v2/daruma.png",
   "public/assets/v2/reset-pixel.svg",
+  "public/assets/v2/blooms/camellia.png",
+  "public/assets/v2/blooms/plum.png",
+  "public/assets/v2/blooms/sakura.png",
+  "public/assets/v2/blooms/wisteria.png",
+  "public/assets/v2/blooms/hydrangea.png",
+  "public/assets/v2/blooms/lotus.png",
+  "public/assets/v2/blooms/sunflower.png",
+  "public/assets/v2/blooms/cosmos.png",
+  "public/assets/v2/blooms/chrysanthemum.png",
 ];
+
+const bloomAssets = assets.filter((asset) => asset.includes("/blooms/"));
 
 describe("homepage v2 pixel assets", () => {
   it("keeps replaceable assets at stable public paths", () => {
@@ -28,7 +39,18 @@ describe("homepage v2 pixel assets", () => {
     expect(guide).toContain("bloom-lotus.png");
     expect(guide).toContain("daruma.png");
     expect(guide).toContain("reset-pixel.svg");
+    expect(guide).toContain("blooms/*.png");
     expect(guide).toContain("Safe overlay area");
+  });
+
+  it("keeps every seasonal flower in the same transparent pixel-art format", async () => {
+    for (const asset of bloomAssets) {
+      const metadata = await sharp(resolve(process.cwd(), asset)).metadata();
+
+      expect(metadata.width, asset).toBe(192);
+      expect(metadata.height, asset).toBe(192);
+      expect(metadata.hasAlpha, asset).toBe(true);
+    }
   });
 
   it("keeps the bottom-right of the Study artwork free of baked-in progress boxes", async () => {

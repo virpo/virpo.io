@@ -45,4 +45,13 @@ Prompt direction: one tiny friendly red Daruma in crisp 16-bit Japanese pixel ar
 Path: `public/assets/v2/reset-pixel.svg`
 Current size: 16 × 16 crisp-edge SVG
 
-The tiny black undo arrow is kept as a separate pixel glyph so the Study button stays round, legible, and easy to replace without touching the interactive component.
+The tiny coral eraser is kept as a separate pixel glyph so the Study reset button stays quiet, legible, and easy to replace without touching the interactive component.
+
+## `blooms/*.png`
+
+Paths: `public/assets/v2/blooms/{camellia,plum,sakura,wisteria,hydrangea,lotus,sunflower,cosmos,chrysanthemum}.png`
+Current size: 192 × 192 transparent PNG each
+
+Prompt direction: one unmistakable seasonal Japanese flower, coarse 16-bit pixel art with large square pixels, a limited palette, chunky color clusters, and a warm near-black 3–5 px outline. The subject fills roughly 72% of a square and uses the same cozy 1990s Japanese-game language as the radio and notebook toys. Generate on a flat chroma background with no ground, scenery, lettering, border, or shadow; remove the chroma background and resize to a transparent 192 px square.
+
+Safe overlay area: none. Keep every flower centered with transparent corners. The compact ticker and the expanded seasonal list render the same asset at different sizes.

@@ -426,38 +426,37 @@ export function SoundsToy() {
           </svg>
         </button>
 
-        <SoundWaveform
-          analyser={analyser}
-          playing={playing}
-          reducedMotion={reducedMotion}
-        />
-
-        <div className="soundMeta">
-          <div>
+        <div className="soundMeta soundDisplay" data-sound-display>
+          <div className="soundReadout">
             <strong>{current.title}</strong>
             <span aria-live="polite">{visibleStatus}</span>
           </div>
-          <div
-            className="soundSteps"
-            role="group"
-            aria-label="Sound navigation"
-            aria-busy={switching}
+          <SoundWaveform
+            analyser={analyser}
+            playing={playing}
+            reducedMotion={reducedMotion}
+          />
+        </div>
+        <div
+          className="soundSteps"
+          role="group"
+          aria-label="Sound navigation"
+          aria-busy={switching}
+        >
+          <button
+            type="button"
+            aria-label="Previous sound"
+            onClick={() => selectSound(indexRef.current - 1)}
           >
-            <button
-              type="button"
-              aria-label="Previous sound"
-              onClick={() => selectSound(indexRef.current - 1)}
-            >
-              <span aria-hidden="true">←</span>
-            </button>
-            <button
-              type="button"
-              aria-label="Next sound"
-              onClick={() => selectSound(indexRef.current + 1)}
-            >
-              <span aria-hidden="true">→</span>
-            </button>
-          </div>
+            <span aria-hidden="true">←</span>
+          </button>
+          <button
+            type="button"
+            aria-label="Next sound"
+            onClick={() => selectSound(indexRef.current + 1)}
+          >
+            <span aria-hidden="true">→</span>
+          </button>
         </div>
       </div>
 

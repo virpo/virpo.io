@@ -21,7 +21,13 @@ function formatWindow(startMonth: number, startDay: number, endMonth: number, en
   return `Typical window: ${monthName.format(start)} ${startDay} – ${monthName.format(end)} ${endDay}`;
 }
 
-export function BloomTicker({ showSeasonList = false }: { showSeasonList?: boolean }) {
+export function BloomTicker({
+  showSeasonList = false,
+  pixelArt = false,
+}: {
+  showSeasonList?: boolean;
+  pixelArt?: boolean;
+}) {
   const rootRef = useRef<HTMLElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const pointerInitiatedFocus = useRef(false);
@@ -140,7 +146,11 @@ export function BloomTicker({ showSeasonList = false }: { showSeasonList?: boole
         onClick={() => setIsOpen((open) => !open)}
       >
         <span className="bloomEmoji" aria-hidden="true">
-          {bloom?.emoji ?? "🌱"}
+          {pixelArt && bloom ? (
+            <img src={bloom.pixelArt} alt="" role="presentation" />
+          ) : (
+            bloom?.emoji ?? "🌱"
+          )}
         </span>
         <span className="bloomSummary">
           <span className="tickerKicker">{status?.status === "active" ? "Blooming now" : "Blooming next"}</span>
@@ -164,7 +174,15 @@ export function BloomTicker({ showSeasonList = false }: { showSeasonList?: boole
                 <li key={item.bloom.id}>
                   <a href={item.bloom.sourceUrl} target="_blank" rel="noreferrer">
                     <span className="bloomSeasonEmoji" aria-hidden="true">
-                      {item.bloom.emoji}
+                      {pixelArt ? (
+                        <img
+                          src={item.bloom.pixelArt}
+                          alt=""
+                          role="presentation"
+                        />
+                      ) : (
+                        item.bloom.emoji
+                      )}
                     </span>
                     <span className="bloomSeasonName">
                       <strong>{item.bloom.name}</strong>

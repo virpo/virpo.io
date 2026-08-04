@@ -4,6 +4,9 @@
   --v2-red: #d6533d;
   --v2-coral: #ef8e70;
   --v2-yellow: #f4c64d;
+  --v2-radio-border: #bd513d;
+  --v2-window-border: #61725d;
+  --v2-study-border: #bf861f;
   --v2-ink: #11100e;
   --v2-muted: #685f55;
   --v2-gap: 5px;
@@ -110,8 +113,15 @@
   height: 3.25rem;
   border: 0;
   border-radius: 0;
-  background: url("/assets/v2/bloom-lotus.png") center / contain no-repeat;
+  background: transparent;
   font-size: 0;
+  image-rendering: pixelated;
+}
+
+.masthead :global(.bloomEmoji img) {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   image-rendering: pixelated;
 }
 
@@ -160,8 +170,19 @@
 }
 
 .masthead :global(.bloomSeasonEmoji) {
+  display: grid;
+  width: 2.15rem;
+  height: 2.15rem;
+  place-items: center;
   font-family: system-ui, sans-serif;
   font-size: 1.25rem;
+}
+
+.masthead :global(.bloomSeasonEmoji img) {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
 }
 
 .masthead :global(.bloomSeasonName) {
@@ -361,6 +382,8 @@
   aspect-ratio: 3 / 2;
   overflow: hidden;
   background: #ef8e70 url("/assets/v2/radio.png") center / contain no-repeat;
+  box-shadow: inset 0 0 0 2px var(--v2-radio-border);
+  container-type: inline-size;
   image-rendering: pixelated;
 }
 
@@ -394,47 +417,46 @@
   background: transparent;
 }
 
-.radio :global(.soundMeta) {
+.radio :global(.soundDisplay) {
   position: absolute;
-  top: 34%;
-  left: 42.5%;
-  display: block;
-  width: 32%;
-  height: 45%;
+  top: 36%;
+  left: 44%;
+  display: grid;
+  width: 30%;
+  height: 16%;
+  grid-template-rows: auto 1fr;
+  gap: 4%;
 }
 
-.radio :global(.soundMeta > div:first-child) {
-  position: absolute;
-  top: 1%;
-  right: 3%;
-  left: 3%;
+.radio :global(.soundReadout) {
   display: grid;
-  gap: 0.08rem;
+  min-width: 0;
+  gap: 0;
   text-align: center;
 }
 
-.radio :global(.soundMeta strong) {
+.radio :global(.soundDisplay strong) {
   color: #f6b34c;
   font-family: var(--font-righteous), sans-serif;
-  font-size: clamp(0.42rem, 0.6vw, 0.58rem);
+  font-size: clamp(0.44rem, 1.65cqw, 1rem);
   font-weight: 400;
   line-height: 1.05;
   text-shadow: 0 0 5px rgba(246, 179, 76, 0.4);
 }
 
-.radio :global(.soundMeta > div:first-child > span) {
+.radio :global(.soundReadout > span) {
   color: #dd6c3c;
-  font-size: clamp(0.4rem, 0.56vw, 0.54rem);
+  font-size: clamp(0.4rem, 1.45cqw, 0.88rem);
   line-height: 1.05;
 }
 
-.radio :global(.soundWaveform) {
+.radio :global(.soundDisplay .soundWaveform) {
   --sound-wave-color: #e36a36;
-  position: absolute;
-  top: 43%;
-  left: 43.8%;
-  width: 29.5%;
-  height: 8%;
+  position: static;
+  inset: auto;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
   image-rendering: auto;
 }
 
@@ -464,9 +486,9 @@
 .radio :global(.soundSteps) {
   position: absolute;
   top: 60.5%;
-  right: 0;
-  left: 0;
+  left: 44%;
   display: block;
+  width: 30%;
   height: 22%;
 }
 
@@ -499,6 +521,7 @@
   position: relative;
   aspect-ratio: 3 / 2;
   background: var(--v2-paper);
+  box-shadow: inset 0 0 0 2px var(--v2-window-border);
 }
 
 .window :global(.windowSeatScene) {
@@ -550,6 +573,8 @@
   aspect-ratio: 3 / 2;
   overflow: hidden;
   background: var(--v2-yellow) url("/assets/v2/study-paper.png") center / contain no-repeat;
+  box-shadow: inset 0 0 0 2px var(--v2-study-border);
+  container-type: inline-size;
   image-rendering: pixelated;
 }
 
@@ -589,7 +614,7 @@
   border: 2px solid var(--v2-ink);
   border-radius: 50%;
   background: var(--v2-paper);
-  box-shadow: 2px 2px 0 rgba(17, 16, 14, 0.72);
+  box-shadow: 2px 2px 0 rgba(17, 16, 14, 0.68);
   cursor: pointer;
   filter: none;
   transition: box-shadow 90ms ease, transform 90ms ease;
@@ -601,8 +626,8 @@
 }
 
 .study :global(.studyReset span) {
-  width: 17px;
-  height: 17px;
+  width: 20px;
+  height: 20px;
   background: url("/assets/v2/reset-pixel.svg") center / contain no-repeat;
   color: transparent;
   font-size: 0;
@@ -632,10 +657,10 @@
 
 .study :global(.studyCard) {
   position: absolute;
-  top: 18%;
-  left: 12%;
+  top: 13%;
+  left: 7%;
   display: grid;
-  width: 46%;
+  width: 60%;
   height: 52%;
   min-height: 0;
   gap: 0.08rem;
@@ -650,7 +675,8 @@
 }
 
 .study :global(.studyCard > strong) {
-  font-size: clamp(2.8rem, 5vw, 4.5rem);
+  font-size: clamp(3.6rem, 18cqw, 7rem);
+  line-height: 0.9;
 }
 
 .study :global(.studyReading) {
@@ -681,8 +707,8 @@
 .study :global(.studyStatusLine) {
   position: absolute;
   right: auto;
-  bottom: 1.5%;
-  left: 12%;
+  bottom: 2.3%;
+  left: 13%;
   display: grid;
   width: 45%;
   min-height: 0;
@@ -695,6 +721,23 @@
 .study :global(.studyStatusLine progress) {
   position: static;
   width: 100%;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #f8e2a3;
+  box-shadow: inset 0 0 0 1.5px #9d6a18;
+}
+
+.study :global(.studyStatusLine progress::-webkit-progress-bar) {
+  background: #f8e2a3;
+}
+
+.study :global(.studyStatusLine progress::-webkit-progress-value) {
+  background: #c64f36;
+}
+
+.study :global(.studyStatusLine progress::-moz-progress-bar) {
+  background: #c64f36;
 }
 
 .study :global(.studyStatusValue) {
@@ -719,9 +762,10 @@
 .study :global(.studyActions) {
   position: absolute;
   z-index: 8;
-  bottom: 18%;
-  left: 14%;
-  width: 42%;
+  top: 59%;
+  bottom: auto;
+  left: 13%;
+  width: 48%;
 }
 
 .study :global(.studyActions button) {
@@ -770,6 +814,27 @@
   border-radius: var(--v2-radius);
   background: var(--v2-paper);
   transition: background 150ms ease, transform 150ms ease;
+}
+
+.writingGrid > a[data-v2-writing-featured="true"] {
+  background: #ffe5d6;
+  box-shadow: inset 0 0 0 2px var(--v2-red);
+}
+
+.writingGrid > a[data-v2-writing-featured="true"]:hover,
+.writingGrid > a[data-v2-writing-featured="true"]:focus-visible {
+  background: #ffd8c3;
+}
+
+.writingGrid :global([data-v2-writing-featured-label]) {
+  width: fit-content;
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+  background: var(--v2-red);
+  color: white;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .writingGrid > a:hover,
@@ -853,26 +918,24 @@
     grid-column: 1 / -1;
   }
 
-  .hero {
-    grid-template-columns: 1fr;
-  }
-
-  .intro {
-    height: auto;
-    min-height: 420px;
-    padding: clamp(2rem, 5vw, 4rem);
-  }
-
-  .face {
-    width: min(100%, 460px);
-  }
-
   .writingGrid {
     grid-template-columns: 1fr 1fr;
   }
 
   .writingGrid > a:first-child {
     grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 820px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .intro {
+    height: auto;
+    min-height: 0;
+    padding: clamp(2rem, 5vw, 4rem);
   }
 }
 
@@ -944,18 +1007,6 @@
     background-size: contain;
   }
 
-  .radio :global(.soundMeta) {
-    top: 34%;
-  }
-
-  .radio :global(.soundMeta strong) {
-    font-size: clamp(0.5rem, 2vw, 0.7rem);
-  }
-
-  .radio :global(.soundWaveform) {
-    top: 43%;
-  }
-
   .radio :global(.soundPlay) {
     top: 60.7%;
   }
@@ -1000,14 +1051,10 @@
   }
 
   .study :global(.studyCard) {
-    top: 22%;
-    left: 10%;
-    width: 52%;
-    height: 50%;
-  }
-
-  .study :global(.studyCard > strong) {
-    font-size: clamp(3.4rem, 18vw, 6rem);
+    top: 13%;
+    left: 7%;
+    width: 60%;
+    height: 52%;
   }
 
   .study :global(.studyStatusLine) {
@@ -1046,14 +1093,6 @@
 
   .masthead :global(.bloomSummary strong) {
     font-size: 0.78rem;
-  }
-
-  .radio :global(.soundMeta) {
-    top: 34%;
-  }
-
-  .radio :global(.soundWaveform) {
-    top: 43%;
   }
 
   .study :global(.studyHeading h2) {
