@@ -11,10 +11,10 @@ afterEach(() => {
 });
 
 describe("homepage v2", () => {
-  it("lives on a separate route without replacing the original homepage", () => {
-    const original = readFileSync(resolve(process.cwd(), "app/page.tsx"), "utf8");
+  it("is promoted to the homepage while keeping the v2 route", () => {
+    const homepage = readFileSync(resolve(process.cwd(), "app/page.tsx"), "utf8");
 
-    expect(original).toContain('className="homeBento"');
+    expect(homepage).toContain('from "./v2/page"');
     expect(existsSync(resolve(process.cwd(), "app/v2/page.tsx"))).toBe(true);
   });
 
@@ -210,11 +210,13 @@ describe("homepage v2", () => {
     expect(
       screen.getByRole("heading", {
         level: 1,
-        name: /product engineer from Slovakia\. I make products and small tools/i,
+        name: /I like living somewhere between product, design, and engineering/i,
       }),
     ).toBeVisible();
     expect(
-      screen.getByText(/Working at Slido for 10\+ years now/i),
+      screen.getByText(
+        /I’ve been doing that at Slido for 10\+ years\. Since 2021, we’ve been part of Cisco\. Sometimes it’s a product, sometimes a tool, sometimes a toy\./i,
+      ),
     ).toBeVisible();
 
     const hero = container.querySelector("[data-v2-hero]");

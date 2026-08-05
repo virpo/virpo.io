@@ -11,10 +11,10 @@ describe("homepage", () => {
     const { container } = render(<HomePage />);
     const orderedLabels = [
       "Peter's interactive face",
+      "About Peter",
       "Japan Sounds",
       "Window Seat",
       "Japanese Study",
-      "About Peter",
       "Latest writing",
     ];
 
@@ -33,18 +33,24 @@ describe("homepage", () => {
 
   it("renders the accurate short introduction and only profile icon links", () => {
     render(<HomePage />);
-    const intro = screen.getByRole("region", { name: "About Peter" });
+    const intro = screen.getByLabelText("About Peter");
 
-    expect(within(intro).getByText(/product engineer from Slovakia/i)).toBeVisible();
     expect(
       within(intro).getByText(
-        /I’ve worked at Slido for ten years\. We became part of Cisco in 2021\. I always want to be where product, design, and engineering meet\./i,
+        /I like living somewhere between product, design, and engineering/i,
       ),
     ).toBeVisible();
-    expect(within(intro).getByText(/products and small tools/i)).toBeVisible();
+    expect(
+      within(intro).getByText(
+        /I’ve been doing that at Slido for 10\+ years\. Since 2021, we’ve been part of Cisco\. Sometimes it’s a product, sometimes a tool, sometimes a toy\./i,
+      ),
+    ).toBeVisible();
     expect(within(intro).getAllByRole("link").map((link) => link.getAttribute("aria-label"))).toEqual([
-      "LinkedIn",
       "GitHub",
+      "Instagram",
+      "LinkedIn",
+      "X",
+      "Email",
     ]);
   });
 
@@ -63,7 +69,7 @@ describe("homepage", () => {
       );
       expect(within(preview).queryByRole("link")).toBeNull();
       expect(within(preview).queryByText(/^Read$/)).toBeNull();
-      expect(within(preview).getByTestId("writing-excerpt").textContent?.length).toBeGreaterThan(70);
+      expect(within(preview).getByTestId("v2-writing-excerpt").textContent?.length).toBeGreaterThan(70);
     }
   });
 
@@ -77,10 +83,10 @@ describe("homepage", () => {
 
   it("keeps projects on their own page behind a compact writing link", () => {
     const { container } = render(<HomePage />);
-    const writing = screen.getByRole("region", { name: "Latest writing" });
+    const primaryNav = screen.getByRole("navigation", { name: "Primary" });
 
     expect(container.querySelectorAll(".projectCard")).toHaveLength(0);
-    expect(within(writing).getByRole("link", { name: "Projects" })).toHaveAttribute(
+    expect(within(primaryNav).getByRole("link", { name: "Projects" })).toHaveAttribute(
       "href",
       expect.stringMatching(/^\/projects\/?$/),
     );
@@ -88,20 +94,19 @@ describe("homepage", () => {
 
   it("preserves the finished toy order", () => {
     const { container } = render(<HomePage />);
-    const toyRail = container.querySelector(".toyRail");
+    const toys = container.querySelector("[data-v2-toys]");
 
     expect(container.querySelector("[data-sounds-toy]")).toBeVisible();
     expect(container.querySelector("[data-window-seat-toy]")).toBeVisible();
     expect(container.querySelector("[data-study-toy]")).toBeVisible();
     expect(
-      Array.from(toyRail?.children ?? [], (child) =>
-        child.getAttribute("aria-label"),
+      Array.from(toys?.querySelectorAll("[data-v2-toy]") ?? [], (toy) =>
+        toy.getAttribute("data-v2-toy"),
       ),
     ).toEqual([
-      "Peter's interactive face",
-      "Japan Sounds",
-      "Window Seat",
-      "Japanese Study",
+      "radio",
+      "window-seat",
+      "study",
     ]);
   });
 
@@ -111,7 +116,6 @@ describe("homepage", () => {
       "utf8",
     );
 
-    expect(source).toContain("<SoundsToy />");
-    expect(source).toContain("<WindowSeatToy />");
+    expect(source).toContain('from "./v2/page"');
   });
 });

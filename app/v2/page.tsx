@@ -12,15 +12,14 @@ import { getPostSummaries } from "../../lib/blog";
 import styles from "./v2.module.css";
 
 export const metadata: Metadata = {
-  title: "Homepage v2 preview",
-  alternates: { canonical: "/v2/" },
-  robots: { index: false, follow: false },
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     siteName: "virpo",
-    title: "virpo · homepage v2 preview",
-    description: "A calmer personal homepage for Peter Hraska.",
-    url: "/v2/",
+    title: "virpo · Peter Hraska",
+    description:
+      "Peter Hraska lives somewhere between product, design, and engineering.",
+    url: "/",
   },
 };
 
@@ -53,12 +52,12 @@ export default function HomePageV2() {
           <div className={styles.intro} id="about" aria-label="About Peter">
             <p className={styles.eyebrow}>Hello, I’m Peter.</p>
             <h1>
-              Product engineer from Slovakia. I make products and small tools.
+              I like living somewhere between product, design, and engineering.
             </h1>
             <p>
-              Working at Slido for 10+ years now. We became part of Cisco in
-              2021. I always want to be where product, design, and engineering
-              meet.
+              I’ve been doing that at Slido for 10+ years. Since 2021, we’ve
+              been part of Cisco. Sometimes it’s a product, sometimes a tool,
+              sometimes a toy.
             </p>
             <div className={styles.links} aria-label="Peter elsewhere">
               {socialLinks.map((link) => (

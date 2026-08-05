@@ -24,7 +24,8 @@ const sourceSerif = Source_Serif_4({
 export const metadata: Metadata = {
   metadataBase: new URL("https://virpo.io"),
   title: { default: "virpo · Peter Hraska", template: "%s · virpo" },
-  description: "Peter Hraska makes useful things where product, design, and engineering meet.",
+  description:
+    "Peter Hraska lives somewhere between product, design, and engineering.",
   applicationName: "virpo",
   icons: {
     icon: "/assets/brand-mark.svg",
@@ -34,12 +35,14 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "virpo",
     title: "virpo · Peter Hraska",
-    description: "Peter Hraska makes useful things where product, design, and engineering meet.",
+    description:
+      "Peter Hraska lives somewhere between product, design, and engineering.",
   },
   twitter: {
     card: "summary",
     title: "virpo · Peter Hraska",
-    description: "Peter Hraska makes useful things where product, design, and engineering meet.",
+    description:
+      "Peter Hraska lives somewhere between product, design, and engineering.",
   },
 };
 

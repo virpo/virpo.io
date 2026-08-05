@@ -19,6 +19,8 @@ describe("route-owned URL metadata", () => {
     expect(rootMetadata).toMatchObject({
       applicationName: "virpo",
       title: { default: "virpo · Peter Hraska" },
+      description:
+        "Peter Hraska lives somewhere between product, design, and engineering.",
       icons: { apple: "/assets/apple-touch-icon.png" },
     });
   });
@@ -38,7 +40,12 @@ describe("route-owned URL metadata", () => {
   it("defines the homepage canonical and Open Graph URL on the homepage", () => {
     expect(homeMetadata).toMatchObject({
       alternates: { canonical: "/" },
-      openGraph: { url: "/" },
+      openGraph: {
+        description:
+          "Peter Hraska lives somewhere between product, design, and engineering.",
+        url: "/",
+      },
     });
+    expect(homeMetadata).not.toHaveProperty("title");
   });
 });
