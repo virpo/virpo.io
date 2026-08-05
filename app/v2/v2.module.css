@@ -556,10 +556,12 @@
 
 .window :global(.windowSeatScene) {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  aspect-ratio: auto;
+  top: 50%;
+  left: 50%;
+  width: 122%;
+  height: auto;
+  aspect-ratio: 2130 / 1481;
+  transform: translate(-50%, -50%);
 }
 
 .window :global(.windowSeatVideo) {
@@ -1057,11 +1059,14 @@
 
   .window :global(.windowSeatScene) {
     position: relative;
+    top: auto;
+    left: auto;
     inset: auto;
     width: auto;
     height: auto;
     aspect-ratio: 2130 / 1481;
     grid-row: 1;
+    transform: none;
   }
 
   .window :global(.windowSeatHeading) {

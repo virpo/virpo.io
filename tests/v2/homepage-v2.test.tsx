@@ -59,6 +59,9 @@ describe("homepage v2", () => {
     expect(styles).toMatch(
       /\.window\s+:global\(\.windowSeatVideo\)\s*{[^}]*top:\s*57\.5%[^}]*height:\s*136%/s,
     );
+    expect(styles).toMatch(
+      /\.window\s+:global\(\.windowSeatScene\)\s*{[^}]*position:\s*absolute[^}]*top:\s*50%[^}]*left:\s*50%[^}]*width:\s*122%[^}]*height:\s*auto[^}]*aspect-ratio:\s*2130\s*\/\s*1481[^}]*transform:\s*translate\(-50%,\s*-50%\)/s,
+    );
   });
 
   it("starts directly with the toys, removes the Window Seat caption, and aligns radio controls", () => {
