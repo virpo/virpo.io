@@ -148,7 +148,13 @@ describe("homepage v2", () => {
       /\.study\s+:global\(\.studyCard > strong\)\s*{[^}]*18cqw/s,
     );
     expect(styles).toMatch(
-      /\.study\s+:global\(\.studyActions\)\s*{[^}]*top:\s*59%/s,
+      /\.study\s+:global\(\.studyCard\[aria-expanded="true"\]\)\s*{[^}]*row-gap:\s*clamp\(0\.45rem,\s*1\.1cqw,\s*0\.8rem\)/s,
+    );
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyReading\)\s*{[^}]*font-size:\s*clamp\(0\.82rem,\s*1\.3vw,\s*1\.05rem\)[^}]*line-height:\s*1\.15/s,
+    );
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyActions\)\s*{[^}]*top:\s*64%/s,
     );
     expect(styles).toMatch(
       /\.study\s+:global\(\.studyStatusLine\)\s*{[^}]*left:\s*12\.5%[^}]*width:\s*47%/s,

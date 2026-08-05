@@ -722,8 +722,13 @@
   line-height: 0.9;
 }
 
+.study :global(.studyCard[aria-expanded="true"]) {
+  row-gap: clamp(0.45rem, 1.1cqw, 0.8rem);
+}
+
 .study :global(.studyReading) {
-  font-size: clamp(0.7rem, 1.05vw, 0.85rem);
+  font-size: clamp(0.82rem, 1.3vw, 1.05rem);
+  line-height: 1.15;
 }
 
 .study :global(.studyMeaning) {
@@ -805,7 +810,7 @@
 .study :global(.studyActions) {
   position: absolute;
   z-index: 8;
-  top: 59%;
+  top: 64%;
   bottom: auto;
   left: 16%;
   width: 52%;
