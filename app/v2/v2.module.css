@@ -559,9 +559,17 @@
   top: 50%;
   left: 50%;
   width: 122%;
-  height: auto;
-  aspect-ratio: 2130 / 1481;
+  height: 100%;
+  aspect-ratio: auto;
   transform: translate(-50%, -50%);
+}
+
+.window :global(.windowSeatArt) {
+  object-fit: fill;
+}
+
+.window :global(.windowSeatCompassMask) {
+  background-size: 100% 100%;
 }
 
 .window :global(.windowSeatVideo) {

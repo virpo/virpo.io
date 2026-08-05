@@ -60,7 +60,13 @@ describe("homepage v2", () => {
       /\.window\s+:global\(\.windowSeatVideo\)\s*{[^}]*top:\s*57\.5%[^}]*height:\s*136%/s,
     );
     expect(styles).toMatch(
-      /\.window\s+:global\(\.windowSeatScene\)\s*{[^}]*position:\s*absolute[^}]*top:\s*50%[^}]*left:\s*50%[^}]*width:\s*122%[^}]*height:\s*auto[^}]*aspect-ratio:\s*2130\s*\/\s*1481[^}]*transform:\s*translate\(-50%,\s*-50%\)/s,
+      /\.window\s+:global\(\.windowSeatScene\)\s*{[^}]*position:\s*absolute[^}]*top:\s*50%[^}]*left:\s*50%[^}]*width:\s*122%[^}]*height:\s*100%[^}]*aspect-ratio:\s*auto[^}]*transform:\s*translate\(-50%,\s*-50%\)/s,
+    );
+    expect(styles).toMatch(
+      /\.window\s+:global\(\.windowSeatArt\)\s*{[^}]*object-fit:\s*fill/s,
+    );
+    expect(styles).toMatch(
+      /\.window\s+:global\(\.windowSeatCompassMask\)\s*{[^}]*background-size:\s*100%\s+100%/s,
     );
   });
 
