@@ -174,7 +174,7 @@ export function StudyToy({ promptLabel = "Tap to reveal" }: { promptLabel?: stri
           <>
             <button
               ref={cardButtonRef}
-              className="studyCard"
+              className={`studyCard${isKanji ? " studyCardKanji" : ""}`}
               type="button"
               aria-expanded={revealed}
               aria-label={

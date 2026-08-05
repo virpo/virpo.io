@@ -114,6 +114,7 @@ describe("StudyToy", () => {
     render(<StudyToy />);
 
     const card = await screen.findByRole("button", { name: /reveal answer/i });
+    expect(card).toHaveClass("studyCardKanji");
     expect(screen.getByText(target.writing)).toBeVisible();
     expect(screen.getByText(target.reading)).toBeVisible();
     expect(screen.getByText(target.meaning)).not.toBeVisible();

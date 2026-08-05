@@ -513,6 +513,21 @@
   opacity: 0;
 }
 
+.radio :global(.soundPlay[aria-pressed="true"]) {
+  background: #fff4dc;
+  color: var(--v2-ink);
+}
+
+.radio :global(.soundPlay[aria-pressed="true"]:hover),
+.radio :global(.soundPlay[aria-pressed="true"]:focus-visible) {
+  background: #fff4dc;
+  color: var(--v2-ink);
+}
+
+.radio :global(.soundPlay[aria-pressed="true"] svg) {
+  opacity: 1;
+}
+
 .radio :global(.soundSteps) {
   position: absolute;
   top: 60.5%;
@@ -663,8 +678,15 @@
   transition: box-shadow 90ms ease, transform 90ms ease;
 }
 
-.study :global(.studyBack::before),
-.study :global(.studyBack::after) {
+.study :global(.studyBack)::before {
+  display: block;
+  inset: 2px;
+  border: 2px solid var(--v2-ink);
+  border-radius: 50%;
+  background: var(--v2-paper);
+}
+
+.study :global(.studyBack)::after {
   display: none;
 }
 
@@ -706,7 +728,13 @@
   width: var(--study-page-width);
   height: var(--study-page-height);
   min-height: 0;
-  gap: 0.08rem;
+  grid-template-rows: auto 1.25rem 1rem;
+  grid-template-areas:
+    "writing"
+    "reading"
+    "secondary";
+  align-content: center;
+  row-gap: clamp(0.3rem, 0.7cqw, 0.5rem);
   padding: 0.5rem;
   border: 0;
   border-radius: 0;
@@ -718,17 +746,24 @@
 }
 
 .study :global(.studyCard > strong) {
+  grid-area: writing;
   font-size: clamp(3.6rem, 18cqw, 7rem);
   line-height: 0.9;
 }
 
-.study :global(.studyCard[aria-expanded="true"]) {
-  row-gap: clamp(0.45rem, 1.1cqw, 0.8rem);
+.study :global(.studyReading),
+.study :global(.studyCard small) {
+  grid-area: reading;
 }
 
 .study :global(.studyReading) {
   font-size: clamp(0.82rem, 1.3vw, 1.05rem);
   line-height: 1.15;
+}
+
+.study :global(.studyMeaning),
+.study :global(.studyCardKanji small) {
+  grid-area: secondary;
 }
 
 .study :global(.studyMeaning) {

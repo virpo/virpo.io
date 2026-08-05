@@ -123,6 +123,20 @@ describe("homepage v2", () => {
     );
   });
 
+  it("shows a real pause icon over the radio artwork while audio is playing", () => {
+    const styles = readFileSync(
+      resolve(process.cwd(), "app/v2/v2.module.css"),
+      "utf8",
+    );
+
+    expect(styles).toMatch(
+      /\.radio\s+:global\(\.soundPlay\[aria-pressed="true"\]\)\s*{[^}]*background:\s*#fff4dc[^}]*color:\s*var\(--v2-ink\)/s,
+    );
+    expect(styles).toMatch(
+      /\.radio\s+:global\(\.soundPlay\[aria-pressed="true"\]\s+svg\)\s*{[^}]*opacity:\s*1/s,
+    );
+  });
+
   it("keeps the Study chrome quiet and the desktop hero tiles equal-height", () => {
     const styles = readFileSync(
       resolve(process.cwd(), "app/v2/v2.module.css"),
@@ -134,6 +148,12 @@ describe("homepage v2", () => {
     );
     expect(styles).toMatch(
       /\.study\s+:global\(\.studyBack\)\s*{[^}]*border:\s*2px\s+solid\s+var\(--v2-ink\)[^}]*border-radius:\s*50%/s,
+    );
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyBack\)::before\s*{[^}]*display:\s*block[^}]*inset:\s*2px[^}]*border:\s*2px\s+solid\s+var\(--v2-ink\)/s,
+    );
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyBack\)::after\s*{[^}]*display:\s*none/s,
     );
     expect(styles).toMatch(
       /\.study\s+:global\(\.studyBack span\)\s*{[^}]*background:\s*url\("\/assets\/v2\/back-pixel\.svg"\)/s,
@@ -148,7 +168,16 @@ describe("homepage v2", () => {
       /\.study\s+:global\(\.studyCard > strong\)\s*{[^}]*18cqw/s,
     );
     expect(styles).toMatch(
-      /\.study\s+:global\(\.studyCard\[aria-expanded="true"\]\)\s*{[^}]*row-gap:\s*clamp\(0\.45rem,\s*1\.1cqw,\s*0\.8rem\)/s,
+      /\.study\s+:global\(\.studyCard\)\s*{[^}]*grid-template-rows:\s*auto\s+1\.25rem\s+1rem[^}]*grid-template-areas:\s*"writing"\s+"reading"\s+"secondary"[^}]*align-content:\s*center[^}]*row-gap:\s*clamp\(0\.3rem,\s*0\.7cqw,\s*0\.5rem\)/s,
+    );
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyCard > strong\)\s*{[^}]*grid-area:\s*writing/s,
+    );
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyReading\),\s*\.study\s+:global\(\.studyCard small\)\s*{[^}]*grid-area:\s*reading/s,
+    );
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyMeaning\),\s*\.study\s+:global\(\.studyCardKanji small\)\s*{[^}]*grid-area:\s*secondary/s,
     );
     expect(styles).toMatch(
       /\.study\s+:global\(\.studyReading\)\s*{[^}]*font-size:\s*clamp\(0\.82rem,\s*1\.3vw,\s*1\.05rem\)[^}]*line-height:\s*1\.15/s,
