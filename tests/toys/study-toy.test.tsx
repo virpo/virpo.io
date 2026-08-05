@@ -64,9 +64,7 @@ describe("StudyToy", () => {
     expect(document.querySelector(".studyStats")).toBeNull();
     expect(document.querySelector(".studyStat")).toBeNull();
     expect(document.querySelector(".studyProgressTrack")).toBeNull();
-    expect(
-      container.querySelector(".studyHeading .studyReset"),
-    ).toBeVisible();
+    expect(container.querySelector(".studyHeading .studyBack")).toBeNull();
     expect(container.querySelector(".studyFooter")).toBeNull();
     expect(screen.queryByRole("group", { name: /rate this answer/i })).toBeNull();
   });
@@ -143,7 +141,7 @@ describe("StudyToy", () => {
     expect(await screen.findByLabelText("1 of 46 stable")).toBeVisible();
   });
 
-  it("resets and persists fresh progress", async () => {
+  it("returns from the answer to the same card without resetting progress", async () => {
     const state = createStudyState();
     state.cards["h-a"] = {
       stage: 2,
@@ -152,16 +150,23 @@ describe("StudyToy", () => {
       wrong: 0,
     };
     localStorage.setItem(STUDY_STORAGE_KEY, JSON.stringify(state));
-    vi.spyOn(window, "confirm").mockReturnValue(true);
     render(<StudyToy />);
     expect(await screen.findByLabelText("1 of 46 stable")).toBeVisible();
+    const card = screen.getByRole("button", { name: /reveal answer/i });
+    const writing = card.querySelector("strong")?.textContent;
 
-    fireEvent.click(screen.getByRole("button", { name: /reset progress/i }));
+    fireEvent.click(card);
+    const back = screen.getByRole("button", { name: "Back to question" });
+    expect(back).toBeVisible();
+    fireEvent.click(back);
 
-    expect(await screen.findByLabelText("0 of 46 stable")).toBeVisible();
-    expect(
-      JSON.parse(localStorage.getItem(STUDY_STORAGE_KEY) ?? "{}").cards["h-a"],
-    ).toEqual({ stage: 0, dueAt: 0, correct: 0, wrong: 0 });
+    expect(screen.getByRole("button", { name: /reveal answer/i })).toHaveTextContent(
+      writing ?? "",
+    );
+    expect(screen.queryByRole("group", { name: /rate this answer/i })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Back to question" })).toBeNull();
+    expect(screen.getByLabelText("1 of 46 stable")).toBeVisible();
+    expect(localStorage.getItem(STUDY_STORAGE_KEY)).toBe(JSON.stringify(state));
   });
 
   it("keeps future-version bytes through scoring and reports tab-only progress", async () => {
@@ -177,38 +182,6 @@ describe("StudyToy", () => {
     expect(await screen.findByText("Saved for this tab only.")).toBeVisible();
     expect(document.querySelector(".studyNotice")).toBeVisible();
     expect(localStorage.getItem(STUDY_STORAGE_KEY)).toBe(raw);
-  });
-
-  it("keeps future-version bytes through reset and reports tab-only progress", async () => {
-    const raw = '{"version":4,"cards":{},"opaque":"keep"}';
-    localStorage.setItem(STUDY_STORAGE_KEY, raw);
-    vi.spyOn(window, "confirm").mockReturnValue(true);
-    render(<StudyToy />);
-    await screen.findByRole("button", { name: /reveal answer/i });
-
-    fireEvent.click(screen.getByRole("button", { name: /reset progress/i }));
-
-    expect(await screen.findByText("Saved for this tab only.")).toBeVisible();
-    expect(document.querySelector(".studyNotice")).toBeVisible();
-    expect(screen.queryByText("Progress reset.")).toBeNull();
-    expect(localStorage.getItem(STUDY_STORAGE_KEY)).toBe(raw);
-  });
-
-  it("does not replace a storage failure warning with reset success copy", async () => {
-    vi.spyOn(window, "confirm").mockReturnValue(true);
-    const setItem = vi
-      .spyOn(Storage.prototype, "setItem")
-      .mockImplementation(() => {
-        throw new DOMException("Storage blocked", "QuotaExceededError");
-      });
-    render(<StudyToy />);
-    await screen.findByRole("button", { name: /reveal answer/i });
-
-    fireEvent.click(screen.getByRole("button", { name: /reset progress/i }));
-
-    expect(await screen.findByText("Saved for this tab only.")).toBeVisible();
-    expect(screen.queryByText("Progress reset.")).toBeNull();
-    expect(setItem).toHaveBeenCalled();
   });
 
   it("uses one compact console with readable controls and no Arial fallback", () => {
@@ -230,10 +203,10 @@ describe("StudyToy", () => {
       /\.studyActions button\s*\{[^}]*min-height:\s*44px;/s,
     );
     expect(studyCss).toMatch(
-      /\.studyReset\s*\{[^}]*width:\s*44px;[^}]*min-height:\s*44px;[^}]*border:\s*0;/s,
+      /\.studyBack\s*\{[^}]*width:\s*44px;[^}]*min-height:\s*44px;[^}]*border:\s*0;/s,
     );
     expect(studyCss).toMatch(
-      /\.studyReset::before\s*\{[^}]*inset:\s*4px;[^}]*border:\s*2px solid var\(--ink\);/s,
+      /\.studyBack::before\s*\{[^}]*inset:\s*4px;[^}]*border:\s*2px solid var\(--ink\);/s,
     );
     expect(studyCss).toMatch(
       /\.studyActions button:focus-visible\s*\{[^}]*outline:\s*3px solid var\(--focus\);[^}]*box-shadow:\s*none;/s,

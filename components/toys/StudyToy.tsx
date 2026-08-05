@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
-  createStudyState,
   getStudyProgress,
   scoreCard,
   selectNextCard,
@@ -113,14 +112,9 @@ export function StudyToy({ promptLabel = "Tap to reveal" }: { promptLabel?: stri
     setSelection(select(next));
   }
 
-  function reset() {
-    if (!window.confirm("Reset all Japanese Study progress?")) return;
-    const next = createStudyState();
-    const saved = persist(next);
-    setState(next);
+  function goBack() {
+    focusNextCard.current = true;
     setRevealed(false);
-    setSelection(select(next));
-    if (saved) setNotice("Progress reset.");
   }
 
   return (
@@ -133,15 +127,17 @@ export function StudyToy({ promptLabel = "Tap to reveal" }: { promptLabel?: stri
         <h2>Japanese Study</h2>
         <div className="studyHeadingTools">
           <span>{groupLabels[currentGroup]}</span>
-          <button
-            className="studyReset"
-            type="button"
-            aria-label="Reset progress"
-            title="Reset progress"
-            onClick={reset}
-          >
-            <span aria-hidden="true">↺</span>
-          </button>
+          {revealed ? (
+            <button
+              className="studyBack"
+              type="button"
+              aria-label="Back to question"
+              title="Back to question"
+              onClick={goBack}
+            >
+              <span aria-hidden="true">←</span>
+            </button>
+          ) : null}
         </div>
       </header>
 

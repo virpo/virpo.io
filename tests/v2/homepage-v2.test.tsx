@@ -91,23 +91,23 @@ describe("homepage v2", () => {
     expect(within(screen.getByRole("region", { name: "Small Japan toys" })).getByText("Click me")).toBeVisible();
   });
 
-  it("frames each toy with its own restrained accent", () => {
+  it("frames each toy outside the artwork with its own accent", () => {
     const styles = readFileSync(
       resolve(process.cwd(), "app/v2/v2.module.css"),
       "utf8",
     );
 
     expect(styles).toMatch(
-      /\.radio\s+:global\(\.soundsToy::after\)[\s\S]*?border:\s*2px solid var\(--v2-radio-border\)/s,
+      /\.radio,\s*\.window,\s*\.study\s*{[^}]*padding:\s*0[^}]*overflow:\s*hidden[^}]*border:\s*3px solid[^}]*border-radius:\s*calc\(var\(--v2-radius\) \+ 3px\)/s,
     );
     expect(styles).toMatch(
-      /\.window\s+:global\(\.windowSeatToy::after\)[\s\S]*?border:\s*2px solid var\(--v2-window-border\)/s,
+      /\.radio\s*{[^}]*border-color:\s*var\(--v2-radio-border\)/s,
     );
     expect(styles).toMatch(
-      /\.study\s+:global\(\.studyToy::after\)[\s\S]*?border:\s*2px solid var\(--v2-study-border\)/s,
+      /\.window\s*{[^}]*border-color:\s*var\(--v2-window-border\)/s,
     );
     expect(styles).toMatch(
-      /\.radio\s+:global\(\.soundsToy::after\),[\s\S]*?z-index:\s*30[^}]*pointer-events:\s*none/s,
+      /\.study\s*{[^}]*border-color:\s*var\(--v2-study-border\)/s,
     );
   });
 
@@ -121,10 +121,10 @@ describe("homepage v2", () => {
       /\.study\s+:global\(\.studyHeadingTools\s*>\s*span\)\s*{[^}]*display:\s*none/s,
     );
     expect(styles).toMatch(
-      /\.study\s+:global\(\.studyReset\)\s*{[^}]*border:\s*2px\s+solid\s+var\(--v2-ink\)[^}]*border-radius:\s*50%/s,
+      /\.study\s+:global\(\.studyBack\)\s*{[^}]*border:\s*2px\s+solid\s+var\(--v2-ink\)[^}]*border-radius:\s*50%/s,
     );
     expect(styles).toMatch(
-      /\.study\s+:global\(\.studyReset span\)\s*{[^}]*background:\s*url\("\/assets\/v2\/reset-pixel\.svg"\)/s,
+      /\.study\s+:global\(\.studyBack span\)\s*{[^}]*background:\s*url\("\/assets\/v2\/back-pixel\.svg"\)/s,
     );
     expect(styles).toMatch(
       /\.study\s+:global\(\.studyToy\)\s*{[^}]*--study-page-x:\s*7%[^}]*--study-page-y:\s*13%[^}]*--study-page-width:\s*70%[^}]*--study-page-height:\s*65%/s,

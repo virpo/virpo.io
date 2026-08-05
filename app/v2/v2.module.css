@@ -377,35 +377,28 @@
 .window,
 .study {
   min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 3px solid;
+  border-radius: calc(var(--v2-radius) + 3px);
+}
+
+.radio {
+  border-color: var(--v2-radio-border);
+}
+
+.window {
+  border-color: var(--v2-window-border);
+}
+
+.study {
+  border-color: var(--v2-study-border);
 }
 
 .radio :global(.soundsToy),
 .study :global(.studyToy),
 .window :global(.windowSeatToy) {
   border-radius: var(--v2-radius);
-}
-
-.radio :global(.soundsToy::after),
-.window :global(.windowSeatToy::after),
-.study :global(.studyToy::after) {
-  position: absolute;
-  z-index: 30;
-  inset: 0;
-  border-radius: inherit;
-  content: "";
-  pointer-events: none;
-}
-
-.radio :global(.soundsToy::after) {
-  border: 2px solid var(--v2-radio-border);
-}
-
-.window :global(.windowSeatToy::after) {
-  border: 2px solid var(--v2-window-border);
-}
-
-.study :global(.studyToy::after) {
-  border: 2px solid var(--v2-study-border);
 }
 
 .radio :global(.soundsToy) {
@@ -645,7 +638,7 @@
   display: none;
 }
 
-.study :global(.studyReset) {
+.study :global(.studyBack) {
   display: grid;
   width: 34px;
   min-height: 34px;
@@ -660,27 +653,27 @@
   transition: box-shadow 90ms ease, transform 90ms ease;
 }
 
-.study :global(.studyReset::before),
-.study :global(.studyReset::after) {
+.study :global(.studyBack::before),
+.study :global(.studyBack::after) {
   display: none;
 }
 
-.study :global(.studyReset span) {
+.study :global(.studyBack span) {
   width: 20px;
   height: 20px;
-  background: url("/assets/v2/reset-pixel.svg") center / contain no-repeat;
+  background: url("/assets/v2/back-pixel.svg") center / contain no-repeat;
   color: transparent;
   font-size: 0;
   image-rendering: pixelated;
 }
 
-.study :global(.studyReset:hover),
-.study :global(.studyReset:focus-visible) {
+.study :global(.studyBack:hover),
+.study :global(.studyBack:focus-visible) {
   box-shadow: 3px 3px 0 rgba(17, 16, 14, 0.72);
   transform: translate(-1px, -1px);
 }
 
-.study :global(.studyReset:active) {
+.study :global(.studyBack:active) {
   box-shadow: none;
   transform: translate(2px, 2px);
 }

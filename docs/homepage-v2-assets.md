@@ -40,12 +40,12 @@ Prompt direction: one tiny friendly red Daruma in crisp 16-bit Japanese pixel ar
 
 `daruma-source.png` preserves the original generation and `daruma-large.png` preserves the cleaned high-resolution intermediate.
 
-## `reset-pixel.svg`
+## `back-pixel.svg`
 
-Path: `public/assets/v2/reset-pixel.svg`
+Path: `public/assets/v2/back-pixel.svg`
 Current size: 16 × 16 crisp-edge SVG
 
-The single-color pixel refresh arrow is kept as a separate glyph so the Study reset button stays quiet, legible, and easy to replace without touching the interactive component.
+The single-color pixel back arrow is kept as a separate glyph so the Study answer can return to its question without adding visual clutter or touching saved progress.
 
 ## `blooms/*.png`
 

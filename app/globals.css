@@ -805,7 +805,7 @@ img {
   font-size: 0.66rem;
 }
 
-.studyReset {
+.studyBack {
   position: relative;
   display: grid;
   width: 44px;
@@ -820,7 +820,7 @@ img {
   cursor: pointer;
 }
 
-.studyReset::before {
+.studyBack::before {
   position: absolute;
   inset: 4px;
   border: 2px solid var(--ink);
@@ -829,7 +829,7 @@ img {
   content: "";
 }
 
-.studyReset span {
+.studyBack span {
   position: relative;
   z-index: 1;
   color: inherit;

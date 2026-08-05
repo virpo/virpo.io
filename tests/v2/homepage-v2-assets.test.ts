@@ -8,7 +8,7 @@ const assets = [
   "public/assets/v2/study-paper.png",
   "public/assets/v2/bloom-lotus.png",
   "public/assets/v2/daruma.png",
-  "public/assets/v2/reset-pixel.svg",
+  "public/assets/v2/back-pixel.svg",
   "public/assets/v2/blooms/camellia.png",
   "public/assets/v2/blooms/plum.png",
   "public/assets/v2/blooms/sakura.png",
@@ -38,14 +38,14 @@ describe("homepage v2 pixel assets", () => {
     expect(guide).toContain("study-paper.png");
     expect(guide).toContain("bloom-lotus.png");
     expect(guide).toContain("daruma.png");
-    expect(guide).toContain("reset-pixel.svg");
+    expect(guide).toContain("back-pixel.svg");
     expect(guide).toContain("blooms/*.png");
     expect(guide).toContain("Safe overlay area");
   });
 
-  it("keeps the Study reset glyph as one quiet pixel refresh arrow", () => {
+  it("keeps the Study back glyph as one quiet pixel arrow", () => {
     const icon = readFileSync(
-      resolve(process.cwd(), "public/assets/v2/reset-pixel.svg"),
+      resolve(process.cwd(), "public/assets/v2/back-pixel.svg"),
       "utf8",
     );
     const guide = readFileSync(
@@ -56,7 +56,7 @@ describe("homepage v2 pixel assets", () => {
     expect(icon).not.toContain("<circle");
     expect(icon).not.toContain("#d6533d");
     expect(icon.match(/<path\b/g)).toHaveLength(1);
-    expect(guide).toContain("pixel refresh arrow");
+    expect(guide).toContain("pixel back arrow");
   });
 
   it("keeps every seasonal flower in the same transparent pixel-art format", async () => {
