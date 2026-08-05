@@ -817,11 +817,27 @@
 }
 
 .study :global(.studyActions button) {
-  min-height: 31px;
-  border-width: 1.5px;
-  border-radius: 10px;
+  min-height: 38px;
+  border-width: 2px;
+  border-radius: 12px;
   background: var(--v2-paper);
-  font-size: 0.55rem;
+  font-size: clamp(0.72rem, 1.4vw, 0.92rem);
+  font-weight: 800;
+  letter-spacing: 0.015em;
+  box-shadow: 0 3px 0 var(--v2-ink);
+  transition: background 100ms ease, box-shadow 80ms ease, transform 80ms ease;
+}
+
+.study :global(.studyActions button:hover),
+.study :global(.studyActions button:focus-visible) {
+  background: #fff1cf;
+  box-shadow: 0 4px 0 var(--v2-ink);
+  transform: translateY(-1px);
+}
+
+.study :global(.studyActions button:active) {
+  box-shadow: none;
+  transform: translateY(3px);
 }
 
 @keyframes studyPromptPulse {

@@ -157,6 +157,12 @@ describe("homepage v2", () => {
       /\.study\s+:global\(\.studyActions\)\s*{[^}]*top:\s*64%/s,
     );
     expect(styles).toMatch(
+      /\.study\s+:global\(\.studyActions button\)\s*{[^}]*min-height:\s*38px[^}]*border-width:\s*2px[^}]*font-size:\s*clamp\(0\.72rem,\s*1\.4vw,\s*0\.92rem\)[^}]*font-weight:\s*800[^}]*box-shadow:\s*0\s+3px\s+0\s+var\(--v2-ink\)/s,
+    );
+    expect(styles).toMatch(
+      /\.study\s+:global\(\.studyActions button:active\)\s*{[^}]*box-shadow:\s*none[^}]*transform:\s*translateY\(3px\)/s,
+    );
+    expect(styles).toMatch(
       /\.study\s+:global\(\.studyStatusLine\)\s*{[^}]*left:\s*12\.5%[^}]*width:\s*47%/s,
     );
     expect(styles).toMatch(
