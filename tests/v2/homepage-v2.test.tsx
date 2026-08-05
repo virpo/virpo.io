@@ -274,6 +274,10 @@ describe("homepage v2", () => {
       "https://x.com/virpo",
       "mailto:peter@hraska.sk",
     ]);
+    expect(links[0].querySelector("path")).toHaveAttribute(
+      "d",
+      expect.stringContaining("c-6.63 0-12 5.373-12 12"),
+    );
     for (const link of links) {
       expect(link).toHaveAttribute("title", link.getAttribute("aria-label"));
       expect(link).toHaveTextContent("");
