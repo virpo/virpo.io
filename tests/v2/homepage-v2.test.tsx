@@ -109,6 +109,9 @@ describe("homepage v2", () => {
     expect(styles).toMatch(
       /\.study\s*{[^}]*border-color:\s*var\(--v2-study-border\)/s,
     );
+    expect(styles).toMatch(
+      /\.radio\s+:global\(\.soundsToy\),\s*\.study\s+:global\(\.studyToy\),\s*\.window\s+:global\(\.windowSeatToy\)\s*{[^}]*border-radius:\s*0/s,
+    );
   });
 
   it("keeps the Study chrome quiet and the desktop hero tiles equal-height", () => {

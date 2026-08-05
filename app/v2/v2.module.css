@@ -398,7 +398,7 @@
 .radio :global(.soundsToy),
 .study :global(.studyToy),
 .window :global(.windowSeatToy) {
-  border-radius: var(--v2-radius);
+  border-radius: 0;
 }
 
 .radio :global(.soundsToy) {
