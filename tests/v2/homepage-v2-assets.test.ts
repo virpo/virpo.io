@@ -43,6 +43,22 @@ describe("homepage v2 pixel assets", () => {
     expect(guide).toContain("Safe overlay area");
   });
 
+  it("keeps the Study reset glyph as one quiet pixel refresh arrow", () => {
+    const icon = readFileSync(
+      resolve(process.cwd(), "public/assets/v2/reset-pixel.svg"),
+      "utf8",
+    );
+    const guide = readFileSync(
+      resolve(process.cwd(), "docs/homepage-v2-assets.md"),
+      "utf8",
+    );
+
+    expect(icon).not.toContain("<circle");
+    expect(icon).not.toContain("#d6533d");
+    expect(icon.match(/<path\b/g)).toHaveLength(1);
+    expect(guide).toContain("pixel refresh arrow");
+  });
+
   it("keeps every seasonal flower in the same transparent pixel-art format", async () => {
     for (const asset of bloomAssets) {
       const metadata = await sharp(resolve(process.cwd(), asset)).metadata();

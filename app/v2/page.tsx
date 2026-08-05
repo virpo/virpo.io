@@ -6,6 +6,7 @@ import { SoundsToy } from "../../components/toys/SoundsToy";
 import { StudyToy } from "../../components/toys/StudyToy";
 import { WindowSeatToy } from "../../components/toys/WindowSeatToy";
 import { V2Masthead } from "../../components/v2/V2Masthead";
+import { V2SocialIcon } from "../../components/v2/V2SocialIcon";
 import { V2WritingPreview } from "../../components/v2/V2WritingPreview";
 import { getPostSummaries } from "../../lib/blog";
 import styles from "./v2.module.css";
@@ -25,6 +26,21 @@ export const metadata: Metadata = {
 
 export default function HomePageV2() {
   const posts = getPostSummaries().slice(0, 3);
+  const socialLinks = [
+    { label: "GitHub", icon: "github" as const, href: "https://github.com/virpo" },
+    {
+      label: "Instagram",
+      icon: "instagram" as const,
+      href: "https://www.instagram.com/virpo.san/",
+    },
+    {
+      label: "LinkedIn",
+      icon: "linkedin" as const,
+      href: "https://www.linkedin.com/in/hraska/",
+    },
+    { label: "X", icon: "x" as const, href: "https://x.com/virpo" },
+    { label: "Email", icon: "email" as const, href: "mailto:peter@hraska.sk" },
+  ];
 
   return (
     <div className={styles.page} data-v2-home>
@@ -45,12 +61,19 @@ export default function HomePageV2() {
               meet.
             </p>
             <div className={styles.links} aria-label="Peter elsewhere">
-              <a href="https://www.linkedin.com/in/hraska/" target="_blank" rel="noreferrer">
-                LinkedIn
-              </a>
-              <a href="https://github.com/virpo" target="_blank" rel="noreferrer">
-                GitHub
-              </a>
+              {socialLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  aria-label={link.label}
+                  title={link.label}
+                  {...(link.href.startsWith("http")
+                    ? { target: "_blank", rel: "noreferrer" }
+                    : {})}
+                >
+                  <V2SocialIcon name={link.icon} />
+                </a>
+              ))}
             </div>
           </div>
         </section>

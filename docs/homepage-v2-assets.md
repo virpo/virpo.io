@@ -45,7 +45,7 @@ Prompt direction: one tiny friendly red Daruma in crisp 16-bit Japanese pixel ar
 Path: `public/assets/v2/reset-pixel.svg`
 Current size: 16 × 16 crisp-edge SVG
 
-The tiny coral eraser is kept as a separate pixel glyph so the Study reset button stays quiet, legible, and easy to replace without touching the interactive component.
+The single-color pixel refresh arrow is kept as a separate glyph so the Study reset button stays quiet, legible, and easy to replace without touching the interactive component.
 
 ## `blooms/*.png`
 

@@ -229,4 +229,31 @@ describe("homepage v2", () => {
       expect(within(article).getByTestId("v2-writing-excerpt")).toBeVisible();
     }
   });
+
+  it("shows Peter's social links as accessible icons in the intended order", () => {
+    render(<HomePageV2 />);
+
+    const elsewhere = screen.getByLabelText("Peter elsewhere");
+    const links = within(elsewhere).getAllByRole("link");
+
+    expect(links.map((link) => link.getAttribute("aria-label"))).toEqual([
+      "GitHub",
+      "Instagram",
+      "LinkedIn",
+      "X",
+      "Email",
+    ]);
+    expect(links.map((link) => link.getAttribute("href"))).toEqual([
+      "https://github.com/virpo",
+      "https://www.instagram.com/virpo.san/",
+      "https://www.linkedin.com/in/hraska/",
+      "https://x.com/virpo",
+      "mailto:peter@hraska.sk",
+    ]);
+    for (const link of links) {
+      expect(link).toHaveAttribute("title", link.getAttribute("aria-label"));
+      expect(link).toHaveTextContent("");
+      expect(link.querySelector("svg")).toBeInTheDocument();
+    }
+  });
 });
