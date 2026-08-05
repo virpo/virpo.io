@@ -116,18 +116,23 @@ describe("WindowSeatToy", () => {
     expect(windowSeatCss).not.toMatch(/\bzoom\s*:/);
   });
 
-  it("uses only the approved warm palette for the generated still", () => {
+  it("uses a local frame from the train video while the embed loads", () => {
     const css = readFileSync(resolve(process.cwd(), "app/globals.css"), "utf8");
     const still = css.match(/\.windowSeatStill\s*\{([^}]*)}/s)?.[1] ?? "";
     const startup =
       css.match(/\.windowSeatStartupCover\s*\{([^}]*)}/s)?.[1] ?? "";
 
     for (const rule of [still, startup]) {
-      expect(rule).toContain("var(--paper)");
-      expect(rule).toContain("var(--kaki)");
-      expect(rule).toContain("var(--brand-red)");
-      expect(rule).toContain("var(--peach)");
-      expect(rule).not.toMatch(/#557b4f|#c9d6c3|#718c58/i);
+      expect(rule).toMatch(
+        /background:\s*url\("\/assets\/train-window-still\.png"\)\s+center\s*\/\s*cover\s+no-repeat/,
+      );
+      expect(rule).not.toContain("linear-gradient");
     }
+
+    expect(
+      readFileSync(
+        resolve(process.cwd(), "public/assets/train-window-still.png"),
+      ).byteLength,
+    ).toBeGreaterThan(0);
   });
 });

@@ -536,9 +536,7 @@ img {
   position: absolute;
   z-index: 0;
   inset: 0;
-  background:
-    linear-gradient(165deg, transparent 49%, var(--brand-red) 50% 64%, transparent 65%),
-    linear-gradient(var(--paper) 0 40%, var(--peach) 40% 61%, var(--kaki) 61%);
+  background: url("/assets/train-window-still.png") center / cover no-repeat;
 }
 
 .windowSeatAperture {
@@ -569,9 +567,7 @@ img {
   position: absolute;
   z-index: 3;
   inset: 0;
-  background:
-    linear-gradient(165deg, transparent 49%, var(--brand-red) 50% 64%, transparent 65%),
-    linear-gradient(var(--paper) 0 40%, var(--peach) 40% 61%, var(--kaki) 61%);
+  background: url("/assets/train-window-still.png") center / cover no-repeat;
   pointer-events: none;
 }
 
