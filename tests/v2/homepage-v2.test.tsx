@@ -85,7 +85,7 @@ describe("homepage v2", () => {
     expect(styles).toMatch(
       /\.window\s+:global\(\.windowSeatHeading\)\s*{[^}]*display:\s*none/s,
     );
-    expect(styles).toContain("top: 60.7%");
+    expect(styles).toContain("top: 61.7%");
     expect(styles).toContain("left: 10%");
     const sounds = within(
       screen.getByRole("region", { name: "Small Japan toys" }),
@@ -123,7 +123,7 @@ describe("homepage v2", () => {
     );
   });
 
-  it("shows a real pause icon over the radio artwork while audio is playing", () => {
+  it("draws a centered opaque pause control over the radio artwork", () => {
     const styles = readFileSync(
       resolve(process.cwd(), "app/v2/v2.module.css"),
       "utf8",
@@ -133,8 +133,18 @@ describe("homepage v2", () => {
       /\.radio\s+:global\(\.soundPlay\[aria-pressed="true"\]\)\s*{[^}]*background:\s*#fff4dc[^}]*color:\s*var\(--v2-ink\)/s,
     );
     expect(styles).toMatch(
+      /\.radio\s+:global\(\.soundPlay\[aria-pressed="true"\]\)::before\s*{[^}]*inset:\s*0[^}]*background:\s*#fff4dc[^}]*content:\s*""/s,
+    );
+    expect(styles).toMatch(
+      /\.radio\s+:global\(\.soundPlay\[aria-pressed="true"\]\)::after\s*{[^}]*width:\s*10px[^}]*height:\s*14px[^}]*linear-gradient\(\s*to right,[^}]*var\(--v2-ink\)/s,
+    );
+    expect(styles).not.toMatch(
       /\.radio\s+:global\(\.soundPlay\[aria-pressed="true"\]\s+svg\)\s*{[^}]*opacity:\s*1/s,
     );
+    expect(styles).toMatch(
+      /\.radio\s+:global\(\.soundPlay\)\s*{[^}]*top:\s*61\.7%/s,
+    );
+    expect(styles).not.toContain("top: 60.7%");
   });
 
   it("keeps the Study chrome quiet and the desktop hero tiles equal-height", () => {

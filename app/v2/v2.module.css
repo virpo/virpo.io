@@ -493,7 +493,7 @@
 .radio :global(.soundPlay) {
   position: absolute;
   z-index: 6;
-  top: 60.7%;
+  top: 61.7%;
   left: 55.5%;
   width: 8.5%;
   height: auto;
@@ -524,8 +524,30 @@
   color: var(--v2-ink);
 }
 
-.radio :global(.soundPlay[aria-pressed="true"] svg) {
-  opacity: 1;
+.radio :global(.soundPlay[aria-pressed="true"])::before {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: 50%;
+  background: #fff4dc;
+  content: "";
+}
+
+.radio :global(.soundPlay[aria-pressed="true"])::after {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 14px;
+  background: linear-gradient(
+    to right,
+    var(--v2-ink) 0 3px,
+    transparent 3px 7px,
+    var(--v2-ink) 7px 10px
+  );
+  content: "";
+  transform: translate(-50%, -50%);
 }
 
 .radio :global(.soundSteps) {
@@ -1104,10 +1126,6 @@
   .study :global(.studyToy) {
     aspect-ratio: 3 / 2;
     background-size: contain;
-  }
-
-  .radio :global(.soundPlay) {
-    top: 60.7%;
   }
 
   .window :global(.windowSeatToy) {
