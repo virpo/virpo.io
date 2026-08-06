@@ -1,11 +1,13 @@
 # Homepage v2 pixel assets
 
-The generated artwork is deliberately separate from the interactive HTML. Replace any PNG at the same public path and the toy keeps working.
+The generated artwork is deliberately separate from the interactive HTML. The PNG files are editable sources. Run `npm run optimize:assets` after replacing one; the live site serves display-sized WebP derivatives from `public/assets/optimized/`.
 
 ## `radio.png`
 
 Path: `public/assets/v2/radio.png`  
 Current size: 1536 × 1024 PNG
+
+Live derivative: `public/assets/optimized/radio.webp`, 1200 × 800 WebP
 
 Prompt direction: a wide 1990s Japanese pixel-art coral radio on a warm cream shelf, small maneki-neko on the left, bonsai on the right, large speaker, knobs and three physical playback buttons. The upper-right display must be plain black with no text, icons, waveform, reflections, or decoration.
 
@@ -15,6 +17,8 @@ Measured black-display bounds: 43.16–76.50% from the left and 31.74–54.20% f
 
 Path: `public/assets/v2/study-paper.png`  
 Current size: 1536 × 1024 PNG
+
+Live derivative: `public/assets/optimized/study-paper.webp`, 1200 × 800 WebP
 
 Prompt direction: a wide cozy Japanese pixel-art study desk, mustard-yellow background, large blank cream spiral notebook on the left, green pencil and blue eraser on the right. No writing, letters, progress boxes, UI, display, or console.
 
@@ -30,6 +34,15 @@ Prompt direction: one pink lotus in crisp 16-bit Japanese pixel art with a few g
 Safe overlay area: none. Keep the flower centered with transparent corners. Bloom name, place, days, and Tokyo time remain semantic HTML next to it.
 
 `bloom-lotus-large.png` is the full-resolution transparent intermediate. It is kept only to make later cleanup or resizing easier.
+
+Its display-sized derivative is `public/assets/optimized/bloom-lotus-large.webp`.
+
+## Train window
+
+Source overlay: `public/assets/train-window.png`  
+Source still: `public/assets/train-window-still.png`
+
+Live derivatives: `public/assets/optimized/train-window.webp` and `public/assets/optimized/train-window-still.webp`. The overlay derivative uses the aspect ratio produced by the desktop toy layout, avoiding browser-side distortion and an inaccurate intrinsic aspect ratio warning.
 
 ## `daruma.png`
 

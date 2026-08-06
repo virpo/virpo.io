@@ -86,10 +86,10 @@ export function WindowSeatToy() {
         <span className="windowSeatGlass" aria-hidden="true" />
         <img
           className="windowSeatArt"
-          src="/assets/train-window.png"
+          src="/assets/optimized/train-window.webp"
           alt=""
-          width="2130"
-          height="1481"
+          width="1464"
+          height="800"
           aria-hidden="true"
         />
         <span

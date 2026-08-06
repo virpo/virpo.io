@@ -536,7 +536,7 @@ img {
   position: absolute;
   z-index: 0;
   inset: 0;
-  background: url("/assets/train-window-still.png") center / cover no-repeat;
+  background: url("/assets/optimized/train-window-still.webp") center / cover no-repeat;
 }
 
 .windowSeatAperture {
@@ -567,7 +567,7 @@ img {
   position: absolute;
   z-index: 3;
   inset: 0;
-  background: url("/assets/train-window-still.png") center / cover no-repeat;
+  background: url("/assets/optimized/train-window-still.webp") center / cover no-repeat;
   pointer-events: none;
 }
 
@@ -601,7 +601,7 @@ img {
   position: absolute;
   z-index: 10;
   inset: 0;
-  background: url("/assets/train-window.png") center / contain no-repeat;
+  background: url("/assets/optimized/train-window.webp") center / contain no-repeat;
   -webkit-mask-image: radial-gradient(
     circle at 7% 90%,
     #000 0 3.5%,

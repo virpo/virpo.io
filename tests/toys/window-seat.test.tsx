@@ -107,7 +107,7 @@ describe("WindowSeatToy", () => {
     expect(windowSeatCss).not.toMatch(/\.windowSeatMask/);
     expect(windowSeatCss).not.toMatch(/\.windowSeatSubtitleMask/);
     expect(windowSeatCss).toMatch(
-      /\.windowSeatCompassMask\s*\{[^}]*position:\s*absolute;[^}]*z-index:\s*10;[^}]*background:\s*url\("\/assets\/train-window\.png"\)[^;]*;[^}]*mask-image:\s*radial-gradient\(/s,
+      /\.windowSeatCompassMask\s*\{[^}]*position:\s*absolute;[^}]*z-index:\s*10;[^}]*background:\s*url\("\/assets\/optimized\/train-window\.webp"\)[^;]*;[^}]*mask-image:\s*radial-gradient\(/s,
     );
     expect(windowSeatCss).not.toMatch(
       /data-reduced-motion="true"[^}]*windowSeatCompassMask[^}]*display:\s*none/s,
@@ -124,14 +124,17 @@ describe("WindowSeatToy", () => {
 
     for (const rule of [still, startup]) {
       expect(rule).toMatch(
-        /background:\s*url\("\/assets\/train-window-still\.png"\)\s+center\s*\/\s*cover\s+no-repeat/,
+        /background:\s*url\("\/assets\/optimized\/train-window-still\.webp"\)\s+center\s*\/\s*cover\s+no-repeat/,
       );
       expect(rule).not.toContain("linear-gradient");
     }
 
     expect(
       readFileSync(
-        resolve(process.cwd(), "public/assets/train-window-still.png"),
+        resolve(
+          process.cwd(),
+          "public/assets/optimized/train-window-still.webp",
+        ),
       ).byteLength,
     ).toBeGreaterThan(0);
   });

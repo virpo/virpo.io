@@ -409,7 +409,7 @@
   position: relative;
   aspect-ratio: 3 / 2;
   overflow: hidden;
-  background: #ef8e70 url("/assets/v2/radio.png") center / contain no-repeat;
+  background: #ef8e70 url("/assets/optimized/radio.webp") center / contain no-repeat;
   container-type: inline-size;
   image-rendering: pixelated;
 }
@@ -653,7 +653,7 @@
   position: relative;
   aspect-ratio: 3 / 2;
   overflow: hidden;
-  background: var(--v2-yellow) url("/assets/v2/study-paper.png") center / contain no-repeat;
+  background: var(--v2-yellow) url("/assets/optimized/study-paper.webp") center / contain no-repeat;
   container-type: inline-size;
   image-rendering: pixelated;
 }
