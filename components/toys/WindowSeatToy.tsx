@@ -12,6 +12,9 @@ const TRAIN_VIDEO_URL =
 export function WindowSeatToy() {
   const [reducedMotion, setReducedMotion] = useState(true);
   const [coverVisible, setCoverVisible] = useState(true);
+  const [nearViewport, setNearViewport] = useState(false);
+  const [idleReady, setIdleReady] = useState(false);
+  const rootRef = useRef<HTMLElement>(null);
   const coverTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -38,6 +41,60 @@ export function WindowSeatToy() {
     };
   }, []);
 
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    if (!("IntersectionObserver" in window)) {
+      setNearViewport(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        setNearViewport(true);
+        observer.disconnect();
+      },
+      { rootMargin: "600px 0px" },
+    );
+    observer.observe(root);
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    let idleId: number | null = null;
+    let fallbackTimer: number | null = null;
+
+    const markIdle = () => {
+      if (!cancelled) setIdleReady(true);
+    };
+    const scheduleIdle = () => {
+      if ("requestIdleCallback" in window) {
+        idleId = window.requestIdleCallback(markIdle, { timeout: 2_500 });
+      } else {
+        fallbackTimer = window.setTimeout(markIdle, 0);
+      }
+    };
+
+    if (document.readyState === "complete") {
+      scheduleIdle();
+    } else {
+      window.addEventListener("load", scheduleIdle, { once: true });
+    }
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("load", scheduleIdle);
+      if (idleId !== null && "cancelIdleCallback" in window) {
+        window.cancelIdleCallback(idleId);
+      }
+      if (fallbackTimer !== null) window.clearTimeout(fallbackTimer);
+    };
+  }, []);
+
   function handleFrameLoad() {
     if (reducedMotion) return;
     if (coverTimerRef.current !== null) {
@@ -51,6 +108,7 @@ export function WindowSeatToy() {
 
   return (
     <section
+      ref={rootRef}
       className="tile windowSeatToy"
       data-window-seat-toy
       data-reduced-motion={String(reducedMotion)}
@@ -63,19 +121,21 @@ export function WindowSeatToy() {
       <div className="windowSeatScene" data-testid="window-seat-still">
         <div className="windowSeatAperture">
           <div className="windowSeatStill" aria-hidden="true" />
-          <iframe
-            className="windowSeatVideo"
-            src={reducedMotion ? "about:blank" : TRAIN_VIDEO_URL}
-            title="Japanese train window from Mount Fuji to Tokyo"
-            loading="lazy"
-            allow="autoplay; encrypted-media"
-            referrerPolicy="strict-origin-when-cross-origin"
-            tabIndex={-1}
-            aria-hidden="true"
-            onLoad={handleFrameLoad}
-            style={{ pointerEvents: "none" }}
-          />
-          {!reducedMotion && coverVisible ? (
+          {!reducedMotion && nearViewport && idleReady ? (
+            <iframe
+              className="windowSeatVideo"
+              src={TRAIN_VIDEO_URL}
+              title="Japanese train window from Mount Fuji to Tokyo"
+              loading="lazy"
+              allow="autoplay; encrypted-media"
+              referrerPolicy="strict-origin-when-cross-origin"
+              tabIndex={-1}
+              aria-hidden="true"
+              onLoad={handleFrameLoad}
+              style={{ pointerEvents: "none" }}
+            />
+          ) : null}
+          {!reducedMotion && nearViewport && idleReady && coverVisible ? (
             <span
               className="windowSeatStartupCover"
               data-testid="youtube-startup-cover"

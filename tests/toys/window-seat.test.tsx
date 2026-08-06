@@ -22,34 +22,116 @@ function mockMatchMedia(reducedMotion: boolean) {
   });
 }
 
+function mockLoadingSignals() {
+  let intersectionCallback: IntersectionObserverCallback | undefined;
+  let idleCallback: IdleRequestCallback | undefined;
+  class MockIntersectionObserver implements IntersectionObserver {
+    readonly root = null;
+    readonly rootMargin = "600px 0px";
+    readonly thresholds = [0];
+
+    constructor(callback: IntersectionObserverCallback) {
+      intersectionCallback = callback;
+    }
+
+    disconnect = vi.fn();
+    observe = vi.fn();
+    takeRecords = vi.fn().mockReturnValue([]);
+    unobserve = vi.fn();
+  }
+  const observer = new MockIntersectionObserver(() => undefined);
+
+  vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
+  vi.stubGlobal(
+    "requestIdleCallback",
+    vi.fn((callback: IdleRequestCallback) => {
+      idleCallback = callback;
+      return 1;
+    }),
+  );
+  vi.stubGlobal("cancelIdleCallback", vi.fn());
+
+  return {
+    setNearViewport(isIntersecting: boolean) {
+      act(() => {
+        intersectionCallback?.(
+          [{ isIntersecting } as IntersectionObserverEntry],
+          observer,
+        );
+      });
+    },
+    runIdle() {
+      act(() => {
+        idleCallback?.({
+          didTimeout: false,
+          timeRemaining: () => 50,
+        });
+      });
+    },
+  };
+}
+
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  vi.unstubAllGlobals();
   vi.useRealTimers();
 });
 
 describe("WindowSeatToy", () => {
   it("keeps the train unloaded behind a still illustration for reduced motion", async () => {
     mockMatchMedia(true);
+    const loading = mockLoadingSignals();
     render(<WindowSeatToy />);
 
-    const frame = screen.getByTitle(/Japanese train window/i);
-    await waitFor(() => expect(frame).toHaveAttribute("src", "about:blank"));
+    loading.setNearViewport(true);
+    loading.runIdle();
+
+    await waitFor(() =>
+      expect(screen.queryByTitle(/Japanese train window/i)).toBeNull(),
+    );
     expect(screen.getByTestId("window-seat-still")).toBeVisible();
     expect(screen.queryByTestId("youtube-startup-cover")).toBeNull();
     expect(screen.queryByText("Still journey")).toBeNull();
   });
 
-  it("uses supported embed parameters without overstating branding or caption control", async () => {
+  it("keeps YouTube out of the initial page and loads it when the visible toy reaches idle", async () => {
     mockMatchMedia(false);
+    const loading = mockLoadingSignals();
     render(<WindowSeatToy />);
 
-    const frame = screen.getByTitle(/Japanese train window/i);
-    await waitFor(() =>
-      expect(frame.getAttribute("src")).toContain(
-        "youtube-nocookie.com/embed/RMpM2Qu3QC8",
-      ),
+    expect(screen.queryByTitle(/Japanese train window/i)).toBeNull();
+    loading.setNearViewport(true);
+    expect(screen.queryByTitle(/Japanese train window/i)).toBeNull();
+    loading.runIdle();
+
+    expect(await screen.findByTitle(/Japanese train window/i)).toHaveAttribute(
+      "src",
+      expect.stringContaining("youtube-nocookie.com/embed/RMpM2Qu3QC8"),
     );
+  });
+
+  it("waits to load YouTube until an offscreen toy approaches the viewport", () => {
+    mockMatchMedia(false);
+    const loading = mockLoadingSignals();
+    render(<WindowSeatToy />);
+
+    loading.setNearViewport(false);
+    loading.runIdle();
+    expect(screen.queryByTitle(/Japanese train window/i)).toBeNull();
+
+    loading.setNearViewport(true);
+    expect(screen.getByTitle(/Japanese train window/i)).toBeInTheDocument();
+  });
+
+  it("uses supported embed parameters without overstating branding or caption control", async () => {
+    mockMatchMedia(false);
+    const loading = mockLoadingSignals();
+    render(<WindowSeatToy />);
+    loading.setNearViewport(true);
+    loading.runIdle();
+
+    const frame = await screen.findByTitle(/Japanese train window/i);
     const src = new URL(frame.getAttribute("src") ?? "");
 
     for (const [key, value] of [
@@ -73,8 +155,10 @@ describe("WindowSeatToy", () => {
   it("keeps the startup cover through YouTube's startup chrome", async () => {
     vi.useFakeTimers();
     mockMatchMedia(false);
+    const loading = mockLoadingSignals();
     render(<WindowSeatToy />);
-    await act(async () => undefined);
+    loading.setNearViewport(true);
+    loading.runIdle();
     const frame = screen.getByTitle(/Japanese train window/i);
 
     act(() => vi.advanceTimersByTime(30_000));
@@ -94,6 +178,7 @@ describe("WindowSeatToy", () => {
     const windowSeatCss = css.slice(start, end);
 
     mockMatchMedia(false);
+    mockLoadingSignals();
     render(<WindowSeatToy />);
     expect(screen.queryByTestId("youtube-mask-top")).toBeNull();
     expect(screen.queryByTestId("youtube-mask-bottom")).toBeNull();
