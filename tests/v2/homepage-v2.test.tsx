@@ -85,7 +85,7 @@ describe("homepage v2", () => {
     expect(styles).toMatch(
       /\.window\s+:global\(\.windowSeatHeading\)\s*{[^}]*display:\s*none/s,
     );
-    expect(styles).toContain("top: 61.7%");
+    expect(styles).toContain("top: 65.5%");
     expect(styles).toContain("left: 10%");
     const sounds = within(
       screen.getByRole("region", { name: "Small Japan toys" }),
@@ -142,9 +142,9 @@ describe("homepage v2", () => {
       /\.radio\s+:global\(\.soundPlay\[aria-pressed="true"\]\s+svg\)\s*{[^}]*opacity:\s*1/s,
     );
     expect(styles).toMatch(
-      /\.radio\s+:global\(\.soundPlay\)\s*{[^}]*top:\s*61\.7%/s,
+      /\.radio\s+:global\(\.soundPlay\)\s*{[^}]*top:\s*65\.5%[^}]*left:\s*60%[^}]*transform:\s*translate\(-50%,\s*-50%\)/s,
     );
-    expect(styles).not.toContain("top: 60.7%");
+    expect(styles).not.toContain("top: 61.7%");
   });
 
   it("keeps the Study chrome quiet and the desktop hero tiles equal-height", () => {

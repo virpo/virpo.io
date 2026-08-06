@@ -493,14 +493,15 @@
 .radio :global(.soundPlay) {
   position: absolute;
   z-index: 6;
-  top: 61.7%;
-  left: 55.5%;
+  top: 65.5%;
+  left: 60%;
   width: 8.5%;
   height: auto;
   aspect-ratio: 1;
   border: 0;
   background: transparent;
   color: transparent;
+  transform: translate(-50%, -50%);
 }
 
 .radio :global(.soundPlay:hover),

@@ -292,6 +292,61 @@ test("mobile preserves face, intro, Sounds, Window Seat, Study, writing order", 
   await context.close();
 });
 
+test("all toys stay proportional and the radio control stays centered across widths", async ({
+  page,
+}) => {
+  await blockThirdPartyTrain(page);
+
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 768, height: 900 },
+    { width: 1024, height: 900 },
+    { width: 1440, height: 1000 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+
+    const toyFrames = page.locator("[data-v2-toy]");
+    await expect(toyFrames).toHaveCount(3);
+    for (const frame of await toyFrames.all()) {
+      const box = await frame.boundingBox();
+      expect(box).not.toBeNull();
+      expect(box?.x ?? -1).toBeGreaterThanOrEqual(0);
+      expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(
+        viewport.width + 1,
+      );
+      const ratio = (box?.width ?? 0) / (box?.height ?? 1);
+      expect(ratio).toBeGreaterThanOrEqual(1.4);
+      expect(ratio).toBeLessThanOrEqual(1.52);
+    }
+
+    const radio = page.getByRole("region", { name: "Japan Sounds" });
+    const [radioBox, playBox] = await Promise.all([
+      radio.boundingBox(),
+      radio.getByRole("button", { name: /Play FamilyMart welcome/ }).boundingBox(),
+    ]);
+    expect(radioBox).not.toBeNull();
+    expect(playBox).not.toBeNull();
+
+    const x =
+      ((playBox?.x ?? 0) + (playBox?.width ?? 0) / 2 - (radioBox?.x ?? 0)) /
+      (radioBox?.width ?? 1);
+    const y =
+      ((playBox?.y ?? 0) + (playBox?.height ?? 0) / 2 - (radioBox?.y ?? 0)) /
+      (radioBox?.height ?? 1);
+    expect(x).toBeCloseTo(0.6, 2);
+    expect(y).toBeCloseTo(0.655, 2);
+
+    expect(
+      await page.evaluate(
+        () =>
+          document.documentElement.scrollWidth <=
+          document.documentElement.clientWidth,
+      ),
+    ).toBe(true);
+  }
+});
+
 test("Sounds exposes waveform, play/pause, rapid next, and error fallback", async ({
   page,
 }) => {
