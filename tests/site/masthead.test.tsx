@@ -2,6 +2,7 @@ import { act, cleanup, fireEvent, render, screen } from "@testing-library/react"
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Masthead } from "../../components/site/Masthead";
 import { SiteShell } from "../../components/site/SiteShell";
+import { BloomTicker } from "../../components/site/BloomTicker";
 
 afterEach(() => {
   cleanup();
@@ -44,9 +45,22 @@ describe("bloom disclosure", () => {
     const trigger = screen.getByRole("button", {
       name: /Open Japan bloom details/i,
     });
-    expect(trigger.getAttribute("aria-label")).toMatch(
-      /Blooming (now|next).*Lotus/i,
+    expect(trigger).not.toHaveAttribute("aria-label");
+    expect(trigger).toHaveAccessibleName(
+      /Blooming (now|next).*Lotus.*Open Japan bloom details/i,
     );
+  });
+
+  it("does not build the seasonal image list until bloom details open", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-08-04T00:00:00Z"));
+    const { container } = render(<BloomTicker showSeasonList pixelArt />);
+
+    expect(container.querySelector(".bloomSeasonList")).toBeNull();
+    fireEvent.click(
+      screen.getByRole("button", { name: /Open Japan bloom details/i }),
+    );
+    expect(container.querySelector(".bloomSeasonList")).toBeInTheDocument();
   });
 
   it("uses the cohesive pixel flower set when requested", () => {

@@ -7,6 +7,7 @@ const optimizedAssets = [
   { path: "public/assets/optimized/radio.webp", maxBytes: 300_000 },
   { path: "public/assets/optimized/study-paper.webp", maxBytes: 300_000 },
   { path: "public/assets/optimized/train-window.webp", maxBytes: 400_000 },
+  { path: "public/assets/optimized/train-window-mobile.webp", maxBytes: 250_000 },
   { path: "public/assets/optimized/train-window-still.webp", maxBytes: 60_000 },
   { path: "public/assets/optimized/bloom-lotus-large.webp", maxBytes: 200_000 },
 ] as const;
@@ -36,6 +37,7 @@ describe("homepage performance assets", () => {
     expect(css).toContain('/assets/optimized/study-paper.webp');
     expect(css).toContain('/assets/optimized/train-window-still.webp');
     expect(train).toContain('/assets/optimized/train-window.webp');
+    expect(train).toContain('/assets/optimized/train-window-mobile.webp');
 
     for (const source of [
       "public/assets/v2/radio.png",

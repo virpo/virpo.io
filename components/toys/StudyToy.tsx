@@ -177,17 +177,6 @@ export function StudyToy({ promptLabel = "Tap to reveal" }: { promptLabel?: stri
               className={`studyCard${isKanji ? " studyCardKanji" : ""}`}
               type="button"
               aria-expanded={revealed}
-              aria-label={
-                revealed
-                  ? `${selection.card.writing}, ${selection.card.reading}${
-                      selection.card.meaning
-                        ? `, ${selection.card.meaning}`
-                        : ""
-                    }`
-                  : `${selection.card.writing}${
-                      isKanji ? `, ${selection.card.reading}` : ""
-                    }. ${promptLabel}. Reveal answer`
-              }
               onClick={() => setRevealed(true)}
             >
               <strong lang="ja">{selection.card.writing}</strong>
@@ -204,6 +193,9 @@ export function StudyToy({ promptLabel = "Tap to reveal" }: { promptLabel?: stri
               <small className={revealed ? undefined : "studyPrompt"}>
                 {revealed ? "How did it go?" : promptLabel}
               </small>
+              {!revealed ? (
+                <span className="visuallyHidden">Reveal answer</span>
+              ) : null}
             </button>
 
             {revealed ? (

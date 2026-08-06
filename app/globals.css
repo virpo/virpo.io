@@ -34,6 +34,18 @@ body {
   line-height: 1.2;
 }
 
+.visuallyHidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 button,
 a {
   color: inherit;
@@ -1523,6 +1535,7 @@ img {
   }
 
   .windowSeatCompassMask {
+    background-image: url("/assets/optimized/train-window-mobile.webp");
     -webkit-mask-image: radial-gradient(
       circle at 9.5% 85%,
       #000 0 4.5%,
@@ -1535,6 +1548,10 @@ img {
       rgba(0, 0, 0, 0.96) 5.5%,
       transparent 7.5%
     );
+  }
+
+  .windowSeatScene {
+    aspect-ratio: 800 / 556;
   }
 
   .homeEditorial {

@@ -104,6 +104,8 @@ describe("WindowSeatToy", () => {
     loading.setNearViewport(true);
     expect(screen.queryByTitle(/Japanese train window/i)).toBeNull();
     loading.runIdle();
+    expect(screen.queryByTitle(/Japanese train window/i)).toBeNull();
+    fireEvent.pointerMove(window);
 
     expect(await screen.findByTitle(/Japanese train window/i)).toHaveAttribute(
       "src",
@@ -118,9 +120,25 @@ describe("WindowSeatToy", () => {
 
     loading.setNearViewport(false);
     loading.runIdle();
+    fireEvent.pointerMove(window);
     expect(screen.queryByTitle(/Japanese train window/i)).toBeNull();
 
     loading.setNearViewport(true);
+    expect(screen.getByTitle(/Japanese train window/i)).toBeInTheDocument();
+  });
+
+  it("loads a passive visible train only after the initial page has settled", () => {
+    vi.useFakeTimers();
+    mockMatchMedia(false);
+    const loading = mockLoadingSignals();
+    render(<WindowSeatToy />);
+
+    loading.setNearViewport(true);
+    loading.runIdle();
+    act(() => vi.advanceTimersByTime(5_999));
+    expect(screen.queryByTitle(/Japanese train window/i)).toBeNull();
+
+    act(() => vi.advanceTimersByTime(1));
     expect(screen.getByTitle(/Japanese train window/i)).toBeInTheDocument();
   });
 
@@ -130,6 +148,7 @@ describe("WindowSeatToy", () => {
     render(<WindowSeatToy />);
     loading.setNearViewport(true);
     loading.runIdle();
+    fireEvent.pointerMove(window);
 
     const frame = await screen.findByTitle(/Japanese train window/i);
     const src = new URL(frame.getAttribute("src") ?? "");
@@ -159,6 +178,7 @@ describe("WindowSeatToy", () => {
     render(<WindowSeatToy />);
     loading.setNearViewport(true);
     loading.runIdle();
+    fireEvent.pointerMove(window);
     const frame = screen.getByTitle(/Japanese train window/i);
 
     act(() => vi.advanceTimersByTime(30_000));

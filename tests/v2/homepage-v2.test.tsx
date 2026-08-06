@@ -222,7 +222,7 @@ describe("homepage v2", () => {
     render(<V2Masthead />);
 
     fireEvent.click(
-      screen.getByRole("button", { name: "Open Japan bloom details" }),
+      screen.getByRole("button", { name: /Open Japan bloom details/i }),
     );
     const dialog = screen.getByRole("dialog", { name: "Japan bloom details" });
     const list = within(dialog).getByRole("list", {

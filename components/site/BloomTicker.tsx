@@ -129,11 +129,6 @@ export function BloomTicker({
         ref={triggerRef}
         className="bloomTrigger"
         type="button"
-        aria-label={`Open Japan bloom details. ${
-          status?.status === "active" ? "Blooming now" : "Blooming next"
-        }: ${bloom?.name ?? "Checking Japan"}. ${
-          status?.label ?? "one moment"
-        }`}
         aria-expanded={isOpen}
         aria-controls="bloom-popover"
         onPointerDown={() => {
@@ -161,65 +156,67 @@ export function BloomTicker({
           <strong>{bloom?.name ?? "Checking Japan"}</strong>
           <span>{status?.label ?? "one moment"}</span>
         </span>
+        <span className="visuallyHidden">Open Japan bloom details</span>
       </button>
-      <div
-        className="bloomPopover"
-        id="bloom-popover"
-        role="dialog"
-        aria-label="Japan bloom details"
-        hidden={!isOpen}
-      >
-        <span className="popoverArrow" aria-hidden="true" />
-        {showSeasonList ? (
-          <>
-            <p className="popoverKicker">Japan in bloom</p>
-            <ul className="bloomSeasonList" aria-label="What is blooming in Japan">
-              {timeline.map((item) => (
-                <li key={item.bloom.id}>
-                  <a href={item.bloom.sourceUrl} target="_blank" rel="noreferrer">
-                    <span className="bloomSeasonEmoji" aria-hidden="true">
-                      {pixelArt ? (
-                        <img
-                          src={item.bloom.pixelArt}
-                          alt=""
-                          role="presentation"
-                        />
-                      ) : (
-                        item.bloom.emoji
-                      )}
-                    </span>
-                    <span className="bloomSeasonName">
-                      <strong>{item.bloom.name}</strong>
-                      <small>{item.bloom.place}</small>
-                    </span>
-                    <em>{item.label}</em>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </>
-        ) : (
-          <>
-            <p className="popoverKicker">
-              {status?.status === "active" ? "Now in Japan" : "Next in Japan"}
-            </p>
-            <strong>{bloom ? `${bloom.place} · ${bloom.region}` : "Somewhere in Japan"}</strong>
-            <span>
-              {bloom
-                ? formatWindow(
-                    bloom.startMonth,
-                    bloom.startDay,
-                    bloom.endMonth,
-                    bloom.endDay,
-                  )
-                : "Typical bloom window"}
-            </span>
-            <a href={bloom?.sourceUrl ?? FALLBACK_SOURCE} target="_blank" rel="noreferrer">
-              Source <span aria-hidden="true">↗</span>
-            </a>
-          </>
-        )}
-      </div>
+      {isOpen ? (
+        <div
+          className="bloomPopover"
+          id="bloom-popover"
+          role="dialog"
+          aria-label="Japan bloom details"
+        >
+          <span className="popoverArrow" aria-hidden="true" />
+          {showSeasonList ? (
+            <>
+              <p className="popoverKicker">Japan in bloom</p>
+              <ul className="bloomSeasonList" aria-label="What is blooming in Japan">
+                {timeline.map((item) => (
+                  <li key={item.bloom.id}>
+                    <a href={item.bloom.sourceUrl} target="_blank" rel="noreferrer">
+                      <span className="bloomSeasonEmoji" aria-hidden="true">
+                        {pixelArt ? (
+                          <img
+                            src={item.bloom.pixelArt}
+                            alt=""
+                            role="presentation"
+                          />
+                        ) : (
+                          item.bloom.emoji
+                        )}
+                      </span>
+                      <span className="bloomSeasonName">
+                        <strong>{item.bloom.name}</strong>
+                        <small>{item.bloom.place}</small>
+                      </span>
+                      <em>{item.label}</em>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <>
+              <p className="popoverKicker">
+                {status?.status === "active" ? "Now in Japan" : "Next in Japan"}
+              </p>
+              <strong>{bloom ? `${bloom.place} · ${bloom.region}` : "Somewhere in Japan"}</strong>
+              <span>
+                {bloom
+                  ? formatWindow(
+                      bloom.startMonth,
+                      bloom.startDay,
+                      bloom.endMonth,
+                      bloom.endDay,
+                    )
+                  : "Typical bloom window"}
+              </span>
+              <a href={bloom?.sourceUrl ?? FALLBACK_SOURCE} target="_blank" rel="noreferrer">
+                Source <span aria-hidden="true">↗</span>
+              </a>
+            </>
+          )}
+        </div>
+      ) : null}
     </section>
   );
 }

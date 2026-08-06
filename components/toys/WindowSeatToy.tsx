@@ -14,6 +14,7 @@ export function WindowSeatToy() {
   const [coverVisible, setCoverVisible] = useState(true);
   const [nearViewport, setNearViewport] = useState(false);
   const [idleReady, setIdleReady] = useState(false);
+  const [engagementReady, setEngagementReady] = useState(false);
   const rootRef = useRef<HTMLElement>(null);
   const coverTimerRef = useRef<number | null>(null);
 
@@ -40,6 +41,37 @@ export function WindowSeatToy() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!idleReady || reducedMotion) return;
+
+    const events = [
+      "pointermove",
+      "pointerdown",
+      "keydown",
+      "touchstart",
+      "scroll",
+    ] as const;
+    let finished = false;
+
+    const cleanup = () => {
+      window.clearTimeout(settleTimer);
+      for (const event of events) window.removeEventListener(event, markReady);
+    };
+    const markReady = () => {
+      if (finished) return;
+      finished = true;
+      cleanup();
+      setEngagementReady(true);
+    };
+    const settleTimer = window.setTimeout(markReady, 6_000);
+
+    for (const event of events) {
+      window.addEventListener(event, markReady, { once: true, passive: true });
+    }
+
+    return cleanup;
+  }, [idleReady, reducedMotion]);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -128,7 +160,7 @@ export function WindowSeatToy() {
       <div className="windowSeatScene" data-testid="window-seat-still">
         <div className="windowSeatAperture">
           <div className="windowSeatStill" aria-hidden="true" />
-          {!reducedMotion && nearViewport && idleReady ? (
+          {!reducedMotion && nearViewport && idleReady && engagementReady ? (
             <iframe
               className="windowSeatVideo"
               src={TRAIN_VIDEO_URL}
@@ -142,7 +174,11 @@ export function WindowSeatToy() {
               style={{ pointerEvents: "none" }}
             />
           ) : null}
-          {!reducedMotion && nearViewport && idleReady && coverVisible ? (
+          {!reducedMotion &&
+          nearViewport &&
+          idleReady &&
+          engagementReady &&
+          coverVisible ? (
             <span
               className="windowSeatStartupCover"
               data-testid="youtube-startup-cover"
@@ -151,14 +187,20 @@ export function WindowSeatToy() {
           ) : null}
         </div>
         <span className="windowSeatGlass" aria-hidden="true" />
-        <img
-          className="windowSeatArt"
-          src="/assets/optimized/train-window.webp"
-          alt=""
-          width="1464"
-          height="800"
-          aria-hidden="true"
-        />
+        <picture>
+          <source
+            media="(max-width: 700px)"
+            srcSet="/assets/optimized/train-window-mobile.webp"
+          />
+          <img
+            className="windowSeatArt"
+            src="/assets/optimized/train-window.webp"
+            alt=""
+            width="1464"
+            height="800"
+            aria-hidden="true"
+          />
+        </picture>
         <span
           className="windowSeatCompassMask"
           data-testid="youtube-compass-mask"

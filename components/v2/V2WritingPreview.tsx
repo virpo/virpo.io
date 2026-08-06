@@ -27,6 +27,7 @@ export function V2WritingPreview({
   return (
     <Link
       href={`/blog/${post.slug}/`}
+      prefetch={false}
       data-v2-writing-link
       data-v2-writing-featured={featured || undefined}
     >

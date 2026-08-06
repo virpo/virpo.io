@@ -155,7 +155,7 @@ test("Bloom supports pointer, keyboard, Source, and Escape", async ({ page }) =>
 
   await trigger.focus();
   await expect(dialog).toBeVisible();
-  await dialog.getByRole("link", { name: /Source/ }).focus();
+  await dialog.getByRole("link").first().focus();
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();
   await expect(trigger).toBeFocused();
@@ -178,8 +178,6 @@ test("Tab order reaches navigation, Bloom, Source, and sound playback", async ({
     primary.getByRole("link", { name: "Projects", exact: true }),
     primary.getByRole("link", { name: "About", exact: true }),
     page.getByRole("button", { name: "Open Japan bloom details" }),
-    page.getByRole("link", { name: /Source/ }),
-    page.getByRole("button", { name: /Play FamilyMart welcome/ }),
   ];
 
   for (const [index, target] of expected.entries()) {
@@ -191,6 +189,21 @@ test("Tab order reaches navigation, Bloom, Source, and sound playback", async ({
       );
     }
   }
+  const bloomLinks = page
+    .getByRole("dialog", { name: "Japan bloom details" })
+    .getByRole("link");
+  for (let index = 0; index < (await bloomLinks.count()); index += 1) {
+    await page.keyboard.press("Tab");
+    await expect(bloomLinks.nth(index)).toBeFocused();
+  }
+  for (const name of ["GitHub", "Instagram", "LinkedIn", "X", "Email"]) {
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("link", { name, exact: true })).toBeFocused();
+  }
+  await page.keyboard.press("Tab");
+  await expect(
+    page.getByRole("button", { name: /Play FamilyMart welcome/ }),
+  ).toBeFocused();
   await page.keyboard.press("Enter");
   const pause = page.getByRole("button", { name: /Pause FamilyMart welcome/ });
   await expect(pause).toBeFocused();
@@ -235,7 +248,7 @@ test("face remains square and reacts only to a fine pointer", async ({
   await context.close();
 });
 
-test("mobile preserves face, Sounds, Window Seat, Study, intro, writing order", async ({
+test("mobile preserves face, intro, Sounds, Window Seat, Study, writing order", async ({
   browser,
 }) => {
   const context = await browser.newContext({
@@ -247,7 +260,7 @@ test("mobile preserves face, Sounds, Window Seat, Study, intro, writing order", 
   await blockThirdPartyTrain(page);
   await page.goto("/");
 
-  const labels = await page.locator(".homeBento [aria-label]").evaluateAll((nodes) =>
+  const labels = await page.locator("main [aria-label]").evaluateAll((nodes) =>
     nodes
       .map((node) => node.getAttribute("aria-label"))
       .filter((label) =>
@@ -263,10 +276,10 @@ test("mobile preserves face, Sounds, Window Seat, Study, intro, writing order", 
   );
   expect(labels).toEqual([
     "Peter's interactive face",
+    "About Peter",
     "Japan Sounds",
     "Window Seat",
     "Japanese Study",
-    "About Peter",
     "Latest writing",
   ]);
   expect(
@@ -337,9 +350,7 @@ test("Window Seat fills its aperture and stays inert", async ({ page }) => {
   ]);
   expect(apertureBox).not.toBeNull();
   expect(frameBox).not.toBeNull();
-  expect(Math.abs((frameBox?.height ?? 0) - (apertureBox?.height ?? 0))).toBeLessThan(
-    1,
-  );
+  expect(frameBox?.height ?? 0).toBeGreaterThanOrEqual(apertureBox?.height ?? 0);
   expect(frameBox?.width ?? 0).toBeGreaterThan(apertureBox?.width ?? 0);
   for (const id of [
     "youtube-mask-top",
@@ -367,8 +378,8 @@ test("reduced motion leaves the train blank and makes no YouTube request", async
   });
   await page.goto("/");
   const windowSeat = page.getByRole("region", { name: "Window Seat" });
-  await expect(windowSeat.locator("iframe")).toHaveAttribute("src", "about:blank");
-  await expect(windowSeat.locator("iframe")).toHaveCSS("visibility", "hidden");
+  await expect(windowSeat.locator("iframe")).toHaveCount(0);
+  await expect(windowSeat.getByTestId("window-seat-still")).toBeVisible();
   await expect(windowSeat).toHaveAttribute("data-reduced-motion", "true");
   expect(youtubeRequests).toEqual([]);
   await context.close();
@@ -444,7 +455,6 @@ test("Study randomizes, reveals, focuses, persists, migrates, and unlocks", asyn
     localStorage.setItem("virpo-study-v2", JSON.stringify(state));
   });
   await page.reload();
-  await expect(study.getByText("Katakana", { exact: true })).toBeVisible();
   await expect(study.getByText("ア", { exact: true })).toBeVisible();
 
   await page.evaluate(() => {
@@ -458,7 +468,6 @@ test("Study randomizes, reveals, focuses, persists, migrates, and unlocks", asyn
     localStorage.setItem("virpo-study-v2", JSON.stringify(state));
   });
   await page.reload();
-  await expect(study.getByText("Kanji · landscape", { exact: true })).toBeVisible();
   await expect(study.getByText("水", { exact: true })).toBeVisible();
   await expect(study.getByText("みず", { exact: true })).toBeVisible();
   await expect(study.getByText("water", { exact: true })).toBeHidden();

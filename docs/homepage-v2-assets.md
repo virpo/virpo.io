@@ -42,7 +42,7 @@ Its display-sized derivative is `public/assets/optimized/bloom-lotus-large.webp`
 Source overlay: `public/assets/train-window.png`  
 Source still: `public/assets/train-window-still.png`
 
-Live derivatives: `public/assets/optimized/train-window.webp` and `public/assets/optimized/train-window-still.webp`. The overlay derivative uses the aspect ratio produced by the desktop toy layout, avoiding browser-side distortion and an inaccurate intrinsic aspect ratio warning.
+Live derivatives: `public/assets/optimized/train-window.webp`, `public/assets/optimized/train-window-mobile.webp`, and `public/assets/optimized/train-window-still.webp`. Desktop and mobile overlays match their rendered toy ratios, avoiding browser-side distortion and inaccurate intrinsic aspect-ratio warnings.
 
 ## `daruma.png`
 

@@ -97,7 +97,9 @@ export default function HomePageV2() {
               <p>Latest writing</p>
               <span>Short notes from making real things.</span>
             </div>
-            <Link href="/blog/">All writing →</Link>
+            <Link href="/blog/" prefetch={false}>
+              All writing →
+            </Link>
           </header>
           <div className={styles.writingGrid}>
             {posts.map((post, index) => (

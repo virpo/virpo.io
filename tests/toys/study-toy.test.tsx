@@ -44,9 +44,9 @@ describe("StudyToy", () => {
     render(<StudyToy promptLabel="Click me" />);
 
     expect(await screen.findByText("Click me")).toBeVisible();
-    expect(screen.getByRole("button", { name: /reveal answer/i })).toHaveAccessibleName(
-      /Click me/i,
-    );
+    const card = screen.getByRole("button", { name: /reveal answer/i });
+    expect(card).not.toHaveAttribute("aria-label");
+    expect(card).toHaveAccessibleName(/Click me.*Reveal answer/i);
   });
 
   it("loads a randomized Kana card with its answer hidden", async () => {
