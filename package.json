@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "npm run build && playwright test",
-    "test:build": "npm run build && node scripts/assert-static-output.mjs"
+    "test:build": "npm run build && node scripts/assert-static-output.mjs",
+    "test:performance-budget": "node scripts/check-performance-budget.mjs"
   },
   "dependencies": {
     "@mdx-js/react": "^3.1.1",

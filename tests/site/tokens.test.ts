@@ -3,10 +3,22 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const globals = readFileSync(resolve(process.cwd(), "app/globals.css"), "utf8");
+const homepageV2 = readFileSync(
+  resolve(process.cwd(), "app/v2/v2.module.css"),
+  "utf8",
+);
 
 function token(name: string) {
   const match = globals.match(new RegExp(`${name}:\\s*(#[0-9a-f]{6})`, "i"));
   if (!match) throw new Error(`Missing color token ${name}`);
+  return match[1];
+}
+
+function v2Token(name: string) {
+  const match = homepageV2.match(
+    new RegExp(`${name}:\\s*(#[0-9a-f]{6})`, "i"),
+  );
+  if (!match) throw new Error(`Missing homepage color token ${name}`);
   return match[1];
 }
 
@@ -151,6 +163,14 @@ describe("shell contrast", () => {
     );
     expect(globals).toMatch(
       /\.popoverKicker\s*{[^}]*color:\s*var\(--kaki-text\)/s,
+    );
+  });
+});
+
+describe("homepage v2 contrast", () => {
+  it("keeps small white labels readable on the red brand surface", () => {
+    expect(contrast("#ffffff", v2Token("--v2-red"))).toBeGreaterThanOrEqual(
+      4.5,
     );
   });
 });

@@ -64,6 +64,13 @@ export function WindowSeatToy() {
   }, []);
 
   useEffect(() => {
+    const idleWindow = window as unknown as {
+      requestIdleCallback?: (
+        callback: IdleRequestCallback,
+        options?: IdleRequestOptions,
+      ) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
     let cancelled = false;
     let idleId: number | null = null;
     let fallbackTimer: number | null = null;
@@ -72,8 +79,8 @@ export function WindowSeatToy() {
       if (!cancelled) setIdleReady(true);
     };
     const scheduleIdle = () => {
-      if ("requestIdleCallback" in window) {
-        idleId = window.requestIdleCallback(markIdle, { timeout: 2_500 });
+      if (idleWindow.requestIdleCallback) {
+        idleId = idleWindow.requestIdleCallback(markIdle, { timeout: 2_500 });
       } else {
         fallbackTimer = window.setTimeout(markIdle, 0);
       }
@@ -88,8 +95,8 @@ export function WindowSeatToy() {
     return () => {
       cancelled = true;
       window.removeEventListener("load", scheduleIdle);
-      if (idleId !== null && "cancelIdleCallback" in window) {
-        window.cancelIdleCallback(idleId);
+      if (idleId !== null && idleWindow.cancelIdleCallback) {
+        idleWindow.cancelIdleCallback(idleId);
       }
       if (fallbackTimer !== null) window.clearTimeout(fallbackTimer);
     };

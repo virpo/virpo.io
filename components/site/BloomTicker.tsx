@@ -129,7 +129,11 @@ export function BloomTicker({
         ref={triggerRef}
         className="bloomTrigger"
         type="button"
-        aria-label="Open Japan bloom details"
+        aria-label={`Open Japan bloom details. ${
+          status?.status === "active" ? "Blooming now" : "Blooming next"
+        }: ${bloom?.name ?? "Checking Japan"}. ${
+          status?.label ?? "one moment"
+        }`}
         aria-expanded={isOpen}
         aria-controls="bloom-popover"
         onPointerDown={() => {

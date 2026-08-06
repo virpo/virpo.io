@@ -186,7 +186,7 @@ export function StudyToy({ promptLabel = "Tap to reveal" }: { promptLabel?: stri
                     }`
                   : `${selection.card.writing}${
                       isKanji ? `, ${selection.card.reading}` : ""
-                    }. Reveal answer`
+                    }. ${promptLabel}. Reveal answer`
               }
               onClick={() => setRevealed(true)}
             >

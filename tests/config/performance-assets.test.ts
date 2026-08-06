@@ -46,4 +46,19 @@ describe("homepage performance assets", () => {
       expect(existsSync(resolve(process.cwd(), source)), source).toBe(true);
     }
   });
+
+  it("provides a repeatable production-build budget check", () => {
+    const packageJson = JSON.parse(
+      readFileSync(resolve(process.cwd(), "package.json"), "utf8"),
+    ) as { scripts?: Record<string, string> };
+    const budgetScript = resolve(
+      process.cwd(),
+      "scripts/check-performance-budget.mjs",
+    );
+
+    expect(existsSync(budgetScript)).toBe(true);
+    expect(packageJson.scripts?.["test:performance-budget"]).toBe(
+      "node scripts/check-performance-budget.mjs",
+    );
+  });
 });

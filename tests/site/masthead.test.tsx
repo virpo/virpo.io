@@ -36,6 +36,19 @@ it("wraps page content with the shared masthead and footer", () => {
 });
 
 describe("bloom disclosure", () => {
+  it("includes the visible bloom summary in the trigger's accessible name", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-08-04T00:00:00Z"));
+    render(<Masthead current="home" />);
+
+    const trigger = screen.getByRole("button", {
+      name: /Open Japan bloom details/i,
+    });
+    expect(trigger.getAttribute("aria-label")).toMatch(
+      /Blooming (now|next).*Lotus/i,
+    );
+  });
+
   it("uses the cohesive pixel flower set when requested", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-08-04T00:00:00Z"));
@@ -48,7 +61,7 @@ describe("bloom disclosure", () => {
     vi.useFakeTimers();
     render(<Masthead current="home" />);
     const module = screen.getByLabelText("Tokyo time and seasonal bloom");
-    const trigger = screen.getByRole("button", { name: "Open Japan bloom details" });
+    const trigger = screen.getByRole("button", { name: /Open Japan bloom details/i });
     const pointerOver = new MouseEvent("pointerover", { bubbles: true });
     Object.defineProperty(pointerOver, "pointerType", { value: "mouse" });
 
@@ -69,7 +82,7 @@ describe("bloom disclosure", () => {
     vi.useFakeTimers();
     render(<Masthead current="home" />);
     const module = screen.getByLabelText("Tokyo time and seasonal bloom");
-    const trigger = screen.getByRole("button", { name: "Open Japan bloom details" });
+    const trigger = screen.getByRole("button", { name: /Open Japan bloom details/i });
     const pointerOver = new MouseEvent("pointerover", { bubbles: true });
     Object.defineProperty(pointerOver, "pointerType", { value: "mouse" });
 
@@ -91,7 +104,7 @@ describe("bloom disclosure", () => {
 
   it("closes on Escape from Source and returns focus without reopening", () => {
     render(<Masthead current="home" />);
-    const trigger = screen.getByRole("button", { name: "Open Japan bloom details" });
+    const trigger = screen.getByRole("button", { name: /Open Japan bloom details/i });
 
     fireEvent.focus(trigger);
     const source = screen.getByRole("link", { name: "Source" });
@@ -110,7 +123,7 @@ describe("bloom disclosure", () => {
         <button type="button">Outside</button>
       </div>,
     );
-    const trigger = screen.getByRole("button", { name: "Open Japan bloom details" });
+    const trigger = screen.getByRole("button", { name: /Open Japan bloom details/i });
 
     fireEvent.click(trigger);
     expect(trigger).toHaveAttribute("aria-expanded", "true");
