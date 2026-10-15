@@ -12,6 +12,7 @@ describe("static build-output assertions", () => {
     "dist/404.html",
     "dist/blog/index.html",
     "dist/projects/index.html",
+    "dist/skills/index.html",
     "dist/blog/weird-use-of-ai-3/index.html",
     "dist/blog/weird-use-of-ai-1/index.html",
     "dist/blog/a-different-kind-of-hackathon/index.html",

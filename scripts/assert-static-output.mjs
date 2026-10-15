@@ -7,6 +7,7 @@ const requiredFiles = [
   "dist/404.html",
   "dist/blog/index.html",
   "dist/projects/index.html",
+  "dist/skills/index.html",
   "dist/blog/weird-use-of-ai-3/index.html",
   "dist/blog/weird-use-of-ai-1/index.html",
   "dist/blog/a-different-kind-of-hackathon/index.html",
@@ -99,6 +100,16 @@ for (const media of [
   assertIncludes(projectsHtml, `src="${media}"`, projectsFile);
 }
 
+const skillsFile = "dist/skills/index.html";
+const skillsHtml = await readFile(resolve(skillsFile), "utf8");
+assertIncludes(
+  skillsHtml,
+  'rel="canonical" href="https://virpo.io/skills/"',
+  skillsFile,
+);
+assertIncludes(skillsHtml, "npx skills add virpo/agent-skills --skill", skillsFile);
+assertIncludes(homeHtml, 'href="/skills/"', homeFile);
+
 const rss = await readFile(resolve("dist/rss.xml"), "utf8");
 const sitemap = await readFile(resolve("dist/sitemap.xml"), "utf8");
 const robots = await readFile(resolve("dist/robots.txt"), "utf8");
@@ -113,4 +124,5 @@ for (const slug of articleSlugs) {
   assertIncludes(sitemap, url, "dist/sitemap.xml");
 }
 
+assertIncludes(sitemap, "https://virpo.io/skills/", "dist/sitemap.xml");
 assertIncludes(robots, "Sitemap: https://virpo.io/sitemap.xml", "dist/robots.txt");

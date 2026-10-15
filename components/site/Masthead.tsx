@@ -2,7 +2,7 @@ import Link from "next/link";
 import { BloomTicker } from "./BloomTicker";
 import { BrandMark } from "./BrandMark";
 
-export type CurrentRoute = "home" | "blog" | "projects";
+export type CurrentRoute = "home" | "blog" | "projects" | "skills";
 
 export function Masthead({ current }: { current: CurrentRoute }) {
   return (

@@ -1441,6 +1441,164 @@ img {
   color: var(--ink);
 }
 
+.skillsPage {
+  min-height: calc(100vh - 141px);
+  padding: clamp(1.75rem, 5vw, 4.5rem) clamp(1rem, 6vw, 5rem);
+  background: var(--paper);
+}
+
+.skillsHeader,
+.skillList {
+  width: min(100%, 52rem);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.skillsHeader {
+  padding-bottom: clamp(1.4rem, 4vw, 2.8rem);
+  border-bottom: 3px solid var(--ink);
+}
+
+.skillsHeader > p {
+  margin: 0;
+  color: var(--kaki-text);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.skillsHeader h1 {
+  max-width: 24ch;
+  margin: 0.55rem 0 0;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(1.75rem, 3.6vw, 2.8rem);
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.skillList {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.skillList > li {
+  padding: clamp(1.25rem, 3vw, 2rem) 0;
+  border-bottom: 2px solid var(--ink);
+  scroll-margin-top: 1rem;
+}
+
+.skillList h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  margin: 0 0 0.5rem;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.skillEmoji {
+  font-family: system-ui, sans-serif;
+  font-size: 0.85em;
+}
+
+.skillSummary {
+  max-width: 44rem;
+  margin: 0;
+  color: var(--muted);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.skillProof {
+  margin: 0.45rem 0 0;
+  color: var(--kaki-text);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.skillActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1.1rem;
+  margin-top: 1rem;
+}
+
+.skillInstall {
+  display: flex;
+  max-width: 100%;
+  min-width: 0;
+  align-items: stretch;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background: var(--white);
+}
+
+.skillInstall code {
+  min-width: 0;
+  padding: 0.55rem 0.75rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.skillInstallToken {
+  white-space: nowrap;
+}
+
+.skillInstall button {
+  flex: none;
+  min-width: 4.6rem;
+  padding: 0 0.85rem;
+  border-left: 2px solid var(--ink);
+  background: var(--paper);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 140ms ease;
+}
+
+.skillInstall button:hover {
+  background: var(--yellow);
+}
+
+.skillInstall button[data-copied] {
+  background: var(--kaki);
+}
+
+.skillSource {
+  border-bottom: 2px solid var(--kaki);
+  font-size: 0.8rem;
+  transition: color 140ms ease;
+}
+
+.skillSource:hover,
+.skillSource:focus-visible {
+  color: var(--kaki-text);
+}
+
+.footerLink {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.footerLink:hover,
+.footerLink:focus-visible {
+  color: var(--kaki-text);
+}
+
 @media (max-width: 1060px) {
   .masthead {
     grid-template-columns: max-content 1fr;
@@ -1585,7 +1743,8 @@ img {
     flex-direction: column;
   }
 
-  .blogIndex {
+  .blogIndex,
+  .skillsPage {
     min-height: calc(100vh - 211px);
   }
 
