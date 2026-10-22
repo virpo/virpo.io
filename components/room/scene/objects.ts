@@ -46,9 +46,8 @@ export const ROOM_OBJECTS: readonly RoomObject[] = [
   { id: "arcade", fig: 12, name: "Arcade", goes: "Levels", kind: "project", projectSlug: "levels", layer: "obj-arcade", box: obj("arcade"), hull: hull("arcade") },
   { id: "tv", fig: 13, name: "Tiny TV", goes: "YouTLDR", kind: "project", projectSlug: "youtldr", layer: "obj-tv", box: obj("tv"), hull: hull("tv") },
   { id: "deck", fig: 14, name: "Stream deck", goes: "CMUX Deck", kind: "project", projectSlug: "cmux-deck", layer: "obj-deck", box: obj("deck"), hull: hull("deck") },
-  { id: "clay", fig: 15, name: "Clay figure", goes: "Prehistoriq", kind: "project", projectSlug: "prehistoriq", layer: "obj-clay", box: obj("clay"), hull: hull("clay") },
-  { id: "cork", fig: 16, name: "Cork board", goes: "Žltá stopa", kind: "project", projectSlug: "zlta-stopa", layer: "obj-cork", box: obj("cork"), hull: hull("cork") },
-  { id: "aiposter", fig: 17, name: "Poster", goes: "AI Build Week", kind: "project", projectSlug: "ai-build-week", layer: "obj-aiposter", box: obj("aiposter"), hull: hull("aiposter") },
+  { id: "cork", fig: 15, name: "Cork board", goes: "Žltá stopa", kind: "project", projectSlug: "zlta-stopa", layer: "obj-cork", box: obj("cork"), hull: hull("cork") },
+  { id: "aiposter", fig: 16, name: "Poster", goes: "AI Build Week", kind: "project", projectSlug: "ai-build-week", layer: "obj-aiposter", box: obj("aiposter"), hull: hull("aiposter") },
 ];
 
 export const objectById = new Map(ROOM_OBJECTS.map((item) => [item.id, item]));

@@ -592,3 +592,31 @@
     display: none;
   }
 }
+
+/* ---- clean cut-outs: the moving copy is trimmed, a still copy waits underneath ---- */
+.ghost {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.ghost > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.cut {
+  position: absolute;
+  inset: 0;
+}
+
+.cut > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}

@@ -9,11 +9,33 @@ import styles from "./scene.module.css";
 const SRC = "/lab/room";
 
 /** Hit order, back to front: small things painted in front of big ones win. */
-const HIT_ORDER = ["window", "kana", "cork", "aiposter", "hydrangea", "printer", "mirror", "bookshelf", "radio", "clay", "tv", "arcade", "peter", "deck", "post-2", "post-1", "post-0"];
+const HIT_ORDER = ["window", "kana", "cork", "aiposter", "hydrangea", "printer", "mirror", "bookshelf", "radio", "tv", "arcade", "peter", "deck", "post-2", "post-1", "post-0"];
 const HITS = HIT_ORDER.map((id) => objectById.get(id)!).filter(Boolean);
 
 /** Paint order of the object layers (the plate is under all of them). */
 const PAINT_ORDER = ["window", "kana", "cork", "aiposter", "mirror", "radio", "clay", "printer", "tv", "hydrangea", "arcade", "bookshelf", "deck", "post-2", "post-1", "post-0"];
+
+/**
+ * Clean outlines for the lifted copy of each object, in % of its box. The cut-outs carry slivers of
+ * whatever stood next to them (a leaf, a shelf edge); these polygons trim them so the ink-and-orange
+ * outline traces the object itself.
+ */
+const CUT: Record<string, string> = {
+  arcade: "13% 6%, 92% 2%, 98% 10%, 98% 86%, 60% 96%, 16% 95%, 9% 72%, 9% 40%",
+  bookshelf: "8% 22%, 30% 10%, 75% 12%, 92% 24%, 92% 90%, 60% 97%, 12% 97%, 6% 80%",
+  cork: "9% 3%, 100% 1%, 100% 99%, 9% 99%",
+  deck: "18% 12%, 78% 10%, 96% 60%, 86% 86%, 22% 90%, 12% 70%",
+  hydrangea: "18% 30%, 25% 8%, 50% 2%, 85% 5%, 100% 25%, 96% 50%, 75% 60%, 72% 95%, 55% 100%, 35% 95%, 30% 65%, 10% 58%, 8% 45%",
+  printer: "4% 3%, 97% 4%, 97% 93%, 82% 99%, 16% 99%, 3% 93%",
+  radio: "8% 38%, 22% 22%, 30% 21%, 84% 3%, 89% 7%, 52% 31%, 96% 33%, 98% 95%, 92% 100%, 11% 100%, 8% 90%",
+  tv: "6% 22%, 40% 3%, 96% 8%, 96% 85%, 70% 97%, 12% 95%, 4% 80%",
+  window: "0% 0%, 100% 22%, 100% 90%, 80% 100%, 0% 84%",
+};
+
+/** Painted pieces that are not clickable (yet), drawn as plain layers. */
+const DECOR: Record<string, { layer: string; box: readonly [number, number, number, number] }> = {
+  clay: { layer: "obj-clay", box: LAYERS.objects.clay },
+};
 
 /** Where each Fig. tag sits, in plate pixels (defaults to the top centre of the object). */
 const TAG_AT: Record<string, [number, number]> = {
@@ -74,14 +96,35 @@ export type SceneProps = {
 };
 
 function Layer({ id, src, box, className, children, style }: { id: string; src?: string; box: readonly [number, number, number, number]; className?: string; children?: React.ReactNode; style?: CSSProperties }) {
-  return (
-    <div className={`${styles.obj} ${className ?? ""}`} data-obj={id} style={{ ...boxStyle(box), ...style }}>
+  const cut = CUT[id];
+  const content = (
+    <>
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={src} alt="" draggable={false} decoding="async" />
       ) : null}
       {children}
-    </div>
+    </>
+  );
+  return (
+    <>
+      {/* a still copy stays put under a lifted object, so lifting never leaves a hole */}
+      {cut && src ? (
+        <div className={styles.ghost} style={boxStyle(box)} aria-hidden="true">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={src} alt="" draggable={false} decoding="async" />
+        </div>
+      ) : null}
+      <div className={`${styles.obj} ${className ?? ""}`} data-obj={id} style={{ ...boxStyle(box), ...style }}>
+        {cut ? (
+          <div className={styles.cut} style={{ clipPath: `polygon(${cut})` }}>
+            {content}
+          </div>
+        ) : (
+          content
+        )}
+      </div>
+    </>
   );
 }
 
@@ -225,7 +268,10 @@ export function RoomScene({
 
         {/* object layers, painted in depth order */}
         {PAINT_ORDER.map((id) => {
-          const item = objectById.get(id)!;
+          const decor = DECOR[id];
+          if (decor) return <Layer key={id} id={id} src={`${SRC}/${decor.layer}.webp`} box={decor.box} />;
+          const item = objectById.get(id);
+          if (!item) return null;
           if (id === "window") {
             return (
               <Layer key={id} id={id} box={WINDOW_BOX} className={styles.windowObj}>
@@ -355,7 +401,10 @@ export function RoomScene({
                   pointerType.current = event.pointerType;
                   if (event.pointerType === "mouse" || event.pointerType === "pen") onHover?.(item.id);
                 }}
-                onFocus={() => onFocusObject?.(item.id)}
+                onFocus={(event) => {
+                  // only keyboard focus selects; a mouse click also focuses the link in Chrome
+                  if (event.currentTarget.matches(":focus-visible")) onFocusObject?.(item.id);
+                }}
                 onClick={(event) => {
                   event.stopPropagation();
                   onActivate?.(item, event, pointerType.current, true);

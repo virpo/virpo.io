@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Device } from "../../components/room/Device";
+import { ProjectIcon } from "../../components/room/icons/ProjectIcon";
 import { roomDate, RoomFooter } from "../../components/room/RoomChrome";
-import { figLabel, objectForProject, roomPostHref, TOY_OBJECTS } from "../../components/room/scene/objects";
+import { figLabel, objectForProject, roomPostHref } from "../../components/room/scene/objects";
 import { getPostSummaries } from "../../lib/blog";
 import { labAbout, labProjects } from "../../lib/lab/catalog";
 import styles from "./room.module.css";
@@ -14,19 +15,15 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-const TOY_BLURBS: Record<string, string> = {
-  window: "Ride the shinkansen past the hills.",
-  face: "My face follows your cursor.",
-  kana: "Learn hiragana, one card at a time.",
-  sounds: "Small sounds of Japan on the radio.",
-  bloom: "What is blooming in Japan right now.",
-};
-
 export default function RoomPage() {
   const posts = getPostSummaries();
   const newest = posts.slice(0, 3);
   const devicePosts = newest.map((post) => ({ slug: post.slug, title: post.title, date: post.publishedAt.toISOString() }));
-  const projects = labProjects.map((project) => ({
+  // Prehistoriq stays out of the room for now (Levels still lives on its domain).
+  const shown = labProjects
+    .filter((project) => project.slug !== "prehistoriq")
+    .map((project) => (project.slug === "levels" ? { ...project, blurb: "A small web game: climb one level at a time." } : project));
+  const projects = shown.map((project) => ({
     slug: project.slug,
     title: project.title,
     type: project.type,
@@ -42,7 +39,7 @@ export default function RoomPage() {
             <Device posts={devicePosts} projects={projects} about={labAbout} />
             <p className={styles.deviceHint}>
               <span className={styles.hintMouse}>Everything with a number opens.</span>
-              <span className={styles.hintTouch}>Tap a number to see it, tap again to open.</span>
+              <span className={styles.hintTouch}>Tap a number, tap again to open.</span>
               <span className={styles.hintKeys}>
                 <kbd>←</kbd>
                 <kbd>→</kbd> browse · <kbd>Enter</kbd> open · <kbd>Esc</kbd> back
@@ -72,11 +69,14 @@ export default function RoomPage() {
           <section className={styles.section} id="projects" aria-labelledby="projects-title">
             <h2 id="projects-title">Projects</h2>
             <ul className={styles.rows}>
-              {labProjects.map((project) => {
+              {shown.map((project) => {
                 const item = objectForProject(project.slug);
                 return (
                   <li key={project.slug}>
-                    <a className={styles.row} href={project.href} target="_blank" rel="noreferrer" data-room-target={item?.id}>
+                    <a className={`${styles.row} ${styles.projectRow}`} href={project.href} target="_blank" rel="noreferrer" data-room-target={item?.id} data-icon-play>
+                      <span className={styles.rowIcon}>
+                        <ProjectIcon slug={project.slug} />
+                      </span>
                       <span className={styles.rowTitle}>{project.title}</span>
                       <span className={styles.rowMeta}>{project.blurb}</span>
                       <span className={styles.rowFig}>{item ? `${figLabel(item.fig)} · ${item.name}` : project.type}</span>
@@ -84,23 +84,6 @@ export default function RoomPage() {
                   </li>
                 );
               })}
-            </ul>
-          </section>
-
-          <section className={styles.section} id="toys" aria-labelledby="toys-title">
-            <h2 id="toys-title">In the room</h2>
-            <ul className={styles.rows}>
-              {TOY_OBJECTS.map((item) => (
-                <li key={item.id} id={`toy-${item.toy}`}>
-                  <a className={styles.row} href={`#toy-${item.toy}`} data-room-target={item.id}>
-                    <span className={styles.rowTitle}>{item.goes}</span>
-                    <span className={styles.rowMeta}>{TOY_BLURBS[item.toy ?? ""]}</span>
-                    <span className={styles.rowFig}>
-                      {figLabel(item.fig)} · {item.name}
-                    </span>
-                  </a>
-                </li>
-              ))}
             </ul>
           </section>
 

@@ -12,6 +12,7 @@ import { loadStoredStudyState, saveStudyState } from "../../../lib/study/storage
 import type { StudySelection, StudyState } from "../../../lib/study/types";
 import { LAYERS } from "../scene/layers";
 import { nextTrain, type Train } from "../scene/life";
+import { ProjectIcon } from "../icons/ProjectIcon";
 import styles from "./apps.module.css";
 
 export type AppProject = { slug: string; title: string; type: string; href: string; blurb: string; image?: { src: string; alt: string; width: number; height: number; fit: string; position?: string } };
@@ -286,7 +287,12 @@ export function ProjectApp({ project, layer, object }: { project: AppProject; la
       </div>
       <div className={styles.projectText}>
         <p className={styles.kicker}>{project.type}</p>
-        <p className={styles.projectTitle}>{project.title}</p>
+        <p className={styles.projectTitle}>
+          <span className={styles.projectIcon}>
+            <ProjectIcon slug={project.slug} playing />
+          </span>
+          {project.title}
+        </p>
         <p className={styles.projectBlurb}>{project.blurb}</p>
         <a className={styles.primary} data-primary href={project.href} {...external(project.href)}>
           Visit {project.title} <span aria-hidden="true">↗</span>

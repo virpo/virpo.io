@@ -1,0 +1,383 @@
+/*
+ * Project pictograms. Still at rest; a short loop plays while an ancestor with
+ * [data-icon-play] is hovered or focused, or while the svg has data-playing="true".
+ * Size follows font-size (1em). No motion under prefers-reduced-motion.
+ */
+
+.icon {
+  display: inline-block;
+  flex: none;
+  width: 1em;
+  height: 1em;
+  overflow: visible;
+  vertical-align: -0.14em;
+}
+
+.icon * {
+  transform-box: view-box;
+}
+
+/* rest-state tweaks */
+.tldrShort,
+.coinRays {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* ---- levels: the ball hops two steps, then respawns at the bottom ---- */
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .levelsHopX {
+    animation: levelsHopX 1.6s linear infinite;
+  }
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .levelsHopY {
+    animation: levelsHopY 1.6s infinite;
+  }
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .levelsBall {
+    transform-origin: 16.5px 12.3px;
+    animation: levelsBall 1.6s infinite;
+  }
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .levelsTrail {
+    animation: levelsTrail 1.6s infinite;
+  }
+
+  /* ---- youtldr: wavy clickbait collapses into one short line ---- */
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .tldrLong {
+    transform-origin: 3.5px 26.2px;
+    animation: tldrLong 1.6s cubic-bezier(0.6, 0, 0.3, 1) infinite;
+  }
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .tldrShort {
+    transform-origin: 3.5px 26.2px;
+    animation: tldrShort 1.6s cubic-bezier(0.3, 1.4, 0.5, 1) infinite;
+  }
+
+  /* ---- žltá stopa: the lens sweeps over the footprint ---- */
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .stopaLens {
+    animation: stopaLens 1.6s ease-in-out infinite;
+  }
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) :is(.toe1, .toe2, .toe3, .toe4) {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: stopaToe 1.6s ease-out infinite;
+  }
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .toe2 {
+    animation-delay: 0.08s;
+  }
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .toe3 {
+    animation-delay: 0.16s;
+  }
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .toe4 {
+    animation-delay: 0.24s;
+  }
+
+  /* ---- mood radio: the needle tunes from sad to happy, the air hums ---- */
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .radioNeedle {
+    animation: radioNeedle 1.6s infinite;
+  }
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .radioWave1 {
+    animation: radioWave 0.8s ease-in-out infinite;
+  }
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .radioWave2 {
+    animation: radioWave 0.8s ease-in-out 0.2s infinite both;
+  }
+
+  /* ---- pegboard toy: the missing peg drops into its slot ---- */
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .pegFall {
+    transform-origin: 21.1px 11px;
+    animation: pegFall 1.6s infinite;
+  }
+
+  /* ---- ai build week: twelve hours sweep by, a euro pops out ---- */
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .clockHand {
+    transform-origin: 12.5px 19.5px;
+    animation: clockHand 1.6s cubic-bezier(0.55, 0, 0.35, 1) infinite;
+  }
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .coin {
+    transform-origin: 25px 7.5px;
+    animation: coin 1.6s infinite;
+  }
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .coinRays {
+    animation: coinRays 1.6s infinite;
+  }
+
+  /* ---- cmux deck: keys light up in turn, like busy agents ---- */
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) :is(.key1, .key2, .key3, .key4, .key5, .key6) {
+    fill: currentColor;
+    animation: deckKey 1.2s steps(1, end) infinite;
+  }
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .key2 {
+    animation-delay: -1s;
+  }
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .key3 {
+    animation-delay: -0.8s;
+  }
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .key6 {
+    animation-delay: -0.6s;
+  }
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .key5 {
+    animation-delay: -0.4s;
+  }
+  :is([data-icon-play]:is(:hover, :focus-visible, :focus-within, [data-room-lit]), .icon[data-playing="true"]) .key4 {
+    animation-delay: -0.2s;
+  }
+}
+
+@keyframes levelsHopX {
+  0% {
+    transform: translateX(0);
+  }
+  14%,
+  20% {
+    transform: translateX(4px);
+  }
+  34% {
+    transform: translateX(7px);
+  }
+  48%,
+  86% {
+    transform: translateX(10px);
+  }
+  87%,
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes levelsHopY {
+  0% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.5);
+  }
+  14%,
+  20% {
+    transform: translateY(3px);
+    animation-timing-function: cubic-bezier(0.1, 0.5, 0.5, 1);
+  }
+  34% {
+    transform: translateY(-6.5px);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.5);
+  }
+  48%,
+  86% {
+    transform: translateY(-3px);
+  }
+  87%,
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes levelsBall {
+  0%,
+  13% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  15.5% {
+    transform: translateY(0.4px) scale(1.12, 0.86);
+  }
+  19%,
+  47% {
+    transform: scale(1);
+  }
+  49.5% {
+    transform: translateY(0.4px) scale(1.12, 0.86);
+  }
+  53%,
+  74% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  82%,
+  88% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes levelsTrail {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  8%,
+  88% {
+    opacity: 0;
+  }
+}
+
+@keyframes tldrLong {
+  0%,
+  12% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  36% {
+    opacity: 0;
+    transform: scale(0.4, 0);
+  }
+  80% {
+    opacity: 0;
+    transform: scale(0.4, 0);
+  }
+  96%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes tldrShort {
+  0%,
+  28% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  44%,
+  78% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  88%,
+  100% {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes stopaLens {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  35% {
+    transform: translate(-5px, -7px);
+  }
+  65% {
+    transform: translate(-3px, -2px);
+  }
+}
+
+@keyframes stopaToe {
+  0%,
+  22% {
+    transform: scale(1);
+  }
+  32% {
+    transform: scale(1.45);
+  }
+  44%,
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes radioNeedle {
+  0%,
+  6% {
+    transform: translateX(0);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.3, 1);
+  }
+  34%,
+  44% {
+    transform: translateX(-13px);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.3, 1);
+  }
+  72% {
+    transform: translateX(1.2px);
+    animation-timing-function: ease-in-out;
+  }
+  80% {
+    transform: translateX(-0.6px);
+    animation-timing-function: ease-in-out;
+  }
+  86%,
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes radioWave {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes clockHand {
+  0%,
+  10% {
+    transform: rotate(0deg);
+  }
+  58%,
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes coin {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  10%,
+  56% {
+    opacity: 0;
+    transform: translate(-12.5px, 12px) scale(0.3);
+    animation-timing-function: cubic-bezier(0.3, 1.6, 0.5, 1);
+  }
+  72%,
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes coinRays {
+  0%,
+  62% {
+    opacity: 0;
+  }
+  70%,
+  86% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes deckKey {
+  0% {
+    fill-opacity: 1;
+  }
+  20%,
+  100% {
+    fill-opacity: 0;
+  }
+}
+
+@keyframes pegFall {
+  0%,
+  6% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+  30% {
+    transform: translateY(8px);
+  }
+  36% {
+    transform: translateY(8px) scale(1.12, 0.86);
+  }
+  44%,
+  66% {
+    transform: translateY(8px) scale(1);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.3, 1);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

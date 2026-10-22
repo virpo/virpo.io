@@ -28,6 +28,9 @@ const APP_TITLES: Record<RoomToyId, string> = {
   bloom: "Bloom forecast",
 };
 
+/** z of each slab of the case, in cqw (the face sits in front at +6) */
+const SLABS = [-6, -4, -2, 0, 2, 4];
+
 const TIME_LABEL: Record<TimeChoice, string> = { auto: "Tokyo time", morning: "Morning", day: "Day", evening: "Evening", night: "Night" };
 
 const media = (query: string) => typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia(query).matches;
@@ -91,6 +94,30 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
     const id = window.setInterval(resolve, 60_000);
     return () => window.clearInterval(id);
   }, [timeChoice]);
+
+  // ---- the device leans a little towards the pointer (desktop only) ----
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || !media("(hover: hover) and (pointer: fine)") || media("(prefers-reduced-motion: reduce)")) return;
+    let frame = 0;
+    let x = 0.5;
+    let y = 0.5;
+    const apply = () => {
+      frame = 0;
+      root.style.setProperty("--tx", (x - 0.5).toFixed(3));
+      root.style.setProperty("--ty", (y - 0.5).toFixed(3));
+    };
+    const onMove = (event: PointerEvent) => {
+      x = event.clientX / window.innerWidth;
+      y = event.clientY / window.innerHeight;
+      if (!frame) frame = requestAnimationFrame(apply);
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
 
   // ---- hover links both ways with the plain lists on the page ----
   useEffect(() => {
@@ -194,19 +221,24 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
     return null;
   };
 
-  const openApp = useCallback((next: RoomAppId, from: string | null) => {
+  // Keyboard users get focus back on the object they opened; pointer users get a clean room.
+  const openedByKeys = useRef(false);
+
+  const openApp = useCallback((next: RoomAppId, from: string | null, byKeys = false) => {
+    openedByKeys.current = byKeys;
     setApp(next);
     setAppFrom(from);
     setHover(null);
+    setSelected(null);
     setLabelOpen(false);
     const title = next.startsWith("project:") ? projects.find((project) => `project:${project.slug}` === next)?.title : next === "about" ? "About Peter" : APP_TITLES[next as RoomToyId];
     setAnnounce(`${title ?? "App"} open on the device screen. Press Escape or Back to return to the room.`);
   }, [projects]);
 
   const open = useCallback(
-    (item: RoomObject) => {
+    (item: RoomObject, byKeys = false) => {
       const next = appFor(item);
-      if (next) return openApp(next, item.id);
+      if (next) return openApp(next, item.id, byKeys);
       const href = hrefFor(item);
       if (href.startsWith("/")) router.push(href);
       else window.location.assign(href);
@@ -219,10 +251,16 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
     if (!app) return;
     const from = appFrom;
     setApp(null);
+    setHover(null);
+    setSelected(null);
+    setLabelOpen(false);
     setAnnounce("Back in the room.");
-    if (from) {
+    if (from && openedByKeys.current) {
+      // keyboard: back on the object you opened, so the arrows carry on from there
       setSelected(from);
       requestAnimationFrame(() => rootRef.current?.querySelector<HTMLElement>(`[data-hit="${from}"]`)?.focus({ preventScroll: true }));
+    } else if (document.activeElement instanceof HTMLElement && rootRef.current?.contains(document.activeElement)) {
+      document.activeElement.blur();
     }
   }, [app, appFrom]);
 
@@ -256,6 +294,8 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
     setPressed(id);
     window.setTimeout(() => setPressed((current) => (current === id ? null : current)), 150);
     playClick(kind);
+    // a tiny tick under the thumb where phones support it
+    if (touch && typeof navigator.vibrate === "function") navigator.vibrate(kind === "knob" ? 4 : 7);
   };
 
   const appAction = (which: "primary" | "prev" | "next") => {
@@ -313,12 +353,15 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
     if (event.key === "Escape") {
       if (app || selected) {
         event.preventDefault();
+        press("stop");
         back();
       }
       return;
     }
     if (arrows[event.key] && (!app || !target.closest("[data-app-body]"))) {
       event.preventDefault();
+      // the d-pad key moves under your finger even when you use the arrow keys
+      press(arrows[event.key]);
       move(arrows[event.key]);
     }
   };
@@ -361,7 +404,8 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
     const next = appFor(item);
     if (next) {
       event.preventDefault();
-      openApp(next, item.id);
+      // a click with detail 0 came from Enter on the focused object
+      openApp(next, item.id, event.detail === 0);
       return;
     }
     // posts and the bookshelf are plain links: let the browser follow them
@@ -410,7 +454,11 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
       titleFor={titleFor}
       onHover={(id) => {
         setHover(id);
-        if (id) setLabelOpen(false);
+        if (id) {
+          // the mouse always wins over a d-pad or keyboard selection
+          setSelected(null);
+          setLabelOpen(false);
+        }
       }}
       onFocusObject={(id) => {
         setSelected(id);
@@ -433,27 +481,32 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
       onKeyDown={onKeyDown}
       style={{ "--knob": `${knob}deg`, "--progress": progress.toFixed(3) } as CSSProperties}
     >
-      <svg className={styles.lanyard} viewBox="0 0 70 410" aria-hidden="true">
-        <defs>
-          <pattern id="room-braid" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(38)">
-            <rect width="6" height="6" fill="#e1692a" />
-            <rect width="3" height="6" fill="#f49a58" />
-            <rect y="2.4" width="6" height="0.9" fill="#a9440f" opacity="0.55" />
-          </pattern>
-        </defs>
-        <path className={styles.cord} d="M37 34 C 22 52, 15 120, 15 240 C 15 330, 17 392, 29 401 C 41 409, 45 378, 43 326 C 41 250, 36 130, 41 66" />
-        <path className={styles.cordBraid} d="M37 34 C 22 52, 15 120, 15 240 C 15 330, 17 392, 29 401 C 41 409, 45 378, 43 326 C 41 250, 36 130, 41 66" />
-        <rect className={styles.sleeve} x="13" y="238" width="33" height="44" rx="7" />
-        <rect className={styles.sleeveHi} x="16" y="242" width="6" height="36" rx="3" />
-      </svg>
-      <div className={styles.stand} aria-hidden="true" />
       <div className={styles.shadow} aria-hidden="true" />
 
       <div className={styles.body}>
-        <div className={styles.side} aria-hidden="true">
-          <i className={styles.sideSlots} />
+        {/* the case is a stack of slabs, so its thickness shows when it turns */}
+        {SLABS.map((z) => (
+          <i key={z} className={styles.slab} style={{ "--z": `${z}cqw` } as CSSProperties} aria-hidden="true" />
+        ))}
+        <div className={styles.stand} aria-hidden="true" />
+        <svg className={styles.lanyard} viewBox="0 0 70 410" aria-hidden="true">
+          {/* a braided cord: a dark edge, the orange body, then two rows of twist marks */}
+          <path className={styles.cord} d="M37 34 C 22 52, 15 120, 15 240 C 15 330, 17 392, 29 401 C 41 409, 45 378, 43 326 C 41 250, 36 130, 41 66" />
+          <path className={styles.cordBody} d="M37 34 C 22 52, 15 120, 15 240 C 15 330, 17 392, 29 401 C 41 409, 45 378, 43 326 C 41 250, 36 130, 41 66" />
+          <path className={styles.cordTwist} d="M37 34 C 22 52, 15 120, 15 240 C 15 330, 17 392, 29 401 C 41 409, 45 378, 43 326 C 41 250, 36 130, 41 66" />
+          <path className={styles.cordShade} d="M37 34 C 22 52, 15 120, 15 240 C 15 330, 17 392, 29 401 C 41 409, 45 378, 43 326 C 41 250, 36 130, 41 66" />
+          <path className={styles.cordShine} d="M37 34 C 22 52, 15 120, 15 240 C 15 330, 17 392, 29 401 C 41 409, 45 378, 43 326 C 41 250, 36 130, 41 66" />
+          <rect className={styles.sleeve} x="13" y="238" width="33" height="44" rx="7" />
+          <rect className={styles.sleeveHi} x="16" y="242" width="6" height="36" rx="3" />
+          <circle className={styles.lug} cx="38" cy="36" r="5" />
+        </svg>
+        {/* the left side of the case, with the light button on it */}
+        <div className={styles.side}>
+          <i className={styles.sideSlots} aria-hidden="true" />
+          <button type="button" className={styles.sideButton} onClick={hero ? () => (press("side"), cycleTime()) : undefined} aria-label={`Light in the room: ${TIME_LABEL[timeChoice]}. Change`} title={`Light: ${TIME_LABEL[timeChoice]}`} {...btn("side")}>
+            <i />
+          </button>
         </div>
-        <button type="button" className={styles.sideButton} onClick={hero ? cycleTime : undefined} aria-label={`Light in the room: ${TIME_LABEL[timeChoice]}. Change`} title={`Light: ${TIME_LABEL[timeChoice]}`} {...btn("side")} />
 
         <div className={styles.face}>
           <div className={styles.bezel}>
@@ -486,6 +539,11 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
               ) : null}
               <i className={styles.glare} aria-hidden="true" />
             </div>
+            <span className={styles.model} aria-hidden="true">
+              PR-03<span className={styles.modelSquare}> pocket room</span>
+              <span className={styles.modelTall}> mini</span>
+              <span className={styles.modelWide}> wide</span>
+            </span>
           </div>
 
           <div className={styles.progress} aria-hidden={hero ? true : undefined} role={hero ? undefined : "progressbar"} aria-label={hero ? undefined : "Reading progress"} aria-valuenow={hero ? undefined : Math.round(progress * 100)} aria-valuemin={hero ? undefined : 0} aria-valuemax={hero ? undefined : 100}>
@@ -558,8 +616,16 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
               }}
               {...btn("knob")}
             >
-              <i className={styles.knobCap} />
+              <i className={styles.knobCap}>
+                <i className={styles.knobMark} />
+              </i>
             </button>
+            <span className={styles.legend} aria-hidden="true">
+              <span data-for="dpad">move</span>
+              <span data-for="round">open</span>
+              <span data-for="pill">figs · back</span>
+              <span data-for="knob">browse</span>
+            </span>
           </div>
         </div>
       </div>

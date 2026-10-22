@@ -486,3 +486,11 @@ button:disabled {
     animation: none;
   }
 }
+
+.projectIcon {
+  display: inline-grid;
+  place-items: center;
+  margin-right: 0.35em;
+  vertical-align: -0.12em;
+  font-size: 1.15em;
+}

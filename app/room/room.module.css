@@ -38,16 +38,16 @@
   grid-template-columns: minmax(0, 60fr) minmax(0, 40fr);
   align-items: center;
   gap: 0 4.4vw;
-  max-width: 1500px;
-  min-height: min(100svh, 980px);
+  max-width: clamp(1500px, 150vh, 1900px);
+  min-height: min(100svh, 1400px);
   margin: 0 auto;
   padding: 4vh 4.6vw 4vh 2.6vw;
 }
 
+/* the device is as big as the column allows, but never taller than the screen */
 .deviceCol {
   position: relative;
-  width: 100%;
-  max-width: 800px;
+  width: min(100%, 1040px, calc((100svh - 13vh) * 0.96));
   justify-self: end;
 }
 
@@ -92,13 +92,13 @@
 }
 
 .textCol {
-  max-width: 520px;
+  max-width: clamp(520px, 30vw, 720px);
   padding-bottom: 3vh;
 }
 
 .name {
   margin: 0 0 clamp(1.4rem, 3.4vw, 3rem);
-  font-size: clamp(2.6rem, 6vw, 5.6rem);
+  font-size: clamp(2.6rem, min(6vw, 9vh), 7.4rem);
   font-weight: 500;
   letter-spacing: -0.035em;
   line-height: 1;
@@ -123,7 +123,7 @@
 }
 
 .postTitle {
-  font-size: clamp(1.25rem, 2.1vw, 1.9rem);
+  font-size: clamp(1.25rem, min(2.1vw, 3.1vh), 2.5rem);
   font-weight: 500;
   letter-spacing: -0.015em;
   line-height: 1.2;
@@ -136,7 +136,7 @@
 
 .post time {
   color: var(--grey);
-  font-size: clamp(0.98rem, 1.5vw, 1.3rem);
+  font-size: clamp(0.98rem, min(1.5vw, 2.2vh), 1.65rem);
   letter-spacing: 0.005em;
 }
 
@@ -164,7 +164,7 @@
   gap: 0.5rem;
   margin-top: clamp(1.4rem, 3vw, 2.6rem);
   color: var(--orange) !important;
-  font-size: clamp(1.1rem, 1.75vw, 1.55rem);
+  font-size: clamp(1.1rem, min(1.75vw, 2.6vh), 2rem);
   font-weight: 500;
   text-decoration: none;
 }
@@ -255,6 +255,43 @@
 .row[data-room-lit] .rowFig,
 .row:hover .rowFig {
   color: var(--orange);
+}
+
+/* projects: a small pictogram in front of each one says what it does */
+.projectRow {
+  grid-template-columns: 2.6rem minmax(0, 1fr) auto;
+  column-gap: 0.9rem;
+}
+
+.projectRow .rowTitle,
+.projectRow .rowMeta {
+  grid-column: 2;
+}
+
+.projectRow .rowFig {
+  grid-column: 3;
+}
+
+.rowIcon {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: center;
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 0.7rem;
+  background: #f1ece4;
+  color: var(--ink);
+  font-size: 1.75rem;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.projectRow:hover .rowIcon,
+.projectRow:focus-visible .rowIcon,
+.projectRow[data-room-lit] .rowIcon {
+  background: #fde6d6;
+  color: var(--orange-ink);
 }
 
 .about {
@@ -432,18 +469,8 @@
   font-size: 0.95rem;
 }
 
-/* ---- phones ---- */
+/* ---- narrow windows ---- */
 @media (max-width: 899px) {
-  .hero {
-    grid-template-columns: minmax(0, 1fr);
-    min-height: 0;
-    padding: 14px 16px 1rem;
-  }
-
-  .deviceCol {
-    justify-self: center;
-    max-width: 560px;
-  }
 
   .deviceHint {
     margin: 0.2rem 0 0;
@@ -483,6 +510,14 @@
     margin-top: 0.3rem;
   }
 
+  .projectRow {
+    grid-template-columns: 2.6rem minmax(0, 1fr);
+  }
+
+  .projectRow .rowFig {
+    grid-column: 2;
+  }
+
   .year {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -493,5 +528,132 @@
 
   .footer {
     padding: 1.6rem 16px 2.4rem;
+  }
+}
+
+/* ---- tablets held upright: the device on top, the list under it ---- */
+@media (min-width: 620px) and (max-width: 1099px) and (orientation: portrait) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    align-content: center;
+    gap: 2.4rem;
+    padding: 3vh 6vw 2rem;
+  }
+
+  .deviceCol {
+    justify-self: center;
+    width: min(100%, 660px, calc((100svh - 460px) * 0.96));
+  }
+
+  .deviceHint {
+    margin: 0.4rem 0 0;
+    text-align: center;
+  }
+
+  .textCol {
+    width: min(100%, 660px);
+    max-width: none;
+    padding: 0;
+  }
+
+  .name {
+    margin-bottom: 0.6rem;
+    font-size: clamp(2.6rem, 6.4vw, 3.6rem);
+  }
+
+  .post {
+    padding: 0.85rem 0;
+  }
+
+  .postTitle {
+    font-size: 1.35rem;
+  }
+
+  .post time {
+    font-size: 1rem;
+  }
+
+  .allWriting {
+    margin-top: 0.9rem;
+    font-size: 1.15rem;
+  }
+}
+
+/* ---- phones ---- */
+/* phones held upright: name, then the pocket handheld, then the posts */
+@media (max-width: 619px) and (orientation: portrait) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+    padding: 12px max(16px, env(safe-area-inset-right)) 1rem max(16px, env(safe-area-inset-left));
+  }
+
+  .textCol {
+    display: contents;
+  }
+
+  .name {
+    order: -1;
+    margin: 0 0 0.9rem !important;
+    font-size: 2.1rem !important;
+  }
+
+  .deviceCol {
+    justify-self: center;
+    width: min(100%, 460px, calc((100svh - 240px) * 0.83));
+  }
+
+  .posts {
+    margin-top: 0.4rem;
+  }
+
+  .post {
+    padding: 0.8rem 0;
+  }
+
+  .postTitle {
+    font-size: 1.2rem;
+  }
+
+  .post time {
+    font-size: 0.95rem;
+  }
+
+  .allWriting {
+    margin-top: 0.6rem;
+    font-size: 1.1rem;
+    min-height: 44px;
+  }
+}
+
+/* phones held sideways: the wide edition fills the screen, the list follows */
+@media (orientation: landscape) and (max-height: 520px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    min-height: 0;
+    gap: 1.6rem;
+    padding: 10px max(20px, env(safe-area-inset-right)) 1.6rem max(20px, env(safe-area-inset-left));
+  }
+
+  .deviceCol {
+    justify-self: center;
+    width: min(100%, calc((100svh - 22px) * 1.96));
+  }
+
+  .deviceHint {
+    display: none;
+  }
+
+  .textCol {
+    width: min(100%, 720px);
+    max-width: none;
+    padding: 0;
+  }
+
+  .name {
+    margin-bottom: 0.4rem;
+    font-size: 2.4rem;
   }
 }

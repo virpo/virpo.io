@@ -57,10 +57,15 @@ describe("Pocket Room landing", () => {
   it("links the plain lists to their objects both ways", () => {
     for (let index = 0; index < 3; index += 1) expect(markup).toContain(`data-room-target="post-${index}"`);
     expect(markup).toContain('data-room-target="bookshelf"');
-    for (const project of labProjects) {
+    for (const project of labProjects.filter((entry) => entry.slug !== "prehistoriq")) {
       expect(markup).toContain(`href="${project.href}"`);
       expect(markup).toContain(project.title);
     }
+  });
+
+  it("leaves Prehistoriq out of the room for now", () => {
+    expect(markup).not.toContain("Prehistoriq");
+    expect(markup).not.toMatch(/>[^<]*prehistoriq[^<]*</i);
   });
 
   it("keeps the Japan toys one click away from the plain list", () => {
@@ -95,7 +100,7 @@ describe("Pocket Room objects", () => {
     expect(goes("arcade")?.projectSlug).toBe("levels");
     expect(goes("tv")?.projectSlug).toBe("youtldr");
     expect(goes("deck")?.projectSlug).toBe("cmux-deck");
-    expect(goes("clay")?.projectSlug).toBe("prehistoriq");
+    expect(goes("clay")).toBeUndefined();
     expect(goes("cork")?.projectSlug).toBe("zlta-stopa");
     expect(goes("aiposter")?.projectSlug).toBe("ai-build-week");
     expect(goes("printer")?.projectSlug).toBe("pegboard-toy");
@@ -124,8 +129,8 @@ describe("Pocket Room objects", () => {
   });
 
   it("picks the object under a finger, or the nearest one within reach", () => {
-    const [x, y, w, h] = objectById.get("clay")!.box;
-    expect(pickAt(x + w / 2, y + h / 2)?.id).toBe("clay");
+    const [x, y, w, h] = objectById.get("mirror")!.box;
+    expect(pickAt(x + w / 2, y + h / 2)?.id).toBe("mirror");
     expect(pickAt(x + w + 20, y + h / 2)?.id).toBeDefined();
     expect(pickAt(-500, -500)).toBeNull();
   });

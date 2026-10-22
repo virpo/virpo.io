@@ -1,18 +1,27 @@
 /*
  * The Pocket Room device, drawn in CSS. Every size is cqw of the wrapper, so the same
  * object renders big on the landing and small in a post's margin.
+ *
+ * It comes in three shapes that follow the screen you hold:
+ *   square  the agreed mockup: desktops, laptops and tablets, turned three-quarters in 3D
+ *   tall    phones held upright: a pocket handheld, controls under the screen
+ *   wide    phones held sideways: screen in the middle, d-pad left, knob right
  */
 
 .wrap {
   --orange: #f0722b;
   --orange-hi: #ff9a55;
   --orange-lo: #c4501a;
-  --shell-hi: #d9d1c7;
-  --shell: #c4bbb0;
-  --shell-lo: #aaa094;
-  --side: #998e82;
+  --shell-hi: #dcd5cb;
+  --shell: #c6bdb2;
+  --shell-lo: #aca296;
+  --side: #a1978b;
+  --side-lo: #857b70;
+  --key-wall: #9b9387;
   --ink: #2a2118;
   --ease-press: cubic-bezier(0.2, 0.9, 0.3, 1.3);
+  --tx: 0;
+  --ty: 0;
   position: relative;
   container-type: inline-size;
   width: 100%;
@@ -29,85 +38,36 @@
   white-space: nowrap;
 }
 
-/* ---- body ---- */
+/* ---- the body: a slab of aluminium, turned three-quarters like the product shot ---- */
 .body {
   position: absolute;
   z-index: 2;
-  top: 1cqw;
-  left: 9.5cqw;
-  width: 88cqw;
-  height: 91cqw;
-  /* turned a few degrees, as in the product shot: the left side of the case shows */
-  transform: perspective(240cqw) rotateY(7deg);
-  transform-origin: 30% 50%;
+  top: 1.5cqw;
+  left: 8.5cqw;
+  width: 86cqw;
+  height: 90cqw;
+  transform-style: preserve-3d;
+  transform-origin: 46% 60%;
+  transform: perspective(250cqw) rotateX(calc(5deg - var(--ty) * 5deg)) rotateY(calc(21deg + var(--tx) * 8deg));
+  transition: transform 900ms cubic-bezier(0.16, 0.84, 0.24, 1);
 }
 
 .wrap[data-variant="dock"] .body {
-  transform: perspective(240cqw) rotateY(5deg);
+  transform: perspective(250cqw) rotateX(calc(3deg - var(--ty) * 3deg)) rotateY(calc(14deg + var(--tx) * 5deg));
 }
 
-/* phones rasterise a 3D-turned layer at 1x: keep the device flat (and sharp) there */
-@media (max-width: 899px), (pointer: coarse) {
-  .body,
-  .wrap[data-variant="dock"] .body {
-    transform: none;
-  }
-}
-
-/* the left side of the case, seen a little from the side */
-.body::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 0.6cqw auto 0.4cqw -3cqw;
-  width: 12cqw;
-  border-radius: 7.4cqw 0 0 7.4cqw;
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0) 30%, rgba(0, 0, 0, 0.08) 70%),
-    linear-gradient(180deg, #aaa398, var(--side) 55%, #8a8378);
-  box-shadow:
-    inset 0.25cqw 0 0.2cqw rgba(255, 255, 255, 0.35),
-    inset 0 -0.6cqw 0.8cqw rgba(0, 0, 0, 0.2);
-}
-
-.side {
+/* stacked slabs: their edges add up to the side of the case */
+.slab {
   position: absolute;
   inset: 0;
+  border-radius: 7.4cqw;
+  transform: translateZ(var(--z));
+  background: linear-gradient(180deg, #d9d2c8 0%, var(--side) 7%, var(--side) 55%, var(--side-lo) 100%);
   pointer-events: none;
 }
 
-.sideSlots {
-  position: absolute;
-  top: 21cqw;
-  left: -1.9cqw;
-  width: 1.1cqw;
-  height: 9cqw;
-  border-radius: 1cqw;
-  background: repeating-linear-gradient(180deg, rgba(40, 34, 28, 0.55) 0 0.55cqw, transparent 0.55cqw 1.3cqw);
-  opacity: 0.8;
-}
-
-.sideButton {
-  position: absolute;
-  z-index: -1;
-  top: 9cqw;
-  left: -3.9cqw;
-  width: 2.4cqw;
-  height: 6.4cqw;
-  padding: 0;
-  border: 0;
-  border-radius: 1.2cqw 0.4cqw 0.4cqw 1.2cqw;
-  background: linear-gradient(90deg, var(--orange-hi), var(--orange) 50%, var(--orange-lo));
-  box-shadow:
-    inset 0.2cqw 0 0.15cqw rgba(255, 255, 255, 0.5),
-    -0.2cqw 0.3cqw 0.4cqw rgba(60, 30, 10, 0.35);
-  cursor: pointer;
-  transition: transform 120ms var(--ease-press);
-}
-
-.sideButton:active,
-.sideButton[data-pressed="true"] {
-  transform: translateX(0.5cqw);
+.slab:first-child {
+  background: linear-gradient(180deg, #b5ab9f, var(--side-lo));
 }
 
 .face {
@@ -115,23 +75,88 @@
   height: 100%;
   padding: 3.2cqw 3.4cqw 0 3.6cqw;
   border-radius: 7.4cqw;
+  transform: translateZ(6cqw);
   background:
     radial-gradient(120% 60% at 30% -10%, rgba(255, 255, 255, 0.55), transparent 55%),
     radial-gradient(80% 50% at 100% 105%, rgba(0, 0, 0, 0.1), transparent 60%),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
     linear-gradient(176deg, var(--shell-hi) 0%, var(--shell) 50%, var(--shell-lo) 100%);
   box-shadow:
-    inset 0 0.3cqw 0 rgba(255, 255, 255, 0.9),
-    inset 0.35cqw 0 0.3cqw rgba(255, 255, 255, 0.35),
+    /* a polished chamfer all round the face */
+    inset 0 0.3cqw 0 rgba(255, 255, 255, 0.95),
+    inset 0.35cqw 0 0.3cqw rgba(255, 255, 255, 0.4),
     inset -0.4cqw 0 0.5cqw rgba(0, 0, 0, 0.08),
-    inset 0 -0.7cqw 0.9cqw rgba(0, 0, 0, 0.16),
-    0 0.2cqw 0.3cqw rgba(0, 0, 0, 0.2);
+    inset 0 -0.7cqw 0.9cqw rgba(0, 0, 0, 0.16);
   user-select: none;
   -webkit-user-select: none;
 }
 
+/* light moves over the face as the device turns */
+.face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(70% 55% at calc(28% - var(--tx) * 40%) calc(10% - var(--ty) * 30%), rgba(255, 255, 255, 0.22), transparent 70%);
+  pointer-events: none;
+}
+
+/* the left side of the case, a real plane at right angles to the face */
+.side {
+  position: absolute;
+  left: 0;
+  top: 7.4cqw;
+  bottom: 7.4cqw;
+  width: 12cqw;
+  transform-origin: 0 50%;
+  transform: translateZ(-6cqw) rotateY(-90deg);
+  transform-style: preserve-3d;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.07), rgba(255, 255, 255, 0.06) 70%, rgba(255, 255, 255, 0.2)), linear-gradient(180deg, var(--side) 0%, var(--side-lo) 100%);
+}
+
+.sideSlots {
+  position: absolute;
+  top: 18cqw;
+  left: 50%;
+  width: 6cqw;
+  height: 10cqw;
+  margin-left: -3cqw;
+  border-radius: 1cqw;
+  background: repeating-linear-gradient(180deg, rgba(40, 34, 28, 0.55) 0 0.55cqw, transparent 0.55cqw 1.4cqw);
+  opacity: 0.85;
+}
+
+.sideButton {
+  position: absolute;
+  top: 3cqw;
+  left: 50%;
+  width: 6.4cqw;
+  height: 7.4cqw;
+  margin-left: -3.2cqw;
+  padding: 0;
+  border: 0;
+  border-radius: 1.4cqw;
+  transform: translateZ(1.1cqw);
+  background: linear-gradient(90deg, var(--orange-lo), var(--orange) 45%, var(--orange-hi));
+  box-shadow:
+    inset 0 0.25cqw 0.15cqw rgba(255, 255, 255, 0.45),
+    inset 0 -0.3cqw 0.3cqw rgba(110, 40, 5, 0.35);
+  cursor: pointer;
+  transition: transform 120ms var(--ease-press), filter 160ms ease;
+}
+
+.sideButton:hover {
+  filter: brightness(1.08);
+}
+
+.sideButton:active,
+.sideButton[data-pressed="true"] {
+  transform: translateZ(0.35cqw);
+}
+
 /* ---- screen ---- */
 .bezel {
+  position: relative;
   padding: 2.5cqw;
   border-radius: 4.6cqw;
   background:
@@ -155,14 +180,32 @@
   isolation: isolate;
 }
 
+/* glass: a soft reflection that slides as the device turns */
 .glare {
   position: absolute;
   inset: 0;
   z-index: 90;
   border-radius: inherit;
-  background: linear-gradient(128deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.04) 22%, rgba(255, 255, 255, 0) 38%);
+  background: linear-gradient(128deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.05) 20%, rgba(255, 255, 255, 0) 36%) calc(var(--tx) * -30%) calc(var(--ty) * -20%) / 140% 140% no-repeat;
   box-shadow: inset 0 0 1.6cqw rgba(0, 0, 0, 0.35);
   pointer-events: none;
+}
+
+/* silkscreen on the bezel: the model name follows the shape */
+.model {
+  position: absolute;
+  left: 3.4cqw;
+  bottom: 0.5cqw;
+  color: rgba(214, 206, 194, 0.5);
+  font: 600 1.05cqw/1.2 var(--font-room-mono), ui-monospace, monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.modelTall,
+.modelWide {
+  display: none;
 }
 
 /* ---- apps on the screen ---- */
@@ -235,6 +278,7 @@
   box-shadow: 0 0.35cqw 0 var(--ink);
   font: 700 2.2cqw/1 var(--font-room-sans), system-ui, sans-serif;
   cursor: pointer;
+  transition: transform 80ms ease, box-shadow 80ms ease;
 }
 
 .appBack:active {
@@ -286,15 +330,16 @@
 /* ---- controls ---- */
 .controls {
   position: relative;
-  height: 22cqw;
+  height: 23.4cqw;
 }
 
 .dpad {
   position: absolute;
   left: 3.4cqw;
-  top: 1.6cqw;
+  top: 1.4cqw;
   width: 19cqw;
   height: 19cqw;
+  --key: 7.2cqw;
 }
 
 .dkey,
@@ -304,44 +349,56 @@
   padding: 0;
   border: 0;
   cursor: pointer;
+  /* the key's own wall: how far it can travel */
+  --wall: 0.7cqw;
   background:
-    radial-gradient(90% 90% at 35% 25%, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0) 55%),
-    linear-gradient(180deg, #d9d5ce, #bdb7ae);
+    radial-gradient(90% 90% at 35% 25%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 55%),
+    linear-gradient(180deg, #dcd8d1, #bdb7ae);
   box-shadow:
-    inset 0 0.2cqw 0 rgba(255, 255, 255, 0.9),
+    inset 0 0.2cqw 0 rgba(255, 255, 255, 0.95),
     inset 0 -0.3cqw 0.3cqw rgba(0, 0, 0, 0.12),
-    0 0.55cqw 0 #9d968b,
-    0 0.8cqw 0.9cqw rgba(50, 40, 30, 0.35);
+    0 var(--wall) 0 var(--key-wall),
+    0 calc(var(--wall) + 0.35cqw) 0.9cqw rgba(50, 40, 30, 0.38);
   transition:
-    transform 90ms var(--ease-press),
-    box-shadow 90ms ease;
+    transform 70ms ease-out,
+    box-shadow 70ms ease-out,
+    filter 140ms ease;
   touch-action: manipulation;
+}
+
+.dkey:hover,
+.round:hover,
+.pillKey:hover {
+  filter: brightness(1.04);
 }
 
 .dkey {
   position: absolute;
-  width: 7.2cqw;
-  height: 7.2cqw;
+  width: var(--key);
+  height: var(--key);
   border-radius: 50%;
 }
 
-.dkey[data-dir="up"] { left: 5.9cqw; top: 0; }
-.dkey[data-dir="down"] { left: 5.9cqw; bottom: 0; }
-.dkey[data-dir="left"] { left: 0; top: 5.9cqw; }
-.dkey[data-dir="right"] { right: 0; top: 5.9cqw; }
+.dkey[data-dir="up"] { left: calc(50% - var(--key) / 2); top: 0; }
+.dkey[data-dir="down"] { left: calc(50% - var(--key) / 2); bottom: 0; }
+.dkey[data-dir="left"] { left: 0; top: calc(50% - var(--key) / 2); }
+.dkey[data-dir="right"] { right: 0; top: calc(50% - var(--key) / 2); }
 
+/* pressed: the key sinks into its wall, its shadow tucks in, and it springs back on release */
 .dkey:active,
 .dkey[data-pressed="true"],
 .round:active,
 .round[data-pressed="true"],
 .pillKey:active,
 .pillKey[data-pressed="true"] {
-  transform: translateY(0.45cqw);
+  transform: translateY(calc(var(--wall) - 0.12cqw));
   box-shadow:
-    inset 0 0.2cqw 0 rgba(255, 255, 255, 0.6),
-    inset 0 -0.15cqw 0.2cqw rgba(0, 0, 0, 0.1),
-    0 0.1cqw 0 #9d968b,
+    inset 0 0.2cqw 0 rgba(255, 255, 255, 0.55),
+    inset 0 0.3cqw 0.4cqw rgba(0, 0, 0, 0.1),
+    0 0.12cqw 0 var(--key-wall),
     0 0.2cqw 0.3cqw rgba(50, 40, 30, 0.3);
+  filter: brightness(0.97);
+  transition-duration: 40ms;
 }
 
 .dkey:focus-visible,
@@ -353,10 +410,28 @@
   outline-offset: 0.4cqw;
 }
 
+/* finger-sized hit areas around the small keys */
+@media (pointer: coarse) {
+  .dkey::after,
+  .round::after,
+  .pillKey::after {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
+
+  .pillKey {
+    position: relative;
+  }
+}
+
 .round {
   position: absolute;
-  left: 27cqw;
-  top: 7.4cqw;
+  left: 26.2cqw;
+  top: 7.2cqw;
   width: 7.4cqw;
   height: 7.4cqw;
   border-radius: 50%;
@@ -373,8 +448,8 @@
 
 .pill {
   position: absolute;
-  left: 36.2cqw;
-  top: 7.4cqw;
+  left: 35.2cqw;
+  top: 7.2cqw;
   display: flex;
   width: 15.6cqw;
   height: 7.4cqw;
@@ -407,7 +482,6 @@
 }
 
 .pillKey[aria-pressed="true"] .menuIcon {
-  background-color: transparent;
   filter: drop-shadow(0 0 0.4cqw var(--orange));
 }
 
@@ -420,18 +494,19 @@
 
 .grille {
   position: absolute;
-  left: 54.8cqw;
-  top: 7.5cqw;
+  left: 53.2cqw;
+  top: 7.4cqw;
   width: 6.4cqw;
   height: 6.4cqw;
   background: radial-gradient(circle, rgba(40, 34, 28, 0.78) 0 0.55cqw, transparent 0.62cqw) 0 0 / 2.13cqw 2.13cqw;
   filter: drop-shadow(0 0.12cqw 0 rgba(255, 255, 255, 0.7));
 }
 
+/* the knob: a knurled orange cylinder. The knurl and the mark turn, the light on it does not. */
 .knob {
   position: absolute;
-  right: 1cqw;
-  top: -0.6cqw;
+  right: 0.2cqw;
+  top: -0.8cqw;
   width: 17.4cqw;
   height: 17.4cqw;
   padding: 0;
@@ -443,35 +518,50 @@
 }
 
 .knob::before {
-  /* the knurled skirt */
+  /* the knurled skirt, seen a little from above, so its side shows below the cap */
   content: "";
   position: absolute;
   inset: 0;
   border-radius: 50%;
   background:
     radial-gradient(circle, transparent 60%, rgba(0, 0, 0, 0.18) 72%, transparent 73%),
-    repeating-conic-gradient(from var(--knob), #e7692a 0 3.2deg, #b9481a 3.2deg 6.4deg);
+    repeating-conic-gradient(from var(--knob), #ec6d2c 0 3.2deg, #b8471a 3.2deg 6.4deg);
   box-shadow:
-    0 1cqw 0 #a43f15,
-    0 1.6cqw 1.6cqw rgba(60, 30, 10, 0.45),
+    0 0.45cqw 0 #c9541d,
+    0 1.1cqw 0 #a43f15,
+    0 1.8cqw 1.8cqw rgba(60, 30, 10, 0.45),
     inset 0 0 0 0.3cqw rgba(0, 0, 0, 0.12);
-  transition: transform 160ms var(--ease-press);
+  transition: transform 160ms var(--ease-press), box-shadow 160ms ease;
+}
+
+.knob:hover::before {
+  box-shadow:
+    0 0.45cqw 0 #c9541d,
+    0 1.1cqw 0 #a43f15,
+    0 2cqw 2cqw rgba(60, 30, 10, 0.5),
+    inset 0 0 0 0.3cqw rgba(0, 0, 0, 0.12);
 }
 
 .knobCap {
   position: absolute;
   inset: 1.5cqw;
   border-radius: 50%;
-  background:
-    radial-gradient(80% 80% at 35% 28%, #ffb07a, var(--orange) 55%, #d9561d 100%);
+  background: radial-gradient(80% 80% at 35% 28%, #ffb07a, var(--orange) 55%, #d9561d 100%);
   box-shadow:
     inset 0 0.3cqw 0.2cqw rgba(255, 255, 255, 0.45),
-    inset 0 -0.5cqw 0.6cqw rgba(120, 40, 0, 0.35);
+    inset 0 -0.5cqw 0.6cqw rgba(120, 40, 0, 0.35),
+    0 0.2cqw 0.4cqw rgba(110, 40, 5, 0.35);
+}
+
+.knobMark {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
   transform: rotate(var(--knob));
   transition: transform 220ms var(--ease-press);
 }
 
-.knobCap::after {
+.knobMark::after {
   content: "";
   position: absolute;
   left: 50%;
@@ -480,24 +570,47 @@
   height: 3cqw;
   margin-left: -0.45cqw;
   border-radius: 1cqw;
-  background: rgba(120, 40, 0, 0.35);
+  background: rgba(120, 40, 0, 0.4);
+  box-shadow: 0 0.12cqw 0 rgba(255, 210, 170, 0.5);
 }
 
 .knob:active::before,
 .knob[data-pressed="true"]::before {
-  transform: translateY(0.3cqw);
+  transform: translateY(0.25cqw);
 }
 
 .knob:active {
   cursor: grabbing;
 }
 
+/* tiny silkscreen under the controls */
+.legend {
+  position: absolute;
+  inset: 0;
+  color: rgba(80, 72, 62, 0.55);
+  font: 600 1.05cqw/1 var(--font-room-mono), ui-monospace, monospace;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.legend span {
+  position: absolute;
+  top: 21.6cqw;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.legend [data-for="dpad"] { left: 12.9cqw; }
+.legend [data-for="round"] { left: 29.9cqw; }
+.legend [data-for="pill"] { left: 43cqw; }
+.legend [data-for="knob"] { left: 69.9cqw; }
+
 /* ---- lanyard, stand, shadow ---- */
 .lanyard {
   position: absolute;
-  z-index: 3;
-  left: -0.5cqw;
-  top: 20cqw;
+  left: -6.2cqw;
+  top: 13cqw;
   width: 14cqw;
   height: 82cqw;
   overflow: visible;
@@ -506,55 +619,406 @@
 }
 
 .cord,
-.cordBraid {
+.cordBody,
+.cordTwist,
+.cordShade,
+.cordShine {
   fill: none;
-  stroke-width: 9.5;
   stroke-linecap: round;
 }
 
 .cord {
-  stroke: #a9440f;
+  stroke: #9c3f10;
   stroke-width: 11.5;
 }
 
-.cordBraid {
-  stroke: url(#room-braid);
+.cordBody {
+  stroke: #e8692a;
+  stroke-width: 9.5;
+}
+
+.cordTwist {
+  stroke: #ffa86b;
+  stroke-width: 7.5;
+  stroke-linecap: butt;
+  stroke-dasharray: 2.2 3;
+}
+
+.cordShade {
+  stroke: rgba(120, 40, 5, 0.42);
+  stroke-width: 9.5;
+  stroke-linecap: butt;
+  stroke-dasharray: 1 4.2;
+  stroke-dashoffset: 2.6;
+}
+
+.cordShine {
+  stroke: rgba(255, 230, 205, 0.35);
+  stroke-width: 2.2;
+  transform: translate(-1.6px, 0);
 }
 
 .sleeve {
-  fill: #79746c;
+  fill: #7a756d;
   stroke: #57524b;
   stroke-width: 1.2;
 }
 
 .sleeveHi {
-  fill: rgba(255, 255, 255, 0.22);
+  fill: rgba(255, 255, 255, 0.24);
 }
 
+.lug {
+  fill: #8f877c;
+  stroke: #645d54;
+  stroke-width: 1.4;
+}
+
+/* the kickstand, hinged at the back and folded out */
 .stand {
   position: absolute;
-  z-index: 1;
-  left: 14cqw;
-  top: 58cqw;
-  width: 8.5cqw;
-  height: 37cqw;
-  border-radius: 1.4cqw;
-  transform: skewX(-17deg);
-  transform-origin: 0 0;
-  background: linear-gradient(90deg, #b0a99f, #8f887e);
-  box-shadow: inset 0.3cqw 0 0.2cqw rgba(255, 255, 255, 0.35);
+  left: 12cqw;
+  top: 46cqw;
+  width: 15cqw;
+  height: 50cqw;
+  border-radius: 2cqw;
+  transform-origin: 50% 0;
+  transform: translateZ(-6.2cqw) rotateX(-34deg);
+  background: linear-gradient(180deg, #a59b8f, #82786d);
+  box-shadow: inset 0.3cqw 0 0.2cqw rgba(255, 255, 255, 0.3);
 }
 
 .shadow {
   position: absolute;
   z-index: 0;
-  left: 6cqw;
-  right: 1cqw;
-  top: 88cqw;
-  height: 10cqw;
+  left: 2cqw;
+  right: 2cqw;
+  top: 85cqw;
+  height: 13cqw;
   border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(70, 52, 34, 0.42), rgba(70, 52, 34, 0.14) 60%, transparent);
-  filter: blur(1cqw);
+  background: radial-gradient(closest-side, rgba(70, 52, 34, 0.42), rgba(70, 52, 34, 0.14) 62%, transparent);
+  filter: blur(1.2cqw);
+  transform: translateX(calc(var(--tx) * -3cqw));
+  transition: transform 900ms cubic-bezier(0.16, 0.84, 0.24, 1);
+}
+
+/* ---- flat: touch screens and narrow windows ----
+ * Chrome rasterises 3D-turned layers at 1x on phones and the painting goes soft, so the device
+ * faces you there. Its thickness shows as a lip under the face instead. */
+@media (max-width: 899px), (hover: none), (pointer: coarse) {
+  .body,
+  .wrap[data-variant="dock"] .body {
+    transform: none;
+    transform-style: flat;
+  }
+
+  .face {
+    transform: none;
+    box-shadow:
+      inset 0 0.3cqw 0 rgba(255, 255, 255, 0.95),
+      inset 0.35cqw 0 0.3cqw rgba(255, 255, 255, 0.4),
+      inset -0.4cqw 0 0.5cqw rgba(0, 0, 0, 0.08),
+      inset 0 -0.7cqw 0.9cqw rgba(0, 0, 0, 0.16),
+      0 1.8cqw 0 var(--side),
+      0 2.2cqw 0 var(--side-lo);
+  }
+
+  .slab,
+  .stand {
+    display: none;
+  }
+
+  .side {
+    left: -1.6cqw;
+    top: 9cqw;
+    bottom: auto;
+    width: 1.6cqw;
+    height: 9cqw;
+    transform: none;
+    background: none;
+  }
+
+  .sideSlots {
+    display: none;
+  }
+
+  .sideButton {
+    inset: 0;
+    width: auto;
+    height: auto;
+    margin: 0;
+    border-radius: 1.2cqw 0.3cqw 0.3cqw 1.2cqw;
+    transform: none;
+    background: linear-gradient(90deg, var(--orange-hi), var(--orange) 50%, var(--orange-lo));
+  }
+
+  .sideButton::after {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+
+  .sideButton:active,
+  .sideButton[data-pressed="true"] {
+    transform: translateX(0.45cqw);
+  }
+
+  .lanyard {
+    left: -8.5cqw;
+    top: 19cqw;
+  }
+
+  .shadow {
+    top: 88cqw;
+    left: 8cqw;
+    right: 2cqw;
+    transform: none;
+  }
+}
+
+/* ---- tall: a phone held upright gets a pocket handheld ---- */
+@media (max-width: 619px) and (orientation: portrait) {
+  .wrap[data-variant="hero"] {
+    aspect-ratio: 100 / 121;
+  }
+
+  .wrap[data-variant="hero"] .body {
+    top: 0.5cqw;
+    left: 3.2cqw;
+    width: 93.6cqw;
+    height: 114.5cqw;
+  }
+
+  .wrap[data-variant="hero"] .face {
+    padding: 4.2cqw 4.6cqw 0;
+    border-radius: 9cqw;
+  }
+
+  .wrap[data-variant="hero"] .bezel {
+    padding: 2.6cqw;
+    border-radius: 5.2cqw;
+  }
+
+  .wrap[data-variant="hero"] .screen {
+    border-radius: 1.8cqw;
+  }
+
+  .wrap[data-variant="hero"] .model {
+    left: 4cqw;
+    bottom: 0.6cqw;
+    font-size: 1.5cqw;
+  }
+
+  .wrap[data-variant="hero"] .controls {
+    height: 40cqw;
+  }
+
+  .wrap[data-variant="hero"] .dpad {
+    left: 0.8cqw;
+    top: 2.6cqw;
+    width: 33cqw;
+    height: 33cqw;
+    --key: 13cqw;
+  }
+
+  .wrap[data-variant="hero"] .dkey,
+  .wrap[data-variant="hero"] .round,
+  .wrap[data-variant="hero"] .pillKey {
+    --wall: 1.1cqw;
+  }
+
+  .wrap[data-variant="hero"] .round {
+    left: 38.2cqw;
+    top: 3.4cqw;
+    width: 12cqw;
+    height: 12cqw;
+  }
+
+  .wrap[data-variant="hero"] .round i {
+    width: 1.8cqw;
+    height: 1.8cqw;
+  }
+
+  .wrap[data-variant="hero"] .pill {
+    left: 34.4cqw;
+    top: 19.4cqw;
+    width: 19.6cqw;
+    height: 10.4cqw;
+    border-radius: 6cqw;
+  }
+
+  .wrap[data-variant="hero"] .pillKey:first-child {
+    border-radius: 6cqw 1.2cqw 1.2cqw 6cqw;
+  }
+
+  .wrap[data-variant="hero"] .pillKey:last-child {
+    border-radius: 1.2cqw 6cqw 6cqw 1.2cqw;
+  }
+
+  .wrap[data-variant="hero"] .menuIcon {
+    width: 3.2cqw;
+    height: 2.5cqw;
+    background-size: 100% 0.45cqw;
+  }
+
+  .wrap[data-variant="hero"] .stopIcon {
+    width: 2.6cqw;
+    height: 2.6cqw;
+  }
+
+  .wrap[data-variant="hero"] .grille {
+    left: 39.6cqw;
+    top: 32.4cqw;
+    width: 9cqw;
+    height: 4.6cqw;
+    background-size: 3cqw 2.3cqw;
+    background-image: radial-gradient(circle, rgba(40, 34, 28, 0.7) 0 0.6cqw, transparent 0.68cqw);
+  }
+
+  .wrap[data-variant="hero"] .knob {
+    right: 0.4cqw;
+    top: 3.2cqw;
+    width: 29cqw;
+    height: 29cqw;
+  }
+
+  .wrap[data-variant="hero"] .knobCap {
+    inset: 2.4cqw;
+  }
+
+  .wrap[data-variant="hero"] .knobMark::after {
+    width: 1.4cqw;
+    height: 4.6cqw;
+    margin-left: -0.7cqw;
+  }
+
+  .wrap[data-variant="hero"] .lanyard,
+  .wrap[data-variant="hero"] .legend {
+    display: none;
+  }
+
+  .wrap[data-variant="hero"] .side {
+    left: -1.9cqw;
+    top: 14cqw;
+    width: 1.9cqw;
+    height: 11cqw;
+  }
+
+  .wrap[data-variant="hero"] .shadow {
+    top: 108cqw;
+    left: 6cqw;
+    right: 6cqw;
+    height: 12cqw;
+  }
+
+  .wrap[data-variant="hero"] .modelSquare {
+    display: none;
+  }
+
+  .wrap[data-variant="hero"] .modelTall {
+    display: inline;
+  }
+}
+
+/* ---- wide: a phone held sideways gets the wide edition ---- */
+@media (orientation: landscape) and (max-height: 520px) {
+  .wrap[data-variant="hero"] {
+    aspect-ratio: 100 / 51;
+  }
+
+  .wrap[data-variant="hero"] .body {
+    top: 0.5cqw;
+    left: 2cqw;
+    width: 96cqw;
+    height: 47.6cqw;
+  }
+
+  .wrap[data-variant="hero"] .face {
+    padding: 3cqw 21cqw;
+    border-radius: 9cqw;
+  }
+
+  .wrap[data-variant="hero"] .bezel {
+    padding: 2.2cqw;
+    border-radius: 4.4cqw;
+  }
+
+  .wrap[data-variant="hero"] .progress {
+    display: none;
+  }
+
+  .wrap[data-variant="hero"] .controls {
+    position: absolute;
+    inset: 0;
+    height: auto;
+  }
+
+  .wrap[data-variant="hero"] .dpad {
+    left: 3.2cqw;
+    top: 7cqw;
+    width: 15cqw;
+    height: 15cqw;
+    --key: 5.9cqw;
+  }
+
+  .wrap[data-variant="hero"] .pill {
+    left: 4cqw;
+    top: 30cqw;
+    width: 13.4cqw;
+    height: 6cqw;
+  }
+
+  .wrap[data-variant="hero"] .knob {
+    right: 3.2cqw;
+    top: 5.4cqw;
+    width: 14.6cqw;
+    height: 14.6cqw;
+  }
+
+  .wrap[data-variant="hero"] .round {
+    left: auto;
+    right: 7.2cqw;
+    top: 27.6cqw;
+    width: 6.6cqw;
+    height: 6.6cqw;
+  }
+
+  .wrap[data-variant="hero"] .grille {
+    left: auto;
+    right: 7.6cqw;
+    top: 38cqw;
+    width: 6cqw;
+    height: 4cqw;
+    background-size: 2cqw 2cqw;
+  }
+
+  .wrap[data-variant="hero"] .lanyard,
+  .wrap[data-variant="hero"] .legend {
+    display: none;
+  }
+
+  .wrap[data-variant="hero"] .side {
+    top: 6cqw;
+    height: 7cqw;
+  }
+
+  .wrap[data-variant="hero"] .shadow {
+    top: 44cqw;
+    left: 4cqw;
+    right: 4cqw;
+    height: 7cqw;
+  }
+
+  .wrap[data-variant="hero"] .modelSquare {
+    display: none;
+  }
+
+  .wrap[data-variant="hero"] .modelWide {
+    display: inline;
+  }
 }
 
 /* ---- docked in a post's margin ---- */
@@ -563,12 +1027,14 @@
 }
 
 .wrap[data-variant="dock"] .lanyard,
-.wrap[data-variant="dock"] .stand {
+.wrap[data-variant="dock"] .stand,
+.wrap[data-variant="dock"] .legend,
+.wrap[data-variant="dock"] .model {
   display: none;
 }
 
 .wrap[data-variant="dock"] .body {
-  left: 6cqw;
+  left: 7cqw;
 }
 
 .wrap[data-variant="dock"] .controls {
@@ -619,8 +1085,6 @@
     height: auto;
   }
 
-  .wrap[data-variant="dock"] .body::before,
-  .wrap[data-variant="dock"] .sideButton,
   .wrap[data-variant="dock"] .side,
   .wrap[data-variant="dock"] .controls,
   .wrap[data-variant="dock"] .shadow {
@@ -630,6 +1094,10 @@
   .wrap[data-variant="dock"] .face {
     padding: 1.6cqw 1.6cqw 1.8cqw;
     border-radius: 4.4cqw;
+    box-shadow:
+      inset 0 0.3cqw 0 rgba(255, 255, 255, 0.95),
+      inset 0 -0.7cqw 0.9cqw rgba(0, 0, 0, 0.16),
+      0 1cqw 0 var(--side);
   }
 
   .wrap[data-variant="dock"] .bezel {
@@ -662,7 +1130,9 @@
     animation: none;
   }
 
-  .knobCap,
+  .body,
+  .shadow,
+  .knobMark,
   .knob::before {
     transition: none;
   }
