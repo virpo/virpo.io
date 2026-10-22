@@ -13,7 +13,7 @@ from pathlib import Path
 
 HOME = Path.home()
 NOW = time.time()
-OUT = {"probe": 1, "os": sys.platform}
+OUT = {"probe": 2, "os": sys.platform}
 
 
 def exists(p):
@@ -99,6 +99,10 @@ codex_cfg = read("~/.codex/config.toml")
 OUT["settings"] = {
     "claude_hooks": hooks,
     "allow_rules": len(perms.get("allow") or []), "deny_rules": len(perms.get("deny") or []),
+    "deny_rules_on_secrets": sum(1 for r in perms.get("deny") or [] if re.search(r"\.env|secret|\.ssh|\.aws|credential|\.pem|\.key\b|token", str(r), re.I)),
+    "sandbox_network_limited": bool(re.search(r"allowedDomains|allowed_domains|deniedDomains", json.dumps((cs.get("sandbox") or {}).get("network") or {}))),
+    "codex_network_off": bool(re.search(r"^\s*network_access\s*=\s*false", codex_cfg, re.M)),
+    "voice_on": bool(cs.get("voice")),
     "default_mode": perms.get("defaultMode"), "skip_danger_prompt": bool(cs.get("skipDangerousModePermissionPrompt")),
     "status_line": bool(cs.get("statusLine")), "sandbox": bool((cs.get("sandbox") or {}).get("enabled")),
     "claude_model": cs.get("model"), "claude_effort": cs.get("effortLevel"),
@@ -154,7 +158,6 @@ def rules_info(p):
     t = read(p)
     return {"lines": lines(p), "symlink": p.is_symlink(), "imports_other": bool(re.search(r"^@\S+\.md", t, re.M)),
             "links_docs": len(re.findall(r"\(([^)]+\.md)\)|`([\w./-]+\.md)`", t)),
-            "mentions_attribution": bool(re.search(r"co-authored|attribution|generated with", t, re.I)),
             "mentions_notify": bool(re.search(r"\bnotify\b|notification|terminal-notifier", t, re.I)),
             "mentions_stop_ask": bool(re.search(r"stop and ask|ask (me|the user) (before|when)|if (you are|you're) stuck", t, re.I)),
             "mentions_risk_paths": bool(re.search(r"\b(auth|migration|payment|security|critical)\b.*\b(review|read|human)\b", t, re.I)),
@@ -201,6 +204,7 @@ for repo in repos:
     if has(".devcontainer", ".devcontainer.json"): R["devcontainer"] += 1
     if has("sgconfig.yml", ".semgrep.yml", ".semgrep", "eslint-rules", "eslint-local-rules.js", "lint-rules", "scripts/check"): R["custom_checks"] += 1
     if any(repo.glob("QA*.md")) or any(repo.glob("RELEASE*.md")) or has("docs/release.md", "RELEASING.md"): R["release_qa"] += 1
+    if re.search(r"\b(claude|codex|roborev|opencode|gemini)\b", read(repo / ".git" / "hooks" / "post-commit", 100_000)): R["post_commit_agent_hook"] += 1
     wt = repo / ".git" / "worktrees"
     n_wt = len(names(wt)) if wt.is_dir() else 0
     R["max_worktrees"] = max(R["max_worktrees"], n_wt + 1)
@@ -223,6 +227,14 @@ for repo in repos[:80]:
     hits = run(["git", "-C", str(repo), "grep", "-l", "-E", LOOP_RX, "--", "*.py", "*.ts", "*.js", "*.go", "*.rs", "*.swift", ":!node_modules", ":!vendor"], timeout=10)
     if hits.strip() and re.search(r'"(anthropic|openai|@anthropic-ai/sdk|@ai-sdk/[\w-]+|ai)"\s*:|^\s*(anthropic|openai)\b', read(repo / "package.json", 300_000) + read(repo / "pyproject.toml", 300_000) + read(repo / "requirements.txt", 100_000), re.M):
         R["own_agent_loop"] += 1
+# tiny tools of your own: repos with a handful of commits and no remote (the 100 most recent)
+for repo in repos[:100]:
+    n = run(["git", "-C", str(repo), "rev-list", "--count", "HEAD"]).strip()
+    if n.isdigit() and int(n) <= 15 and not git_remote(repo):
+        R["small_repos_without_remote"] += 1
+hooks_path = run(["git", "config", "--global", "core.hooksPath"]).strip()
+if hooks_path and re.search(r"\b(claude|codex|roborev|opencode|gemini)\b", read(Path(hooks_path).expanduser() / "post-commit", 100_000)):
+    R["post_commit_agent_hook"] += 1
 bots = set()
 for repo in repos[:15]:
     for a in run(["git", "-C", str(repo), "log", "-300", "--format=%an"]).splitlines():
@@ -232,17 +244,6 @@ R["own_bot_authors"] = len(bots)
 OUT["repos"] = dict(R)
 OUT["repo_rules_files"] = rules_hist[:15]
 
-# commits vs what the rules say (level 90): AI trailers in your last 100 commits across your 10 most recent repos
-me = run(["git", "config", "--global", "user.email"]).strip()
-trailers = commits = 0
-for repo in repos[:10]:
-    log = run(["git", "-C", str(repo), "log", "-100", f"--author={me}" if me else "--all", "--format=%B%x00"])
-    for msg in log.split("\x00"):
-        if msg.strip():
-            commits += 1
-            if re.search(r"co-authored-by:.*(claude|codex|anthropic|openai|copilot|cursor|gemini)|generated with \[?(claude|codex)", msg, re.I):
-                trailers += 1
-OUT["commits"] = {"checked": commits, "with_ai_trailer": trailers}
 
 # ---------------------------------------------------------------- prompt history (counts only)
 P = []   # (timestamp seconds, session/project key, text)
@@ -278,11 +279,14 @@ PROMPT_PATTERNS = {
     "review": r"\breview\b", "models_by_role": r"\b(fable|opus|sonnet|haiku|gpt|sol|codex|gemini)\b.{0,40}\b(plan|implement|review|design|orchestrat|decide|code)",
     "relay_other_agent": r"^(codex|claude|gpt|gemini|cursor)( is)? (says?|said|thinks|replied)|\[Pasted text.{0,40}(codex|claude)",
     "speech_tells": r"\b(um+|uh+|erm|you know what i mean)\b", "please": r"\bplease\b",
+    "gives_reason": r"\bbecause\b|\bso that\b|the goal is|the reason (is|being)|\bi want .{3,60} so\b",
+    "decide_or_critique": r"\bshould i\b|help me (decide|choose|pick)|what am i missing|push back|poke holes|devil'?s advocate|pros and cons|what would you (do|pick|choose)",
+    "about_the_machine": r"disk space|free up (space|storage)|clear (some )?storage|(mac|computer|laptop) is (slow|hot|full)|brew doctor|my \$?path\b|fans? (are|is) loud",
 }
 SLASH = ["clear", "new", "compact", "rewind", "btw", "effort", "model", "usage", "stats", "cost", "context", "loop", "schedule",
          "goal", "review", "code-review", "plan", "init", "resume", "agents", "hooks", "mcp", "remote-control", "insights"]
 pc = Counter()
-long_prompts = 0
+long_prompts = prompts_40w = 0
 for _, _, t in P:
     for k, rx in PROMPT_PATTERNS.items():
         if re.search(rx, t, re.M | re.I):
@@ -292,6 +296,8 @@ for _, _, t in P:
         pc["/" + m.group(1)] += 1
     if len(t.split()) > 150:
         long_prompts += 1
+    if len(t.split()) > 40:
+        prompts_40w += 1
 
 def in_git(path):
     p = Path(path)
@@ -313,7 +319,7 @@ for ts, key, _ in P:
     if ts: win[int(ts // 600)].add(key)
 both = sum(1 for s in win.values() if len(s) >= 2)
 OUT["history"] = {
-    "prompts": len(P), "sessions": len({k for _, k, _ in P}), "long_prompts_150w": long_prompts, "project_folders_outside_git": outside,
+    "prompts": len(P), "sessions": len({k for _, k, _ in P}), "long_prompts_150w": long_prompts, "prompts_over_40w": prompts_40w, "project_folders_outside_git": outside,
     "first": time.strftime("%Y-%m-%d", time.localtime(P[0][0])) if P and P[0][0] else None,
     "counts": dict(pc), "ten_min_windows_with_2plus_sessions": both, "max_sessions_in_ten_min": max((len(s) for s in win.values()), default=0),
 }
@@ -340,6 +346,7 @@ SHELL = {   # counted only inside commands an agent ran
     "video": ["remotion", "hyperframes", "ffmpeg "], "hardware": ["esptool", "arduino-cli", "adb ", "simctl", "idevice", "picotool"],
     "skip_permissions": ["--dangerously-skip-permissions", "--yolo", "--full-auto"],
     "cad_tools": ["openscad", "cadquery", "build123d", "blender "], "insights": ["/insights"],
+    "machine_care": ["du -sh", "df -h", "brew doctor", "brew cleanup", "diskutil", "ncdu"],
 }
 CMD_RX = re.compile(r'"(?:command|cmd)":\s*"((?:[^"\\]|\\.){1,6000})"|\\"command\\":\[((?:[^\]]){1,6000})\]')
 CLIS = ["gh", "aws", "gcloud", "az", "vercel", "netlify", "stripe", "supabase", "wrangler", "fly", "heroku", "kubectl", "doctl", "railway", "firebase", "eas"]
@@ -393,7 +400,7 @@ for d in ("/Applications", "~/Applications"):
 WANT = r"lm studio|ollama|jan|openclaw|wispr|superwhisper|macwhisper|voiceink|openwhispr|aqua|spokenly|handy|willow|codexbar|cmux|conductor|ghostty|warp|iterm|termius|blink|stream deck|elgato|claude|chatgpt|codex|cursor|docker|orbstack|tailscale|raycast|cleanshot"
 OUT["apps"] = sorted(a for a in apps if re.search(WANT, a, re.I))
 OUT["bins"] = sorted(b for b in ("tmux", "zellij", "mosh", "terminal-notifier", "ccusage", "docker", "gh", "ast-grep", "sg", "ffmpeg", "agent-browser",
-                                    "ollama", "lms", "llama-server", "mlx_lm.generate", "pi", "openclaw", "hermes", "openscad") if shutil.which(b))
+                                    "ollama", "lms", "llama-server", "mlx_lm.generate", "pi", "openclaw", "hermes", "openscad", "op", "doppler", "infisical", "roborev") if shutil.which(b))
 la = [n for n in names("~/Library/LaunchAgents") if re.search(r"\b(claude|codex|opencode|gemini|cursor-agent)\b", read(Path("~/Library/LaunchAgents").expanduser() / n, 100_000), re.I)]
 cron = [l for l in run(["crontab", "-l"]).splitlines() if re.search(r"\b(claude|codex|opencode|gemini)\b", l)]
 OUT["schedulers"] = {"launch_agents_running_an_agent": len(la), "cron_lines_running_an_agent": len(cron),
