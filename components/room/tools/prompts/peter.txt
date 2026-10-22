@@ -1,0 +1,13 @@
+Use your image generation tool to create ONE image, then copy the resulting PNG file to this absolute path:
+<art dir>/peter-sheet.png
+
+Attached: mock-screen.png (target style and the camera angle: a man at a desk seen from behind at three-quarters from above), peter-character-ink.jpg and peter-photo.png (this is the man: short dark-brown hair with faded short sides and a longer textured top swept up, fair skin, prominent ears, big friendly grin, sage-green hoodie with drawstrings, dark jeans, white sneakers).
+Paint a SPRITE SHEET of this man as a tiny figure in the room illustration style: fine black ink line, soft watercolor, same scale and same camera as the man in mock-screen.png (seen from above at three-quarters, from behind and slightly to the left, facing a desk that is up and to the right, which is NOT drawn). In every pose he sits on the SAME simple wooden desk chair with a slatted back, drawn identically in every cell.
+Layout: a 3 columns x 2 rows grid on a perfectly flat solid magenta background (#FF00FF, no shadows on the background, no floor, no desk, no grid lines). Each figure centered in its cell, all figures at the same size and position within the cell, never touching each other.
+1. typing on a laptop (laptop not drawn, his hands forward on an invisible desk), seen from behind three-quarters.
+2. leaning back in the chair holding a white mug near his mouth.
+3. turned his head to the right, looking out of a window, hands on the invisible desk.
+4. reading an open book held in both hands in front of him.
+5. reading, turning a page of the open book (one page mid-air).
+6. turned around in the chair toward the viewer, big grin, waving with his right hand raised.
+Landscape 1536x1024. No text.

@@ -1,0 +1,594 @@
+/* The painted room. Everything is positioned in % of the plate, so one scene renders at any size. */
+
+.viewport {
+  --ink: #2a2118;
+  --orange: #f26a1f;
+  --paper: #fbf7ef;
+  --px: 0;
+  --py: 0;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  container-type: inline-size;
+  background: #e8dcc6;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+}
+
+.viewport[data-framed] .scene {
+  inset: auto;
+}
+
+.plate {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.obj {
+  position: absolute;
+  z-index: 3;
+  transform-origin: 50% 92%;
+  transition:
+    transform 260ms cubic-bezier(0.2, 0.9, 0.3, 1.25),
+    filter 200ms ease;
+  pointer-events: none;
+}
+
+.obj > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* notebooks get a soft contact shadow on the desk */
+.obj[data-obj^="post-"] > img {
+  filter: drop-shadow(0.12cqw 0.2cqw 0.16cqw rgba(70, 40, 10, 0.35));
+}
+
+/* ---- the window: view, trains, then the painted frame on top ---- */
+.windowObj {
+  z-index: 2;
+  transform-origin: 50% 60%;
+}
+
+.glass {
+  position: absolute;
+  overflow: hidden;
+  background: #bcd6ea;
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+}
+
+.outside {
+  position: absolute;
+  transform: translate3d(calc(var(--px) * -1.6%), calc(var(--py) * -1.2%), 0);
+  transition: transform 600ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.outside > img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.glassShine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 32%, rgba(255, 255, 255, 0) 64%, rgba(255, 255, 255, 0.12));
+  pointer-events: none;
+}
+
+.frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.train {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  animation: track var(--ms) linear forwards;
+}
+
+.train > img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  max-width: none;
+  animation: carriage var(--ms) linear forwards;
+}
+
+.train[data-dir="-1"] {
+  scale: -1 1;
+}
+
+@keyframes track {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes carriage {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+/* ---- the printer prints, slowly ---- */
+.part {
+  position: absolute;
+}
+
+.part > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  clip-path: inset(var(--grow, 0%) 0 0 0);
+  animation: print 48s steps(48) infinite;
+}
+
+.nozzle {
+  position: absolute;
+  left: 0;
+  width: 26%;
+  height: 7%;
+  border-radius: 2px;
+  background: #ffcf8a;
+  box-shadow: 0 0 0.5cqw 0.2cqw rgba(255, 170, 70, 0.8);
+  animation:
+    nozzleY 48s steps(48) infinite,
+    nozzleX 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes print {
+  0% { clip-path: inset(100% 0 0 0); }
+  92% { clip-path: inset(0 0 0 0); }
+  100% { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes nozzleY {
+  0% { top: 96%; opacity: 1; }
+  92% { top: -4%; opacity: 1; }
+  93%, 100% { top: -4%; opacity: 0; }
+}
+
+@keyframes nozzleX {
+  from { left: 4%; }
+  to { left: 70%; }
+}
+
+/* ---- Peter ---- */
+.pose {
+  position: absolute;
+  display: block;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.pose[data-on="true"] {
+  opacity: 1;
+}
+
+.obj[data-pose="typing"] .pose[data-on="true"] {
+  animation: typing 0.42s steps(2) infinite;
+}
+
+@keyframes typing {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-0.35%); }
+}
+
+/* ---- small life ---- */
+.sway,
+.plant {
+  animation: sway 7s ease-in-out infinite alternate;
+  transform-origin: 50% 100%;
+}
+
+.plant {
+  z-index: 9;
+  animation-duration: 9s;
+}
+
+@keyframes sway {
+  from { rotate: -0.5deg; }
+  to { rotate: 0.6deg; }
+}
+
+.cat {
+  z-index: 4;
+  transform-origin: 50% 90%;
+  animation: breathe 3.6s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  50% { scale: 1.018 1.035; }
+}
+
+.steam {
+  position: absolute;
+  z-index: 8;
+  pointer-events: none;
+}
+
+.steam i {
+  position: absolute;
+  bottom: 0;
+  left: 38%;
+  width: 26%;
+  height: 70%;
+  border-radius: 50%;
+  border-left: 0.16cqw solid rgba(255, 255, 255, 0.85);
+  filter: blur(0.12cqw);
+  opacity: 0;
+  animation: steam 3.4s ease-out infinite;
+}
+
+.steam i:nth-child(2) {
+  left: 18%;
+  animation-delay: 1.1s;
+}
+
+.steam i:nth-child(3) {
+  left: 56%;
+  animation-delay: 2.2s;
+}
+
+@keyframes steam {
+  0% { opacity: 0; transform: translateY(20%) scaleY(0.6); }
+  30% { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(-40%) scaleY(1.1) skewX(-12deg); }
+}
+
+/* ---- light over the day ---- */
+.light {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  transition: background-color 1.2s ease;
+}
+
+.light i {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  mix-blend-mode: screen;
+}
+
+.lamp {
+  width: 34%;
+  height: 40%;
+  transform: translate(-50%, -30%);
+  background: radial-gradient(closest-side, rgba(255, 196, 110, 0.75), rgba(255, 160, 70, 0.25) 55%, transparent);
+}
+
+.screenGlow {
+  width: 18%;
+  height: 20%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(closest-side, rgba(150, 200, 255, 0.55), transparent);
+}
+
+.viewport[data-time="morning"] .light {
+  background: rgba(255, 236, 214, 0.12);
+  mix-blend-mode: soft-light;
+}
+
+.viewport[data-time="evening"] .light {
+  background: linear-gradient(200deg, rgba(255, 150, 80, 0.32), rgba(150, 70, 90, 0.28));
+  mix-blend-mode: multiply;
+}
+
+.viewport[data-time="evening"] .glass {
+  filter: sepia(0.35) saturate(1.3) hue-rotate(-14deg) brightness(0.92);
+}
+
+.viewport[data-time="night"] .light {
+  background: rgba(36, 44, 92, 0.66);
+  mix-blend-mode: multiply;
+}
+
+.viewport[data-time="night"] .light i {
+  opacity: 1;
+}
+
+.viewport[data-time="night"] .glass {
+  filter: brightness(0.66) saturate(0.6) contrast(1.04);
+}
+
+.viewport[data-time="night"] .glassShine {
+  background: linear-gradient(180deg, rgba(40, 52, 120, 0.42), rgba(60, 60, 110, 0.18));
+  mix-blend-mode: multiply;
+}
+
+/* ---- hover: dim the room, lift the object, trace its own alpha in ink and orange ---- */
+.dim {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background: rgba(30, 22, 14, 0.46);
+  opacity: 0;
+  transition: opacity 220ms ease;
+  pointer-events: none;
+}
+
+.viewport[data-active] .dim {
+  opacity: 1;
+}
+
+.obj.lit,
+.viewport[data-active="peter"] .obj[data-obj="peter"],
+.viewport[data-active="post-0"] .obj[data-obj="post-0"],
+.viewport[data-active="post-1"] .obj[data-obj="post-1"],
+.viewport[data-active="post-2"] .obj[data-obj="post-2"],
+.viewport[data-active="bookshelf"] .obj[data-obj="bookshelf"],
+.viewport[data-active="window"] .obj[data-obj="window"],
+.viewport[data-active="mirror"] .obj[data-obj="mirror"],
+.viewport[data-active="kana"] .obj[data-obj="kana"],
+.viewport[data-active="radio"] .obj[data-obj="radio"],
+.viewport[data-active="hydrangea"] .obj[data-obj="hydrangea"],
+.viewport[data-active="printer"] .obj[data-obj="printer"],
+.viewport[data-active="arcade"] .obj[data-obj="arcade"],
+.viewport[data-active="tv"] .obj[data-obj="tv"],
+.viewport[data-active="deck"] .obj[data-obj="deck"],
+.viewport[data-active="clay"] .obj[data-obj="clay"],
+.viewport[data-active="cork"] .obj[data-obj="cork"],
+.viewport[data-active="aiposter"] .obj[data-obj="aiposter"] {
+  z-index: 30;
+  transform: translateY(-1.6%) scale(1.07);
+  filter: drop-shadow(0.16cqw 0 0 #fff) drop-shadow(-0.16cqw 0 0 #fff) drop-shadow(0 0.16cqw 0 #fff) drop-shadow(0 -0.16cqw 0 #fff)
+    drop-shadow(0.2cqw 0 0 var(--orange)) drop-shadow(-0.2cqw 0 0 var(--orange)) drop-shadow(0 0.2cqw 0 var(--orange)) drop-shadow(0 -0.2cqw 0 var(--orange))
+    drop-shadow(0 1cqw 1cqw rgba(20, 12, 4, 0.45));
+  animation: none;
+}
+
+/* big flat things lift less */
+.viewport[data-active="window"] .obj[data-obj="window"],
+.viewport[data-active="kana"] .obj[data-obj="kana"],
+.viewport[data-active="cork"] .obj[data-obj="cork"],
+.viewport[data-active="aiposter"] .obj[data-obj="aiposter"],
+.viewport[data-active="peter"] .obj[data-obj="peter"] {
+  transform: translateY(-1%) scale(1.035);
+}
+
+/* the d-pad cursor bobs a little so it reads as a game selection */
+.viewport[data-active] .obj[data-obj] .pose[data-on="true"] {
+  animation: none;
+}
+
+/* ---- Fig. tags ---- */
+.tags {
+  position: absolute;
+  inset: 0;
+  z-index: 34;
+  pointer-events: none;
+}
+
+.tag {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  min-width: 2.4cqw;
+  height: 2.4cqw;
+  padding: 0 0.45cqw;
+  transform: translate(-50%, -50%);
+  border: 0.18cqw solid var(--ink);
+  border-radius: 99px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 600 1.3cqw/1 var(--font-room-mono), ui-monospace, monospace;
+  letter-spacing: -0.02em;
+  box-shadow: 0 0.2cqw 0 rgba(42, 33, 24, 0.35);
+  opacity: 0.72;
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease,
+    background-color 200ms ease;
+  animation: tagPing 10s ease-in-out infinite;
+}
+
+/* a gentle periodic shimmer: the tags pop one after another every few seconds */
+@keyframes tagPing {
+  0%, 84%, 100% { transform: translate(-50%, -50%) scale(1); }
+  88% { transform: translate(-50%, -50%) scale(1.28); background: #fff4c9; }
+  92% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.viewport:hover .tag {
+  opacity: 1;
+}
+
+.viewport[data-active] .tag {
+  opacity: 0;
+}
+
+.viewport[data-active] .tag[data-on="true"] {
+  opacity: 1;
+  background: var(--orange);
+  border-color: #fff;
+  color: #fff;
+  transform: translate(-50%, -50%) scale(1.15);
+  animation: none;
+}
+
+.viewport[data-tags="on"] .tag {
+  opacity: 1;
+  min-width: 3.6cqw;
+  height: 3.6cqw;
+  font-size: 1.9cqw;
+}
+
+/* ---- hit areas ---- */
+.hits {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+}
+
+.hit {
+  position: absolute;
+  display: block;
+  cursor: pointer;
+  border-radius: 1cqw;
+  outline: none;
+  touch-action: manipulation;
+}
+
+.hit:focus-visible {
+  box-shadow: 0 0 0 0.35cqw #fff, 0 0 0 0.7cqw var(--orange);
+}
+
+/* ---- the label tag on screen: "Fig. 07 · Mirror → Face tracker" ---- */
+.label {
+  position: absolute;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 1cqw;
+  max-width: 70cqw;
+  padding: 0.9cqw 1.2cqw 0.9cqw 0.9cqw;
+  transform: translate(-50%, calc(-100% - 1.6cqw));
+  border: 0.22cqw solid var(--ink);
+  border-radius: 1.2cqw;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 0.5cqw 0 rgba(42, 33, 24, 0.28), 0 1.6cqw 2.4cqw rgba(20, 12, 4, 0.3);
+  font: 600 2.15cqw/1.15 var(--font-room-sans), system-ui, sans-serif;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: labelIn 200ms cubic-bezier(0.2, 0.9, 0.3, 1.3);
+}
+
+.label::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -1.3cqw;
+  width: 2cqw;
+  height: 2cqw;
+  background: var(--paper);
+  border-right: 0.22cqw solid var(--ink);
+  border-bottom: 0.22cqw solid var(--ink);
+  transform: translateX(-50%) rotate(45deg) scale(0.8);
+}
+
+.label[data-align="start"] {
+  transform: translate(-12%, calc(-100% - 1.6cqw));
+}
+
+.label[data-align="start"]::after {
+  left: 12%;
+}
+
+.label[data-align="end"] {
+  transform: translate(-88%, calc(-100% - 1.6cqw));
+}
+
+.label[data-align="end"]::after {
+  left: 88%;
+}
+
+.label[data-below] {
+  transform: translate(-50%, 1.6cqw);
+}
+
+.label[data-below][data-align="start"] {
+  transform: translate(-12%, 1.6cqw);
+}
+
+.label[data-below][data-align="end"] {
+  transform: translate(-88%, 1.6cqw);
+}
+
+.label[data-below]::after {
+  bottom: auto;
+  top: -1.3cqw;
+  rotate: 180deg;
+}
+
+@keyframes labelIn {
+  from { opacity: 0; scale: 0.92; }
+}
+
+.labelFig {
+  padding: 0.45cqw 0.8cqw;
+  border-radius: 0.7cqw;
+  background: var(--orange);
+  color: #fff;
+  font: 600 1.6cqw/1 var(--font-room-mono), ui-monospace, monospace;
+  letter-spacing: 0.02em;
+}
+
+.labelText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.labelText b {
+  color: var(--orange);
+  font-weight: 700;
+}
+
+/* a finger-sized hit area around the compact Open button */
+.labelOpen::after {
+  content: "";
+  position: absolute;
+  inset: max(-1.8cqw, -14px) max(-1.4cqw, -10px);
+  min-height: 44px;
+}
+
+.labelOpen {
+  position: relative;
+  margin: 0 0 0 0.4cqw;
+  padding: 0.9cqw 2cqw;
+  border: 0;
+  border-radius: 0.9cqw;
+  background: var(--ink);
+  color: #fff;
+  font: 700 2.2cqw/1 var(--font-room-sans), system-ui, sans-serif;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* ---- motion off ---- */
+.viewport[data-paused="true"] *,
+.viewport[data-paused="true"] *::before,
+.viewport[data-paused="true"] *::after {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .viewport *,
+  .viewport *::before,
+  .viewport *::after {
+    animation: none !important;
+    transition-duration: 1ms !important;
+  }
+
+  .part > img {
+    clip-path: inset(25% 0 0 0);
+  }
+
+  .steam {
+    display: none;
+  }
+}

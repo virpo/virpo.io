@@ -1,0 +1,7 @@
+Use your image generation tool to create ONE image, then copy the resulting PNG file to this absolute path:
+<art dir>/view.png
+
+Attached: mock-screen.png (target style; look at the view through its window) and plate-a.png (the room this view belongs to).
+Paint the VIEW OUTSIDE THE WINDOW as a standalone landscape, landscape format 1536x1024, in exactly the same hand-drawn fine ink line and soft watercolor style, warm afternoon light, paper texture.
+Content: a Japanese suburban town at the edge of the countryside. Pale blue sky with a few soft white clouds in the top third. Green rolling hills and a distant blue-grey mountain range. A few small houses with grey tiled roofs and an apartment block among trees. Two wooden utility poles with wires sagging across the whole image. In the lower-middle of the image a long concrete ELEVATED SHINKANSEN VIADUCT runs PERFECTLY HORIZONTALLY from the left edge to the right edge (seen from the side, straight on, its top edge between 52% and 58% of the image height), with concrete pillars below it and an EMPTY track on top: NO TRAIN anywhere. Below the viaduct: rooftops, trees and bushes to the bottom edge.
+No window frame, no room, no text, no border.

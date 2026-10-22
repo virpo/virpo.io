@@ -1,0 +1,488 @@
+/* Apps on the device screen. Units are cqw of the screen, so they scale with the device. */
+
+.kicker {
+  margin: 0;
+  color: #8b7d6b;
+  font: 600 1.7cqw/1.2 var(--font-room-mono), ui-monospace, monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.hint {
+  margin: 0;
+  color: #6f6252;
+  font-size: 2.2cqw;
+  text-align: center;
+}
+
+.primary,
+.windowBar button,
+.kanaButtons button,
+.radioKeys button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8cqw;
+  min-height: max(44px, 6.4cqw);
+  padding: 0 2.6cqw;
+  border: 0.22cqw solid #2a2118;
+  border-radius: 1.4cqw;
+  background: #fff;
+  color: #2a2118;
+  box-shadow: 0 0.45cqw 0 #2a2118;
+  font: 700 2.3cqw/1 var(--font-room-sans), system-ui, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 90ms ease, box-shadow 90ms ease;
+}
+
+.primary,
+.radioKeys .play,
+.kanaButtons [data-next] {
+  background: #f26a1f;
+  color: #fff;
+}
+
+.primary:active,
+.windowBar button:active,
+.kanaButtons button:active,
+.radioKeys button:active {
+  transform: translateY(0.4cqw);
+  box-shadow: 0 0.05cqw 0 #2a2118;
+}
+
+.primary:focus-visible,
+.windowBar button:focus-visible,
+.kanaButtons button:focus-visible,
+.radioKeys button:focus-visible,
+.card:focus-visible,
+.bloomList a:focus-visible,
+.links a:focus-visible,
+.aside:focus-visible {
+  outline: 0.4cqw solid #f26a1f;
+  outline-offset: 0.4cqw;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ---- window ---- */
+.window {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  background: #22303a;
+}
+
+.ride,
+.video {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.rideView {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 40%;
+  animation: drift 40s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  from { transform: scale(1.06) translateX(-1.5%); }
+  to { transform: scale(1.06) translateX(1.5%); }
+}
+
+.rideTrain {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  top: 37.5%;
+  animation: rideTrack 3s linear forwards;
+}
+
+.rideTrain[data-dir="-1"] {
+  scale: -1 1;
+}
+
+.rideTrain img {
+  position: absolute;
+  left: 0;
+  height: 100%;
+  width: auto;
+  max-width: none;
+  animation: rideCar 3s linear forwards;
+}
+
+@keyframes rideTrack {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes rideCar {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.windowBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2cqw;
+  padding: 1.6cqw 2.4cqw;
+  background: #fbf7ef;
+  border-top: 0.22cqw solid #2a2118;
+}
+
+.windowBar p {
+  margin: 0;
+  color: #2a2118;
+  font: 600 2.2cqw/1.2 var(--font-room-sans), system-ui, sans-serif;
+}
+
+/* ---- mirror ---- */
+.mirror {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 2.4cqw;
+  background:
+    radial-gradient(60% 80% at 50% 40%, #fff7e8, transparent 70%),
+    #efe3cd;
+}
+
+.mirrorFrame {
+  width: 34cqw;
+  aspect-ratio: 0.8;
+  overflow: hidden;
+  border: 1.6cqw solid #b98a4e;
+  border-radius: 50%;
+  background: #cfe0e6;
+  box-shadow:
+    inset 0 0 0 0.3cqw #2a2118,
+    0 0 0 0.3cqw #2a2118,
+    0 1.4cqw 2cqw rgba(60, 30, 0, 0.3);
+}
+
+.mirrorFrame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.15);
+}
+
+/* ---- kana ---- */
+.kana {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 1.6cqw;
+  padding: 2.6cqw 3cqw 2.4cqw;
+  background: #f4ead6;
+}
+
+.card {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 1cqw;
+  border: 0.26cqw solid #2a2118;
+  border-radius: 1.6cqw;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 4.6cqw, rgba(42, 33, 24, 0.06) 4.6cqw 4.8cqw),
+    #fffdf7;
+  box-shadow: 0 0.6cqw 0 #2a2118;
+  color: #2a2118;
+  cursor: pointer;
+}
+
+.cardKana {
+  font: 500 15cqw/1 "Hiragino Mincho ProN", "Yu Mincho", serif;
+}
+
+.cardReading {
+  color: #f26a1f;
+  font: 600 2.6cqw/1.1 var(--font-room-mono), ui-monospace, monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.cardMeaning {
+  color: #6f6252;
+  font-size: 2.2cqw;
+}
+
+.kanaBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #6f6252;
+  font: 600 1.9cqw/1 var(--font-room-mono), ui-monospace, monospace;
+}
+
+.kanaButtons {
+  display: flex;
+  gap: 1.4cqw;
+}
+
+/* ---- radio ---- */
+.radio {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 2.4cqw;
+  padding: 3cqw;
+  background:
+    radial-gradient(70% 60% at 50% 30%, #fff6e2, transparent 70%),
+    #e9dcc2;
+  color: #2a2118;
+}
+
+.dial {
+  position: relative;
+  width: 78%;
+  height: 9cqw;
+  border: 0.3cqw solid #2a2118;
+  border-radius: 1.4cqw;
+  background: linear-gradient(#fff1cf, #f4dca8);
+  box-shadow: inset 0 0.6cqw 1cqw rgba(120, 70, 10, 0.25);
+}
+
+.dialScale {
+  position: absolute;
+  inset: 22% 6%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.dialScale i {
+  width: 0.3cqw;
+  background: rgba(42, 33, 24, 0.5);
+}
+
+.dialScale i[data-on] {
+  background: #f26a1f;
+}
+
+.dialNeedle {
+  position: absolute;
+  top: 8%;
+  bottom: 8%;
+  width: 0.6cqw;
+  border-radius: 1cqw;
+  background: #d8430c;
+  transition: left 400ms cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+.dial[data-playing="true"] .dialNeedle {
+  box-shadow: 0 0 1.4cqw #ff8a3d;
+}
+
+.station {
+  display: grid;
+  gap: 0.8cqw;
+  margin: 0;
+  text-align: center;
+  font: 700 4.4cqw/1.05 var(--font-room-sans), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.station small {
+  color: #8b7d6b;
+  font: 600 1.8cqw/1 var(--font-room-mono), ui-monospace, monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.radioKeys {
+  display: flex;
+  gap: 1.6cqw;
+}
+
+.aside {
+  color: #6f6252;
+  font-size: 1.9cqw;
+  text-decoration: underline;
+  text-underline-offset: 0.3cqw;
+}
+
+/* ---- bloom ---- */
+.bloom {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 2cqw;
+  padding: 3cqw 3.4cqw;
+  background:
+    radial-gradient(60% 50% at 20% 10%, rgba(140, 160, 230, 0.28), transparent 70%),
+    #f5eedf;
+  color: #2a2118;
+}
+
+.bloomNow {
+  display: flex;
+  align-items: center;
+  gap: 2.4cqw;
+}
+
+.bloomNow img {
+  width: 12cqw;
+  height: 12cqw;
+  image-rendering: pixelated;
+}
+
+.bloomName {
+  margin: 0.4cqw 0 0;
+  font: 700 4.6cqw/1 var(--font-room-sans), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.bloomMeta {
+  margin: 0.6cqw 0 0;
+  color: #6f6252;
+  font-size: 2.1cqw;
+}
+
+.bloomList {
+  display: grid;
+  align-content: start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 0.2cqw solid rgba(42, 33, 24, 0.2);
+}
+
+.bloomList a {
+  display: grid;
+  grid-template-columns: 5cqw 1fr auto;
+  align-items: center;
+  gap: 1.6cqw;
+  min-height: max(44px, 6.6cqw);
+  border-bottom: 0.2cqw solid rgba(42, 33, 24, 0.2);
+  color: inherit;
+  text-decoration: none;
+}
+
+.bloomList img {
+  width: 4.6cqw;
+  height: 4.6cqw;
+  image-rendering: pixelated;
+}
+
+.bloomList span {
+  display: grid;
+}
+
+.bloomList strong {
+  font-size: 2.3cqw;
+}
+
+.bloomList small {
+  color: #8b7d6b;
+  font-size: 1.8cqw;
+}
+
+.bloomList em {
+  color: #d8430c;
+  font: 600 1.8cqw/1 var(--font-room-mono), ui-monospace, monospace;
+  font-style: normal;
+}
+
+/* ---- project and about cards ---- */
+.project {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 42% 1fr;
+  align-items: center;
+  gap: 3cqw;
+  padding: 3cqw 4cqw 3cqw 3cqw;
+  background:
+    radial-gradient(60% 70% at 22% 50%, #fff8ea, transparent 70%),
+    #efe5d3;
+  color: #2a2118;
+}
+
+.projectArt {
+  display: grid;
+  place-items: center;
+  height: 100%;
+}
+
+.projectArt img {
+  max-width: 100%;
+  max-height: 46cqw;
+  object-fit: contain;
+  filter: drop-shadow(0 1.4cqw 1.2cqw rgba(60, 30, 0, 0.25));
+  animation: float 4s ease-in-out infinite alternate;
+}
+
+@keyframes float {
+  from { transform: translateY(0.6cqw) rotate(-1deg); }
+  to { transform: translateY(-0.6cqw) rotate(1deg); }
+}
+
+.projectText {
+  display: grid;
+  gap: 1.6cqw;
+  align-content: center;
+  justify-items: start;
+}
+
+.projectTitle {
+  margin: 0;
+  font: 700 5.4cqw/1 var(--font-room-sans), system-ui, sans-serif;
+  letter-spacing: -0.03em;
+}
+
+.aboutHeadline {
+  margin: 0;
+  font: 700 3.3cqw/1.12 var(--font-room-sans), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.projectBlurb {
+  margin: 0;
+  color: #4c4034;
+  font-size: 2.3cqw;
+  line-height: 1.4;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6cqw 1.8cqw;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: max(32px, 4.4cqw);
+  color: #d8430c;
+  font-weight: 600;
+  font-size: 2.2cqw;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rideView,
+  .projectArt img {
+    animation: none;
+  }
+}

@@ -1,0 +1,21 @@
+Use your image generation tool to create ONE image, then copy the resulting PNG file to this absolute path:
+<art dir>/plate-b.png
+
+Attached: mock-screen.png is the target illustration, and plate-a.png is a previous attempt whose style and objects are perfect; keep its look. Recreate THAT illustration as closely as possible: same hand-drawn ink line and soft watercolor style, same warm wood floor, same cozy Japanese room seen from above at three-quarters (isometric-ish), same layout and camera. Landscape 1536x1024.
+
+Changes from the reference (very important):
+1. NO PERSON and NO DESK CHAIR. The floor in front of the desk, where the person sat, is empty wood floor. The laptop is open on the desk, screen glowing pale blue.
+2. The WINDOW GLASS is filled with a perfectly flat solid magenta color (#FF00FF), every pane, nothing outside visible: no sky, no hills, no train. The window frame, mullions, sill and the curtain edge stay drawn normally in ink and watercolor.
+3. Keep everything else from the reference in the same place: hiragana poster (あいうえお / かきくけこ / さしすせそ / たちつてと / なにぬねの) on the wall, framed Mount Fuji print, wall shelf top-left with a retro radio and a small white lucky cat, pegboard with tools on the left wall, black 3D printer printing a small orange part on the left desk, desk lamp, laptop, mug, pen cup, potted plants, a big blue hydrangea in a pot on the right by the window, bookshelf, cardboard boxes, a blue patterned rug, a bed with a blue check blanket in the bottom-right corner, big leafy plants bottom-left.
+4. ADD these small objects, drawn naturally in the same style:
+   - on the main desk, right of the laptop: a stack of THREE notebooks clearly separate and slightly fanned out: one orange, one mustard yellow, one blue.
+   - on the main desk, left of the laptop: a small black stream-deck box with a 3x2 grid of tiny glowing colored keys.
+   - on the wall shelf next to the radio: a tiny clay figure of a caveman (terracotta orange clay).
+   - on the left wall below the shelf, next to the pegboard: a cork board with pinned notes and red string, one note is a bright yellow footprint.
+   - a round mirror with a thin wooden frame hanging on the wall between the pegboard and the hiragana poster.
+   - on the low cabinet under the left desk: a tiny retro TV (small CRT, cream colored).
+   - on the bookshelf on the right: a tiny tabletop arcade cabinet (red and black, glowing screen).
+   - on the wall above the bed, right of the window: a small poster that says "AI BUILD WEEK" in bold letters.
+5. COMPOSITION FOR A 4:3 CROP: the image will be cropped to its central 4:3 area (the left 8% and right 8% are cut away). Keep EVERY listed object, including the AI BUILD WEEK poster, the arcade, the cork board, the radio and the window, fully inside the central 84% of the width. The outer edges only show continuing wall, plant leaves and floor. Also show a little more ceiling at the top and more floor at the bottom.
+6. Fill the whole frame edge to edge with the room, no border, no frame, no device, no text other than the poster texts.
+Style: April Zhu colorfigures, cozy Japanese illustration, fine black ink outlines, soft warm watercolor washes, paper texture, warm afternoon light. Not 3D, not vinyl, not pixel art.

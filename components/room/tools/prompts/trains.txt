@@ -1,0 +1,8 @@
+Use your image generation tool to create ONE image, then copy the resulting PNG file to this absolute path:
+<art dir>/trains.png
+
+Attached: mock-screen.png (target style: look at the white and blue shinkansen through its window).
+On a perfectly flat solid magenta background (#FF00FF, no gradient, no shadow, no ground, no track), paint two trains as SIDE-VIEW sprites, perfectly side-on and perfectly horizontal, in the same hand-drawn fine black ink line and soft watercolor style. Landscape 1536x1024.
+Row 1 (top half): a white Tokaido shinkansen with a blue stripe along the windows, made of exactly THREE separate cars with a clear magenta gap between each car: left car is the tail with a long duck-bill nose pointing LEFT, middle car is a plain passenger car with a row of windows, right car is the head with a long duck-bill nose pointing RIGHT and a driver window. Together they span the full width.
+Row 2 (bottom half): a Japanese local commuter train, silver stainless steel with a green and orange stripe, TWO cars with a clear magenta gap between them, flat front ends, spanning about 80% of the width.
+Nothing else in the image. Do not let any part of the trains touch the image edges.

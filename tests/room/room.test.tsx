@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import type { ReactElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -14,68 +14,64 @@ vi.mock("next/navigation", () => ({
 import RoomPostPage, { generateMetadata, generateStaticParams } from "../../app/room/blog/[slug]/page";
 import RoomPage, { metadata as landingMetadata } from "../../app/room/page";
 import RoomWritingPage, { metadata as writingMetadata } from "../../app/room/writing/page";
-import { roomHotspots, resolveHotspot, toyHotspots } from "../../components/room/hotspots";
-import { LIGHTING_BOOT_SCRIPT, stillCss } from "../../components/room/lighting";
-import { RoomWindow } from "../../components/room/panels/RoomWindow";
-import { lightingForHour } from "../../components/room/RoomStage";
-import { spineLabel } from "../../components/room/spines";
-import { STILL_ANCHORS } from "../../components/room/still-anchors";
+import { LAYERS } from "../../components/room/scene/layers";
+import { nextTrain, readingPose, timeForHour } from "../../components/room/scene/life";
+import { cycle, hullClip, neighbour, objectById, pickAt, ROOM_OBJECTS, TOY_OBJECTS } from "../../components/room/scene/objects";
 import { getPostSlugs, getPostSummaries } from "../../lib/blog";
 import { labProjects } from "../../lib/lab/catalog";
 
 const html = (node: ReactElement) => renderToStaticMarkup(node);
 // next/link drops the trailing slash outside a Next build; the export keeps it.
 const href = (path: string) => new RegExp(`href="${path.replace(/\/$/, "")}/?"`);
+const escape = (text: string) => text.replace(/&/g, "&amp;");
 
 describe("Pocket Room landing", () => {
   const markup = html(<RoomPage />);
   const newest = getPostSummaries().slice(0, 3);
 
-  it("renders the three newest posts as plain links with real dates, plus All writing", () => {
+  it("shows the name, the three newest posts with real dates, and All writing", () => {
+    expect(markup).toMatch(/<h1[^>]*>Peter Hraska<\/h1>/);
     for (const post of newest) {
       expect(markup).toMatch(href(`/room/blog/${post.slug}/`));
-      expect(markup).toContain(post.title.replace(/&/g, "&amp;"));
+      expect(markup).toContain(escape(post.title));
       expect(markup).toContain(`dateTime="${post.publishedAt.toISOString()}"`);
     }
     expect(markup).toMatch(/href="\/room\/writing\/?"[^>]*>All writing/);
-    expect(markup).toContain('href="/rss.xml"');
   });
 
-  it("lists every project with an outbound link, and links each one to its object", () => {
+  it("server-renders the painted room: plate, window view, every object layer and Peter", () => {
+    expect(markup).toContain("/lab/room/plate.webp");
+    expect(markup).toContain("/lab/room/view.webp");
+    expect(markup).toContain("/lab/room/peter-typing.webp");
+    for (const item of ROOM_OBJECTS) if (item.id !== "peter" && item.id !== "window") expect(markup, item.id).toContain(`/lab/room/${item.layer}.webp`);
+  });
+
+  it("makes every object a real link with a Fig. label, so Tab, Enter and no-JS all work", () => {
+    const hits = markup.match(/<a[^>]*data-hit="[^"]+"[^>]*>/g) ?? [];
+    expect(hits).toHaveLength(ROOM_OBJECTS.length);
+    for (const item of ROOM_OBJECTS) expect(markup, item.id).toMatch(new RegExp(`aria-label="Fig\\. ${String(item.fig).padStart(2, "0")}, `));
+    // notebooks are links to their posts
+    newest.forEach((post, index) => expect(markup).toMatch(new RegExp(`href="/room/blog/${post.slug}/?"[^>]*data-hit="post-${index}"|data-hit="post-${index}"[^>]*href="/room/blog/${post.slug}/?"`)));
+  });
+
+  it("links the plain lists to their objects both ways", () => {
+    for (let index = 0; index < 3; index += 1) expect(markup).toContain(`data-room-target="post-${index}"`);
+    expect(markup).toContain('data-room-target="bookshelf"');
     for (const project of labProjects) {
       expect(markup).toContain(`href="${project.href}"`);
       expect(markup).toContain(project.title);
-      expect(roomHotspots.some((spot) => spot.projectSlug === project.slug)).toBe(true);
     }
   });
 
-  it("keeps the five Japan toys one click away from the plain list", () => {
-    for (const toy of toyHotspots) expect(markup).toContain(`data-room-open="${toy.id}"`);
-    expect(toyHotspots.map((spot) => spot.toy).sort()).toEqual(["bloom", "face", "kana", "sounds", "window"]);
+  it("keeps the Japan toys one click away from the plain list", () => {
+    expect(TOY_OBJECTS.map((item) => item.toy).sort()).toEqual(["bloom", "face", "kana", "sounds", "window"]);
+    for (const item of TOY_OBJECTS) expect(markup).toContain(`href="#toy-${item.toy}"`);
   });
 
-  it("renders a still image and keyboard-reachable markers before any WebGL loads", () => {
-    expect(markup).toContain("/lab/room/still-day-desktop.webp");
-    expect(markup).toContain("/lab/room/still-night-mobile.webp");
-    const markers = markup.match(/aria-label="Fig\. \d\d, /g) ?? [];
-    expect(markers).toHaveLength(roomHotspots.length);
-  });
-
-  it("places every marker over the still image server-side, so hotspots work without JavaScript", () => {
-    for (const spot of roomHotspots) {
-      expect(STILL_ANCHORS.desktop[spot.id], spot.id).toBeDefined();
-      expect(STILL_ANCHORS.mobile[spot.id], spot.id).toBeDefined();
+  it("has the device controls: d-pad, open button, pill keys, knob and a side button", () => {
+    for (const label of ["Select the object above", "Select the object below", "Select the object to the left", "Select the object to the right", "Open the selected object", "Show all Fig. numbers", "Clear the selection", "Turn to browse the objects in the room", "Light in the room"]) {
+      expect(markup).toContain(label);
     }
-    const placed = markup.match(/<a[^>]*data-placed="true"[^>]*--sx:[\d.]+%/g) ?? [];
-    expect(placed.length).toBeGreaterThanOrEqual(roomHotspots.length);
-  });
-
-  it("gives phones one shared marker for the three notebooks on the desk", () => {
-    expect(markup).toMatch(/aria-label="Fig\. 02 to Fig\. 04, notebooks on the desk: the 3 newest posts"/);
-  });
-
-  it("links the colour key to the plain lists", () => {
-    for (const id of ["writing", "projects", "toys"]) expect(markup).toContain(`href="#${id}"`);
   });
 
   it("is kept out of search results while it is an experiment", () => {
@@ -83,46 +79,85 @@ describe("Pocket Room landing", () => {
   });
 });
 
-describe("Pocket Room hotspots", () => {
+describe("Pocket Room objects", () => {
   it("numbers every clickable object uniquely, in order", () => {
-    expect(roomHotspots.map((spot) => spot.fig)).toEqual(roomHotspots.map((_, index) => index + 1));
-    expect(new Set(roomHotspots.map((spot) => spot.id)).size).toBe(roomHotspots.length);
+    expect(ROOM_OBJECTS.map((item) => item.fig)).toEqual(ROOM_OBJECTS.map((_, index) => index + 1));
+    expect(new Set(ROOM_OBJECTS.map((item) => item.id)).size).toBe(ROOM_OBJECTS.length);
   });
 
-  it("covers every object the brief asks for", () => {
-    const objects = roomHotspots.map((spot) => spot.object.toLowerCase()).join("|");
-    for (const thing of ["peter", "notebook", "bookshelf", "3d printer", "arcade", "stage", "detective board", "tv", "stream deck", "clay", "radio", "window", "mirror", "hiragana", "hydrangea", "vending"]) {
-      expect(objects).toContain(thing);
+  it("maps the objects the brief asks for to the right places", () => {
+    const goes = (id: string) => objectById.get(id);
+    expect(goes("window")?.toy).toBe("window");
+    expect(goes("mirror")?.toy).toBe("face");
+    expect(goes("kana")?.toy).toBe("kana");
+    expect(goes("radio")?.toy).toBe("sounds");
+    expect(goes("hydrangea")?.toy).toBe("bloom");
+    expect(goes("arcade")?.projectSlug).toBe("levels");
+    expect(goes("tv")?.projectSlug).toBe("youtldr");
+    expect(goes("deck")?.projectSlug).toBe("cmux-deck");
+    expect(goes("clay")?.projectSlug).toBe("prehistoriq");
+    expect(goes("cork")?.projectSlug).toBe("zlta-stopa");
+    expect(goes("aiposter")?.projectSlug).toBe("ai-build-week");
+    expect(goes("printer")?.projectSlug).toBe("pegboard-toy");
+    expect(goes("peter")?.kind).toBe("about");
+    const slugs = new Set(labProjects.map((project) => project.slug));
+    for (const item of ROOM_OBJECTS) if (item.projectSlug) expect(slugs.has(item.projectSlug), item.projectSlug).toBe(true);
+  });
+
+  it("places every object inside the plate and gives it a hull hit shape", () => {
+    for (const item of ROOM_OBJECTS) {
+      const [x, y, w, h] = item.box;
+      expect(x >= 0 && y >= 0 && x + w <= LAYERS.plate.w + 1 && y + h <= LAYERS.plate.h + 1, item.id).toBe(true);
+      expect(hullClip(item.hull), item.id).toMatch(/^polygon\(/);
     }
   });
 
-  it("turns the notebooks into the newest posts", () => {
-    const posts = getPostSummaries().slice(0, 3).map((post) => ({ slug: post.slug, title: post.title, description: post.description, date: "" }));
-    const resolved = roomHotspots.filter((spot) => spot.kind === "post").map((spot) => resolveHotspot(spot, posts));
-    expect(resolved.map((spot) => spot?.href)).toEqual(posts.map((post) => `/room/blog/${post.slug}/`));
+  it("moves the d-pad cursor to a neighbour in that direction, and the knob cycles", () => {
+    const peter = objectById.get("peter")!;
+    const right = neighbour("peter", "right");
+    expect(right.box[0] + right.box[2] / 2).toBeGreaterThan(peter.box[0] + peter.box[2] / 2);
+    const up = neighbour("peter", "up");
+    expect(up.box[1] + up.box[3] / 2).toBeLessThan(peter.box[1] + peter.box[3] / 2);
+    expect(neighbour(null, "left").id).toBe(ROOM_OBJECTS[0].id);
+    expect(cycle("post-0", 1).id).toBe("post-1");
+    expect(cycle(ROOM_OBJECTS[0].id, -1).id).toBe(ROOM_OBJECTS[ROOM_OBJECTS.length - 1].id);
   });
 
-  it("follows Tokyo time for day, dusk and night", () => {
-    expect(lightingForHour(10)).toBe("day");
-    expect(lightingForHour(17)).toBe("dusk");
-    expect(lightingForHour(23)).toBe("night");
-    expect(lightingForHour(5)).toBe("dusk");
+  it("picks the object under a finger, or the nearest one within reach", () => {
+    const [x, y, w, h] = objectById.get("clay")!.box;
+    expect(pickAt(x + w / 2, y + h / 2)?.id).toBe("clay");
+    expect(pickAt(x + w + 20, y + h / 2)?.id).toBeDefined();
+    expect(pickAt(-500, -500)).toBeNull();
+  });
+});
+
+describe("Pocket Room life", () => {
+  it("runs a shinkansen every 15–25 s with a local train in between", () => {
+    for (const roll of [0, 0.5, 0.999]) {
+      const [, train] = nextTrain(null, () => roll);
+      expect(train.kind).toBe("shinkansen");
+      const [toLocal, local] = nextTrain(train, () => roll);
+      expect(local.kind).toBe("local");
+      const [toNext, next] = nextTrain(local, () => roll);
+      expect(next.kind).toBe("shinkansen");
+      // start of one shinkansen to the start of the next (the scene adds 200 ms after each train)
+      const gap = train.ms + 200 + toLocal + local.ms + 200 + toNext;
+      expect(gap, String(roll)).toBeGreaterThanOrEqual(15_000);
+      expect(gap, String(roll)).toBeLessThanOrEqual(25_000);
+    }
   });
 
-  it("picks the lighting before paint and shares it between the landing and post pages", () => {
-    expect(LIGHTING_BOOT_SCRIPT).toContain("virpo-room-lighting");
-    expect(LIGHTING_BOOT_SCRIPT).toContain("Asia/Tokyo");
-    expect(stillCss("night")).toContain('[data-time="night"]{display:block!important}');
-    const script = new Function("localStorage", "location", "document", "window", LIGHTING_BOOT_SCRIPT.replace(/^\(function\(\)\{/, "").replace(/\}\)\(\);$/, ""));
-    const head: unknown[] = [];
-    const fakeWindow: { __roomLighting?: string } = {};
-    script(
-      { getItem: () => "dusk" },
-      { search: "" },
-      { getElementById: () => null, createElement: () => ({}), head: { appendChild: (el: unknown) => head.push(el) } },
-      fakeWindow,
-    );
-    expect(head).toHaveLength(1);
+  it("follows Tokyo time for the light in the room", () => {
+    expect(timeForHour(7)).toBe("morning");
+    expect(timeForHour(12)).toBe("day");
+    expect(timeForHour(17)).toBe("evening");
+    expect(timeForHour(23)).toBe("night");
+  });
+
+  it("has mini-Peter read, turn pages, and wave at the end", () => {
+    expect(readingPose(0.2, false)).toBe("reading");
+    expect(readingPose(0.5, true)).toBe("page");
+    expect(readingPose(1, false)).toBe("wave");
   });
 });
 
@@ -138,76 +173,64 @@ describe("Pocket Room post page", () => {
     expect(meta.robots).toMatchObject({ index: false });
   });
 
-  it("renders one readable column with date, reading time, tags, body and neighbours", async () => {
+  it("renders one readable column with date, reading time, tags, body, neighbours and the docked device", async () => {
     const posts = getPostSummaries();
     const post = posts[1];
     const markup = html(await RoomPostPage({ params: Promise.resolve({ slug: post.slug }) }));
-    expect(markup).toContain(`<h1>${post.title.replace(/&/g, "&amp;")}</h1>`);
+    expect(markup).toContain(`<h1>${escape(post.title)}</h1>`);
     expect(markup).toContain(`dateTime="${post.publishedAt.toISOString()}"`);
     expect(markup).toContain(post.readingTime.label);
     for (const tag of post.tags) expect(markup).toContain(tag);
     expect(markup).toContain('id="room-article"');
     expect(markup).toMatch(href(`/room/blog/${posts[0].slug}/`));
     expect(markup).toMatch(href(`/room/blog/${posts[2].slug}/`));
-    expect(markup).toContain('aria-label="A small window into the Pocket Room: Peter reading this post"');
-    expect(markup).toContain("/lab/room/mini-tall-day.webp");
-    expect(markup).toContain("/lab/room/mini-wide-night.webp");
-  });
-
-  it("leads back into the room instead of showing an empty card at the ends", async () => {
-    const posts = getPostSummaries();
-    const newest = html(await RoomPostPage({ params: Promise.resolve({ slug: posts[0].slug }) }));
-    expect(newest).toMatch(/href="\/room\/?\?spot=post-0#world"/);
-    expect(newest).not.toContain("You’re reading the newest post");
-    const oldest = html(await RoomPostPage({ params: Promise.resolve({ slug: posts[posts.length - 1].slug }) }));
-    expect(oldest).not.toContain("This is the oldest post");
-    expect(oldest).toMatch(href("/room/writing/"));
-  });
-
-  it("lists the notebooks on the desk in a Fig. legend that links back to the room", async () => {
-    const posts = getPostSummaries();
-    const markup = html(await RoomPostPage({ params: Promise.resolve({ slug: posts[0].slug }) }));
-    expect(markup).toContain('aria-label="In the Pocket Room"');
-    expect(markup).toContain('aria-current="page"');
+    expect(markup).toContain('data-variant="dock"');
+    expect(markup).toContain('role="progressbar"');
+    expect(markup).toContain("/lab/room/peter-reading.webp");
+    // the docked room is decorative: no extra tab stops in the margin
+    expect(markup).not.toContain("data-hit=");
   });
 });
 
 describe("Pocket Room writing index", () => {
-  it("lists every post with a room link and points canonical at /blog/", () => {
+  it("lists every post and points canonical at /blog/", () => {
     const markup = html(<RoomWritingPage />);
     for (const post of getPostSummaries()) expect(markup).toMatch(href(`/room/blog/${post.slug}/`));
     expect(writingMetadata.alternates?.canonical).toBe("/blog/");
   });
-
-  it("gives every spine a short label that fits", () => {
-    expect(spineLabel("Weird use of AI #3: Detective skills for journalists")).toBe("#3 Detective");
-    expect(spineLabel("Weird use of AI #1: A toy for my son")).toBe("#1 Toy");
-    expect(spineLabel("A different kind of hackathon")).toBe("Hackathon");
-    for (const post of getPostSummaries()) expect(spineLabel(post.title).length).toBeLessThanOrEqual(14);
-  });
-});
-
-describe("Pocket Room toys", () => {
-  it("shows the shinkansen window as a local loop and loads YouTube only on an explicit play", () => {
-    const markup = html(<RoomWindow />);
-    expect(markup).toContain("/assets/optimized/train-window.webp");
-    expect(markup).not.toContain("youtube");
-    expect(markup).toContain("Play the real ride");
-  });
 });
 
 describe("Pocket Room assets", () => {
-  it("ships small WebP stills for the no-WebGL fallback", () => {
-    for (const name of ["day", "dusk", "night"].flatMap((time) => [`still-${time}-desktop`, `still-${time}-mobile`, `mini-tall-${time}`, `mini-wide-${time}`]).concat(["obj-arcade", "obj-clay"])) {
-      const path = resolve(process.cwd(), `public/lab/room/${name}.webp`);
+  it("ships every painted layer as a small WebP", () => {
+    const files = [
+      "plate.webp",
+      "plate-800.webp",
+      "view.webp",
+      "glass-mask.png",
+      "part.webp",
+      "cat.webp",
+      "train-shinkansen.webp",
+      "train-local.webp",
+      ...["typing", "mug", "window", "reading", "page", "wave"].map((pose) => `peter-${pose}.webp`),
+      ...Object.keys(LAYERS.objects).map((id) => `obj-${id}.webp`),
+      "notebook-0.webp",
+      "notebook-1.webp",
+      "notebook-2.webp",
+    ];
+    let total = 0;
+    for (const name of files) {
+      const path = resolve(process.cwd(), "public/lab/room", name);
       expect(existsSync(path), name).toBe(true);
-      expect(readFileSync(path).byteLength, name).toBeLessThan(220_000);
+      const size = statSync(path).size;
+      expect(size, name).toBeLessThan(220_000);
+      total += size;
     }
+    expect(total).toBeLessThan(1_200_000);
   });
 
-  it("loads three.js lazily, never from a server component", () => {
-    const stage = readFileSync(resolve(process.cwd(), "components/room/RoomStage.tsx"), "utf8");
-    expect(stage).toContain('await import("./world/engine")');
-    expect(stage).not.toMatch(/^import .*from "three"/m);
+  it("keeps the room free of three.js and WebGL", () => {
+    for (const file of ["components/room/Device.tsx", "components/room/scene/RoomScene.tsx"]) {
+      expect(readFileSync(resolve(process.cwd(), file), "utf8")).not.toMatch(/from "three"|getContext\("webgl/);
+    }
   });
 });

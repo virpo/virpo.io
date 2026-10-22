@@ -1,0 +1,9 @@
+Use your image generation tool to create ONE image, then copy the resulting PNG file to this absolute path:
+<art dir>/props.png
+
+Attached: plate-b.png is the room illustration these props belong to. Paint small PROP SPRITES in exactly its style (fine black ink outline, soft watercolor, warm light) and exactly its camera and perspective (seen from above at three-quarters, same isometric-ish angle as the desk top and the stack of notebooks on that desk), at the same scale as in plate-b.png but drawn larger for detail.
+On a perfectly flat solid magenta background (#FF00FF, no shadows on the background, no desk, no floor), arranged in a loose grid with lots of magenta space between items, nothing touching:
+Top row: THREE closed notebooks, each lying flat on its own, same angle as the notebooks on the desk in plate-b.png: 1) bright orange hardcover notebook with an elastic band, 2) mustard yellow notebook, 3) blue notebook with a white label. Each notebook the same size.
+Middle row: 4) a white ceramic mug with coffee, same angle; 5) an orange tabby cat curled up asleep, seen from above at the same angle, as if lying on a bed; 6) the same cat sitting upright, looking at the viewer.
+Bottom row: 7) a small printed orange cat figurine (the thing a 3D printer is printing), same angle; 8) a little paper note with a hand-drawn yellow footprint; 9) a small potted green plant.
+Landscape 1536x1024. No text.

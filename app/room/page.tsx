@@ -1,124 +1,85 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import type { CSSProperties } from "react";
-import { RoomFooter, RoomHeader, roomDate } from "../../components/room/RoomChrome";
-import { RoomStage } from "../../components/room/RoomStage";
-import { figLabel, hotspotById, hotspotForProject, roomPostHref, toyHotspots } from "../../components/room/hotspots";
+import { Device } from "../../components/room/Device";
+import { roomDate, RoomFooter } from "../../components/room/RoomChrome";
+import { figLabel, objectForProject, roomPostHref, TOY_OBJECTS } from "../../components/room/scene/objects";
 import { getPostSummaries } from "../../lib/blog";
 import { labAbout, labProjects } from "../../lib/lab/catalog";
 import styles from "./room.module.css";
 
 export const metadata: Metadata = {
-  title: "Pocket Room",
-  description: "Peter Hraska’s writing and projects, kept in a tiny interactive room with trains going past the window.",
+  title: { absolute: "Peter Hraska · Pocket Room" },
+  description: "Peter Hraska’s writing and projects, with a tiny painted room where a shinkansen passes the window.",
   alternates: { canonical: "/" },
   robots: { index: false, follow: true },
 };
 
-const toyBlurbs: Record<string, string> = {
-  window: "Ride the shinkansen past Mount Fuji.",
+const TOY_BLURBS: Record<string, string> = {
+  window: "Ride the shinkansen past the hills.",
   face: "My face follows your cursor.",
   kana: "Learn hiragana, one card at a time.",
+  sounds: "Small sounds of Japan on the radio.",
   bloom: "What is blooming in Japan right now.",
-  sounds: "Ten tiny sounds of Japan.",
 };
 
 export default function RoomPage() {
-  const posts = getPostSummaries().slice(0, 3);
-  const postRefs = posts.map((post) => ({
-    slug: post.slug,
-    title: post.title,
-    description: post.description,
-    date: post.publishedAt.toISOString(),
-  }));
+  const posts = getPostSummaries();
+  const newest = posts.slice(0, 3);
+  const devicePosts = newest.map((post) => ({ slug: post.slug, title: post.title, date: post.publishedAt.toISOString() }));
   const projects = labProjects.map((project) => ({
     slug: project.slug,
     title: project.title,
     type: project.type,
     href: project.href,
     blurb: project.blurb,
-    image: project.image ? { ...project.image } : undefined,
   }));
 
   return (
-    <div className={styles.page} data-room-page>
-      <RoomHeader current="home" home />
-      <main className={styles.home}>
-        <section className={styles.world} id="world" aria-label="Pocket Room: an interactive diorama of Peter’s writing room and workshop">
-          <RoomStage posts={postRefs} projects={projects} about={labAbout} />
+    <div className={styles.page}>
+      <main>
+        <section className={styles.hero} aria-label="Peter Hraska">
+          <div className={styles.deviceCol} id="room">
+            <Device posts={devicePosts} projects={projects} about={labAbout} />
+            <p className={styles.deviceHint}>
+              <span className={styles.hintMouse}>Everything with a number opens.</span>
+              <span className={styles.hintTouch}>Tap a number to see it, tap again to open.</span>
+              <span className={styles.hintKeys}>
+                <kbd>←</kbd>
+                <kbd>→</kbd> browse · <kbd>Enter</kbd> open · <kbd>Esc</kbd> back
+              </span>
+            </p>
+          </div>
+
+          <div className={styles.textCol}>
+            <h1 className={styles.name}>Peter Hraska</h1>
+            <ol className={styles.posts} aria-label="Newest writing">
+              {newest.map((post, index) => (
+                <li key={post.slug}>
+                  <Link href={roomPostHref(post.slug)} className={styles.post} data-room-target={`post-${index}`}>
+                    <span className={styles.postTitle}>{post.title}</span>
+                    <time dateTime={post.publishedAt.toISOString()}>{roomDate.format(post.publishedAt)}</time>
+                  </Link>
+                </li>
+              ))}
+            </ol>
+            <Link href="/room/writing/" className={styles.allWriting} data-room-target="bookshelf">
+              All writing <span aria-hidden="true">→</span>
+            </Link>
+          </div>
         </section>
 
-        <div className={styles.index}>
-          <section className={styles.intro} data-room-target="peter">
-            <p className={styles.kicker}>
-              <span>Fig. 01</span> Peter Hraska
-            </p>
-            <h1>
-              A blog and a box of projects, <em>kept in a pocket room.</em>
-            </h1>
-            <p className={styles.lede}>
-              Short notes on building useful things with AI, hardware and small teams. Anything in the room with a
-              number opens something. Prefer plain text? The full list is right here.
-            </p>
-          </section>
-
-          <section className={styles.block} id="writing" aria-labelledby="writing-title">
-            <header className={styles.blockHead}>
-              <h2 id="writing-title">
-                <i style={{ background: "var(--r-orange)" }} aria-hidden="true" />
-                Writing
-              </h2>
-              <span>Newest first</span>
-            </header>
-            <ol className={styles.posts}>
-              {posts.map((post, index) => {
-                const spot = hotspotById.get(`post-${index}`);
-                return (
-                  <li key={post.slug}>
-                    <Link className={styles.post} href={roomPostHref(post.slug)} data-room-target={`post-${index}`}>
-                      <span className={styles.fig} aria-hidden="true">
-                        {String(spot?.fig ?? index + 2).padStart(2, "0")}
-                      </span>
-                      <span className={styles.postText}>
-                        <strong>{post.title}</strong>
-                        <span>{post.description}</span>
-                      </span>
-                      <time dateTime={post.publishedAt.toISOString()}>{roomDate.format(post.publishedAt)}</time>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ol>
-            <p className={styles.more}>
-              <Link href="/room/writing/" data-room-target="bookshelf">
-                All writing <span aria-hidden="true">→</span>
-              </Link>
-              <a href="/rss.xml">RSS feed</a>
-            </p>
-          </section>
-
-          <section className={styles.block} id="projects" aria-labelledby="projects-title">
-            <header className={styles.blockHead}>
-              <h2 id="projects-title">
-                <i style={{ background: "var(--r-blue)" }} aria-hidden="true" />
-                Projects
-              </h2>
-              <span>{labProjects.length} things I made</span>
-            </header>
-            <ul className={styles.rows} style={{ "--accent": "var(--r-blue)" } as CSSProperties}>
+        <div className={styles.below}>
+          <section className={styles.section} id="projects" aria-labelledby="projects-title">
+            <h2 id="projects-title">Projects</h2>
+            <ul className={styles.rows}>
               {labProjects.map((project) => {
-                const spot = hotspotForProject(project.slug);
+                const item = objectForProject(project.slug);
                 return (
                   <li key={project.slug}>
-                    <a className={styles.row} href={project.href} target="_blank" rel="noreferrer" data-room-target={spot?.id}>
-                      <span className={styles.fig} aria-hidden="true">
-                        {spot ? String(spot.fig).padStart(2, "0") : "··"}
-                      </span>
-                      <strong>{project.title}</strong>
-                      <span className={styles.rowMeta}>{project.type}</span>
-                      <span className={styles.arrow} aria-hidden="true">
-                        ↗
-                      </span>
+                    <a className={styles.row} href={project.href} target="_blank" rel="noreferrer" data-room-target={item?.id}>
+                      <span className={styles.rowTitle}>{project.title}</span>
+                      <span className={styles.rowMeta}>{project.blurb}</span>
+                      <span className={styles.rowFig}>{item ? `${figLabel(item.fig)} · ${item.name}` : project.type}</span>
                     </a>
                   </li>
                 );
@@ -126,25 +87,16 @@ export default function RoomPage() {
             </ul>
           </section>
 
-          <section className={styles.block} id="toys" aria-labelledby="toys-title">
-            <header className={styles.blockHead}>
-              <h2 id="toys-title">
-                <i style={{ background: "var(--r-green)" }} aria-hidden="true" />
-                Japan toys
-              </h2>
-              <span>One click each</span>
-            </header>
-            <ul className={styles.rows} style={{ "--accent": "var(--r-green)" } as CSSProperties}>
-              {toyHotspots.map((spot) => (
-                <li key={spot.id}>
-                  <a className={styles.row} href="#world" data-room-open={spot.id} data-room-target={spot.id} aria-label={`${spot.title}: ${toyBlurbs[spot.id]} Opens in the room. ${figLabel(spot.fig)}.`}>
-                    <span className={styles.fig} aria-hidden="true">
-                      {String(spot.fig).padStart(2, "0")}
-                    </span>
-                    <strong>{spot.title}</strong>
-                    <span className={styles.rowMeta}>{toyBlurbs[spot.id]}</span>
-                    <span className={styles.arrow} aria-hidden="true">
-                      ◱
+          <section className={styles.section} id="toys" aria-labelledby="toys-title">
+            <h2 id="toys-title">In the room</h2>
+            <ul className={styles.rows}>
+              {TOY_OBJECTS.map((item) => (
+                <li key={item.id} id={`toy-${item.toy}`}>
+                  <a className={styles.row} href={`#toy-${item.toy}`} data-room-target={item.id}>
+                    <span className={styles.rowTitle}>{item.goes}</span>
+                    <span className={styles.rowMeta}>{TOY_BLURBS[item.toy ?? ""]}</span>
+                    <span className={styles.rowFig}>
+                      {figLabel(item.fig)} · {item.name}
                     </span>
                   </a>
                 </li>
@@ -152,18 +104,12 @@ export default function RoomPage() {
             </ul>
           </section>
 
-          <section className={styles.block} id="about" aria-labelledby="about-title" data-room-target="peter">
-            <header className={styles.blockHead}>
-              <h2 id="about-title">
-                <i style={{ background: "var(--r-ink)" }} aria-hidden="true" />
-                About
-              </h2>
-              <span>Product · design · engineering</span>
-            </header>
-            <p className={styles.aboutText}>
-              <strong>{labAbout.headline}</strong> {labAbout.body}
+          <section className={styles.section} id="about" aria-labelledby="about-title" data-room-target="peter">
+            <h2 id="about-title">About</h2>
+            <p className={styles.about}>
+              {labAbout.headline} {labAbout.body}
             </p>
-            <ul className={styles.social}>
+            <ul className={styles.links}>
               {labAbout.links.map((link) => (
                 <li key={link.label}>
                   <a href={link.href} {...(link.href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}>
