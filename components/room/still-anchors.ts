@@ -7,24 +7,24 @@ export const STILL_ANCHORS: { desktop: Record<string, [number, number]>; mobile:
       0.1915
     ],
     "post-0": [
-      0.512,
-      0.2326
+      0.48,
+      0.2463
     ],
     "post-1": [
-      0.5354,
-      0.2308
+      0.5234,
+      0.2452
     ],
     "post-2": [
-      0.5587,
-      0.229
+      0.5666,
+      0.2454
     ],
     "bookshelf": [
       0.4698,
       0.1751
     ],
     "deck": [
-      0.5497,
-      0.2922
+      0.6024,
+      0.29
     ],
     "radio": [
       0.7538,
@@ -39,8 +39,8 @@ export const STILL_ANCHORS: { desktop: Record<string, [number, number]>; mobile:
       0.2196
     ],
     "kana": [
-      0.5449,
-      0.1915
+      0.5343,
+      0.1679
     ],
     "bloom": [
       0.7158,
@@ -67,8 +67,8 @@ export const STILL_ANCHORS: { desktop: Record<string, [number, number]>; mobile:
       0.5091
     ],
     "clay": [
-      0.4108,
-      0.4448
+      0.4111,
+      0.4445
     ],
     "vending": [
       0.7405,
@@ -81,24 +81,24 @@ export const STILL_ANCHORS: { desktop: Record<string, [number, number]>; mobile:
       0.2156
     ],
     "post-0": [
-      0.5197,
-      0.2619
+      0.4663,
+      0.278
     ],
     "post-1": [
-      0.5588,
-      0.2597
+      0.5388,
+      0.2767
     ],
     "post-2": [
-      0.5976,
-      0.2575
+      0.611,
+      0.2769
     ],
     "bookshelf": [
       0.4496,
       0.1947
     ],
     "deck": [
-      0.5833,
-      0.3327
+      0.6719,
+      0.3303
     ],
     "radio": [
       0.9266,
@@ -113,8 +113,8 @@ export const STILL_ANCHORS: { desktop: Record<string, [number, number]>; mobile:
       0.2468
     ],
     "kana": [
-      0.5744,
-      0.2134
+      0.5568,
+      0.1862
     ],
     "bloom": [
       0.8652,
@@ -141,8 +141,8 @@ export const STILL_ANCHORS: { desktop: Record<string, [number, number]>; mobile:
       0.5873
     ],
     "clay": [
-      0.3506,
-      0.5083
+      0.3512,
+      0.5079
     ],
     "vending": [
       0.9139,

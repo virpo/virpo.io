@@ -557,9 +557,13 @@ export function RoomStage({
         </span>
         <span className={styles.status}>
           <span className={styles.led} data-on={mode === "live"} aria-hidden="true" />
-          <span>{mode === "live" ? "Live" : mode === "still" ? "Still" : "Loading"}</span>
-          <span aria-hidden="true">·</span>
-          <span>Tokyo {tokyo?.label ?? "--:--"}</span>
+          <span>{mode === "live" ? "Live" : "Still"}</span>
+          {tokyo ? (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>Tokyo {tokyo.label}</span>
+            </>
+          ) : null}
         </span>
       </div>
 
@@ -681,7 +685,7 @@ export function RoomStage({
           <div ref={chipRef} className={`${styles.chip} ${styles.deskChip}`} data-touch="true" style={{ "--accent": "var(--r-orange)" } as CSSProperties} role="dialog" aria-label="The newest posts, on Peter’s desk">
             <span className={styles.chipTop}>
               <i aria-hidden="true" />
-              {figLabel(deskPosts[0]?.fig ?? 2)}–{String(deskPosts[deskPosts.length - 1]?.fig ?? 4).padStart(2, "0")} · Notebooks on the desk
+              {figLabel(deskPosts[0]?.fig ?? 2)}–{String(deskPosts[deskPosts.length - 1]?.fig ?? 4).padStart(2, "0")} · On the desk
               <button type="button" className={styles.chipClose} aria-label="Close" onClick={dismiss}>
                 ×
               </button>

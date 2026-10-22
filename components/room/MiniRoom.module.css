@@ -155,6 +155,10 @@
   .caption a {
     min-height: 44px;
   }
+
+  .caption {
+    margin-bottom: -4px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

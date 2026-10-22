@@ -407,6 +407,7 @@ export function createEngine(options: EngineOptions): Engine {
   const slowParam = new URLSearchParams(window.location.search).get("slow");
   const debugSlowMs = slowParam ? Number(slowParam) || 30 : 0;
   const noDof = new URLSearchParams(window.location.search).has("nodof");
+  const debugStats = new URLSearchParams(window.location.search).has("debug");
   const stats = { fps: 0, cap: 60, draws: 0, dpr, taps, shadowUpdates: 0, why: "", hover: "" as string | null, move: "" };
   let fpsFrames = 0;
   let fpsStart = performance.now();
@@ -435,7 +436,7 @@ export function createEngine(options: EngineOptions): Engine {
     }
 
     // hover picking (mouse) once per frame
-    stats.move = lastMove ? `${Math.round(lastMove.x)},${Math.round(lastMove.y)}${drag ? " drag" : ""}` : "none";
+    if (debugStats) stats.move = lastMove ? `${Math.round(lastMove.x)},${Math.round(lastMove.y)}${drag ? " drag" : ""}` : "none";
     if (lastMove && !drag) {
       const id = pick(lastMove.x, lastMove.y, false);
       stats.hover = id;
@@ -547,7 +548,7 @@ export function createEngine(options: EngineOptions): Engine {
 
     const settling = springing || world.lightingBusy() || Math.abs(view.targetAzimuth - view.azimuth) > 1e-4 || Math.abs(view.targetElevation - view.elevation) > 1e-4 || Math.abs(view.zoom - zoomTarget) > 1e-4 || Math.abs(focusDistance.target - focusDistance.value) > 0.01;
     wasSettling = settling;
-    stats.why = settling ? [springing && "spring", world.lightingBusy() && "light", Math.abs(view.targetAzimuth - view.azimuth) > 1e-4 && "az", Math.abs(view.targetElevation - view.elevation) > 1e-4 && "el", Math.abs(view.zoom - zoomTarget) > 1e-4 && "zoom", Math.abs(focusDistance.target - focusDistance.value) > 0.01 && `focus ${focusDistance.target.toFixed(3)}/${focusDistance.value.toFixed(3)}`].filter(Boolean).join(",") : dirty ? "dirty" : "";
+    if (debugStats) stats.why = settling ? [springing && "spring", world.lightingBusy() && "light", Math.abs(view.targetAzimuth - view.azimuth) > 1e-4 && "az", Math.abs(view.targetElevation - view.elevation) > 1e-4 && "el", Math.abs(view.zoom - zoomTarget) > 1e-4 && "zoom", Math.abs(focusDistance.target - focusDistance.value) > 0.01 && `focus ${focusDistance.target.toFixed(3)}/${focusDistance.value.toFixed(3)}`].filter(Boolean).join(",") : dirty ? "dirty" : "";
     if (!options.reducedMotion || settling || dirty) {
       dirty = false;
       schedule();

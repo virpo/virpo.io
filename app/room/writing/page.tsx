@@ -49,7 +49,7 @@ export default function RoomWritingPage() {
                 tabIndex={-1}
                 className={styles.spine}
                 title={post.title}
-                style={{ "--spine": SPINES[index % SPINES.length], "--h": `${80 + ((index * 37) % 18)}%` } as CSSProperties}
+                style={{ "--spine": SPINES[index % SPINES.length], "--h": `${88 + ((index * 37) % 11)}%` } as CSSProperties}
               >
                 <span>{spineLabel(post.title)}</span>
                 <i>{roomDate.format(post.publishedAt).split(" ").slice(1).join(" ")}</i>
