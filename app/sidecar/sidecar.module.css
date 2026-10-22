@@ -600,12 +600,33 @@
   }
 
   .wordmark {
-    font-size: 30px;
+    font-size: 28px;
+  }
+
+  .brandRow {
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .byline {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .header {
+    flex-wrap: nowrap;
+    align-items: center;
   }
 
   .nav {
-    gap: 6px 20px;
-    font-size: 14px;
+    justify-content: flex-end;
+    gap: 4px 14px;
+    font-size: 13px;
+  }
+
+  .nav a {
+    padding: 12px 0;
   }
 
   .indexStrip {
@@ -617,7 +638,7 @@
   }
 
   .deviceColumn {
-    width: min(100%, 300px);
+    width: min(100%, 284px);
   }
 
   .writing {
@@ -650,6 +671,15 @@
 
   .articleTitle {
     font-size: 2rem;
+  }
+
+  .prose > p:first-child {
+    font-size: 1.05em;
+  }
+
+  .prose > p:first-child::first-letter {
+    margin-top: 0.1em;
+    font-size: 2.6em;
   }
 
   .postRow,
@@ -830,7 +860,7 @@
 
 .prose > p:first-child::first-letter {
   float: left;
-  margin: 0.08em 0.1em 0 -0.02em;
+  margin: 0.08em 0.06em 0 -0.04em;
   font-family: var(--mono);
   font-size: 3.35em;
   font-weight: 500;
