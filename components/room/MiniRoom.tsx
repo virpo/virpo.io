@@ -1,20 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { currentLighting, type LightingName } from "./lighting";
 import type { MiniRoom as MiniRoomHandle } from "./world/mini";
 import styles from "./MiniRoom.module.css";
 
 /**
- * The margin toy on a post page: a small, calm window into the same Pocket Room.
+ * The margin toy on a post page: a small, calm window into the same Pocket Room,
+ * in the same light as the landing (Tokyo clock or the saved choice).
  * Reading progress drives Peter's page turns; at the end he looks up and waves.
  */
-export function MiniRoom({ articleId, fig, bookColor }: { articleId: string; fig?: string; bookColor?: string }) {
+export function MiniRoom({ articleId, fig, bookColor, spotId }: { articleId: string; fig?: string; bookColor?: string; spotId?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const roomRef = useRef<MiniRoomHandle | null>(null);
   const [live, setLive] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [lighting, setLighting] = useState<LightingName>("day");
+
+  useEffect(() => setLighting(currentLighting()), []);
 
   useEffect(() => {
     const article = document.getElementById(articleId);
@@ -58,6 +63,7 @@ export function MiniRoom({ articleId, fig, bookColor }: { articleId: string; fig
         const room = createMiniRoom(canvas, {
           reducedMotion,
           bookColor,
+          lighting: currentLighting(),
           fonts: { mono: css.getPropertyValue("--r-mono").trim(), sans: css.getPropertyValue("--r-sans").trim() },
         });
         roomRef.current = room;
@@ -93,9 +99,10 @@ export function MiniRoom({ articleId, fig, bookColor }: { articleId: string; fig
   const segments = 12;
   const lit = Math.round(progress * segments);
   const status = progress > 0.97 ? "Finished · waving" : progress < 0.02 ? "Opening the notebook" : "Reading along";
+  const roomHref = spotId ? `/room/?spot=${spotId}#world` : "/room/#world";
 
   return (
-    <div className={styles.mini} ref={rootRef} data-live={live}>
+    <div className={styles.mini} ref={rootRef} data-live={live} data-lighting={lighting}>
       <div className={styles.top}>
         <span className={styles.model}>
           <b>PR-03</b> {fig ?? "Writing room"}
@@ -105,11 +112,15 @@ export function MiniRoom({ articleId, fig, bookColor }: { articleId: string; fig
         </span>
       </div>
       <div className={styles.screen}>
-        <picture className={styles.still} aria-hidden="true">
-          <source media="(max-width: 899px)" srcSet="/lab/room/mini-wide.webp" />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/lab/room/mini-tall.webp" alt="" width={600} height={680} loading="lazy" />
-        </picture>
+        <div className={styles.still} data-room-still aria-hidden="true">
+          {(["day", "dusk", "night"] as const).map((time) => (
+            <div
+              key={time}
+              data-time={time}
+              style={{ "--still-tall": `url(/lab/room/mini-tall-${time}.webp)`, "--still-wide": `url(/lab/room/mini-wide-${time}.webp)` } as CSSProperties}
+            />
+          ))}
+        </div>
         <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />
       </div>
       <div className={styles.meter} role="progressbar" aria-label="Reading progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent}>
@@ -119,7 +130,7 @@ export function MiniRoom({ articleId, fig, bookColor }: { articleId: string; fig
       </div>
       <p className={styles.caption}>
         <span>{status}</span>
-        <Link href="/room/">Back to the room ↖</Link>
+        <Link href={roomHref}>Back to the room ↖</Link>
       </p>
     </div>
   );

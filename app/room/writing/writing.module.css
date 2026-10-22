@@ -1,6 +1,19 @@
 .main {
-  width: min(100%, 860px);
+  width: min(100%, 1120px);
   padding: 28px 0 72px;
+}
+
+/* title on the left, the shelf from the room on the right */
+.top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 28px 48px;
+}
+
+.year,
+.back {
+  max-width: 860px;
 }
 
 .kicker {
@@ -15,11 +28,17 @@
   text-transform: uppercase;
 }
 
-.kicker span {
+.kicker a {
   padding: 0.2rem 0.4rem;
   border: 1px solid var(--r-line-strong);
   border-radius: 5px;
   color: var(--r-ink);
+}
+
+.kicker a:hover {
+  border-color: var(--r-ink);
+  background: var(--r-ink);
+  color: #fff;
 }
 
 .header h1 {
@@ -52,11 +71,11 @@
   display: flex;
   width: max-content;
   max-width: 100%;
-  height: 168px;
+  height: 210px;
   align-items: flex-end;
-  gap: 4px;
-  margin: 2.4rem 0 0;
-  padding: 0 18px;
+  gap: 5px;
+  margin: 0;
+  padding: 0 20px;
   border-bottom: 14px solid #b7834f;
   border-radius: 4px;
   background: linear-gradient(180deg, #a87448, #93633c);
@@ -66,10 +85,12 @@
 .spine {
   position: relative;
   display: flex;
-  width: 46px;
+  width: 50px;
   height: var(--h);
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 12px 0 10px;
   overflow: hidden;
   border-radius: 4px 4px 1px 1px;
   background: var(--spine);
@@ -80,16 +101,34 @@
 
 .spine span {
   overflow: hidden;
-  max-height: 88%;
+  max-height: 78%;
   color: #fff;
-  font-family: var(--r-mono);
-  font-size: 0.56rem;
-  letter-spacing: 0.04em;
+  font-family: var(--r-sans);
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
   text-overflow: ellipsis;
-  text-transform: uppercase;
   white-space: nowrap;
   writing-mode: vertical-rl;
   transform: rotate(180deg);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.18);
+}
+
+.spine i {
+  color: rgba(255, 255, 255, 0.82);
+  font-family: var(--r-mono);
+  font-size: 0.48rem;
+  font-style: normal;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.spine[style*="#f2c84b"] span,
+.spine[style*="#f2c84b"] i {
+  color: #3d2c00;
+  text-shadow: none;
 }
 
 .spine:hover {
@@ -214,13 +253,19 @@
   background: var(--r-orange);
 }
 
+@media (max-width: 899px) {
+  .top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 719px) {
   .shelf {
-    height: 132px;
+    height: 160px;
   }
 
   .spine {
-    width: 38px;
+    width: 44px;
   }
 
   .item {

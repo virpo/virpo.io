@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import type { BuildContext } from "./context";
-import { C, LoopPath, capsule, card, cyl, dynamic, group, mat, mesh, ownMat, puck, rbox, roundedProfile, sphere, sweep } from "./kit";
+import { C, LoopPath, capsule, card, contact, cyl, dynamic, group, mat, mesh, ownMat, puck, rbox, roundedProfile, sphere, sweep } from "./kit";
 import { stationSign } from "./textures";
 
 // A double-track loop around the plinth: at ground level in front (with a
@@ -49,6 +49,8 @@ export type Railway = {
   path: LoopPath;
   /** world-space position of the shinkansen's lead car */
   leadPosition(target: THREE.Vector3): THREE.Vector3;
+  /** Level crossings on the street (z ≈ 1.5): road traffic waits while the barriers are down. */
+  crossings: { x: number; closed(): boolean }[];
   update(t: number, dt: number): void;
 };
 
@@ -114,6 +116,9 @@ export function shinkansenCar(kind: "lead" | "mid" | "tail", len: number) {
   }
   car.add(bogie(0.075, len / 2 - 0.2));
   car.add(bogie(0.075, -len / 2 + 0.2));
+  // moving trains stay out of the frozen shadow map; a soft blob grounds them instead
+  car.add(contact(0.5, len * 1.02, { y: -0.004 }, 0.75));
+  car.userData.noShadow = true;
   return car;
 }
 
@@ -137,6 +142,9 @@ function localCar(kind: "lead" | "mid" | "tail", len: number) {
   }
   car.add(bogie(0.075, len / 2 - 0.2));
   car.add(bogie(0.075, -len / 2 + 0.2));
+  // moving trains stay out of the frozen shadow map; a soft blob grounds them instead
+  car.add(contact(0.5, len * 1.02, { y: -0.004 }, 0.75));
+  car.userData.noShadow = true;
   return car;
 }
 
@@ -243,6 +251,7 @@ export function buildRailway(ctx: BuildContext): Railway {
       unit.add(mesh(rbox(0.22, 0.06, 0.02, 0.01), mat(C.yellow), { y: 0.78, rz: -0.6 }));
       unit.add(mesh(rbox(0.12, 0.14, 0.12, 0.03), mat(C.ink), { y: 0.25, x: 0.08 }));
       const arm = dynamic(group({ x: 0.1, y: 0.28 }));
+      arm.userData.noShadow = true;
       const stripes = group({ x: 0.0 });
       for (let i = 0; i < 6; i += 1) stripes.add(mesh(rbox(0.12, 0.035, 0.035, 0.012), mat(i % 2 ? C.ink : C.yellow, { rough: 0.45 }), { x: 0.06 + i * 0.12 }));
       arm.add(stripes);
@@ -346,9 +355,16 @@ export function buildRailway(ctx: BuildContext): Railway {
     }
   };
 
+  const crossingInfo = crossings.map((s) => {
+    const p = path.pointAt(s);
+    const own = barriers.filter((b) => b.s === s);
+    return { x: p.x, closed: () => own.some((b) => b.angle < 1.2) };
+  });
+
   return {
     root,
     path,
+    crossings: crossingInfo,
     leadPosition(target) {
       return target.copy(shin.cars[0].position);
     },

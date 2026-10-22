@@ -60,6 +60,19 @@
   text-transform: uppercase;
 }
 
+.notebook span {
+  color: var(--r-ink-2);
+  transition: transform 160ms ease;
+}
+
+.notebook:hover {
+  border-color: var(--r-ink);
+}
+
+.notebook:hover span {
+  transform: translate(-2px, -2px);
+}
+
 .notebook i {
   width: 14px;
   height: 18px;
@@ -227,8 +240,7 @@
   margin-top: 2rem;
 }
 
-.pageLink,
-.pageEmpty {
+.pageLink {
   display: grid;
   align-content: start;
   gap: 6px;
@@ -267,18 +279,101 @@
   text-underline-offset: 3px;
 }
 
-.pageEmpty {
-  border: 1.5px dashed var(--r-line-strong);
-  color: var(--r-ink-2);
+/* where a neighbour would be, the card leads back into the room instead */
+.pageLink[data-kind="room"] {
+  background:
+    radial-gradient(circle at 92% 18%, rgba(255, 90, 18, 0.16), transparent 34%),
+    linear-gradient(180deg, #e6e3dc, #d6d2c9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 0 0 1px rgba(30, 28, 24, 0.12);
+}
+
+.pageLink[data-kind="room"] strong {
+  font-size: 0.98rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.pageLink em {
+  margin-top: 2px;
+  color: var(--r-orange-text);
   font-family: var(--r-mono);
   font-size: 0.62rem;
-  letter-spacing: 0.05em;
+  font-style: normal;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
-.pageLink[data-align="end"],
-.pageEmpty[data-align="end"] {
+.pageLink[data-align="end"] {
   text-align: right;
+}
+
+/* the Fig. legend under the margin toy */
+.legend {
+  margin-top: 18px;
+  padding: 0 6px;
+}
+
+.legend p {
+  margin: 0 0 6px;
+  color: var(--r-ink-2);
+  font-family: var(--r-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.legend ol {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--r-line);
+}
+
+.legend a {
+  display: grid;
+  min-height: 40px;
+  grid-template-columns: 22px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--r-line);
+  color: var(--r-ink-2);
+  font-size: 0.8rem;
+  line-height: 1.25;
+}
+
+.legend b {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 1.5px solid var(--notebook);
+  border-radius: 50%;
+  color: var(--r-ink);
+  font-family: var(--r-mono);
+  font-size: 8px;
+}
+
+.legend span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.legend a:hover span {
+  color: var(--r-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.legend a[aria-current="page"] {
+  color: var(--r-ink);
+  font-weight: 700;
+}
+
+.legend a[aria-current="page"] b {
+  background: var(--notebook);
+  color: #fff;
 }
 
 .back {
@@ -339,8 +434,11 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .pageLink[data-align="end"],
-  .pageEmpty[data-align="end"] {
+  .pageLink[data-align="end"] {
     text-align: left;
+  }
+
+  .legend {
+    display: none;
   }
 }

@@ -61,6 +61,10 @@ export default async function RoomPostPage({ params }: Props) {
   const older = index >= 0 && index < all.length - 1 ? all[index + 1] : null;
   const spot = index >= 0 && index < 3 ? hotspotById.get(`post-${index}`) : null;
   const notebook = spot ? NOTEBOOK_COLORS[index] : "var(--r-ink)";
+  const shelf = hotspotById.get("bookshelf");
+  const roomLink = `/room/?spot=${spot ? spot.id : "bookshelf"}#world`;
+  // the Fig. legend in the margin: the notebooks on the desk, then the bookshelf
+  const legend = all.slice(0, 3).map((item, i) => ({ item, fig: hotspotById.get(`post-${i}`)?.fig ?? i + 2, color: NOTEBOOK_COLORS[i] }));
 
   return (
     <div className={shell.page} data-room-page>
@@ -73,10 +77,11 @@ export default async function RoomPostPage({ params }: Props) {
             <Link href="/room/writing/">Writing</Link>
           </nav>
           <header className={styles.header}>
-            <p className={styles.notebook}>
+            <Link className={styles.notebook} href={roomLink} title="See it in the Pocket Room">
               <i aria-hidden="true" />
-              {spot ? `${figLabel(spot.fig)} · Notebook ${String(index + 1).padStart(2, "0")} on the desk` : "From the bookshelf"}
-            </p>
+              {spot ? `${figLabel(spot.fig)} · Notebook ${String(index + 1).padStart(2, "0")} on the desk` : `${figLabel(shelf?.fig ?? 5)} · From the bookshelf`}
+              <span aria-hidden="true">↖</span>
+            </Link>
             <h1>{post.title}</h1>
             <p className={styles.standfirst}>{post.description}</p>
             <dl className={styles.meta}>
@@ -129,7 +134,11 @@ export default async function RoomPostPage({ params }: Props) {
                   <time dateTime={older.publishedAt.toISOString()}>{roomDate.format(older.publishedAt)}</time>
                 </Link>
               ) : (
-                <span className={styles.pageEmpty}>This is the oldest post.</span>
+                <Link href="/room/writing/" className={styles.pageLink} data-kind="room">
+                  <span>{figLabel(shelf?.fig ?? 5)} · The bookshelf</span>
+                  <strong>That’s the first post. See every post on the shelf</strong>
+                  <em aria-hidden="true">All writing →</em>
+                </Link>
               )}
               {newer ? (
                 <Link href={roomPostHref(newer.slug)} className={styles.pageLink} data-align="end" rel="next">
@@ -138,9 +147,11 @@ export default async function RoomPostPage({ params }: Props) {
                   <time dateTime={newer.publishedAt.toISOString()}>{roomDate.format(newer.publishedAt)}</time>
                 </Link>
               ) : (
-                <span className={styles.pageEmpty} data-align="end">
-                  You’re reading the newest post.
-                </span>
+                <Link href={roomLink} className={styles.pageLink} data-align="end" data-kind="room">
+                  <span>Newest post · {spot ? figLabel(spot.fig) : "The room"}</span>
+                  <strong>Back to the Pocket Room, where this notebook sits on the desk</strong>
+                  <em aria-hidden="true">↖ Into the room</em>
+                </Link>
               )}
             </nav>
             <p className={styles.back}>
@@ -152,7 +163,26 @@ export default async function RoomPostPage({ params }: Props) {
 
         <aside className={styles.margin} aria-label="A small window into the Pocket Room: Peter reading this post">
           <div className={styles.sticky}>
-            <MiniRoom articleId="room-article" fig={spot ? `${figLabel(spot.fig)} · notebook` : "Writing room"} bookColor={spot ? BOOK_3D[index] : "#84a17f"} />
+            <MiniRoom articleId="room-article" fig={spot ? `${figLabel(spot.fig)} · notebook` : "Writing room"} bookColor={spot ? BOOK_3D[index] : "#84a17f"} spotId={spot?.id ?? "bookshelf"} />
+            <nav className={styles.legend} aria-label="In the Pocket Room">
+              <p>In the room</p>
+              <ol>
+                {legend.map(({ item, fig, color }) => (
+                  <li key={item.slug}>
+                    <Link href={roomPostHref(item.slug)} aria-current={item.slug === post.slug ? "page" : undefined} style={{ "--notebook": color } as CSSProperties}>
+                      <b>{String(fig).padStart(2, "0")}</b>
+                      <span>{item.title}</span>
+                    </Link>
+                  </li>
+                ))}
+                <li>
+                  <Link href="/room/writing/" style={{ "--notebook": "var(--r-ink)" } as CSSProperties}>
+                    <b>{String(shelf?.fig ?? 5).padStart(2, "0")}</b>
+                    <span>The bookshelf · all writing</span>
+                  </Link>
+                </li>
+              </ol>
+            </nav>
           </div>
         </aside>
       </div>

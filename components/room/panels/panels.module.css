@@ -58,17 +58,23 @@
   background: #fff;
 }
 
-.projectImage[data-empty] {
-  display: grid;
-  place-items: center;
-  background: repeating-linear-gradient(-45deg, var(--r-paper-2) 0 8px, var(--r-paper) 8px 16px);
+.projectImage[data-object] {
+  position: relative;
+  background: radial-gradient(circle at 50% 40%, #fbf5ea, #eadfcc);
 }
 
-.projectImage[data-empty] span {
-  font-family: var(--r-sans);
-  font-size: 3rem;
-  font-weight: 800;
-  color: var(--accent);
+.objectTag {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: rgba(28, 29, 33, 0.78);
+  color: #f4efe6;
+  font-family: var(--r-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .projectBlurb {

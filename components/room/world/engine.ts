@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { createPostPass } from "./post";
 import { setTextureFonts } from "./textures";
+import { hotspotById } from "../hotspots";
 import { buildWorld, type LightingName, type World } from "./world";
 
 export type Anchor = { id: string; x: number; y: number; visible: boolean };
@@ -35,7 +36,14 @@ export type Engine = {
   resize(): void;
   setVisible(visible: boolean): void;
   anchors(): Anchor[];
+  stats(): { fps: number; cap: number; draws: number; dpr: number; taps: number; shadowUpdates: number; why: string; hover: string | null; move: string };
   debugCamera(position: [number, number, number], target: [number, number, number]): void;
+  /** Debug/tooling: frame one object (used to render the project thumbnails). */
+  frameSpot(id: string, zoom?: number): void;
+  /** Debug/tooling: where an object's focus point (plus dy world units) is in client pixels. */
+  screenOf(id: string, dy?: number): { x: number; y: number } | null;
+  /** Debug/tooling: what the pointer would hover at a client point. */
+  pickAt(x: number, y: number): string | null;
   dispose(): void;
   world: World;
 };
@@ -53,7 +61,11 @@ export function createEngine(options: EngineOptions): Engine {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
-  renderer.shadowMap.autoUpdate = true;
+  // The shadow map is frozen: it only re-renders when lighting changes, an object
+  // springs up on hover, or the canvas resizes. Moving things (trains, the printer
+  // head, the cat) don't cast into it; they carry soft contact blobs instead.
+  renderer.shadowMap.autoUpdate = false;
+  renderer.shadowMap.needsUpdate = true;
 
   const maxDpr = mobile ? 1.6 : 1.75;
   let dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
@@ -186,16 +198,50 @@ export function createEngine(options: EngineOptions): Engine {
   const ownerOf = new Map<THREE.Object3D, string>();
   for (const spot of world.spots) for (const p of spot.pickables) ownerOf.set(p, spot.id);
 
+  const owner = (object: THREE.Object3D) => {
+    for (let o: THREE.Object3D | null = object; o; o = o.parent) {
+      const id = ownerOf.get(o);
+      if (id) return id;
+    }
+    return null;
+  };
+  /** Ray distance to a spot in its resting pose (not lifted, not popped), or null if the ray misses it. */
+  const restDistance = (id: string) => {
+    const spot = world.spotById.get(id);
+    if (!spot) return null;
+    const y = spot.object.position.y;
+    const scale = spot.object.scale.clone();
+    spot.object.position.y = spot.base.y;
+    spot.object.scale.copy(spot.baseScale);
+    spot.object.updateMatrixWorld(true);
+    const hit = raycaster.intersectObjects(spot.pickables, false)[0];
+    spot.object.position.y = y;
+    spot.object.scale.copy(scale);
+    spot.object.updateMatrixWorld(true);
+    return hit ? hit.distance : null;
+  };
   const pick = (clientX: number, clientY: number, fuzzy: boolean): string | null => {
     const rect = canvas.getBoundingClientRect();
     pointer.set(((clientX - rect.left) / rect.width) * 2 - 1, -((clientY - rect.top) / rect.height) * 2 + 1);
     raycaster.setFromCamera(pointer, camera);
-    const hit = raycaster.intersectObjects(pickables, false)[0];
+    const hits = raycaster.intersectObjects(pickables, false);
+    // Peter's invisible capsule (head + shoulders) wins over the furniture around him (desk,
+    // laptop, chair, wall), but never over another clickable object that is really in front
+    const proxy = hits.find((h) => h.object.userData.proxy);
+    if (proxy) {
+      const blocker = hits.find((h) => h !== proxy && h.distance < proxy.distance && owner(h.object) && owner(h.object) !== "peter");
+      if (!blocker) return owner(proxy.object);
+    }
+    const hit = hits.find((h) => !h.object.userData.proxy);
+    // hysteresis: a hovered object springs up and pops; keep it hovered while the cursor
+    // is still over where it rests, or it would flicker as it jumps out from under the cursor
+    if (!fuzzy && pointerHover && pointerHover !== "peter") {
+      const rest = restDistance(pointerHover);
+      if (rest !== null && (!hit || rest <= hit.distance + 0.05)) return pointerHover;
+    }
     if (hit) {
-      for (let o: THREE.Object3D | null = hit.object; o; o = o.parent) {
-        const id = ownerOf.get(o);
-        if (id) return id;
-      }
+      const id = owner(hit.object);
+      if (id) return id;
     }
     if (!fuzzy) return null;
     // touch: forgive near misses by snapping to the closest marker
@@ -218,11 +264,19 @@ export function createEngine(options: EngineOptions): Engine {
   let focusId: string | null = null;
   const lookTarget = new THREE.Vector3();
   let dirty = true;
+  let pointerInside = false;
+  let glance: THREE.Vector3 | null = null;
+  let lastInput = performance.now();
 
   const applyActive = () => {
     const active = externalHover ?? pointerHover ?? armed;
-    for (const spot of world.spots) spot.active = spot.id === active || spot.id === focusId;
+    // "desk" = the three notebooks together (the shared marker on phones)
+    const isActive = (id: string) => id === active || (active === "desk" && id.startsWith("post-"));
+    for (const spot of world.spots) spot.active = isActive(spot.id) || spot.id === focusId;
     world.peter.state.look = active === "peter" || focusId === "peter" ? 1 : 0;
+    // hover something in the writing room and Peter glances at it
+    const near = active && active !== "peter" ? world.spotById.get(active === "desk" ? "post-1" : active) : null;
+    glance = near && hotspotById.get(near.id)?.zone === "Writing room" ? near.focus : null;
     dirty = true;
   };
 
@@ -262,6 +316,7 @@ export function createEngine(options: EngineOptions): Engine {
     }
     if (event.pointerType === "mouse") {
       lastMove = { x: event.clientX, y: event.clientY };
+      pointerInside = true;
       const rect = canvas.getBoundingClientRect();
       view.parallaxX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       view.parallaxY = ((event.clientY - rect.top) / rect.height) * 2 - 1;
@@ -293,9 +348,17 @@ export function createEngine(options: EngineOptions): Engine {
       callbacks.onHover(id, "touch");
     }
   };
+  const onPointerEnter = (event: PointerEvent) => {
+    if (event.pointerType !== "mouse") return;
+    // a pointer that jumps straight onto an object should light it up immediately
+    lastMove = { x: event.clientX, y: event.clientY };
+    pointerInside = true;
+    kick();
+  };
   const onPointerLeave = (event: PointerEvent) => {
     if (event.pointerType !== "mouse") return;
     lastMove = null;
+    pointerInside = false;
     view.parallaxX = 0;
     view.parallaxY = 0;
     if (pointerHover) {
@@ -311,6 +374,7 @@ export function createEngine(options: EngineOptions): Engine {
     drag = null;
   });
   canvas.addEventListener("pointerleave", onPointerLeave);
+  canvas.addEventListener("pointerenter", onPointerEnter);
 
   // ---------- loop ----------
   let currentAnchors: Anchor[] = [];
@@ -336,17 +400,45 @@ export function createEngine(options: EngineOptions): Engine {
   let elapsed = 0;
   let slowFrames = 0;
   let frames = 0;
+  let lastRender = 0;
+  let wasSettling = true;
+  // quality ladder for slow GPUs: fewer bokeh taps first, then a lower pixel ratio
+  let taps = mobile ? 28 : 44;
+  const slowParam = new URLSearchParams(window.location.search).get("slow");
+  const debugSlowMs = slowParam ? Number(slowParam) || 30 : 0;
+  const noDof = new URLSearchParams(window.location.search).has("nodof");
+  const stats = { fps: 0, cap: 60, draws: 0, dpr, taps, shadowUpdates: 0, why: "", hover: "" as string | null, move: "" };
+  let fpsFrames = 0;
+  let fpsStart = performance.now();
 
   const frame = (now: number) => {
     raf = 0;
     if (!visible) return;
+    // Cap at 60 fps; drop to 30 when nobody is interacting with the world
+    // (pointer elsewhere, nothing springing, no drag): the trains still run.
+    const interacting = pointerInside || drag !== null || now - lastInput < 2500 || wasSettling || focusId !== null || externalHover !== null || armed !== null;
+    const cap = interacting ? 60 : 30;
+    stats.cap = cap;
+    if (!dirty && now - lastRender < 1000 / cap - 2.5) {
+      schedule();
+      return;
+    }
+    lastRender = now;
     const dt = Math.min(0.1, (now - last) / 1000);
     last = now;
     elapsed += dt;
+    if (debugSlowMs) {
+      const until = performance.now() + debugSlowMs;
+      while (performance.now() < until) {
+        /* simulate a slow GPU for testing the quality ladder */
+      }
+    }
 
     // hover picking (mouse) once per frame
+    stats.move = lastMove ? `${Math.round(lastMove.x)},${Math.round(lastMove.y)}${drag ? " drag" : ""}` : "none";
     if (lastMove && !drag) {
       const id = pick(lastMove.x, lastMove.y, false);
+      stats.hover = id;
       if (id !== pointerHover) {
         pointerHover = id;
         applyActive();
@@ -356,7 +448,8 @@ export function createEngine(options: EngineOptions): Engine {
     }
 
     // camera easing
-    const k = 1 - Math.exp(-dt * 5);
+    // reduced motion: no easing anywhere, everything snaps
+    const k = options.reducedMotion ? 1 : 1 - Math.exp(-dt * 5);
     view.azimuth += (view.targetAzimuth - view.azimuth) * k;
     view.elevation += (view.targetElevation - view.elevation) * k;
     const zoomTarget = focusId ? 0.86 : 1;
@@ -367,15 +460,22 @@ export function createEngine(options: EngineOptions): Engine {
     } else view.focusTarget = null;
     const desired = view.focusTarget ? view.baseTarget.clone().lerp(view.focusTarget, 0.3) : view.baseTarget;
     view.target.lerp(desired, k);
-    const az = view.azimuth + view.parallaxX * 0.03;
-    const el = view.elevation - view.parallaxY * 0.015;
+    // no pointer parallax: things must stay exactly under the cursor (drag turns the room instead)
+    const az = view.azimuth;
+    const el = view.elevation;
     const d = view.distance * view.zoom;
     camera.position.set(view.target.x + Math.sin(az) * Math.cos(el) * d, view.target.y + Math.sin(el) * d, view.target.z + Math.cos(az) * Math.cos(el) * d);
     camera.lookAt(view.target);
     camera.updateMatrixWorld();
 
     // world animation
-    lookTarget.copy(camera.position);
+    if (glance && world.peter.state.look < 1) {
+      lookTarget.copy(glance);
+      world.peter.state.glance = 0.75;
+    } else {
+      lookTarget.copy(camera.position);
+      world.peter.state.glance = 0;
+    }
     world.update(elapsed, dt);
     world.peter.update(options.reducedMotion ? 0 : elapsed, dt, lookTarget);
 
@@ -389,7 +489,7 @@ export function createEngine(options: EngineOptions): Engine {
     focusDistance.target = camDist;
     focusVec.project(camera);
     focusY.target = focusVec.y * 0.5 + 0.5;
-    const fk = 1 - Math.exp(-dt * (active ? 9 : 3));
+    const fk = options.reducedMotion ? 1 : 1 - Math.exp(-dt * (active ? 9 : 3));
     focusDistance.value += (focusDistance.target - focusDistance.value) * fk;
     focusY.value += (focusY.target - focusY.value) * fk;
 
@@ -399,34 +499,55 @@ export function createEngine(options: EngineOptions): Engine {
     uniforms.focusY.value = focusY.value;
     const res = uniforms.resolution.value as THREE.Vector2;
     uniforms.maxBlur.value = Math.max(5, Math.min(11, res.y / 95));
-    uniforms.aperture.value = mobile ? 2.8 : 4.8;
-    uniforms.tilt.value = mobile ? 0.8 : 1.0;
+    uniforms.aperture.value = noDof ? 0 : mobile ? 2.8 : 4.8;
+    uniforms.tilt.value = noDof ? 0 : mobile ? 0.8 : 1.0;
     uniforms.time.value = elapsed;
+    uniforms.taps.value = taps;
     (uniforms.bgTop.value as THREE.Color).copy(world.background.top);
     (uniforms.bgBottom.value as THREE.Color).copy(world.background.bottom);
     (uniforms.bgGlow.value as THREE.Color).copy(world.background.glow);
 
+    const springing = world.spots.some((s) => !s.spring.settled());
+    if (springing || world.lightingBusy() || world.peter.state.wave > 0) renderer.shadowMap.needsUpdate = true;
+    if (renderer.shadowMap.needsUpdate) stats.shadowUpdates += 1;
+    renderer.info.autoReset = false;
+    renderer.info.reset();
     renderer.setRenderTarget(post.target);
     renderer.setClearColor(0x000000, 0);
     renderer.clear();
     renderer.render(scene, camera);
     renderer.setRenderTarget(null);
     renderer.render(post.scene, post.camera);
+    stats.draws = renderer.info.render.calls;
     callbacks.onFrame(computeAnchors());
 
-    // adaptive resolution: if we're consistently slow, drop the pixel ratio
+    // adaptive quality: if frames keep taking much longer than the cap allows,
+    // step down the bokeh taps, then the pixel ratio (never below 1)
     frames += 1;
-    if (dt > 0.026) slowFrames += 1;
-    if (frames >= 90) {
-      if (slowFrames > 45 && dpr > 1) {
-        dpr = Math.max(1, dpr - 0.25);
-        resize();
+    if (dt * 1000 > (1000 / cap) * 1.55) slowFrames += 1;
+    if (frames >= 60) {
+      if (slowFrames > 30) {
+        if (taps > 24) taps = 24;
+        else if (dpr > 1) {
+          dpr = Math.max(1, dpr - 0.25);
+          resize();
+        }
+        stats.taps = taps;
+        stats.dpr = dpr;
       }
       frames = 0;
       slowFrames = 0;
     }
+    fpsFrames += 1;
+    if (now - fpsStart > 1000) {
+      stats.fps = Math.round((fpsFrames * 1000) / (now - fpsStart));
+      fpsFrames = 0;
+      fpsStart = now;
+    }
 
-    const settling = world.spots.some((s) => !s.spring.settled()) || world.lightingBusy() || Math.abs(view.targetAzimuth - view.azimuth) > 1e-4 || Math.abs(view.zoom - zoomTarget) > 1e-4 || Math.abs(focusDistance.target - focusDistance.value) > 0.01;
+    const settling = springing || world.lightingBusy() || Math.abs(view.targetAzimuth - view.azimuth) > 1e-4 || Math.abs(view.targetElevation - view.elevation) > 1e-4 || Math.abs(view.zoom - zoomTarget) > 1e-4 || Math.abs(focusDistance.target - focusDistance.value) > 0.01;
+    wasSettling = settling;
+    stats.why = settling ? [springing && "spring", world.lightingBusy() && "light", Math.abs(view.targetAzimuth - view.azimuth) > 1e-4 && "az", Math.abs(view.targetElevation - view.elevation) > 1e-4 && "el", Math.abs(view.zoom - zoomTarget) > 1e-4 && "zoom", Math.abs(focusDistance.target - focusDistance.value) > 0.01 && `focus ${focusDistance.target.toFixed(3)}/${focusDistance.value.toFixed(3)}`].filter(Boolean).join(",") : dirty ? "dirty" : "";
     if (!options.reducedMotion || settling || dirty) {
       dirty = false;
       schedule();
@@ -444,7 +565,8 @@ export function createEngine(options: EngineOptions): Engine {
 
   const kick = () => {
     dirty = true;
-    last = performance.now();
+    lastInput = performance.now();
+    if (!raf) last = performance.now();
     schedule();
   };
   canvas.addEventListener("pointermove", kick);
@@ -469,6 +591,7 @@ export function createEngine(options: EngineOptions): Engine {
     },
     resize() {
       resize();
+      renderer.shadowMap.needsUpdate = true;
       kick();
     },
     setVisible(next) {
@@ -481,6 +604,30 @@ export function createEngine(options: EngineOptions): Engine {
       }
     },
     anchors: () => currentAnchors,
+    stats: () => ({ ...stats, fps: performance.now() - lastRender > 600 ? 0 : stats.fps }),
+    pickAt(x, y) {
+      return pick(x, y, false);
+    },
+    screenOf(id, dy = 0) {
+      const spot = world.spotById.get(id);
+      if (!spot) return null;
+      const p = spot.focus.clone();
+      p.y += dy;
+      p.project(camera);
+      const rect = canvas.getBoundingClientRect();
+      return { x: rect.left + (p.x * 0.5 + 0.5) * rect.width, y: rect.top + (-p.y * 0.5 + 0.5) * rect.height };
+    },
+    frameSpot(id, zoom = 1) {
+      const spot = world.spotById.get(id);
+      if (!spot) return;
+      const box = new THREE.Box3().setFromObject(spot.object);
+      const center = box.getCenter(new THREE.Vector3());
+      const size = Math.max(0.5, box.getSize(new THREE.Vector3()).length());
+      const d = (size * 2.3 + 0.8) / zoom;
+      const az = AZIMUTH + 0.08;
+      const el = 0.3;
+      this.debugCamera([center.x + Math.sin(az) * Math.cos(el) * d, center.y + Math.sin(el) * d, center.z + Math.cos(az) * Math.cos(el) * d], [center.x, center.y, center.z]);
+    },
     debugCamera(position, target) {
       view.targetAzimuth = view.azimuth = Math.atan2(position[0] - target[0], position[2] - target[2]);
       const dx = position[0] - target[0];
@@ -499,6 +646,7 @@ export function createEngine(options: EngineOptions): Engine {
       canvas.removeEventListener("pointermove", onPointerMove);
       canvas.removeEventListener("pointerup", onPointerUp);
       canvas.removeEventListener("pointerleave", onPointerLeave);
+      canvas.removeEventListener("pointerenter", onPointerEnter);
       canvas.removeEventListener("pointermove", kick);
       canvas.removeEventListener("pointerdown", kick);
       world.dispose();

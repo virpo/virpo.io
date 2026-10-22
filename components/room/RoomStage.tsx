@@ -1,24 +1,24 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from "react";
 import { getTokyoParts } from "../../lib/japan/bloom";
-import {
-  figLabel,
-  kindVerb,
-  resolveHotspot,
-  roomHotspots,
-  type RoomHotspot,
-  type RoomPostRef,
-} from "./hotspots";
+import { figLabel, kindVerb, resolveHotspot, roomHotspots, type RoomHotspot, type RoomPostRef } from "./hotspots";
+import { applyStillLighting, currentLighting, lightingForHour, readSavedChoice, saveChoice, type LightingChoice, type LightingName } from "./lighting";
 import { AboutPanel, ProjectPanel, ToyPanel, type PanelAbout, type PanelProject } from "./panels/RoomPanels";
 import { STILL_ANCHORS } from "./still-anchors";
 import type { Anchor, Engine } from "./world/engine";
 import styles from "./RoomStage.module.css";
 
-type LightingName = "day" | "dusk" | "night";
-type LightingChoice = "auto" | LightingName;
+export { lightingForHour } from "./lighting";
+
 type Active = { id: string; via: "pointer" | "touch" | "list" | "focus" };
+
+/** On phones the three notebooks share one marker and one chip listing the posts. */
+export const DESK_ID = "desk";
+const POST_IDS = ["post-0", "post-1", "post-2"];
+/** The desk pill sits left of the notebooks' centre, clear of the stream deck's marker. */
+const DESK_SHIFT = 0.05;
 
 const KIND_ACCENT: Record<RoomHotspot["kind"], string> = {
   post: "var(--r-orange)",
@@ -27,14 +27,6 @@ const KIND_ACCENT: Record<RoomHotspot["kind"], string> = {
   project: "var(--r-blue)",
   toy: "var(--r-green)",
 };
-
-const LIGHTING_KEY = "virpo-room-lighting";
-
-export function lightingForHour(hour: number): LightingName {
-  if (hour >= 6 && hour < 16) return "day";
-  if ((hour >= 16 && hour < 19) || hour === 5) return "dusk";
-  return "night";
-}
 
 function fallbackHref(spot: RoomHotspot) {
   if (spot.href) return spot.href;
@@ -49,6 +41,21 @@ function spotLabel(spot: RoomHotspot) {
   if (spot.kind === "toy") return `${spot.title} · toy`;
   if (spot.kind === "writing") return "All writing";
   return "About Peter Hraska";
+}
+
+const pct = (value: number | undefined) => `${((value ?? 0) * 100).toFixed(2)}%`;
+
+/** Still-image marker position as CSS custom properties (desktop + phone), so markers render server-side. */
+function stillVars(id: string): Record<string, string> | null {
+  const ids = id === DESK_ID ? POST_IDS : [id];
+  const d = ids.map((key) => STILL_ANCHORS.desktop[key]).filter(Boolean);
+  const m = ids.map((key) => STILL_ANCHORS.mobile[key]).filter(Boolean);
+  if (!d.length || !m.length) return null;
+  const avg = (list: [number, number][], i: 0 | 1) => list.reduce((sum, p) => sum + p[i], 0) / list.length;
+  // the shared desk marker sits on the notebooks themselves, below their own anchors
+  const lift = id === DESK_ID ? -0.035 : 0;
+  const shift = id === DESK_ID ? DESK_SHIFT : 0;
+  return { "--sx": pct(avg(d, 0)), "--sy": pct(avg(d, 1) - lift), "--mx": pct(avg(m, 0) - shift), "--my": pct(avg(m, 1) - lift) };
 }
 
 export function RoomStage({
@@ -77,10 +84,15 @@ export function RoomStage({
   const [tokyo, setTokyo] = useState<{ label: string; lighting: LightingName } | null>(null);
   const [coarse, setCoarse] = useState(false);
   const [compact, setCompact] = useState(false);
+  const [sheetDrag, setSheetDrag] = useState(0);
   const activeRef = useRef<Active | null>(null);
   const openRef = useRef<string | null>(null);
+  const compactRef = useRef(false);
+  const modeRef = useRef(mode);
   activeRef.current = active;
   openRef.current = openId;
+  compactRef.current = compact;
+  modeRef.current = mode;
 
   const spots = useMemo(
     () => roomHotspots.map((spot) => resolveHotspot(spot, posts)).filter((spot): spot is RoomHotspot => spot !== null),
@@ -88,10 +100,11 @@ export function RoomStage({
   );
   const spotMap = useMemo(() => new Map(spots.map((spot) => [spot.id, spot])), [spots]);
   const projectMap = useMemo(() => new Map(projects.map((project) => [project.slug, project])), [projects]);
+  const deskPosts = useMemo(() => POST_IDS.map((id) => spotMap.get(id)).filter((spot): spot is RoomHotspot => Boolean(spot)), [spotMap]);
 
   const lighting: LightingName = choice === "auto" ? tokyo?.lighting ?? "day" : choice;
 
-  // ---------- Tokyo clock + saved lighting choice ----------
+  // ---------- Tokyo clock + saved lighting choice (shared with the post-page toy) ----------
   useEffect(() => {
     const tick = () => {
       const parts = getTokyoParts(new Date());
@@ -99,29 +112,22 @@ export function RoomStage({
     };
     tick();
     const id = window.setInterval(tick, 30_000);
-    try {
-      const saved = window.localStorage.getItem(LIGHTING_KEY) as LightingChoice | null;
-      if (saved && ["auto", "day", "dusk", "night"].includes(saved)) setChoice(saved);
-    } catch {
-      /* storage blocked: stay on auto */
-    }
-    const params = new URLSearchParams(window.location.search);
-    const forced = params.get("time");
+    const saved = readSavedChoice();
+    if (saved) setChoice(saved);
+    const forced = new URLSearchParams(window.location.search).get("time");
     if (forced === "day" || forced === "dusk" || forced === "night") setChoice(forced);
     return () => window.clearInterval(id);
   }, []);
 
   useEffect(() => {
+    if (!tokyo) return;
     engineRef.current?.setLighting(lighting);
-  }, [lighting]);
+    applyStillLighting(lighting);
+  }, [lighting, tokyo]);
 
   const chooseLighting = (next: LightingChoice) => {
     setChoice(next);
-    try {
-      window.localStorage.setItem(LIGHTING_KEY, next);
-    } catch {
-      /* ignore */
-    }
+    saveChoice(next);
   };
 
   // ---------- positioning (no React re-render per frame) ----------
@@ -130,30 +136,47 @@ export function RoomStage({
     if (!stage) return;
     const width = stage.clientWidth;
     const height = stage.clientHeight;
-    for (const [id, marker] of markerRefs.current) {
-      const anchor = anchorsRef.current.get(id);
-      if (!anchor) continue;
-      marker.style.transform = `translate3d(${anchor.x.toFixed(1)}px, ${anchor.y.toFixed(1)}px, 0)`;
-      marker.dataset.placed = anchor.visible ? "true" : "false";
+    const anchors = anchorsRef.current;
+    const live = modeRef.current === "live";
+    const anchorOf = (id: string): Anchor | null => {
+      if (id !== DESK_ID) return anchors.get(id) ?? null;
+      const list = POST_IDS.map((key) => anchors.get(key)).filter((a): a is Anchor => Boolean(a && a.visible));
+      if (!list.length) return null;
+      return { id, x: list.reduce((s, a) => s + a.x, 0) / list.length - width * DESK_SHIFT, y: list.reduce((s, a) => s + a.y, 0) / list.length + height * 0.035, visible: true };
+    };
+    const stillAnchor = (id: string): Anchor | null => {
+      const vars = stillVars(id);
+      if (!vars) return null;
+      const phone = window.matchMedia?.("(max-width: 719px)").matches;
+      return { id, x: (parseFloat(phone ? vars["--mx"] : vars["--sx"]) / 100) * width, y: (parseFloat(phone ? vars["--my"] : vars["--sy"]) / 100) * height, visible: true };
+    };
+    const locate = (id: string) => (live ? anchorOf(id) : stillAnchor(id));
+    if (live) {
+      for (const [id, marker] of markerRefs.current) {
+        const anchor = anchorOf(id);
+        if (!anchor) continue;
+        marker.style.transform = `translate3d(${anchor.x.toFixed(1)}px, ${anchor.y.toFixed(1)}px, 0)`;
+        marker.dataset.placed = anchor.visible ? "true" : "false";
+      }
     }
     const current = activeRef.current;
     const chip = chipRef.current;
     if (chip && current) {
-      const anchor = anchorsRef.current.get(current.id);
+      const anchor = locate(current.id);
       if (anchor) {
         const w = chip.offsetWidth;
         const x = Math.max(8, Math.min(width - w - 8, anchor.x - w / 2));
-        const above = anchor.y - chip.offsetHeight - 22;
-        const y = above < 8 ? anchor.y + 22 : above;
+        const above = anchor.y - chip.offsetHeight - 24;
+        const y = above < 8 ? Math.min(height - chip.offsetHeight - 8, anchor.y + 24) : above;
         chip.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
         chip.dataset.below = above < 8 ? "true" : "false";
-        chip.style.setProperty("--tail-x", `${(anchor.x - x).toFixed(1)}px`);
+        chip.style.setProperty("--tail-x", `${Math.max(14, Math.min(w - 14, anchor.x - x)).toFixed(1)}px`);
       }
     }
     const panel = panelRef.current;
     const open = openRef.current;
     if (panel && open && !panel.dataset.sheet) {
-      const anchor = anchorsRef.current.get(open);
+      const anchor = locate(open);
       if (anchor) {
         const pw = panel.offsetWidth;
         const ph = panel.offsetHeight;
@@ -175,6 +198,10 @@ export function RoomStage({
     [placeOverlays],
   );
 
+  const highlight = useCallback((id: string | null) => {
+    engineRef.current?.highlight(id);
+  }, []);
+
   // ---------- open / close ----------
   const open = useCallback(
     (id: string) => {
@@ -187,6 +214,7 @@ export function RoomStage({
       if (!returnFocusRef.current) returnFocusRef.current = (document.activeElement as HTMLElement) ?? null;
       setOpenId(id);
       setActive(null);
+      setSheetDrag(0);
       engineRef.current?.highlight(null);
       engineRef.current?.focus(id);
       if (id === "peter") {
@@ -205,10 +233,18 @@ export function RoomStage({
   const close = useCallback(() => {
     const id = openRef.current;
     setOpenId(null);
+    setSheetDrag(0);
     engineRef.current?.focus(null);
     const back = returnFocusRef.current ?? (id ? markerRefs.current.get(id) : null);
     returnFocusRef.current = null;
     if (back && document.contains(back)) back.focus({ preventScroll: true });
+  }, []);
+
+  /** Touch: what the first tap on an object shows. Notebooks on phones show the shared desk chip. */
+  const arm = useCallback((id: string) => {
+    const shown = compactRef.current && POST_IDS.includes(id) ? DESK_ID : id;
+    engineRef.current?.highlight(shown);
+    setActive({ id: shown, via: "touch" });
   }, []);
 
   // ---------- engine boot ----------
@@ -237,18 +273,22 @@ export function RoomStage({
         await Promise.race([document.fonts?.ready, new Promise((resolve) => setTimeout(resolve, 1500))]);
         const { createEngine } = await import("./world/engine");
         if (disposed) return;
-        const styles = getComputedStyle(stage);
+        const css = getComputedStyle(stage);
         engine = createEngine({
           canvas,
           reducedMotion,
           coarse: isCoarse,
           tokyoLabel: `TOKYO ${getTokyoParts(new Date()).label}`,
-          lighting: (stage.dataset.lighting as LightingName) || "day",
-          fonts: { mono: styles.getPropertyValue("--r-mono").trim(), sans: styles.getPropertyValue("--r-sans").trim() },
+          lighting: currentLighting(),
+          fonts: { mono: css.getPropertyValue("--r-mono").trim(), sans: css.getPropertyValue("--r-sans").trim() },
           callbacks: {
             onHover(id, via) {
+              // while the canvas itself hovers an object, markers let the pointer through, so a
+              // marker riding up with its lifted object can't slide under the cursor and steal it
+              if (via === "pointer" && stageRef.current) stageRef.current.dataset.canvasHover = id ? "true" : "false";
               if (openRef.current && via === "pointer" && !id) return;
-              setActive(id ? { id, via } : null);
+              if (via === "touch" && id) arm(id);
+              else setActive(id ? { id, via } : null);
             },
             onSelect(id) {
               open(id);
@@ -262,13 +302,24 @@ export function RoomStage({
               setAnchors(anchors);
               if (firstFrame) {
                 firstFrame = false;
+                modeRef.current = "live";
                 setMode("live");
               }
             },
           },
         });
         engineRef.current = engine;
-        if (new URLSearchParams(window.location.search).has("debug")) (window as unknown as { __room: Engine }).__room = engine;
+        engine.setVisible(intersecting && !document.hidden);
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("debug")) (window as unknown as { __room: Engine }).__room = engine;
+        // deep link from a post page: /room/?spot=post-0 lights that object up
+        const spot = params.get("spot");
+        if (spot && (spot === DESK_ID || roomHotspots.some((s) => s.id === spot))) {
+          window.setTimeout(() => {
+            engine?.highlight(spot);
+            setActive({ id: spot, via: "list" });
+          }, 400);
+        }
         canvas.addEventListener("webglcontextlost", () => setMode("still"), { once: true });
       } catch (error) {
         console.warn("Pocket Room: falling back to the still image", error);
@@ -280,12 +331,15 @@ export function RoomStage({
     if (idle) idle(() => void boot(), { timeout: 900 });
     else window.setTimeout(() => void boot(), 120);
 
+    // "compact" = the phone layout; the same breakpoint as the CSS and the phone still
+    const phone = () => typeof window.matchMedia === "function" && window.matchMedia("(max-width: 719px)").matches;
     const resizeObserver = new ResizeObserver(() => {
       engine?.resize();
-      setCompact(stage.clientWidth < 720);
+      setCompact(phone());
+      placeOverlays();
     });
     resizeObserver.observe(stage);
-    setCompact(stage.clientWidth < 720);
+    setCompact(phone());
     const intersection = new IntersectionObserver(([entry]) => {
       intersecting = entry.isIntersecting;
       engine?.setVisible(intersecting && !document.hidden);
@@ -302,23 +356,7 @@ export function RoomStage({
       engine?.dispose();
       engineRef.current = null;
     };
-  }, [close, open, setAnchors]);
-
-  // still mode: markers sit at pre-computed positions over the still image
-  useEffect(() => {
-    if (mode !== "still") return;
-    const place = () => {
-      const stage = stageRef.current;
-      if (!stage) return;
-      const set = stage.clientWidth < 720 ? STILL_ANCHORS.mobile : STILL_ANCHORS.desktop;
-      setAnchors(
-        Object.entries(set).map(([id, [fx, fy]]) => ({ id, x: fx * stage.clientWidth, y: fy * stage.clientHeight, visible: true })),
-      );
-    };
-    place();
-    window.addEventListener("resize", place);
-    return () => window.removeEventListener("resize", place);
-  }, [mode, setAnchors]);
+  }, [arm, close, open, placeOverlays, setAnchors]);
 
   // ---------- link the HTML lists both ways ----------
   useEffect(() => {
@@ -365,14 +403,17 @@ export function RoomStage({
     };
   }, [open]);
 
+  // Exactly one thing is ever lit in the lists: clear every stale row, then light the current one.
   useEffect(() => {
     const id = active?.id ?? openId;
+    for (const el of document.querySelectorAll<HTMLElement>("[data-lit]")) delete el.dataset.lit;
     if (!id) return;
-    const lit = document.querySelectorAll<HTMLElement>(`[data-room-target="${id}"]`);
-    lit.forEach((el) => {
-      if (!stageRef.current?.contains(el)) el.dataset.lit = "true";
-    });
-    return () => lit.forEach((el) => delete el.dataset.lit);
+    const ids = id === DESK_ID ? POST_IDS : [id];
+    for (const key of ids) {
+      for (const el of document.querySelectorAll<HTMLElement>(`[data-room-target="${key}"]`)) {
+        if (!stageRef.current?.contains(el)) el.dataset.lit = "true";
+      }
+    }
   }, [active, openId]);
 
   // ---------- keyboard ----------
@@ -393,32 +434,120 @@ export function RoomStage({
 
   useLayoutEffect(() => {
     placeOverlays();
-  }, [active, openId, placeOverlays]);
+  }, [active, openId, mode, placeOverlays]);
 
+  // still / loading: keep the chip and panel glued to the still markers on resize
+  useEffect(() => {
+    if (mode === "live") return;
+    window.addEventListener("resize", placeOverlays);
+    return () => window.removeEventListener("resize", placeOverlays);
+  }, [mode, placeOverlays]);
+
+  // panel focus + phone sheet: keep the opened object visible above the sheet
   useEffect(() => {
     if (!openId) return;
     const panel = panelRef.current;
     panel?.querySelector<HTMLElement>("[data-autofocus]")?.focus({ preventScroll: true });
+    if (!panel?.dataset.sheet) return;
+    const id = window.requestAnimationFrame(() => {
+      const stage = stageRef.current;
+      const anchor = anchorsRef.current.get(openId);
+      if (!stage) return;
+      const rect = stage.getBoundingClientRect();
+      const y = rect.top + (anchor ? anchor.y : rect.height * 0.4);
+      const sheetTop = window.innerHeight - panel.offsetHeight;
+      const wanted = Math.max(70, sheetTop * 0.45);
+      if (y > sheetTop - 40 || y < 60) window.scrollBy({ top: y - wanted, behavior: "smooth" });
+    });
+    return () => window.cancelAnimationFrame(id);
   }, [openId]);
 
-  const markerClick = (event: ReactMouseEvent, spot: RoomHotspot) => {
-    if (mode === "loading" && !engineRef.current) {
-      // the world is still booting: behave like a plain link
-      if (spot.kind === "post" || spot.kind === "writing") return;
+  /** On touch, a tap resolves to the nearest marker centre, so neighbouring 44 px targets never steal taps. */
+  const nearestMarker = (clientX: number, clientY: number, fallback: string) => {
+    let best = fallback;
+    let bestDist = Infinity;
+    for (const [id, marker] of markerRefs.current) {
+      if (marker.dataset.placed !== "true" || marker.offsetParent === null) continue;
+      const rect = marker.getBoundingClientRect();
+      const d = Math.hypot(rect.left + rect.width / 2 - clientX, rect.top + rect.height / 2 - clientY);
+      if (d < bestDist) {
+        bestDist = d;
+        best = id;
+      }
     }
-    event.preventDefault();
-    if (coarse && event.detail > 0 && activeRef.current?.id !== spot.id) {
-      setActive({ id: spot.id, via: "touch" });
-      engineRef.current?.highlight(spot.id);
-      return;
-    }
-    returnFocusRef.current = markerRefs.current.get(spot.id) ?? null;
-    open(spot.id);
+    return best;
   };
 
-  const activeSpot = active ? spotMap.get(active.id) : null;
+  // a click right after a touch/pen pointerdown is a tap; keyboard Enter has no pointerdown
+  const lastPointer = useRef<{ type: string; at: number }>({ type: "", at: 0 });
+  const isTap = () => lastPointer.current.type !== "mouse" && lastPointer.current.type !== "" && performance.now() - lastPointer.current.at < 1200;
+
+  const markerClick = (event: ReactMouseEvent, spotId: string) => {
+    const tap = isTap();
+    lastPointer.current = { type: "", at: 0 };
+    const id = tap ? nearestMarker(event.clientX, event.clientY, spotId) : spotId;
+    const spot = id === DESK_ID ? null : spotMap.get(id);
+    if (!engineRef.current && spot && (spot.kind === "post" || spot.kind === "writing") && !tap) return; // plain link while booting
+    event.preventDefault();
+    if (id === DESK_ID) {
+      highlight(DESK_ID);
+      setActive((current) => (current?.id === DESK_ID && current.via === "touch" ? null : { id: DESK_ID, via: "touch" }));
+      return;
+    }
+    // (a tap also focuses the marker first, so only an earlier *tap* counts as armed)
+    if (tap && !(activeRef.current?.id === id && activeRef.current.via === "touch")) {
+      highlight(id);
+      arm(id);
+      return;
+    }
+    returnFocusRef.current = markerRefs.current.get(id) ?? null;
+    open(id);
+  };
+
+  // ---------- phone sheet: drag the handle down to close ----------
+  const dragStart = useRef<{ y: number; id: number } | null>(null);
+  const onHandleDown = (event: ReactPointerEvent) => {
+    dragStart.current = { y: event.clientY, id: event.pointerId };
+    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+  };
+  const onHandleMove = (event: ReactPointerEvent) => {
+    if (!dragStart.current) return;
+    setSheetDrag(Math.max(0, event.clientY - dragStart.current.y));
+  };
+  const onHandleUp = (event: ReactPointerEvent) => {
+    if (!dragStart.current) return;
+    const moved = event.clientY - dragStart.current.y;
+    dragStart.current = null;
+    if (moved > 70) close();
+    else setSheetDrag(0);
+  };
+
+  const dismiss = () => {
+    setActive(null);
+    engineRef.current?.highlight(null);
+    engineRef.current?.focus(null);
+  };
+
+  const activeSpot = active && active.id !== DESK_ID ? spotMap.get(active.id) : null;
+  const deskActive = active?.id === DESK_ID;
   const openSpot = openId ? spotMap.get(openId) : null;
   const openProject = openSpot?.projectSlug ? projectMap.get(openSpot.projectSlug) : null;
+  const sheet = compact;
+
+  const markerProps = (id: string, accent: string, fig: number) => {
+    const vars = stillVars(id);
+    return {
+      ref: (el: HTMLAnchorElement | null) => {
+        if (el) markerRefs.current.set(id, el);
+        else markerRefs.current.delete(id);
+      },
+      "data-placed": vars ? "true" : "false",
+      onPointerDown: (event: ReactPointerEvent) => {
+        lastPointer.current = { type: event.pointerType, at: performance.now() };
+      },
+      style: { ...(vars ?? {}), "--accent": accent, "--d": `${(fig * 0.4).toFixed(2)}s` } as CSSProperties,
+    };
+  };
 
   return (
     <div className={styles.device} ref={deviceRef} data-mode={mode} data-lighting={lighting}>
@@ -434,59 +563,70 @@ export function RoomStage({
         </span>
       </div>
 
-      <div
-        className={styles.stage}
-        ref={stageRef}
-        data-lighting={lighting}
-        data-coarse={coarse}
-        data-open={openId ? "true" : "false"}
-      >
-        <picture className={styles.still} aria-hidden="true">
-          <source media="(max-width: 719px)" srcSet={`/lab/room/still-${lighting}-mobile.webp`} />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`/lab/room/still-${lighting}-desktop.webp`} alt="" width={1600} height={1200} fetchPriority="high" />
-        </picture>
+      <div className={styles.stage} ref={stageRef} data-lighting={lighting} data-coarse={coarse} data-open={openId ? "true" : "false"}>
+        <div className={styles.still} data-room-still aria-hidden="true">
+          {(["day", "dusk", "night"] as const).map((time) => (
+            <div
+              key={time}
+              data-time={time}
+              style={{ "--still-desktop": `url(/lab/room/still-${time}-desktop.webp)`, "--still-mobile": `url(/lab/room/still-${time}-mobile.webp)` } as CSSProperties}
+            />
+          ))}
+        </div>
         <canvas className={styles.canvas} ref={canvasRef} aria-hidden="true" />
 
         <nav className={styles.markers} aria-label="Things in the room">
           {spots.map((spot) => (
             <a
               key={spot.id}
-              ref={(el) => {
-                if (el) markerRefs.current.set(spot.id, el);
-                else markerRefs.current.delete(spot.id);
-              }}
+              {...markerProps(spot.id, KIND_ACCENT[spot.kind], spot.fig)}
               href={fallbackHref(spot)}
               className={styles.marker}
               data-room-target={spot.id}
               data-kind={spot.kind}
-              data-active={active?.id === spot.id || openId === spot.id ? "true" : "false"}
-              data-placed="false"
-              style={{ "--accent": KIND_ACCENT[spot.kind], "--d": `${(spot.fig * 0.4).toFixed(2)}s` } as CSSProperties}
+              data-desk-item={spot.kind === "post" ? "true" : undefined}
+              data-active={active?.id === spot.id || openId === spot.id || (deskActive && spot.kind === "post") ? "true" : "false"}
               aria-label={`${figLabel(spot.fig)}, ${spot.object}: ${spotLabel(spot)}`}
-              onClick={(event) => markerClick(event, spot)}
+              onClick={(event) => markerClick(event, spot.id)}
               onPointerEnter={(event) => {
                 if (event.pointerType !== "mouse") return;
-                engineRef.current?.highlight(spot.id);
+                highlight(spot.id);
                 setActive({ id: spot.id, via: "pointer" });
               }}
               onPointerLeave={(event) => {
                 if (event.pointerType !== "mouse") return;
-                engineRef.current?.highlight(null);
+                highlight(null);
                 setActive((current) => (current?.id === spot.id ? null : current));
               }}
               onFocus={() => {
-                engineRef.current?.highlight(spot.id);
+                highlight(spot.id);
                 setActive({ id: spot.id, via: "focus" });
               }}
               onBlur={() => {
-                engineRef.current?.highlight(null);
-                setActive((current) => (current?.via === "focus" ? null : current));
+                highlight(null);
+                setActive((current) => (current?.id === spot.id && current.via === "focus" ? null : current));
               }}
             >
               <span aria-hidden="true">{String(spot.fig).padStart(2, "0")}</span>
             </a>
           ))}
+          {deskPosts.length ? (
+            <a
+              {...markerProps(DESK_ID, "var(--r-orange)", 2)}
+              href="#writing"
+              className={`${styles.marker} ${styles.deskMarker}`}
+              data-room-target={DESK_ID}
+              data-kind="post"
+              data-active={deskActive ? "true" : "false"}
+              aria-label={`${figLabel(deskPosts[0].fig)} to ${figLabel(deskPosts[deskPosts.length - 1].fig)}, notebooks on the desk: the ${deskPosts.length} newest posts`}
+              onClick={(event) => markerClick(event, DESK_ID)}
+            >
+              <span aria-hidden="true">
+                {String(deskPosts[0].fig).padStart(2, "0")}
+                <small>–{String(deskPosts[deskPosts.length - 1].fig).padStart(2, "0")}</small>
+              </span>
+            </a>
+          ) : null}
         </nav>
 
         {activeSpot && openId !== activeSpot.id ? (
@@ -501,6 +641,20 @@ export function RoomStage({
             <span className={styles.chipTop}>
               <i aria-hidden="true" />
               {figLabel(activeSpot.fig)} · {activeSpot.object}
+              <span className={styles.chipZone}>{activeSpot.zone}</span>
+              {active?.via === "touch" ? (
+                <button
+                  type="button"
+                  className={styles.chipClose}
+                  aria-label="Close"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    dismiss();
+                  }}
+                >
+                  ×
+                </button>
+              ) : null}
             </span>
             <span className={styles.chipMain}>
               <em>{kindVerb[activeSpot.kind]}</em> {activeSpot.title}
@@ -515,11 +669,37 @@ export function RoomStage({
                   open(activeSpot.id);
                 }}
               >
-                Open
+                {activeSpot.kind === "post" ? "Read it" : activeSpot.kind === "project" ? "Open the card" : activeSpot.kind === "about" ? "Say hello" : "Open"}
               </button>
             ) : (
-              <span className={styles.chipHint}>{active?.via === "focus" ? "Enter to open" : "Click to open"}</span>
+              <span className={styles.chipHint}>{active?.via === "focus" ? "Enter to open" : active?.via === "list" ? "Here in the room" : "Click to open"}</span>
             )}
+          </div>
+        ) : null}
+
+        {deskActive ? (
+          <div ref={chipRef} className={`${styles.chip} ${styles.deskChip}`} data-touch="true" style={{ "--accent": "var(--r-orange)" } as CSSProperties} role="dialog" aria-label="The newest posts, on Peter’s desk">
+            <span className={styles.chipTop}>
+              <i aria-hidden="true" />
+              {figLabel(deskPosts[0]?.fig ?? 2)}–{String(deskPosts[deskPosts.length - 1]?.fig ?? 4).padStart(2, "0")} · Notebooks on the desk
+              <button type="button" className={styles.chipClose} aria-label="Close" onClick={dismiss}>
+                ×
+              </button>
+            </span>
+            <ol className={styles.deskList}>
+              {deskPosts.map((spot) => (
+                <li key={spot.id}>
+                  <a href={spot.href} onClick={(event) => { event.preventDefault(); open(spot.id); }}>
+                    <b aria-hidden="true">{String(spot.fig).padStart(2, "0")}</b>
+                    <span>{spot.title}</span>
+                    <i aria-hidden="true">→</i>
+                  </a>
+                </li>
+              ))}
+            </ol>
+            <a className={styles.deskAll} href="/room/writing/" onClick={(event) => { event.preventDefault(); router.push("/room/writing/"); }}>
+              All writing <span aria-hidden="true">→</span>
+            </a>
           </div>
         ) : null}
 
@@ -530,9 +710,14 @@ export function RoomStage({
             role="dialog"
             aria-modal="false"
             aria-labelledby="room-panel-title"
-            data-sheet={compact ? "true" : undefined}
-            style={{ "--accent": KIND_ACCENT[openSpot.kind] } as CSSProperties}
+            data-sheet={sheet ? "true" : undefined}
+            style={{ "--accent": KIND_ACCENT[openSpot.kind], ...(sheet && sheetDrag ? { translate: `0 ${sheetDrag}px`, transition: "none" } : {}) } as CSSProperties}
           >
+            {sheet ? (
+              <div className={styles.grabber} onPointerDown={onHandleDown} onPointerMove={onHandleMove} onPointerUp={onHandleUp} onPointerCancel={onHandleUp} aria-hidden="true">
+                <i />
+              </div>
+            ) : null}
             <header className={styles.panelHead}>
               <span className={styles.panelFig}>
                 <i aria-hidden="true" />
@@ -548,7 +733,7 @@ export function RoomStage({
             </h2>
             <div className={styles.panelBody}>
               {openSpot.kind === "about" ? <AboutPanel about={about} /> : null}
-              {openSpot.kind === "project" && openProject ? <ProjectPanel project={openProject} /> : null}
+              {openSpot.kind === "project" && openProject ? <ProjectPanel project={openProject} spotId={openSpot.id} object={openSpot.object} /> : null}
               {openSpot.kind === "toy" && openSpot.toy ? <ToyPanel toy={openSpot.toy} /> : null}
             </div>
           </div>
@@ -556,13 +741,19 @@ export function RoomStage({
       </div>
 
       <div className={styles.deviceBottom}>
-        <ul className={styles.legend} aria-label="Colour key">
-          <li style={{ "--accent": "var(--r-orange)" } as CSSProperties}>Writing</li>
-          <li style={{ "--accent": "var(--r-blue)" } as CSSProperties}>Projects</li>
-          <li style={{ "--accent": "var(--r-green)" } as CSSProperties}>Toys</li>
+        <ul className={styles.legend} aria-label="Colour key, and where each list is">
+          <li style={{ "--accent": "var(--r-orange)" } as CSSProperties}>
+            <a href="#writing">Writing</a>
+          </li>
+          <li style={{ "--accent": "var(--r-blue)" } as CSSProperties}>
+            <a href="#projects">Projects</a>
+          </li>
+          <li style={{ "--accent": "var(--r-green)" } as CSSProperties}>
+            <a href="#toys">Toys</a>
+          </li>
         </ul>
         <p className={styles.hint}>
-          {coarse ? "Tap a number, tap again to open · swipe sideways to turn" : "Hover anything · click to open · drag to turn"}
+          {coarse ? "Tap a number, then Open · swipe sideways to turn" : "Hover anything · click to open · drag to turn"}
         </p>
         <div className={styles.switch} role="group" aria-label="Time of day">
           {(["auto", "day", "dusk", "night"] as const).map((value) => (

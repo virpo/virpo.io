@@ -223,6 +223,7 @@ function getContactTexture() {
 }
 
 let contactMaterial: THREE.MeshBasicMaterial | null = null;
+const contactCache = new Map<number, THREE.MeshBasicMaterial>();
 /** Soft blob of ambient occlusion under an object — sells the "sitting on the table" feel. */
 export function contact(w: number, d: number, place: Place = {}, strength = 1) {
   if (!contactMaterial) {
@@ -235,8 +236,13 @@ export function contact(w: number, d: number, place: Place = {}, strength = 1) {
       polygonOffsetFactor: -2,
     });
   }
-  const material = strength === 1 ? contactMaterial : contactMaterial.clone();
-  if (strength !== 1) material.opacity = strength;
+  const key = Math.round(strength * 20) / 20;
+  let material = contactCache.get(key);
+  if (!material) {
+    material = key === 1 ? contactMaterial : contactMaterial.clone();
+    material.opacity = key;
+    contactCache.set(key, material);
+  }
   const m = new THREE.Mesh(cached("contactPlane", () => new THREE.PlaneGeometry(1, 1)), material);
   m.rotation.x = -Math.PI / 2;
   m.scale.set(w, d, 1);

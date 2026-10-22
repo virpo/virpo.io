@@ -1,0 +1,213 @@
+.toy {
+  --sky-top: #8fc3ea;
+  --sky-bottom: #eaf2ef;
+  --fuji: #7f97c6;
+  --far: #9fb7a4;
+  --mid: #7fa36f;
+  --near: #5d8a4f;
+  --roof: #46536b;
+  --house: #efe4d2;
+  --pole: #4d4a46;
+  --sun: #fff6d8;
+  display: grid;
+  gap: 10px;
+}
+
+.toy[data-lighting="dusk"] {
+  --sky-top: #f2a487;
+  --sky-bottom: #fbe0bd;
+  --fuji: #8c7fae;
+  --far: #b28e98;
+  --mid: #8a7f78;
+  --near: #5f5e5a;
+  --roof: #3f3a4a;
+  --house: #f2c79c;
+  --sun: #ffd28a;
+}
+
+.toy[data-lighting="night"] {
+  --sky-top: #141a33;
+  --sky-bottom: #2b3560;
+  --fuji: #3a4472;
+  --far: #283158;
+  --mid: #1f2747;
+  --near: #161c34;
+  --roof: #10142a;
+  --house: #ffd58f;
+  --pole: #0b0e1c;
+  --sun: #f4f1e2;
+}
+
+.scene {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1464 / 800;
+  border-radius: 12px;
+  background: #f1e6d2;
+  box-shadow: inset 0 0 0 1px var(--r-line);
+}
+
+/* the glass in the pixel-art frame */
+.aperture {
+  position: absolute;
+  inset: 10.6% 14.3% 20.4% 13.9%;
+  overflow: hidden;
+  border-radius: 2.2% / 4%;
+  background: linear-gradient(var(--sky-top), var(--sky-bottom) 70%);
+}
+
+.frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  height: 100%;
+  min-width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  transform: translate(-50%, -50%);
+}
+
+.ride {
+  position: absolute;
+  inset: 0;
+}
+
+.ride > * {
+  position: absolute;
+}
+
+.sun {
+  top: 14%;
+  right: 18%;
+  width: 9%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--sun);
+  box-shadow: 0 0 24px 6px color-mix(in srgb, var(--sun) 60%, transparent);
+}
+
+.fuji {
+  bottom: 30%;
+  left: 30%;
+  width: 46%;
+}
+
+.far,
+.mid,
+.near {
+  left: 0;
+  width: 200%;
+  height: 50%;
+  bottom: 0;
+}
+
+.far {
+  height: 46%;
+  bottom: 12%;
+  animation: slide 46s linear infinite;
+}
+
+.mid {
+  height: 40%;
+  bottom: 4%;
+  animation: slide 19s linear infinite;
+}
+
+.near {
+  height: 26%;
+  bottom: -2%;
+  animation: slide 6s linear infinite;
+}
+
+/* little houses between the hills */
+.town {
+  left: 0;
+  bottom: 14%;
+  width: 200%;
+  height: 12%;
+  background:
+    linear-gradient(var(--roof) 0 34%, transparent 34%) 0 0 / 7% 100% repeat-x,
+    linear-gradient(90deg, transparent 0 1.2%, var(--house) 1.2% 5.2%, transparent 5.2%) 0 100% / 7% 66% repeat-x;
+  animation: slide 11s linear infinite;
+}
+
+/* utility poles and wires whipping past */
+.poles {
+  inset: 0;
+  width: 200%;
+  background:
+    linear-gradient(90deg, transparent 0 48.6%, var(--pole) 48.6% 50%, transparent 50%) 0 0 / 50% 100% repeat-x,
+    linear-gradient(transparent 0 21%, color-mix(in srgb, var(--pole) 70%, transparent) 21% 21.8%, transparent 21.8% 27%, color-mix(in srgb, var(--pole) 50%, transparent) 27% 27.6%, transparent 27.6%);
+  animation: slide 2.4s linear infinite;
+  opacity: 0.85;
+}
+
+.lights {
+  display: none;
+}
+
+.toy[data-lighting="night"] .lights {
+  display: block;
+  left: 0;
+  bottom: 18%;
+  width: 200%;
+  height: 10%;
+  background: radial-gradient(circle, #ffd58f 0 1.2px, transparent 2.4px) 0 0 / 3.2% 40% repeat;
+  animation: slide 11s linear infinite;
+  opacity: 0.9;
+}
+
+@keyframes slide {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.bar p {
+  margin: 0;
+  color: var(--r-ink-2);
+  font-family: var(--r-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.bar button {
+  flex: none;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--r-ink);
+  color: #fff;
+  cursor: pointer;
+  font-family: var(--r-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.bar button:hover,
+.bar button:focus-visible {
+  background: var(--r-green);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ride * {
+    animation: none !important;
+  }
+}

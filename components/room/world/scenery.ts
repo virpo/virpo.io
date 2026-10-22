@@ -99,12 +99,14 @@ export function buildScenery(ctx: BuildContext, tokyoLabel: string) {
   catHead.add(mesh(sphere(0.045, 10, 8), furLight, { y: -0.03, z: 0.07, s: [1.2, 0.8, 0.8] }));
   const eyeMat = mat("#2a2a2a", { rough: 0.3 });
   const eyes = [mesh(sphere(0.014, 8, 6), eyeMat, { x: -0.035, y: 0.015, z: 0.088 }), mesh(sphere(0.014, 8, 6), eyeMat, { x: 0.035, y: 0.015, z: 0.088 })];
+  for (const eye of eyes) eye.userData.keep = true;
   catHead.add(...eyes);
   cat.add(catHead);
   const tail = dynamic(group({ y: 0.06, z: -0.13 }));
   tail.add(mesh(capsule(0.025, 0.2, 3, 8), fur, { y: 0.1, z: -0.02, rx: -0.4 }));
   cat.add(tail);
   cat.add(contact(0.45, 0.45, {}, 0.8));
+  cat.userData.noShadow = true;
   root.add(cat);
   ctx.animate((t) => {
     if (ctx.reducedMotion) return;
@@ -213,17 +215,23 @@ export function buildScenery(ctx: BuildContext, tokyoLabel: string) {
   }
 
   // distant town lights — become bokeh discs at dusk
-  const townMats: THREE.MeshBasicMaterial[] = [];
+  // (one instanced draw for all of them)
   const townColors = ["#ffcf8a", "#ffe2b0", "#ffb26b", "#fff1d6", "#ffd9a0"];
-  for (let i = 0; i < 46; i += 1) {
-    const m = new THREE.MeshBasicMaterial({ color: new THREE.Color(townColors[i % 5]).multiplyScalar(3), transparent: true, opacity: 0, depthWrite: false });
-    townMats.push(m);
-    const x = -14 + ((i * 7.3) % 28);
-    const y = -0.9 + ((i * 3.1) % 2.6);
-    const z = -10.5 - ((i * 5.7) % 4);
-    const light = mesh(sphere(0.07, 8, 6), m, { x, y, z, cast: false, receive: false });
-    root.add(light);
+  const townMat = new THREE.MeshBasicMaterial({ color: "#ffffff", transparent: true, opacity: 0, depthWrite: false, toneMapped: true });
+  const TOWN = 46;
+  const town = new THREE.InstancedMesh(sphere(0.07, 8, 6), townMat, TOWN);
+  town.castShadow = false;
+  town.receiveShadow = false;
+  const townDummy = new THREE.Object3D();
+  for (let i = 0; i < TOWN; i += 1) {
+    townDummy.position.set(-14 + ((i * 7.3) % 28), -0.9 + ((i * 3.1) % 2.6), -10.5 - ((i * 5.7) % 4));
+    townDummy.scale.setScalar(0.8 + ((i * 13) % 7) * 0.08);
+    townDummy.updateMatrix();
+    town.setMatrixAt(i, townDummy.matrix);
+    town.setColorAt(i, new THREE.Color(townColors[i % 5]).multiplyScalar(3));
   }
+  town.visible = false;
+  root.add(town);
   // petals drifting from the sakura trees
   const petalCount = ctx.mobile ? 18 : 36;
   const petals = new THREE.InstancedMesh(new THREE.CircleGeometry(0.035, 6), mat(C.sakura, { rough: 0.8, side: THREE.DoubleSide }), petalCount);
@@ -246,9 +254,8 @@ export function buildScenery(ctx: BuildContext, tokyoLabel: string) {
       }
     }
     const lit = THREE.MathUtils.smoothstep(light.night + light.dusk * 0.6, 0.15, 0.7);
-    townMats.forEach((m, i) => {
-      m.opacity = lit * (0.7 + 0.3 * Math.sin(t * 0.7 + i));
-    });
+    townMat.opacity = lit * (0.85 + 0.15 * Math.sin(t * 0.7));
+    town.visible = lit > 0.01;
     for (let i = 0; i < petalCount; i += 1) {
       const sd = seeds[i];
       const p = ctx.reducedMotion ? sd.phase : (sd.phase + t * sd.speed) % 1;

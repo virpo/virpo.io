@@ -32,6 +32,7 @@ const fragmentShader = /* glsl */ `
   uniform float time;
   uniform float grain;
   uniform float vignette;
+  uniform float taps;
   varying vec2 vUv;
 
   float linearDepth(float d) {
@@ -62,8 +63,9 @@ const fragmentShader = /* glsl */ `
     float total = 1.0;
     vec2 texel = 1.0 / resolution;
     for (int i = 0; i < ${TAPS}; i++) {
+      if (float(i) >= taps) break;
       float fi = float(i) + 0.5;
-      float r = sqrt(fi / float(${TAPS})) * maxBlur;
+      float r = sqrt(fi / taps) * maxBlur;
       float a = fi * 2.39996323;
       vec2 suv = vUv + vec2(cos(a), sin(a)) * r * texel;
       float sampleDepth;
@@ -131,6 +133,7 @@ export function createPostPass(renderer: THREE.WebGLRenderer, samples: number): 
       time: { value: 0 },
       grain: { value: 0.018 },
       vignette: { value: 0.5 },
+      taps: { value: TAPS },
     },
   });
   material.toneMapped = true;

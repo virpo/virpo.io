@@ -17,6 +17,8 @@ export type SpotOptions = {
   noOutline?: boolean;
   /** Hover scale boost. */
   pop?: number;
+  /** Add an invisible box around the object so hovering anywhere over open or sparse objects works. */
+  hull?: boolean;
 };
 
 export type BuildContext = {

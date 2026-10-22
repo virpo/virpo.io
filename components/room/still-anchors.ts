@@ -3,28 +3,28 @@
 export const STILL_ANCHORS: { desktop: Record<string, [number, number]>; mobile: Record<string, [number, number]> } = {
   "desktop": {
     "peter": [
-      0.5886,
-      0.1826
+      0.6308,
+      0.1915
     ],
     "post-0": [
-      0.498,
-      0.2632
+      0.512,
+      0.2326
     ],
     "post-1": [
-      0.5265,
-      0.2414
+      0.5354,
+      0.2308
     ],
     "post-2": [
-      0.5594,
-      0.2723
+      0.5587,
+      0.229
     ],
     "bookshelf": [
       0.4698,
       0.1751
     ],
     "deck": [
-      0.5805,
-      0.3054
+      0.5497,
+      0.2922
     ],
     "radio": [
       0.7538,
@@ -67,8 +67,8 @@ export const STILL_ANCHORS: { desktop: Record<string, [number, number]>; mobile:
       0.5091
     ],
     "clay": [
-      0.4114,
-      0.4442
+      0.4108,
+      0.4448
     ],
     "vending": [
       0.7405,
@@ -77,28 +77,28 @@ export const STILL_ANCHORS: { desktop: Record<string, [number, number]>; mobile:
   },
   "mobile": {
     "peter": [
-      0.6479,
-      0.2043
+      0.72,
+      0.2156
     ],
     "post-0": [
-      0.4964,
-      0.2979
+      0.5197,
+      0.2619
     ],
     "post-1": [
-      0.5442,
-      0.273
+      0.5588,
+      0.2597
     ],
     "post-2": [
-      0.5994,
-      0.3092
+      0.5976,
+      0.2575
     ],
     "bookshelf": [
       0.4496,
       0.1947
     ],
     "deck": [
-      0.6349,
-      0.3479
+      0.5833,
+      0.3327
     ],
     "radio": [
       0.9266,
@@ -141,8 +141,8 @@ export const STILL_ANCHORS: { desktop: Record<string, [number, number]>; mobile:
       0.5873
     ],
     "clay": [
-      0.3516,
-      0.5075
+      0.3506,
+      0.5083
     ],
     "vending": [
       0.9139,

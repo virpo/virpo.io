@@ -30,9 +30,15 @@ export function RoomHeader({ current, home = false }: { current?: "writing" | "h
         <Link href="/room/writing/" aria-current={current === "writing" ? "page" : undefined}>
           Writing
         </Link>
-        <a href={`${base}#projects`}>Projects</a>
-        <a href={`${base}#toys`}>Toys</a>
-        <a href={`${base}#about`}>About</a>
+        <a href={`${base}#projects`} className={styles.navExtra}>
+          Projects
+        </a>
+        <a href={`${base}#toys`} className={styles.navExtra}>
+          Toys
+        </a>
+        <a href={`${base}#about`} className={styles.navExtra}>
+          About
+        </a>
         <a href="/rss.xml" className={styles.rss}>
           RSS
         </a>

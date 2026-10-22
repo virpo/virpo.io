@@ -1,72 +1,102 @@
 // Renders the Pocket Room's still fallbacks from the live three.js world.
-// Usage: node scripts/room-stills.mjs [baseUrl=http://localhost:4303]
-// Writes public/lab/room/still-{day,dusk,night}-{desktop,mobile}.webp, mini-{tall,wide}.webp
-// and components/room/still-anchors.ts (marker positions for the no-WebGL fallback).
+// Usage: node scripts/room-stills.mjs [baseUrl=http://localhost:4321] [--only landing,mini,objects]
+// Writes, into public/lab/room/:
+//   still-{day,dusk,night}-{desktop,mobile}.webp  the landing still (no WebGL / before boot)
+//   mini-{tall,wide}-{day,dusk,night}.webp         the post-page margin toy still
+//   obj-<spot>.webp                                project cards without their own picture
+// and components/room/still-anchors.ts (marker positions over the still).
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { chromium, devices } from "@playwright/test";
 import sharp from "sharp";
 
-const base = process.argv[2] ?? "http://localhost:4303";
+const args = process.argv.slice(2);
+const base = args.find((arg) => arg.startsWith("http")) ?? "http://localhost:4321";
+const onlyIndex = args.indexOf("--only");
+const only = onlyIndex === -1 ? ["landing", "mini", "objects"] : args[onlyIndex + 1].split(",");
 const out = join(process.cwd(), "public/lab/room");
 const browser = await chromium.launch({ args: ["--use-gl=angle", "--enable-webgl", "--ignore-gpu-blocklist"] });
 const hideOverlays = `
   nav[aria-label="Things in the room"], [role="status"] { display: none !important; }
   [data-lighting]::after { display: none !important; }
 `;
+const times = ["day", "dusk", "night"];
 
-const viewports = {
-  desktop: { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1.6, width: 1400 },
-  mobile: { ...devices["iPhone 13"], deviceScaleFactor: 2, width: 760 },
-};
-const anchors = {};
-
-for (const [kind, { width, ...context }] of Object.entries(viewports)) {
-  for (const time of ["day", "dusk", "night"]) {
-    const ctx = await browser.newContext(context);
-    const page = await ctx.newPage();
-    await page.goto(`${base}/room/?debug&time=${time}`, { waitUntil: "networkidle" });
-    await page.waitForSelector('[data-mode="live"]', { timeout: 30000 });
-    await page.addStyleTag({ content: hideOverlays });
-    await page.waitForTimeout(2600);
-    const canvas = page.locator("canvas").first();
-    const png = await canvas.screenshot();
-    await sharp(png).resize({ width }).webp({ quality: 72, effort: 6 }).toFile(join(out, `still-${time}-${kind}.webp`));
-    if (time === "day") {
-      anchors[kind] = await page.evaluate(() => {
-        const stage = document.querySelector("canvas").getBoundingClientRect();
-        return Object.fromEntries(
-          window.__room
-            .anchors()
-            .filter((a) => a.visible)
-            .map((a) => [a.id, [Number((a.x / stage.width).toFixed(4)), Number((a.y / stage.height).toFixed(4))]]),
-        );
-      });
+if (only.includes("landing")) {
+  const viewports = {
+    desktop: { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1.6, width: 1400 },
+    mobile: { ...devices["iPhone 13"], deviceScaleFactor: 2, width: 760 },
+  };
+  const anchors = {};
+  for (const [kind, { width, ...context }] of Object.entries(viewports)) {
+    for (const time of times) {
+      const ctx = await browser.newContext({ ...context, reducedMotion: "reduce" });
+      const page = await ctx.newPage();
+      await page.goto(`${base}/room/?debug&time=${time}`, { waitUntil: "networkidle" });
+      await page.waitForSelector('[data-mode="live"]', { timeout: 30000 });
+      await page.addStyleTag({ content: hideOverlays });
+      await page.waitForTimeout(2600);
+      const png = await page.locator("canvas").first().screenshot();
+      await sharp(png).resize({ width }).webp({ quality: 72, effort: 6 }).toFile(join(out, `still-${time}-${kind}.webp`));
+      if (time === "day") {
+        anchors[kind] = await page.evaluate(() => {
+          const stage = document.querySelector("canvas").getBoundingClientRect();
+          return Object.fromEntries(
+            window.__room
+              .anchors()
+              .filter((a) => a.visible)
+              .map((a) => [a.id, [Number((a.x / stage.width).toFixed(4)), Number((a.y / stage.height).toFixed(4))]]),
+          );
+        });
+      }
+      await ctx.close();
+      console.log(`still-${time}-${kind}.webp`);
     }
-    await ctx.close();
-    console.log(`still-${time}-${kind}.webp`);
   }
-}
-
-for (const [name, context, width] of [
-  ["mini-tall", { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 }, 600],
-  ["mini-wide", { ...devices["iPhone 13"], deviceScaleFactor: 2 }, 760],
-]) {
-  const ctx = await browser.newContext(context);
-  const page = await ctx.newPage();
-  await page.goto(`${base}/room/blog/a-different-kind-of-hackathon/`, { waitUntil: "networkidle" });
-  await page.waitForSelector('[data-live="true"]', { timeout: 30000 });
-  await page.waitForTimeout(1500);
-  const png = await page.locator('[data-live="true"] canvas').first().screenshot({ omitBackground: true });
-  await sharp(png).resize({ width }).webp({ quality: 74, effort: 6 }).toFile(join(out, `${name}.webp`));
-  await ctx.close();
-  console.log(`${name}.webp`);
-}
-
-await browser.close();
-const source = `// Marker positions (fractions of the stage) for the still image fallback.
+  const source = `// Marker positions (fractions of the stage) for the still image fallback.
 // Generated by scripts/room-stills.mjs from the live world at the default camera.
 export const STILL_ANCHORS: { desktop: Record<string, [number, number]>; mobile: Record<string, [number, number]> } = ${JSON.stringify(anchors, null, 2)};
 `;
-await writeFile(join(process.cwd(), "components/room/still-anchors.ts"), source);
-console.log("still-anchors.ts");
+  await writeFile(join(process.cwd(), "components/room/still-anchors.ts"), source);
+  console.log("still-anchors.ts");
+}
+
+if (only.includes("mini")) {
+  for (const [name, context, width] of [
+    ["mini-tall", { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 }, 600],
+    ["mini-wide", { ...devices["iPhone 13"], deviceScaleFactor: 2 }, 760],
+  ]) {
+    for (const time of times) {
+      const ctx = await browser.newContext({ ...context, reducedMotion: "reduce" });
+      const page = await ctx.newPage();
+      await page.goto(`${base}/room/blog/a-different-kind-of-hackathon/?time=${time}`, { waitUntil: "networkidle" });
+      await page.waitForSelector('[data-live="true"]', { timeout: 30000 });
+      await page.waitForTimeout(1500);
+      const png = await page.locator('[data-live="true"] canvas').first().screenshot({ omitBackground: true });
+      await sharp(png).resize({ width }).webp({ quality: 74, effort: 6 }).toFile(join(out, `${name}-${time}.webp`));
+      await ctx.close();
+      console.log(`${name}-${time}.webp`);
+    }
+  }
+}
+
+if (only.includes("objects")) {
+  // a close-up of the object for each project card that has no picture of its own (Levels, Prehistoriq)
+  const ids = ["arcade", "clay"];
+  const zoom = { arcade: 1.05, clay: 1.7 };
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2, reducedMotion: "reduce" });
+  const page = await ctx.newPage();
+  await page.goto(`${base}/room/?debug&nodof&time=day`, { waitUntil: "networkidle" });
+  await page.waitForSelector('[data-mode="live"]', { timeout: 30000 });
+  await page.addStyleTag({ content: hideOverlays });
+  for (const id of ids) {
+    await page.evaluate(([spot, z]) => window.__room.frameSpot(spot, z), [id, zoom[id] ?? 1]);
+    await page.waitForTimeout(900);
+    const png = await page.locator("canvas").first().screenshot();
+    await sharp(png).resize({ width: 640, height: 360, fit: "cover" }).webp({ quality: 74, effort: 6 }).toFile(join(out, `obj-${id}.webp`));
+    console.log(`obj-${id}.webp`);
+  }
+  await ctx.close();
+}
+
+await browser.close();

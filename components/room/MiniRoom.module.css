@@ -46,8 +46,16 @@
   box-shadow: inset 0 0 0 1px rgba(20, 18, 14, 0.18), inset 0 2px 8px rgba(20, 18, 14, 0.18);
 }
 
+.mini[data-lighting="dusk"] .screen {
+  background: #e7bfa8;
+}
+
+.mini[data-lighting="night"] .screen {
+  background: #1c2342;
+}
+
 .still,
-.still img,
+.still > div,
 .canvas {
   position: absolute;
   inset: 0;
@@ -55,9 +63,14 @@
   height: 100%;
 }
 
-.still img {
-  object-fit: cover;
+/* one still per lighting; the boot script shows the right one (day without JS) */
+.still > div {
+  background: var(--still-tall) center / cover no-repeat;
   transition: opacity 500ms ease;
+}
+
+.still > div:not([data-time="day"]) {
+  display: none;
 }
 
 .canvas {
@@ -70,7 +83,7 @@
   opacity: 1;
 }
 
-.mini[data-live="true"] .still img {
+.mini[data-live="true"] .still > div {
   opacity: 0;
 }
 
@@ -131,8 +144,12 @@
 
   .screen {
     aspect-ratio: auto;
-    height: 128px;
+    height: 136px;
     border-radius: 12px;
+  }
+
+  .still > div {
+    background-image: var(--still-wide);
   }
 
   .caption a {
@@ -143,7 +160,7 @@
 @media (prefers-reduced-motion: reduce) {
   .meter i,
   .canvas,
-  .still img {
+  .still > div {
     transition: none;
   }
 }

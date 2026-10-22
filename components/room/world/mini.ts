@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
-import { C, canvasTexture, card, contact, cyl, group, lathe, mat, mesh, ownMat, puck, rbox, sphere, torus } from "./kit";
+import { C, canvasTexture, capsule, card, contact, cyl, group, lathe, mat, mesh, ownMat, puck, rbox, sphere, torus } from "./kit";
 import { buildPeter } from "./peter";
 import { shinkansenCar } from "./railway";
 import { kanaPoster, setTextureFonts } from "./textures";
@@ -9,23 +9,41 @@ import { kanaPoster, setTextureFonts } from "./textures";
 // mini-Peter reads this post, turns a page as you scroll, a shinkansen slides
 // past the window behind him, and he looks up and waves when you reach the end.
 
+export type MiniLighting = "day" | "dusk" | "night";
+
 export type MiniRoom = {
   setProgress(progress: number): void;
+  setLighting(name: MiniLighting): void;
   resize(): void;
   setVisible(visible: boolean): void;
   dispose(): void;
 };
 
-function windowView() {
+const VIEW = {
+  day: { sky: ["#9cc8e6", "#e4eff2", "#f3efe2"], fuji: "#8ea3cc", hills: "#b8c9a8", cloud: "rgba(255,255,255,0.9)" },
+  dusk: { sky: ["#f0a07f", "#fbd7b0", "#f6e6cf"], fuji: "#8b7fae", hills: "#a8907e", cloud: "rgba(255,226,206,0.85)" },
+  night: { sky: ["#10162e", "#26315c", "#3a4672"], fuji: "#38426e", hills: "#1f2746", cloud: "rgba(120,132,180,0.35)" },
+} as const;
+
+function windowView(lighting: MiniLighting) {
+  const palette = VIEW[lighting];
   return canvasTexture(512, 256, (ctx) => {
     const sky = ctx.createLinearGradient(0, 0, 0, 256);
-    sky.addColorStop(0, "#9cc8e6");
-    sky.addColorStop(0.7, "#e4eff2");
-    sky.addColorStop(1, "#f3efe2");
+    sky.addColorStop(0, palette.sky[0]);
+    sky.addColorStop(0.7, palette.sky[1]);
+    sky.addColorStop(1, palette.sky[2]);
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, 512, 256);
+    if (lighting === "night") {
+      ctx.fillStyle = "rgba(255,255,255,0.85)";
+      for (let i = 0; i < 40; i += 1) ctx.fillRect((i * 97) % 512, (i * 53) % 120, i % 3 ? 1.5 : 2.5, i % 3 ? 1.5 : 2.5);
+      ctx.fillStyle = "#f4f1e2";
+      ctx.beginPath();
+      ctx.arc(420, 50, 16, 0, Math.PI * 2);
+      ctx.fill();
+    }
     // Fuji
-    ctx.fillStyle = "#8ea3cc";
+    ctx.fillStyle = palette.fuji;
     ctx.beginPath();
     ctx.moveTo(150, 200);
     ctx.lineTo(250, 92);
@@ -44,12 +62,17 @@ function windowView() {
     ctx.lineTo(244, 128);
     ctx.closePath();
     ctx.fill();
-    ctx.fillStyle = "#b8c9a8";
+    ctx.fillStyle = palette.hills;
     ctx.beginPath();
     ctx.ellipse(90, 230, 190, 60, 0, 0, Math.PI * 2);
     ctx.ellipse(430, 236, 210, 64, 0, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "rgba(255,255,255,0.9)";
+    if (lighting !== "day") {
+      // the town wakes up: little warm windows on the hills
+      ctx.fillStyle = lighting === "night" ? "#ffd58f" : "rgba(255,213,143,0.7)";
+      for (let i = 0; i < 26; i += 1) ctx.fillRect(20 + ((i * 71) % 470), 196 + ((i * 37) % 44), 3, 2.5);
+    }
+    ctx.fillStyle = palette.cloud;
     for (const [x, y, r] of [[80, 60, 18], [104, 54, 24], [130, 62, 16], [390, 40, 16], [412, 34, 22]] as const) {
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -58,13 +81,16 @@ function windowView() {
   });
 }
 
-export function createMiniRoom(canvas: HTMLCanvasElement, options: { reducedMotion: boolean; bookColor?: string; fonts?: { mono?: string; sans?: string } }): MiniRoom {
+export function createMiniRoom(canvas: HTMLCanvasElement, options: { reducedMotion: boolean; bookColor?: string; lighting?: MiniLighting; fonts?: { mono?: string; sans?: string } }): MiniRoom {
   if (options.fonts) setTextureFonts(options.fonts.mono, options.fonts.sans);
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "low-power" });
   renderer.toneMapping = THREE.NeutralToneMapping;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
+  // shadows only re-render when something casts differently (a page turn, the wave)
+  renderer.shadowMap.autoUpdate = false;
+  renderer.shadowMap.needsUpdate = true;
   renderer.setClearColor(0x000000, 0);
   const scene = new THREE.Scene();
   // everything outside the window lives in its own scene, drawn through a scissor
@@ -76,7 +102,8 @@ export function createMiniRoom(canvas: HTMLCanvasElement, options: { reducedMoti
   pmrem.dispose();
 
   // ---- the room corner on its little plinth ----
-  const W = 3.4;
+  // wide enough to fill the phone strip; the tall desktop framing crops to the middle
+  const W = 5.4;
   const D = 2.3;
   const plaster = mat(C.plaster, { rough: 0.85 });
   scene.add(mesh(rbox(W + 0.3, 0.32, D + 0.3, 0.12), mat("#ece3d3", { rough: 0.55 }), { y: -0.16 }));
@@ -103,12 +130,15 @@ export function createMiniRoom(canvas: HTMLCanvasElement, options: { reducedMoti
   scene.add(mesh(rbox(0.07, wy1 - wy0, 0.2, 0.02), frameMat, { x: wx1, y: wcy, z: backZ }));
   scene.add(mesh(rbox(0.035, wy1 - wy0, 0.08, 0.01), frameMat, { x: wcx, y: wcy, z: backZ }));
   // the view outside: painted backdrop + a viaduct the train runs on
-  const view = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 2.1), new THREE.MeshBasicMaterial({ map: windowView(), toneMapped: false }));
+  const views = { day: windowView("day"), dusk: windowView("dusk"), night: windowView("night") } as const;
+  const viewMat = new THREE.MeshBasicMaterial({ map: views.day, toneMapped: false });
+  const view = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 2.1), viewMat);
   view.position.set(wcx, wcy + 0.15, backZ - 1.3);
   outside.add(view);
   outside.add(mesh(rbox(8, 0.12, 0.5, 0.03), mat(C.concrete), { x: 0, y: 0.98, z: backZ - 0.65, cast: false }));
   for (let x = -3; x <= 3; x += 1.2) outside.add(mesh(rbox(0.14, 0.95, 0.14, 0.03), mat(C.concreteDark), { x, y: 0.47, z: backZ - 0.65, cast: false }));
-  outside.add(new THREE.HemisphereLight("#fff6e6", "#9c8a6c", 1.4));
+  const outHemi = new THREE.HemisphereLight("#fff6e6", "#9c8a6c", 1.4);
+  outside.add(outHemi);
   const outSun = new THREE.DirectionalLight("#fff1dc", 2.2);
   outSun.position.set(3, 5, 4);
   outside.add(outSun);
@@ -136,11 +166,39 @@ export function createMiniRoom(canvas: HTMLCanvasElement, options: { reducedMoti
   const poster = card(0.5, 0.66, kanaPoster(), 0.02);
   poster.position.set(-0.75, 1.55, backZ + 0.07);
   scene.add(poster);
-  const shelfY = 1.15;
-  scene.add(mesh(rbox(0.3, 0.04, 0.9, 0.01), mat(C.wood), { x: -W / 2 + 0.2, y: shelfY, z: -0.2 }));
-  ["#ff5a12", C.blue, C.yellow, C.sage, C.coral].forEach((color, i) => {
-    scene.add(mesh(rbox(0.2, 0.26 - (i % 2) * 0.04, 0.07, 0.01), mat(color, { rough: 0.6 }), { x: -W / 2 + 0.2, y: shelfY + 0.15 - (i % 2) * 0.02, z: -0.5 + i * 0.09 }));
-  });
+
+  // the sideboard with the old radio and the hydrangea, as in the big room
+  const side = group({ x: 2.05, y: 0.06, z: backZ + 0.36 });
+  side.add(mesh(rbox(0.8, 0.5, 0.5, 0.04), mat(C.woodDark, { rough: 0.65 }), { y: 0.25 }));
+  side.add(mesh(rbox(0.34, 0.36, 0.02, 0.02), mat(C.wood), { x: -0.18, y: 0.25, z: 0.25 }));
+  side.add(mesh(rbox(0.34, 0.36, 0.02, 0.02), mat(C.wood), { x: 0.18, y: 0.25, z: 0.25 }));
+  const radio = group({ y: 0.5, ry: -0.25 });
+  radio.add(mesh(rbox(0.5, 0.3, 0.2, 0.06), mat("#b5623a", { rough: 0.5 }), { y: 0.15 }));
+  radio.add(mesh(rbox(0.28, 0.2, 0.02, 0.03), mat("#e8d7b5", { rough: 0.8 }), { x: -0.08, y: 0.15, z: 0.1 }));
+  radio.add(mesh(puck(0.04, 0.03, 0.01, 14), mat(C.cream), { x: 0.16, y: 0.2, z: 0.1, rx: Math.PI / 2 }));
+  radio.add(mesh(capsule(0.012, 0.36, 3, 6), mat(C.steel, { metal: 0.8, rough: 0.3 }), { x: 0.18, y: 0.45, z: -0.04, rz: -0.35 }));
+  side.add(radio);
+  side.add(contact(1.0, 0.7, {}, 0.8));
+  scene.add(side);
+  const pot = group({ x: 2.15, y: 0.06, z: 0.45 });
+  pot.add(mesh(lathe("bigpot", [[0, 0], [0.2, 0], [0.26, 0.05], [0.28, 0.34], [0.3, 0.38], [0.24, 0.38], [0, 0.36]], 24), mat("#3d5f8a", { rough: 0.4 })));
+  pot.add(mesh(sphere(0.22, 14, 10), mat(C.moss), { y: 0.42, s: [1.1, 0.6, 1.1] }));
+  for (const [hx, hy, hz, color] of [[0, 0.62, 0, C.hydrangea], [-0.15, 0.52, 0.1, C.hydrangeaPink], [0.16, 0.54, 0.06, "#7aa6e8"], [0.05, 0.5, 0.18, "#a9a3ee"]] as const) {
+    pot.add(mesh(sphere(0.13, 12, 9), mat(color, { rough: 0.7, flat: true }), { x: hx, y: hy, z: hz }));
+  }
+  pot.add(contact(0.8, 0.8, {}, 0.8));
+  scene.add(pot);
+  // a tall bookshelf on the far left
+  const shelf = group({ x: -2.35, y: 0.06, z: -0.55 });
+  shelf.add(mesh(rbox(0.4, 1.5, 0.9, 0.03), mat(C.wood), { y: 0.75 }));
+  for (let r = 0; r < 4; r += 1) {
+    ["#ff5a12", C.yellow, C.blue, C.sage, C.coral, C.navy].forEach((color, i) => {
+      if ((i + r) % 4 === 3) return;
+      shelf.add(mesh(rbox(0.26, 0.24 - ((i + r) % 3) * 0.03, 0.08, 0.01), mat(color, { rough: 0.6 }), { x: 0.06, y: 0.2 + r * 0.35, z: -0.34 + i * 0.12 }));
+    });
+  }
+  shelf.add(contact(0.7, 1.1, {}, 0.8));
+  scene.add(shelf);
 
   // rug, desk, chair
   scene.add(mesh(rbox(2.0, 0.02, 1.3, 0.01), mat("#3f5a7a", { rough: 0.95 }), { x: 0.0, y: 0.065, z: -0.05, cast: false }));
@@ -203,7 +261,8 @@ export function createMiniRoom(canvas: HTMLCanvasElement, options: { reducedMoti
   peter.state.typing = 0;
 
   // ---- lights ----
-  scene.add(new THREE.HemisphereLight("#fff6e6", "#9c8a6c", 1.0));
+  const hemi = new THREE.HemisphereLight("#fff6e6", "#9c8a6c", 1.0);
+  scene.add(hemi);
   const sun = new THREE.DirectionalLight("#fff1dc", 2.6);
   sun.position.set(4, 6, 5);
   sun.castShadow = true;
@@ -216,17 +275,45 @@ export function createMiniRoom(canvas: HTMLCanvasElement, options: { reducedMoti
   const lampLight = new THREE.PointLight("#ffcf8a", 1.4, 2.5, 1.6);
   lampLight.position.set(-0.4, 1.15, 0.3);
   scene.add(lampLight);
+  const lampBulb = head.children[1] as THREE.Mesh;
+  const bulbMat = (lampBulb.material as THREE.MeshStandardMaterial).clone();
+  lampBulb.material = bulbMat;
+
+  // the same three lightings as the landing, so the margin toy feels like the same world
+  const LIGHTS = {
+    day: { hemi: ["#fff6e6", "#9c8a6c", 1.0], sun: ["#fff1dc", 2.6], lamp: 1.4, bulb: 2, env: 0.45, out: 1.4 },
+    dusk: { hemi: ["#f5c4a6", "#6b5466", 0.78], sun: ["#ffab6e", 1.7], lamp: 2.6, bulb: 3.5, env: 0.34, out: 0.95 },
+    night: { hemi: ["#5d6ea3", "#22252f", 0.42], sun: ["#9fb3ff", 0.5], lamp: 4.2, bulb: 6, env: 0.14, out: 0.35 },
+  } as const;
+  const setLighting = (name: MiniLighting) => {
+    const l = LIGHTS[name];
+    hemi.color.set(l.hemi[0]);
+    hemi.groundColor.set(l.hemi[1]);
+    hemi.intensity = l.hemi[2];
+    sun.color.set(l.sun[0]);
+    sun.intensity = l.sun[1];
+    lampLight.intensity = l.lamp;
+    bulbMat.emissiveIntensity = l.bulb;
+    scene.environmentIntensity = l.env;
+    outside.environmentIntensity = l.env;
+    outHemi.intensity = l.out;
+    outSun.intensity = l.out * 1.5;
+    viewMat.map = views[name];
+    viewMat.needsUpdate = true;
+    renderer.shadowMap.needsUpdate = true;
+    request();
+  };
 
   // ---- camera ----
   const camera = new THREE.PerspectiveCamera(26, 1, 0.3, 50);
   const target = new THREE.Vector3(0.05, 1.0, -0.3);
   const dir = new THREE.Vector3(0.42, 0.36, 1).normalize();
   const tallPoints = [new THREE.Vector3(-1.25, 0.1, 0.9), new THREE.Vector3(1.45, 0.1, 0.9), new THREE.Vector3(-1.2, 2.2, -1.1), new THREE.Vector3(1.45, 2.15, -1.1)];
-  const widePoints = [new THREE.Vector3(-0.9, 0.5, 0.4), new THREE.Vector3(1.4, 0.6, 0.4), new THREE.Vector3(-0.9, 2.0, -1.1), new THREE.Vector3(1.4, 2.0, -1.1)];
+  const widePoints = [new THREE.Vector3(-2.0, 0.55, 0.5), new THREE.Vector3(2.3, 0.55, 0.5), new THREE.Vector3(-2.0, 1.95, -1.1), new THREE.Vector3(2.3, 1.95, -1.1)];
   const tmp = new THREE.Vector3();
   const fit = () => {
     const points = camera.aspect > 1.6 ? widePoints : tallPoints;
-    const t = camera.aspect > 1.6 ? new THREE.Vector3(0.3, 1.25, -0.4) : target;
+    const t = camera.aspect > 1.6 ? new THREE.Vector3(0.15, 1.2, -0.35) : target;
     const d = camera.aspect > 1.6 ? new THREE.Vector3(0.2, 0.18, 1).normalize() : dir;
     let lo = 2;
     let hi = 40;
@@ -318,6 +405,7 @@ export function createMiniRoom(canvas: HTMLCanvasElement, options: { reducedMoti
       lastRender = now;
     }
     const busy = turnAnim < 1 || waveTimer > 0;
+    if (busy) renderer.shadowMap.needsUpdate = true;
     if (!options.reducedMotion || busy) request();
   };
   const request = () => {
@@ -350,11 +438,13 @@ export function createMiniRoom(canvas: HTMLCanvasElement, options: { reducedMoti
   };
 
   resize();
+  setLighting(options.lighting ?? "day");
   return {
     setProgress(next) {
       progress = next;
       request();
     },
+    setLighting,
     resize,
     setVisible(next) {
       visible = next;

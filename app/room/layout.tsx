@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Martian_Mono, Newsreader, Schibsted_Grotesk } from "next/font/google";
 import type { ReactNode } from "react";
+import { LIGHTING_BOOT_SCRIPT } from "../../components/room/lighting";
 import styles from "./room.module.css";
 
 const sans = Schibsted_Grotesk({
@@ -37,5 +38,11 @@ export const viewport: Viewport = {
 };
 
 export default function RoomLayout({ children }: { children: ReactNode }) {
-  return <div className={`${sans.variable} ${mono.variable} ${serif.variable} ${styles.shell}`}>{children}</div>;
+  return (
+    <div className={`${sans.variable} ${mono.variable} ${serif.variable} ${styles.shell}`}>
+      {/* picks day / dusk / night (Tokyo clock or the saved choice) before the room paints */}
+      <script dangerouslySetInnerHTML={{ __html: LIGHTING_BOOT_SCRIPT }} />
+      {children}
+    </div>
+  );
 }

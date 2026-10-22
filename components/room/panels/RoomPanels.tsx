@@ -4,10 +4,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { getFaceImageUrl } from "../../home/FaceToy";
 import { SoundsToy } from "../../toys/SoundsToy";
 import { StudyToy } from "../../toys/StudyToy";
-import { WindowSeatToy } from "../../toys/WindowSeatToy";
 import { bloomEntries } from "../../../lib/japan/bloom-data";
 import { getBloomStatus, getBloomTimeline, getTokyoParts } from "../../../lib/japan/bloom";
 import type { RoomToyId } from "../hotspots";
+import { RoomWindow } from "./RoomWindow";
 import styles from "./panels.module.css";
 
 export type PanelProject = {
@@ -29,7 +29,8 @@ export type PanelAbout = {
 
 const external = (href: string) => (href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {});
 
-export function ProjectPanel({ project }: { project: PanelProject }) {
+/** A project card. Projects without their own picture show the object they live in, rendered from the room. */
+export function ProjectPanel({ project, spotId, object }: { project: PanelProject; spotId?: string; object?: string }) {
   return (
     <div className={styles.project}>
       {project.image ? (
@@ -45,11 +46,13 @@ export function ProjectPanel({ project }: { project: PanelProject }) {
             decoding="async"
           />
         </div>
-      ) : (
-        <div className={styles.projectImage} data-empty>
-          <span aria-hidden="true">{project.title.slice(0, 1)}</span>
+      ) : spotId ? (
+        <div className={styles.projectImage} data-object>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={`/lab/room/obj-${spotId}.webp`} alt={`The ${object?.toLowerCase() ?? "object"} in the Pocket Room`} width={640} height={360} loading="lazy" decoding="async" />
+          <span className={styles.objectTag}>In the room</span>
         </div>
-      )}
+      ) : null}
       <p className={styles.kicker}>{project.type}</p>
       <p className={styles.projectBlurb}>{project.blurb}</p>
       <a className={styles.primary} href={project.href} {...external(project.href)}>
@@ -168,11 +171,7 @@ export function ToyPanel({ toy }: { toy: RoomToyId }) {
         </div>
       );
     case "window":
-      return (
-        <div className={styles.toyWrap} data-toy="window">
-          <WindowSeatToy />
-        </div>
-      );
+      return <RoomWindow />;
     case "sounds":
       return (
         <div className={styles.toyWrap} data-toy="sounds">

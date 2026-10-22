@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { roomPostHref } from "../../../components/room/hotspots";
+import { spineLabel } from "../../../components/room/spines";
 import { RoomFooter, RoomHeader, roomDate } from "../../../components/room/RoomChrome";
 import { getPostSummaries } from "../../../lib/blog";
 import shell from "../room.module.css";
@@ -28,35 +29,39 @@ export default function RoomWritingPage() {
     <div className={shell.page} data-room-page>
       <RoomHeader current="writing" />
       <main className={styles.main}>
-        <header className={styles.header}>
-          <p className={styles.kicker}>
-            <span>Fig. 05</span> The bookshelf
-          </p>
-          <h1>Writing</h1>
-          <p className={styles.lede}>
-            Short notes from making real things: AI agents, small teams, and objects you can hold. {posts.length}{" "}
-            {posts.length === 1 ? "post" : "posts"}, newest first. Follow along with <a href="/rss.xml">RSS</a>.
-          </p>
-        </header>
+        <div className={styles.top}>
+          <header className={styles.header}>
+            <p className={styles.kicker}>
+              <Link href="/room/?spot=bookshelf#world">Fig. 05</Link> The bookshelf
+            </p>
+            <h1>Writing</h1>
+            <p className={styles.lede}>
+              Short notes from making real things: AI agents, small teams, and objects you can hold. {posts.length}{" "}
+              {posts.length === 1 ? "post" : "posts"}, newest first. Follow along with <a href="/rss.xml">RSS</a>.
+            </p>
+          </header>
 
-        <div className={styles.shelf} aria-hidden="true">
-          {posts.map((post, index) => (
-            <Link
-              key={post.slug}
-              href={roomPostHref(post.slug)}
-              tabIndex={-1}
-              className={styles.spine}
-              style={{ "--spine": SPINES[index % SPINES.length], "--h": `${78 + ((index * 37) % 22)}%` } as CSSProperties}
-            >
-              <span>{post.title}</span>
-            </Link>
-          ))}
-          <span className={styles.bookend} />
-          <span className={styles.plate}>
-            {posts.length} notebooks
-            <br />
-            more soon
-          </span>
+          <div className={styles.shelf} aria-hidden="true">
+            {posts.map((post, index) => (
+              <Link
+                key={post.slug}
+                href={roomPostHref(post.slug)}
+                tabIndex={-1}
+                className={styles.spine}
+                title={post.title}
+                style={{ "--spine": SPINES[index % SPINES.length], "--h": `${80 + ((index * 37) % 18)}%` } as CSSProperties}
+              >
+                <span>{spineLabel(post.title)}</span>
+                <i>{roomDate.format(post.publishedAt).split(" ").slice(1).join(" ")}</i>
+              </Link>
+            ))}
+            <span className={styles.bookend} />
+            <span className={styles.plate}>
+              {posts.length} notebooks
+              <br />
+              more soon
+            </span>
+          </div>
         </div>
 
         {[...years.entries()].map(([year, items]) => (

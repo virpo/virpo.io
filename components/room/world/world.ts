@@ -8,6 +8,7 @@ import type { PeterRig } from "./peter";
 import { createGlowMaterial, createOutlineMaterial } from "./post";
 import { buildRailway, type Railway } from "./railway";
 import { buildScenery } from "./scenery";
+import { buildStreet } from "./street";
 
 export const KIND_COLORS: Record<RoomHotspotKind, string> = {
   post: "#ff5a12",
@@ -92,7 +93,8 @@ export function buildWorld(options: { reducedMotion: boolean; mobile: boolean; t
   const { root: house, peter } = buildHouse(ctx);
   const railway = buildRailway(ctx);
   const { root: scenery } = buildScenery(ctx, options.tokyoLabel);
-  scene.add(scenery, house, railway.root);
+  const street = buildStreet(ctx, railway.crossings);
+  scene.add(scenery, house, railway.root, street);
 
   // ---------- lights ----------
   const hemi = new THREE.HemisphereLight("#fff6e6", "#9a8462", 1.3);
@@ -116,6 +118,17 @@ export function buildWorld(options: { reducedMotion: boolean; mobile: boolean; t
   fill.position.set(-8, 6, 10);
   scene.add(fill);
 
+  // ---------- draw-call diet ----------
+  // Anything that moves continuously keeps out of the (frozen) shadow map, and every
+  // animated group collapses its rigid sub-meshes into one mesh per material.
+  scene.updateMatrixWorld(true);
+  const dynamicRoots: THREE.Object3D[] = [];
+  scene.traverse((object) => {
+    if (object.userData.dynamic) dynamicRoots.push(object);
+    if (object.userData.noShadow) object.traverse((child) => (child.castShadow = false));
+  });
+  for (const object of dynamicRoots) mergeRigid(object);
+
   // ---------- spots ----------
   scene.updateMatrixWorld(true);
   const box = new THREE.Box3();
@@ -126,8 +139,14 @@ export function buildWorld(options: { reducedMotion: boolean; mobile: boolean; t
     const pickables: THREE.Object3D[] = [];
     const meshes: THREE.Mesh[] = [];
     object.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh && !child.userData.contact) meshes.push(child as THREE.Mesh);
+      if (!(child as THREE.Mesh).isMesh || child.userData.contact) return;
+      if (child.userData.proxy) {
+        pickables.push(child);
+        return;
+      }
+      meshes.push(child as THREE.Mesh);
     });
+    if (opts.hull) pickables.push(addHull(object, meshes));
     for (const m of meshes) {
       pickables.push(m);
       const material = Array.isArray(m.material) ? m.material[0] : m.material;
@@ -210,7 +229,7 @@ export function buildWorld(options: { reducedMotion: boolean; mobile: boolean; t
 
   const update = (t: number, dt: number) => {
     // lighting easing
-    const k = 1 - Math.exp(-dt * 2.6);
+    const k = options.reducedMotion ? 1 : 1 - Math.exp(-dt * 2.6);
     const before = lighting.night + lighting.dusk;
     lighting.night += (target.night - lighting.night) * k;
     lighting.dusk += (target.dusk - lighting.dusk) * k;
@@ -276,11 +295,156 @@ export function buildWorld(options: { reducedMotion: boolean; mobile: boolean; t
   };
 }
 
-/** Merge every static, single-material mesh by material to cut draw calls. */
+/** An invisible, pickable box around an object (in its own space), so open shapes are easy to hover. */
+const showHulls = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("hulls");
+const hullMaterial = showHulls ? new THREE.MeshBasicMaterial({ color: "#ff00aa", transparent: true, opacity: 0.35, depthWrite: false }) : new THREE.MeshBasicMaterial({ visible: false });
+function addHull(object: THREE.Object3D, meshes: THREE.Mesh[]) {
+  object.updateMatrixWorld(true);
+  const inverse = new THREE.Matrix4().copy(object.matrixWorld).invert();
+  const box = new THREE.Box3();
+  const part = new THREE.Box3();
+  const local = new THREE.Matrix4();
+  for (const m of meshes) {
+    if (!m.geometry.boundingBox) m.geometry.computeBoundingBox();
+    local.multiplyMatrices(inverse, m.matrixWorld);
+    part.copy(m.geometry.boundingBox!).applyMatrix4(local);
+    box.union(part);
+  }
+  const size = box.getSize(new THREE.Vector3()).multiplyScalar(0.92);
+  const hull = new THREE.Mesh(new THREE.BoxGeometry(Math.max(size.x, 0.05), Math.max(size.y, 0.05), Math.max(size.z, 0.05)), hullMaterial);
+  box.getCenter(hull.position);
+  hull.castShadow = false;
+  hull.receiveShadow = false;
+  hull.userData.hull = true;
+  object.add(hull);
+  return hull;
+}
+
+// ---------- merging helpers ----------
+
+const painted = new Map<string, THREE.MeshStandardMaterial>();
+
+/** Plain matte materials (no texture, no glow, opaque) can share one vertex-coloured material. */
+function paintable(material: THREE.Material): material is THREE.MeshStandardMaterial {
+  const m = material as THREE.MeshStandardMaterial;
+  if (!m.isMeshStandardMaterial || m.map || m.transparent || m.vertexColors) return false;
+  if (m.emissive && (m.emissive.r > 0 || m.emissive.g > 0 || m.emissive.b > 0)) return false;
+  return true;
+}
+
+function paintKey(m: THREE.MeshStandardMaterial) {
+  const physical = m as THREE.MeshPhysicalMaterial;
+  return `paint|${m.type}|${m.roughness.toFixed(2)}|${m.metalness.toFixed(2)}|${m.flatShading}|${m.side}|${physical.isMeshPhysicalMaterial ? physical.clearcoat : 0}`;
+}
+
+function paintedMaterial(m: THREE.MeshStandardMaterial) {
+  const key = paintKey(m);
+  let shared = painted.get(key);
+  if (!shared) {
+    shared = m.clone();
+    shared.color.set("#ffffff");
+    shared.vertexColors = true;
+    painted.set(key, shared);
+  }
+  return shared;
+}
+
+type Bucket = { material: THREE.Material; geometries: THREE.BufferGeometry[]; cast: boolean; receive: boolean; uv: boolean; paint: boolean; meshes: THREE.Mesh[] };
+
+function bucketFor(buckets: Map<string, Bucket>, m: THREE.Mesh) {
+  const material = m.material as THREE.Material;
+  const paint = paintable(material);
+  const key = `${paint ? paintKey(material as THREE.MeshStandardMaterial) : material.uuid}|${m.castShadow}|${m.receiveShadow}`;
+  let bucket = buckets.get(key);
+  if (!bucket) {
+    bucket = {
+      material: paint ? paintedMaterial(material as THREE.MeshStandardMaterial) : material,
+      geometries: [],
+      cast: m.castShadow,
+      receive: m.receiveShadow,
+      uv: Boolean((material as THREE.MeshStandardMaterial).map),
+      paint,
+      meshes: [],
+    };
+    buckets.set(key, bucket);
+  }
+  bucket.meshes.push(m);
+  return bucket;
+}
+
+function bakeGeometry(m: THREE.Mesh, matrix: THREE.Matrix4, bucket: Bucket) {
+  const geometry = m.geometry.clone();
+  geometry.applyMatrix4(matrix);
+  for (const name of Object.keys(geometry.attributes)) {
+    if (name !== "position" && name !== "normal" && !(bucket.uv && name === "uv")) geometry.deleteAttribute(name);
+  }
+  if (!geometry.index) {
+    const count = geometry.attributes.position.count;
+    const index = new (count > 65535 ? Uint32Array : Uint16Array)(count);
+    for (let i = 0; i < count; i += 1) index[i] = i;
+    geometry.setIndex(new THREE.BufferAttribute(index, 1));
+  }
+  if (bucket.paint) {
+    const color = (m.material as THREE.MeshStandardMaterial).color;
+    const count = geometry.attributes.position.count;
+    const colors = new Float32Array(count * 3);
+    for (let i = 0; i < count; i += 1) {
+      colors[i * 3] = color.r;
+      colors[i * 3 + 1] = color.g;
+      colors[i * 3 + 2] = color.b;
+    }
+    geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+  }
+  geometry.clearGroups();
+  return geometry;
+}
+
+/**
+ * Collapse the rigid part of an animated group: every descendant mesh that is not
+ * itself under another animated group (or marked `keep`) merges into one mesh per
+ * material, in the group's local space. Animation keeps working because the group
+ * still moves as a whole.
+ */
+function mergeRigid(root: THREE.Object3D) {
+  root.updateMatrixWorld(true);
+  const inverse = new THREE.Matrix4().copy(root.matrixWorld).invert();
+  const buckets = new Map<string, Bucket>();
+  const visit = (object: THREE.Object3D) => {
+    for (const child of object.children) {
+      if (child.userData.dynamic || child.userData.keep) continue;
+      const m = child as THREE.Mesh;
+      if (m.isMesh && !(m as unknown as THREE.InstancedMesh).isInstancedMesh && !Array.isArray(m.material) && !m.userData.contact && !m.userData.proxy && child.children.length === 0) {
+        if (!(m.material as THREE.Material).transparent && m.visible) {
+          bucketFor(buckets, m);
+          continue;
+        }
+      }
+      visit(child);
+    }
+  };
+  visit(root);
+  const local = new THREE.Matrix4();
+  for (const bucket of buckets.values()) {
+    if (bucket.meshes.length < 2) continue;
+    for (const m of bucket.meshes) {
+      local.multiplyMatrices(inverse, m.matrixWorld);
+      bucket.geometries.push(bakeGeometry(m, local, bucket));
+    }
+    const merged = mergeGeometries(bucket.geometries, false);
+    for (const g of bucket.geometries) g.dispose();
+    if (!merged) continue;
+    for (const m of bucket.meshes) m.parent?.remove(m);
+    const mesh = new THREE.Mesh(merged, bucket.material);
+    mesh.castShadow = bucket.cast;
+    mesh.receiveShadow = bucket.receive;
+    root.add(mesh);
+  }
+}
+
+/** Merge every static mesh by material (plain colours share one vertex-coloured material) to cut draw calls. */
 function mergeStatic(scene: THREE.Scene) {
   scene.updateMatrixWorld(true);
-  const buckets = new Map<string, { material: THREE.Material; geometries: THREE.BufferGeometry[]; cast: boolean; receive: boolean; uv: boolean }>();
-  const remove: THREE.Mesh[] = [];
+  const buckets = new Map<string, Bucket>();
   const isDynamic = (object: THREE.Object3D | null): boolean => {
     for (let o = object; o; o = o.parent) if (o.userData.dynamic) return true;
     return false;
@@ -291,33 +455,14 @@ function mergeStatic(scene: THREE.Scene) {
     if (isDynamic(m)) return;
     const material = m.material as THREE.MeshStandardMaterial;
     if (material.transparent && !m.userData.contact) return;
-    const uv = Boolean(material.map);
-    const key = `${material.uuid}|${m.castShadow}|${m.receiveShadow}`;
-    let bucket = buckets.get(key);
-    if (!bucket) {
-      bucket = { material, geometries: [], cast: m.castShadow, receive: m.receiveShadow, uv };
-      buckets.set(key, bucket);
-    }
-    const geometry = m.geometry.clone();
-    geometry.applyMatrix4(m.matrixWorld);
-    for (const name of Object.keys(geometry.attributes)) {
-      if (name !== "position" && name !== "normal" && !(uv && name === "uv")) geometry.deleteAttribute(name);
-    }
-    if (!geometry.index) {
-      const count = geometry.attributes.position.count;
-      const index = new (count > 65535 ? Uint32Array : Uint16Array)(count);
-      for (let i = 0; i < count; i += 1) index[i] = i;
-      geometry.setIndex(new THREE.BufferAttribute(index, 1));
-    }
-    geometry.clearGroups();
-    bucket.geometries.push(geometry);
-    remove.push(m);
+    bucketFor(buckets, m);
   });
-  for (const m of remove) m.parent?.remove(m);
   for (const bucket of buckets.values()) {
+    for (const m of bucket.meshes) bucket.geometries.push(bakeGeometry(m, m.matrixWorld, bucket));
     const merged = mergeGeometries(bucket.geometries, false);
     for (const g of bucket.geometries) g.dispose();
     if (!merged) continue;
+    for (const m of bucket.meshes) m.parent?.remove(m);
     const mesh = new THREE.Mesh(merged, bucket.material);
     mesh.castShadow = bucket.cast;
     mesh.receiveShadow = bucket.receive;
