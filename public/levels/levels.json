@@ -56,13 +56,13 @@
    "n": 9,
    "era": "Orbit",
    "name": "Beyond the screen",
-   "line": "Your agents reach the team, the release, the pager, and the physical world."
+   "line": "Your agents reach the team, the release, the pager, and your oldest code."
   },
   {
    "n": 10,
    "era": "Stone, again",
    "name": "Full circle",
-   "line": "Fewer, sharper tools, and you understand them all the way down."
+   "line": "Fewer, sharper tools, and you understand them all the way down, to the metal."
   }
  ],
  "levels": [
@@ -378,7 +378,7 @@
    "n": 22,
    "id": "way-to-verify",
    "title": "Give it a way to check its work",
-   "line": "Tests, a build, a screenshot to compare against. It catches its own mistakes before you do.",
+   "line": "Tests, a build, a screenshot to compare against, fast enough to run after every edit. It catches its own mistakes before you do.",
    "check": "10+ prompts that ask it to verify, test, or make sure it works.",
    "how": "history",
    "from": {
@@ -1255,17 +1255,17 @@
   },
   {
    "n": 79,
-   "id": "fast-checks",
-   "title": "Make the checks take seconds",
-   "line": "It checks as often as checking is cheap. A ten-minute suite gets skipped; a five-second one runs after every edit.",
-   "check": "A fast test or check command (seconds, not minutes) that the agent runs on its own, named in the rules file.",
-   "how": "self",
+   "id": "migration",
+   "title": "Hand it the migration nobody wants",
+   "line": "200 files, one mechanical change: the framework upgrade, the rename, the new API. Done by lunch, checked by the tests.",
+   "check": "3+ prompts asking for a codebase-wide change (\"migrate\", \"convert all\", \"upgrade every\", \"across the codebase\").",
+   "how": "history",
    "from": {
-    "h": "paulirish",
-    "name": "Paul Irish",
-    "q": "This allows coding agents to iterate and test logic instantly via CLI/Node unit tests without browser automation overhead (which is ~20x slower).",
-    "url": "https://github.com/paulirish/dotfiles/blob/384da0d2aaca4cb0287f046e1a9791a405f00b17/agents/skills/pauls-project-setup/SKILL.md#L19",
-    "x": "paul_irish"
+    "h": "kentonv",
+    "name": "Kenton Varda",
+    "q": "Claude, buddy. You're gonna do the whole conversion in an hour, then we'll see if it works.",
+    "url": "https://x.com/KentonVarda/status/2084293600142135365",
+    "x": "KentonVarda"
    }
   },
   {
@@ -1394,16 +1394,16 @@
   },
   {
    "n": 89,
-   "id": "hardware",
-   "title": "Put hardware in the loop",
-   "line": "It designs the bracket, flashes the board, reads the serial port, and checks its own work.",
-   "check": "Device or CAD tools driven by an agent (serial, adb, simctl, esptool, arduino-cli, OpenSCAD, CadQuery, build123d), or .stl, .3mf or .scad files it produced.",
-   "how": "history",
+   "id": "revive",
+   "title": "Bring an old project back to life",
+   "line": "The repo that stopped building in 2019. It upgrades everything, fixes what broke, and gets it running again.",
+   "check": "A repo you're committing to again after a year or more without a commit.",
+   "how": "file",
    "from": {
-    "h": "torvalds",
-    "name": "Linus Torvalds",
-    "q": "I started the day with \"I want to connect two pedals together and have them validate each other\", and ended the day with three pedals, a signal generator, and a USB MIDI dongle all connected together as a validation bench with automated checks.",
-    "url": "https://github.com/torvalds/GuitarPedal/commit/d1b95dc5e71e0a2d42912001c5fa4469bbc88766"
+    "h": "bcantrill",
+    "name": "Bryan Cantrill",
+    "q": "It is no exaggeration to say that this was brought to us by Claude.",
+    "url": "https://bcantrill.dtrace.org/2026/05/25/a-portentous-reunion/"
    }
   },
   {
@@ -1442,9 +1442,9 @@
   {
    "n": 92,
    "id": "read-before-install",
-   "title": "Read it before you install it",
-   "line": "Skills, plugins, MCP servers and harnesses run with your keys. Read the code first, or try it in a box.",
-   "check": "You read a skill, plugin or harness before installing it, or run new ones in a VM or a separate user.",
+   "title": "Install only what you trust",
+   "line": "Skills, plugins and MCP servers run with your keys. Stick to sources you trust, or read the code first.",
+   "check": "You install skills, plugins and MCP servers only from sources you trust, or read the code before you do.",
    "how": "self",
    "from": {
     "h": "rasbt",
@@ -1486,31 +1486,31 @@
   },
   {
    "n": 95,
-   "id": "skeleton-by-hand",
-   "title": "Write the skeleton by hand",
-   "line": "Types, interfaces, module boundaries: you write them, it fills in the bodies. The design stays in your head.",
-   "check": "You write the structure (types, signatures, module layout) yourself and hand the agent the rest.",
+   "id": "reset-per-model",
+   "title": "Start from zero with each new model",
+   "line": "A new model gets a clean config. You add back only what it still gets wrong, and most of it never comes back.",
+   "check": "When a new model ships, you start it with a clean config and add rules back only when it needs them.",
    "how": "self",
    "from": {
-    "h": "matklad",
-    "name": "Alex Kladov",
-    "q": "I was providing structure, Claude was painting by the numbers.",
-    "url": "https://matklad.github.io/2026/01/20/vibecoding-2.html"
+    "h": "catherinewu",
+    "name": "Cat Wu",
+    "q": "I generally reset my configs for each new model",
+    "url": "https://x.com/_catwu/status/2102556970473709717",
+    "x": "_catwu"
    }
   },
   {
    "n": 96,
-   "id": "review-budget",
-   "title": "Generate only what you can review",
-   "line": "A daily limit on agent code, sized to how much you can actually read. Anything past it is debt.",
-   "check": "You cap how much agent-written code you accept per day at what you can review.",
-   "how": "self",
+   "id": "hardware",
+   "title": "Put hardware in the loop",
+   "line": "It designs the bracket, flashes the board, reads the serial port, and checks its own work.",
+   "check": "Device or CAD tools driven by an agent (serial, adb, simctl, esptool, arduino-cli, OpenSCAD, CadQuery, build123d), or .stl, .3mf or .scad files it produced.",
+   "how": "history",
    "from": {
-    "h": "badlogic",
-    "name": "Mario Zechner",
-    "q": "Set yourself limits on how much code you let the clanker generate per day, in line with your ability to actually review the code.",
-    "url": "https://mariozechner.at/posts/2026-03-25-thoughts-on-slowing-the-fuck-down/",
-    "x": "badlogicgames"
+    "h": "torvalds",
+    "name": "Linus Torvalds",
+    "q": "I started the day with \"I want to connect two pedals together and have them validate each other\", and ended the day with three pedals, a signal generator, and a USB MIDI dongle all connected together as a validation bench with automated checks.",
+    "url": "https://github.com/torvalds/GuitarPedal/commit/d1b95dc5e71e0a2d42912001c5fa4469bbc88766"
    }
   },
   {
@@ -1651,6 +1651,6 @@
    "line": "Retired as a benchmark. Still a good party trick."
   }
  ],
- "version": "1.2",
+ "version": "1.3",
  "updated": "2026-10-23"
 }

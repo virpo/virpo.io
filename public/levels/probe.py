@@ -232,6 +232,11 @@ for repo in repos[:100]:
     n = run(["git", "-C", str(repo), "rev-list", "--count", "HEAD"]).strip()
     if n.isdigit() and int(n) <= 15 and not git_remote(repo):
         R["small_repos_without_remote"] += 1
+# old projects brought back: a commit this year after a year or more with none
+for repo in repos[:100]:
+    ts = [int(x) for x in run(["git", "-C", str(repo), "log", "-300", "--format=%ct"]).split() if x.isdigit()]
+    if ts and NOW - ts[0] < 365 * 86400 and any(a - b > 365 * 86400 for a, b in zip(ts, ts[1:])):
+        R["revived_repos"] += 1
 hooks_path = run(["git", "config", "--global", "core.hooksPath"]).strip()
 if hooks_path and re.search(r"\b(claude|codex|roborev|opencode|gemini)\b", read(Path(hooks_path).expanduser() / "post-commit", 100_000)):
     R["post_commit_agent_hook"] += 1
@@ -281,6 +286,7 @@ PROMPT_PATTERNS = {
     "speech_tells": r"\b(um+|uh+|erm|you know what i mean)\b", "please": r"\bplease\b",
     "gives_reason": r"\bbecause\b|\bso that\b|the goal is|the reason (is|being)|\bi want .{3,60} so\b",
     "decide_or_critique": r"\bshould i\b|help me (decide|choose|pick)|what am i missing|push back|poke holes|devil'?s advocate|pros and cons|what would you (do|pick|choose)",
+    "codebase_wide": r"\bmigrate\b|\bmigration\b|convert (all|every|the whole)|upgrade (all|every)|across the (whole )?(codebase|repo)|(rename|replace) .{1,40} everywhere",
     "about_the_machine": r"disk space|free up (space|storage)|clear (some )?storage|(mac|computer|laptop) is (slow|hot|full)|brew doctor|my \$?path\b|fans? (are|is) loud",
 }
 SLASH = ["clear", "new", "compact", "rewind", "btw", "effort", "model", "usage", "stats", "cost", "context", "loop", "schedule",

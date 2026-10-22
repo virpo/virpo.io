@@ -20,7 +20,7 @@ const day = at => new Date(at).toLocaleDateString("en-GB", { day: "numeric", mon
 /* results carry the version of the list they were judged against. An older result is read by level id: each answer moves
    to wherever that level is now, a level that absorbed others counts the best answer among them, and a level that didn't
    exist yet is "?". A level that was dropped just drops out. */
-const V = 3;
+const V = 4;
 const PAST = (() => {
   const at = new Map(L.map(l => [l.id, l.n])), where = id => at.get(id) || at.get(D.past.absorbed[id]) || 0;
   return Object.fromEntries(Object.entries(D.past.versions).map(([v, order]) => { const to = order.map(where); return [v, {

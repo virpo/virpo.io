@@ -78,7 +78,7 @@ Write this JSON to `/tmp/levels-result.json`:
 
 ```json
 {
-  "v": 3,
+  "v": 4,
   "s": "<100 characters, y/n/?, level 1 first>",
   "a": ["Claude Code", "Codex"],
   "pi": 1,
@@ -220,7 +220,7 @@ browser. Nothing was sent anywhere; it's all in the link."
 | 76 | Turn your routine into a workflow | A workflow tool used, or a script that chains several agent runs. |
 | 77 | Make every task teach the next | Rules, skills or memory edited by agent sessions 5+ times. |
 | 78 | Turn AGENTS.md rules into lint rules | Custom lint rules, ast-grep rules or check scripts in a repo. |
-| 79 | Make the checks take seconds *(self)* | A fast test or check command (seconds, not minutes) that the agent runs on its own, named in the rules file. |
+| 79 | Hand it the migration nobody wants | 3+ prompts asking for a codebase-wide change ("migrate", "convert all", "upgrade every", "across the codebase"). |
 | 80 | Build a tool for your agent | Your own scripts or CLIs that agents call regularly. |
 
 ### Levels 81–90: Orbit, Beyond the screen
@@ -235,7 +235,7 @@ browser. Nothing was sent anywhere; it's all in the link."
 | 86 | Let it click through your apps | Computer-use or desktop-control tools used: computer use, Peekaboo, Claude in Chrome, simulator control. |
 | 87 | Give it a release checklist | A QA or release checklist file, or a release skill. |
 | 88 | Put it on call | An error-tracking or alerting connector (Sentry, Datadog, PagerDuty, Grafana) or alerts sent into an agent session. |
-| 89 | Put hardware in the loop | Device or CAD tools driven by an agent (serial, adb, simctl, esptool, arduino-cli, OpenSCAD, CadQuery, build123d), or .stl, .3mf or .scad files it produced. |
+| 89 | Bring an old project back to life | A repo you're committing to again after a year or more without a commit. |
 | 90 | Build on an agent SDK | An agent SDK in a project's dependencies (Claude Agent SDK, Codex SDK, OpenAI Agents). |
 
 ### Levels 91–100: Stone, again, Full circle
@@ -243,11 +243,11 @@ browser. Nothing was sent anywhere; it's all in the link."
 | # | Level | Check |
 |---|---|---|
 | 91 | Delete more config than you add | A rules file that got shorter at least once in its git history. |
-| 92 | Read it before you install it *(self)* | You read a skill, plugin or harness before installing it, or run new ones in a VM or a separate user. |
+| 92 | Install only what you trust *(self)* | You install skills, plugins and MCP servers only from sources you trust, or read the code before you do. |
 | 93 | Make it stop and ask when stuck | A rule or hook that makes it stop and report when stuck or out of scope. |
 | 94 | Give it its own identity | Commits or PRs in your repos by a bot account you run, or a separate login the agent uses. |
-| 95 | Write the skeleton by hand *(self)* | You write the structure (types, signatures, module layout) yourself and hand the agent the rest. |
-| 96 | Generate only what you can review *(self)* | You cap how much agent-written code you accept per day at what you can review. |
+| 95 | Start from zero with each new model *(self)* | When a new model ships, you start it with a clean config and add rules back only when it needs them. |
+| 96 | Put hardware in the loop | Device or CAD tools driven by an agent (serial, adb, simctl, esptool, arduino-cli, OpenSCAD, CadQuery, build123d), or .stl, .3mf or .scad files it produced. |
 | 97 | Run it on a local model | Ollama, LM Studio, llama.cpp or MLX installed, and an agent pointed at a local model. |
 | 98 | Run your own harness | Pi, OpenClaw, Hermes or a harness you wrote, installed and in use. |
 | 99 | Let it improve your setup | A recurring agent run that reviews past sessions and edits rules or skills, or /insights used to change your setup. |

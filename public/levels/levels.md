@@ -4,7 +4,7 @@ The 100 tricks worth your time with coding agents, from pasting screenshots to w
 
 - Page: https://virpo.io/levels/
 - Check your own level: paste this into your coding agent: What level am I with coding agents? Follow virpo.io/levels/check.md. It has you run a read-only script that counts things on this machine (no file contents, nothing uploaded), then open my result in the browser. Read the script and tell me what it does before you run it.
-- Data: https://virpo.io/levels/levels.json · version 1.2, updated 2026-10-23
+- Data: https://virpo.io/levels/levels.json · version 1.3, updated 2026-10-23
 
 Your level is how many of the 100 you do. The list is always 100: when a new level earns its place, one goes extinct.
 
@@ -168,7 +168,7 @@ What's wrong, where, and how you'll know it's fixed. Then it knows when to stop.
 
 ### 22. Give it a way to check its work
 
-Tests, a build, a screenshot to compare against. It catches its own mistakes before you do.
+Tests, a build, a screenshot to compare against, fast enough to run after every edit. It catches its own mistakes before you do.
 
 - How it's checked: 10+ prompts that ask it to verify, test, or make sure it works.
 - Who does it: Boris Cherny: “give Claude a way to verify its work… 2-3x the quality” (https://x.com/bcherny/status/2044847858634064115)
@@ -585,12 +585,12 @@ Wrote "never do X" in AGENTS.md twice? Make it a lint rule or a type. It can ski
 - How it's checked: Custom lint rules, ast-grep rules or check scripts in a repo.
 - Who does it: José Valim: “encode as many rules as possible into deterministic checks (first) and adversarial reviews (second), instead of relying exclusively on a bunch of AGENTS.md files to do the job.” (https://x.com/josevalim/status/2075221914549686774)
 
-### 79. Make the checks take seconds
+### 79. Hand it the migration nobody wants
 
-It checks as often as checking is cheap. A ten-minute suite gets skipped; a five-second one runs after every edit.
+200 files, one mechanical change: the framework upgrade, the rename, the new API. Done by lunch, checked by the tests.
 
-- How it's checked: A fast test or check command (seconds, not minutes) that the agent runs on its own, named in the rules file.
-- Who does it: Paul Irish: “This allows coding agents to iterate and test logic instantly via CLI/Node unit tests without browser automation overhead (which is ~20x slower).” (https://github.com/paulirish/dotfiles/blob/384da0d2aaca4cb0287f046e1a9791a405f00b17/agents/skills/pauls-project-setup/SKILL.md#L19)
+- How it's checked: 3+ prompts asking for a codebase-wide change ("migrate", "convert all", "upgrade every", "across the codebase").
+- Who does it: Kenton Varda: “Claude, buddy. You're gonna do the whole conversion in an hour, then we'll see if it works.” (https://x.com/KentonVarda/status/2084293600142135365)
 
 ### 80. Build a tool for your agent
 
@@ -601,7 +601,7 @@ A small CLI made for it to call: --json output, good --help, no prompts.
 
 ## Levels 81–90: Orbit · Beyond the screen
 
-Your agents reach the team, the release, the pager, and the physical world.
+Your agents reach the team, the release, the pager, and your oldest code.
 
 ### 81. Test your skills
 
@@ -657,12 +657,12 @@ It watches errors and alerts, and has a fix open before you've read the page.
 - How it's checked: An error-tracking or alerting connector (Sentry, Datadog, PagerDuty, Grafana) or alerts sent into an agent session.
 - Try: [Sentry MCP](https://docs.sentry.io/product/sentry-mcp/)
 
-### 89. Put hardware in the loop
+### 89. Bring an old project back to life
 
-It designs the bracket, flashes the board, reads the serial port, and checks its own work.
+The repo that stopped building in 2019. It upgrades everything, fixes what broke, and gets it running again.
 
-- How it's checked: Device or CAD tools driven by an agent (serial, adb, simctl, esptool, arduino-cli, OpenSCAD, CadQuery, build123d), or .stl, .3mf or .scad files it produced.
-- Who does it: Linus Torvalds: “I started the day with "I want to connect two pedals together and have them validate each other", and ended the day with three pedals, a signal generator, and a USB MIDI dongle all connected together as a validation bench with automated checks.” (https://github.com/torvalds/GuitarPedal/commit/d1b95dc5e71e0a2d42912001c5fa4469bbc88766)
+- How it's checked: A repo you're committing to again after a year or more without a commit.
+- Who does it: Bryan Cantrill: “It is no exaggeration to say that this was brought to us by Claude.” (https://bcantrill.dtrace.org/2026/05/25/a-portentous-reunion/)
 
 ### 90. Build on an agent SDK
 
@@ -673,7 +673,7 @@ Your own agent product, with the same loop the big ones use under the hood.
 
 ## Levels 91–100: Stone, again · Full circle
 
-Fewer, sharper tools, and you understand them all the way down.
+Fewer, sharper tools, and you understand them all the way down, to the metal.
 
 ### 91. Delete more config than you add
 
@@ -682,11 +682,11 @@ Prune the rules, skills and servers that don't earn their tokens anymore.
 - How it's checked: A rules file that got shorter at least once in its git history.
 - Who does it: Dax Raad: “when i see people with custom workflows and setups they're all addressing problems that don't exist anymore” (https://x.com/thdxr/status/2107260844400931156)
 
-### 92. Read it before you install it
+### 92. Install only what you trust
 
-Skills, plugins, MCP servers and harnesses run with your keys. Read the code first, or try it in a box.
+Skills, plugins and MCP servers run with your keys. Stick to sources you trust, or read the code first.
 
-- How it's checked: You read a skill, plugin or harness before installing it, or run new ones in a VM or a separate user.
+- How it's checked: You install skills, plugins and MCP servers only from sources you trust, or read the code before you do.
 - Who does it: Sebastian Raschka: “Do an audit of the (open-source) agent code base first.” (https://magazine.sebastianraschka.com/p/using-local-coding-agents)
 
 ### 93. Make it stop and ask when stuck
@@ -703,19 +703,19 @@ Its own GitHub account and scoped keys, so you can always see, and revoke, what 
 - How it's checked: Commits or PRs in your repos by a bot account you run, or a separate login the agent uses.
 - Who does it: Anthony Fu: “Agents on behave of @antfu” (https://github.com/antfubot)
 
-### 95. Write the skeleton by hand
+### 95. Start from zero with each new model
 
-Types, interfaces, module boundaries: you write them, it fills in the bodies. The design stays in your head.
+A new model gets a clean config. You add back only what it still gets wrong, and most of it never comes back.
 
-- How it's checked: You write the structure (types, signatures, module layout) yourself and hand the agent the rest.
-- Who does it: Alex Kladov: “I was providing structure, Claude was painting by the numbers.” (https://matklad.github.io/2026/01/20/vibecoding-2.html)
+- How it's checked: When a new model ships, you start it with a clean config and add rules back only when it needs them.
+- Who does it: Cat Wu: “I generally reset my configs for each new model” (https://x.com/_catwu/status/2102556970473709717)
 
-### 96. Generate only what you can review
+### 96. Put hardware in the loop
 
-A daily limit on agent code, sized to how much you can actually read. Anything past it is debt.
+It designs the bracket, flashes the board, reads the serial port, and checks its own work.
 
-- How it's checked: You cap how much agent-written code you accept per day at what you can review.
-- Who does it: Mario Zechner: “Set yourself limits on how much code you let the clanker generate per day, in line with your ability to actually review the code.” (https://mariozechner.at/posts/2026-03-25-thoughts-on-slowing-the-fuck-down/)
+- How it's checked: Device or CAD tools driven by an agent (serial, adb, simctl, esptool, arduino-cli, OpenSCAD, CadQuery, build123d), or .stl, .3mf or .scad files it produced.
+- Who does it: Linus Torvalds: “I started the day with "I want to connect two pedals together and have them validate each other", and ended the day with three pedals, a signal generator, and a USB MIDI dongle all connected together as a validation bench with automated checks.” (https://github.com/torvalds/GuitarPedal/commit/d1b95dc5e71e0a2d42912001c5fa4469bbc88766)
 
 ### 97. Run it on a local model
 
