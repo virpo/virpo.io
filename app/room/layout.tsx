@@ -1,0 +1,48 @@
+import type { Metadata, Viewport } from "next";
+import { Martian_Mono, Newsreader, Schibsted_Grotesk } from "next/font/google";
+import type { ReactNode } from "react";
+import { LIGHTING_BOOT_SCRIPT } from "../../components/room/lighting";
+import styles from "./room.module.css";
+
+const sans = Schibsted_Grotesk({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-room-sans",
+  display: "swap",
+});
+
+const mono = Martian_Mono({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-room-mono",
+  display: "swap",
+  axes: ["wdth"],
+});
+
+const serif = Newsreader({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-room-serif",
+  style: ["normal", "italic"],
+  axes: ["opsz"],
+  display: "swap",
+  // only the post pages read in the serif; don't preload it on the landing
+  preload: false,
+});
+
+export const metadata: Metadata = {
+  alternates: {
+    types: { "application/rss+xml": [{ url: "/rss.xml", title: "virpo · writing" }] },
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#efeae1",
+};
+
+export default function RoomLayout({ children }: { children: ReactNode }) {
+  return (
+    <div className={`${sans.variable} ${mono.variable} ${serif.variable} ${styles.shell}`}>
+      {/* picks day / dusk / night (Tokyo clock or the saved choice) before the room paints */}
+      <script dangerouslySetInnerHTML={{ __html: LIGHTING_BOOT_SCRIPT }} />
+      {children}
+    </div>
+  );
+}

@@ -1,0 +1,170 @@
+.mini {
+  display: grid;
+  gap: 8px;
+  padding: 7px 8px 10px;
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 30%),
+    linear-gradient(180deg, #e6e3dc, #d3cfc6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 0 0 1px rgba(30, 28, 24, 0.1),
+    0 28px 50px -34px rgba(60, 40, 20, 0.55);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+  color: var(--r-ink-2);
+  font-family: var(--r-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.model b {
+  margin-right: 0.45rem;
+  padding: 0.18rem 0.36rem;
+  border-radius: 4px;
+  background: var(--r-ink);
+  color: #f4efe6;
+  font-weight: 600;
+}
+
+.percent {
+  font-variant-numeric: tabular-nums;
+}
+
+.screen {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 300 / 340;
+  border-radius: 16px;
+  background: #ece2d1;
+  box-shadow: inset 0 0 0 1px rgba(20, 18, 14, 0.18), inset 0 2px 8px rgba(20, 18, 14, 0.18);
+}
+
+.mini[data-lighting="dusk"] .screen {
+  background: #e7bfa8;
+}
+
+.mini[data-lighting="night"] .screen {
+  background: #1c2342;
+}
+
+.still,
+.still > div,
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* one still per lighting; the boot script shows the right one (day without JS) */
+.still > div {
+  background: var(--still-tall) center / cover no-repeat;
+  transition: opacity 500ms ease;
+}
+
+.still > div:not([data-time="day"]) {
+  display: none;
+}
+
+.canvas {
+  display: block;
+  opacity: 0;
+  transition: opacity 600ms ease;
+}
+
+.mini[data-live="true"] .canvas {
+  opacity: 1;
+}
+
+.mini[data-live="true"] .still > div {
+  opacity: 0;
+}
+
+.meter {
+  display: flex;
+  gap: 3px;
+  padding: 0 4px;
+}
+
+.meter i {
+  flex: 1;
+  height: 6px;
+  border-radius: 2px;
+  background: #c3beb4;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.2);
+  transition: background 200ms ease, box-shadow 200ms ease;
+}
+
+.meter i[data-on="true"] {
+  background: var(--r-orange);
+  box-shadow: 0 0 6px rgba(255, 90, 18, 0.6);
+}
+
+.caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0 4px;
+  color: var(--r-ink-2);
+  font-family: var(--r-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.caption a {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  color: var(--r-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 899px) {
+  .mini {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+    padding: 6px 6px 6px;
+    border-radius: 18px;
+  }
+
+  .top {
+    display: none;
+  }
+
+  .screen {
+    aspect-ratio: auto;
+    height: 136px;
+    border-radius: 12px;
+  }
+
+  .still > div {
+    background-image: var(--still-wide);
+  }
+
+  .caption a {
+    min-height: 44px;
+  }
+
+  .caption {
+    margin-bottom: -4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meter i,
+  .canvas,
+  .still > div {
+    transition: none;
+  }
+}

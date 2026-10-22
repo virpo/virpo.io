@@ -1,0 +1,805 @@
+/* The display case: a thin, Teenage Engineering-ish aluminium device with a screen well. */
+.device {
+  position: relative;
+  padding: 8px 10px 10px;
+  border-radius: 30px;
+  --screw: radial-gradient(circle, #8f8a80 0 1px, #cfcac0 1.5px 3.2px, #a9a49a 3.6px, transparent 4.2px);
+  background:
+    var(--screw) left 9px top 9px / 9px 9px no-repeat,
+    var(--screw) right 9px top 9px / 9px 9px no-repeat,
+    var(--screw) left 9px bottom 9px / 9px 9px no-repeat,
+    var(--screw) right 9px bottom 9px / 9px 9px no-repeat,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 30%),
+    linear-gradient(180deg, #e6e3dc, #d3cfc6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(30, 28, 24, 0.1),
+    0 40px 70px -40px rgba(60, 40, 20, 0.55),
+    0 12px 24px -16px rgba(60, 40, 20, 0.35);
+}
+
+.deviceTop {
+  display: flex;
+  min-height: 30px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 18px 6px;
+  color: var(--r-ink-2);
+  font-family: var(--r-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.model {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.model b {
+  padding: 0.22rem 0.42rem;
+  border-radius: 5px;
+  background: var(--r-ink);
+  color: #f4efe6;
+  font-weight: 600;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.led {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #a7a299;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.led[data-on="true"] {
+  background: var(--r-orange);
+  box-shadow: 0 0 0 2px rgba(255, 90, 18, 0.16), 0 0 10px rgba(255, 90, 18, 0.8);
+  animation: led 2.4s ease-in-out infinite;
+}
+
+@keyframes led {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.stage {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border-radius: 20px;
+  background: #ece2d1;
+  box-shadow:
+    inset 0 0 0 1px rgba(20, 18, 14, 0.18),
+    inset 0 3px 10px rgba(20, 18, 14, 0.2);
+  isolation: isolate;
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.stage[data-lighting="dusk"] {
+  background: #caa6a1;
+}
+
+.stage[data-lighting="night"] {
+  background: #161b31;
+}
+
+.stage::after {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px rgba(20, 18, 14, 0.2),
+    inset 0 2px 6px rgba(20, 18, 14, 0.18);
+  content: "";
+  pointer-events: none;
+}
+
+.still,
+.still > div,
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* One still per lighting; the inline boot script shows the right one before first paint.
+   Without JavaScript the day still shows. Hidden layers (display: none) never download. */
+.still > div {
+  background: var(--still-desktop) center / cover no-repeat;
+  transition: opacity 600ms ease;
+}
+
+.still > div:not([data-time="day"]) {
+  display: none;
+}
+
+.canvas {
+  display: block;
+  opacity: 0;
+  transition: opacity 700ms ease;
+  cursor: grab;
+}
+
+.device[data-mode="live"] .canvas {
+  opacity: 1;
+}
+
+.device[data-mode="live"] .still > div {
+  opacity: 0;
+}
+
+/* ---------- markers ---------- */
+.markers {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* A 44 px target around a 24 px dot. Before the world is live (and with no JS at all)
+   markers sit at the still image's anchors; once live, JS moves them with transforms. */
+.marker {
+  position: absolute;
+  top: var(--sy, 0);
+  left: var(--sx, 0);
+  display: grid;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  place-items: center;
+  border-radius: 50%;
+  pointer-events: auto;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.device[data-mode="live"] .marker {
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+.marker[data-placed="true"] {
+  opacity: 1;
+}
+
+.stage[data-canvas-hover="true"] .marker {
+  pointer-events: none;
+}
+
+/* a mouse is precise: a tighter target keeps markers from covering the objects next to them */
+@media (pointer: fine) {
+  .marker {
+    width: 32px;
+    height: 32px;
+    margin: -16px 0 0 -16px;
+  }
+}
+
+/* the shared notebook marker only exists on phones */
+.deskMarker {
+  display: none;
+}
+
+.marker span {
+  position: relative;
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 1.5px solid var(--r-ink);
+  border-radius: 50%;
+  background: rgba(252, 249, 243, 0.94);
+  box-shadow: 0 2px 6px rgba(30, 20, 10, 0.25);
+  color: var(--r-ink);
+  font-family: var(--r-mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  transition: transform 180ms cubic-bezier(0.3, 1.6, 0.5, 1), background 140ms ease, color 140ms ease, border-color 140ms ease;
+}
+
+.marker span::after {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid rgba(252, 249, 243, 0.95);
+  border-radius: 50%;
+  background: var(--accent);
+  content: "";
+}
+
+.marker span::before {
+  position: absolute;
+  inset: -2px;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  content: "";
+  opacity: 0;
+  animation: ping 9s ease-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+@keyframes ping {
+  0% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  9% {
+    opacity: 0;
+    transform: scale(2.1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.1);
+  }
+}
+
+.marker[data-active="true"] {
+  z-index: 2;
+}
+
+.marker:hover span,
+.marker[data-active="true"] span {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+  transform: scale(1.28);
+}
+
+.marker:hover span::after,
+.marker[data-active="true"] span::after {
+  border-color: #fff;
+}
+
+.marker:focus-visible {
+  outline: 0;
+  box-shadow: none;
+}
+
+.marker:focus-visible span {
+  box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--accent);
+}
+
+.stage[data-lighting="night"] .marker span {
+  border-color: #fbf6ec;
+}
+
+.stage[data-open="true"] .marker:not([data-active="true"]) span {
+  opacity: 0.45;
+}
+
+/* Touch: a tap on any marker resolves to the nearest marker centre (and the canvas
+   snaps taps near a marker to it), so neighbouring 44 px targets never steal taps. */
+.stage[data-coarse="true"] .marker span {
+  width: 24px;
+  height: 24px;
+  font-size: 8.5px;
+}
+
+/* ---------- hover chip ---------- */
+.chip {
+  position: absolute;
+  z-index: 6;
+  top: 0;
+  left: 0;
+  display: grid;
+  max-width: min(320px, calc(100% - 16px));
+  gap: 3px;
+  padding: 8px 12px 9px;
+  border-radius: 12px;
+  background: #1c1d21;
+  box-shadow: 0 16px 32px -12px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  color: #f4efe6;
+  pointer-events: none;
+  animation: chipIn 160ms ease-out;
+}
+
+.chip::after {
+  position: absolute;
+  bottom: -6px;
+  left: var(--tail-x, 50%);
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  border-radius: 2px;
+  background: #1c1d21;
+  content: "";
+  transform: rotate(45deg);
+}
+
+.chip[data-below="true"]::after {
+  top: -6px;
+  bottom: auto;
+}
+
+@keyframes chipIn {
+  from {
+    opacity: 0;
+    translate: 0 4px;
+  }
+}
+
+.chip[data-touch="true"] {
+  pointer-events: auto;
+}
+
+.chipTop {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #a9a59d;
+  font-family: var(--r-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.chipTop i,
+.panelFig i {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+.chipZone {
+  margin-left: auto;
+  padding-left: 10px;
+  color: #77736c;
+}
+
+.chipClose {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  margin: -10px -8px -10px 4px;
+  place-items: center;
+  border-radius: 50%;
+  background: transparent;
+  color: #f4efe6;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.chipClose:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.chipMain {
+  font-family: var(--r-sans);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+}
+
+.chipMain em {
+  margin-right: 0.2em;
+  color: var(--accent);
+  font-style: normal;
+  filter: brightness(1.25);
+}
+
+.chipHint {
+  color: #8b8780;
+  font-family: var(--r-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.chipOpen {
+  min-height: 40px;
+  margin-top: 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  font-family: var(--r-sans);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+/* the notebooks-on-the-desk chip (phones): the three newest posts, one tap each */
+.deskChip {
+  width: min(330px, calc(100% - 16px));
+  gap: 6px;
+  padding: 10px 10px 8px;
+}
+
+.deskChip .chipTop {
+  padding: 0 4px;
+}
+
+.deskList {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.deskList a {
+  display: grid;
+  min-height: 46px;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f4efe6;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.deskList b {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--r-orange);
+  color: #fff;
+  font-family: var(--r-mono);
+  font-size: 8.5px;
+}
+
+.deskList i {
+  color: var(--r-orange);
+  font-style: normal;
+}
+
+.deskAll {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 2px;
+  border-radius: 999px;
+  background: var(--r-orange);
+  color: #fff;
+  font-family: var(--r-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ---------- panel ---------- */
+.panel {
+  position: absolute;
+  z-index: 7;
+  top: 0;
+  left: 0;
+  width: min(350px, calc(100% - 28px));
+  max-height: calc(100% - 28px);
+  overflow: auto;
+  padding: 12px 16px 18px;
+  border-radius: 18px;
+  background: #faf7f1;
+  box-shadow:
+    0 30px 60px -24px rgba(20, 14, 8, 0.6),
+    0 0 0 1px rgba(20, 18, 14, 0.08),
+    inset 0 3px 0 var(--accent);
+  color: var(--r-ink);
+  overscroll-behavior: contain;
+  animation: panelIn 220ms cubic-bezier(0.2, 1.3, 0.5, 1);
+  user-select: text;
+}
+
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    scale: 0.94;
+  }
+}
+
+/* Phones: a real bottom sheet pinned to the viewport, with a drag handle and
+   safe-area padding; the room and the page stay visible above it. */
+.panel[data-sheet="true"] {
+  position: fixed;
+  z-index: 60;
+  top: auto;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: auto;
+  max-height: min(64svh, 560px);
+  padding: 0 18px calc(18px + env(safe-area-inset-bottom));
+  border-radius: 22px 22px 0 0;
+  box-shadow:
+    0 -24px 60px -20px rgba(20, 14, 8, 0.55),
+    0 0 0 1px rgba(20, 18, 14, 0.08),
+    inset 0 3px 0 var(--accent);
+  transform: none !important;
+  transition: translate 220ms cubic-bezier(0.2, 1, 0.4, 1);
+  animation: sheetIn 300ms cubic-bezier(0.2, 1, 0.4, 1);
+}
+
+@keyframes sheetIn {
+  from {
+    translate: 0 100%;
+  }
+}
+
+.grabber {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  display: grid;
+  height: 26px;
+  margin: 0 -18px 2px;
+  place-items: center;
+  background: linear-gradient(#faf7f1 70%, rgba(250, 247, 241, 0));
+  cursor: grab;
+  touch-action: none;
+}
+
+.grabber i {
+  width: 44px;
+  height: 5px;
+  border-radius: 99px;
+  background: rgba(28, 29, 33, 0.22);
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 4px;
+}
+
+.panelFig {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--r-ink-2);
+  font-family: var(--r-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.close {
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-right: -8px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.close kbd {
+  padding: 2px 5px;
+  border: 1px solid var(--r-line-strong);
+  border-radius: 4px;
+  color: var(--r-ink-2);
+  font-family: var(--r-mono);
+  font-size: 0.55rem;
+  text-transform: uppercase;
+}
+
+.close:hover,
+.close:focus-visible {
+  background: var(--r-paper-2);
+}
+
+.panelTitle {
+  margin: 0 0 12px;
+  font-family: var(--r-sans);
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+
+/* ---------- bottom strip ---------- */
+.deviceBottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 10px 14px 0;
+}
+
+.legend {
+  display: flex;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--r-ink);
+  font-family: var(--r-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend a {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+}
+
+.legend a:hover {
+  text-decoration-color: var(--accent);
+}
+
+.legend li::before {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7);
+  content: "";
+}
+
+.hint {
+  flex: 1;
+  margin: 0;
+  color: var(--r-ink-2);
+  font-family: var(--r-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.switch {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 999px;
+  background: #c6c2b8;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.switch button {
+  min-width: 52px;
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--r-ink);
+  cursor: pointer;
+  font-family: var(--r-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.switch button[aria-pressed="true"] {
+  background: var(--r-ink);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  color: #fff;
+}
+
+.switch button:focus-visible {
+  outline: 2px solid var(--r-orange);
+  outline-offset: 1px;
+  box-shadow: none;
+}
+
+@media (max-width: 719px) {
+  .still > div {
+    background-image: var(--still-mobile);
+  }
+
+  .marker {
+    top: var(--my, 0);
+    left: var(--mx, 0);
+  }
+
+  .marker[data-desk-item] {
+    display: none;
+  }
+
+  .deskMarker {
+    display: grid;
+  }
+
+  .deskMarker {
+    width: 64px;
+    margin-left: -32px;
+  }
+
+  .stage .markers .deskMarker span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    min-width: 24px;
+    padding: 0 7px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .deskMarker small {
+    font-size: 7.5px;
+    opacity: 0.8;
+  }
+
+  .legend a {
+    min-height: 44px;
+  }
+
+  .device {
+    margin: 0 -6px;
+    padding: 6px 6px 8px;
+    border-radius: 22px;
+  }
+
+  .stage {
+    aspect-ratio: 1 / 1.08;
+    border-radius: 16px;
+  }
+
+  .deviceTop {
+    padding: 0 6px 5px;
+  }
+
+  .hint {
+    order: 3;
+    flex-basis: 100%;
+    text-align: left;
+  }
+
+  .deviceBottom {
+    padding-top: 8px;
+  }
+
+  .switch button {
+    min-width: 0;
+    min-height: 44px;
+    padding: 0 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marker span::before,
+  .led[data-on="true"] {
+    animation: none;
+  }
+
+  .chip,
+  .panel {
+    animation: none;
+    transition: none;
+  }
+}
