@@ -159,7 +159,7 @@ def rules_info(p):
     return {"lines": lines(p), "symlink": p.is_symlink(), "imports_other": bool(re.search(r"^@\S+\.md", t, re.M)),
             "links_docs": len(re.findall(r"\(([^)]+\.md)\)|`([\w./-]+\.md)`", t)),
             "mentions_notify": bool(re.search(r"\bnotify\b|notification|terminal-notifier", t, re.I)),
-            "mentions_stop_ask": bool(re.search(r"stop and ask|ask (me|the user) (before|when)|if (you are|you're) stuck", t, re.I)),
+            "mentions_stop_ask": bool(re.search(r"stop and (ask|report)|ask (me|the user) (before|when|instead)|if (you are|you're|you get) stuck|after (two|three|2|3) failed", t, re.I)),
             "mentions_risk_paths": bool(re.search(r"\b(auth|migration|payment|security|critical)\b.*\b(review|read|human)\b", t, re.I)),
             "points_to_personal_context": bool(re.search(r"(~|/Users/|/home/)[\w./-]*(me|wiki|notes|brain|vault|context)\b", t, re.I))}
 
@@ -202,6 +202,7 @@ for repo in repos:
         R["repo_skills"] += 1
         if "[remote " in read(repo / ".git" / "config", 50_000): R["repo_skills_with_remote"] += 1
     if has(".devcontainer", ".devcontainer.json"): R["devcontainer"] += 1
+    R["repo_agent_definitions"] += len(list((repo / ".claude" / "agents").glob("*.md")))
     if has("sgconfig.yml", ".semgrep.yml", ".semgrep", "eslint-rules", "eslint-local-rules.js", "lint-rules", "scripts/check"): R["custom_checks"] += 1
     if any(repo.glob("QA*.md")) or any(repo.glob("RELEASE*.md")) or has("docs/release.md", "RELEASING.md"): R["release_qa"] += 1
     if re.search(r"\b(claude|codex|roborev|opencode|gemini)\b", read(repo / ".git" / "hooks" / "post-commit", 100_000)): R["post_commit_agent_hook"] += 1
@@ -219,8 +220,9 @@ for repo in repos:
         if main:
             log = run(["git", "-C", str(repo), "log", "--numstat", "--format=tformat:@", "--", main.name])
             adds_dels = [tuple(int(x) for x in l.split()[:2]) for l in log.splitlines() if re.match(r"^\d+\s+\d+\s", l)]
+            info = rules_info(main)
             rules_hist.append({"commits": len(adds_dels), "ever_shrank": any(d > a for a, d in adds_dels), "lines": lines(main),
-                               "links_docs": rules_info(main)["links_docs"]})
+                               "links_docs": info["links_docs"], "mentions_stop_ask": info["mentions_stop_ask"]})
 # your own agent: code of yours that sends tools to a model API and handles the calls in a loop (git grep is fast)
 LOOP_RX = r"tool_use|tool_calls|tool_result|function_call_output"
 for repo in repos[:80]:
@@ -406,7 +408,7 @@ for d in ("/Applications", "~/Applications"):
 WANT = r"lm studio|ollama|jan|openclaw|wispr|superwhisper|macwhisper|voiceink|openwhispr|aqua|spokenly|handy|willow|codexbar|cmux|conductor|ghostty|warp|iterm|termius|blink|stream deck|elgato|claude|chatgpt|codex|cursor|docker|orbstack|tailscale|raycast|cleanshot"
 OUT["apps"] = sorted(a for a in apps if re.search(WANT, a, re.I))
 OUT["bins"] = sorted(b for b in ("tmux", "zellij", "mosh", "terminal-notifier", "ccusage", "docker", "gh", "ast-grep", "sg", "ffmpeg", "agent-browser",
-                                    "ollama", "lms", "llama-server", "mlx_lm.generate", "pi", "openclaw", "hermes", "openscad", "op", "doppler", "infisical", "roborev") if shutil.which(b))
+                                    "ollama", "lms", "llama-server", "mlx_lm.generate", "pi", "openclaw", "hermes", "openscad", "op", "doppler", "infisical", "roborev", "sentry-cli") if shutil.which(b))
 la = [n for n in names("~/Library/LaunchAgents") if re.search(r"\b(claude|codex|opencode|gemini|cursor-agent)\b", read(Path("~/Library/LaunchAgents").expanduser() / n, 100_000), re.I)]
 cron = [l for l in run(["crontab", "-l"]).splitlines() if re.search(r"\b(claude|codex|opencode|gemini)\b", l)]
 OUT["schedulers"] = {"launch_agents_running_an_agent": len(la), "cron_lines_running_an_agent": len(cron),

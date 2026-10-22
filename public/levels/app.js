@@ -41,6 +41,7 @@ function norm(p) {
     a: (Array.isArray(p.a) ? p.a : []).slice(0, 6).map(x => String(x).slice(0, 40)),
     p: (Array.isArray(p.p) ? p.p : []).slice(0, 3).map(x => [Math.round(+x?.[0]) || 0, String(x?.[1] ?? "").slice(0, 160)]).filter(x => x[0] >= 1 && x[0] <= 100),
     e: Object.fromEntries(Object.entries(p.e && typeof p.e === "object" ? p.e : {}).slice(0, 40).map(([k, v]) => [String(+k), String(v).slice(0, 60)])),
+    f: (Array.isArray(p.f) ? p.f : []).slice(0, 3).map(x => String(x).slice(0, 100)).filter(Boolean),   /* what the agent noticed: yours only, never published */
   };
 }
 function decode(h) {
@@ -72,7 +73,12 @@ const whose = () => MODE === "mine" ? "Your" : (WHO?.first || SUBJ.name.split(" 
 
 /* ---------- small pieces */
 const icon = n => ICON[L[n - 1].id] ? `<img src="${ICON[L[n - 1].id]}" alt="" width="34" height="34" loading="lazy">` : `<span>${n}</span>`;
-const promptFor = l => `Help me reach level ${l.n} of ${SITE}: "${l.title}". ${l.line}${l.try ? ` Worth a look: ${l.try.map(x => x.name).join(", ")}.` : ""} Look at how I work here, suggest the smallest setup that would do it, then do it with me and show me it working.`;
+const promptFor = l => [
+  `Help me pick up level ${l.n} of the 100 at ${SITE}: "${l.title}". ${l.line}`,
+  l.learn || "First show me one moment from my recent sessions, or from this project, where this would already have saved me time, so I see why it matters for me. Then set up the smallest version of it and show it working on something real of mine, not a toy example.",
+  l.try ? `Worth a look: ${l.try.map(x => x.name).join(", ")}.` : "",
+  "Ask before you install anything or change global settings. Finish with one thing about it most people don't know.",
+].filter(Boolean).join(" ");
 const tryHTML = (l, short) => !l.try ? "" : `<p class="try-t"><b>Try</b>${l.try.map(x => `<a href="${esc(x.url)}" rel="noopener" target="_blank">${esc(x.name)}</a>${x.note && !short ? ` <span>${esc(x.note)}</span>` : ""}`).join(" · ")}</p>`;
 function toast(t) { const el = $("#toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 2600); }
 async function copy(text) { try { await navigator.clipboard.writeText(text); return true; } catch { return false; } }
@@ -263,6 +269,8 @@ function renderCopy() {
   $("#res-line").textContent = MODE === "pub"
     ? `Their own agent found ${lv - sc} of the 100 on their machine${sc ? `, and they ticked ${sc} more` : ""}. ${t.line}`
     : `Your agent found ${lv - sc} of the 100${sc ? `, and you ticked ${sc}` : ""}. ${unsure ? `It couldn't see ${unsure} from your machine.` : t.line}${from}`;
+  $("#noticed").hidden = !(MODE === "mine" && SUBJ.f.length);
+  $("#noticed").innerHTML = MODE === "mine" ? SUBJ.f.map(x => `<li>${esc(x)}</li>`).join("") : "";
   $$("#share, #share-note, #res-foot").forEach(el => el.hidden = MODE === "pub");
   $("#keep").hidden = MODE !== "mine";
   /* before sharing, the ones it didn't find are worth a look: the agent can't see everything from a machine */

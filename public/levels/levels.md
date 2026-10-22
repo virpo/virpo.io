@@ -32,6 +32,7 @@ No more copy-pasting between chat and editor. It writes the change, you read the
 No magic words, no templates. Say what you want and why, the way you'd brief a smart colleague.
 
 - How it's checked: 10+ prompts that give the reason, not just the task ("because", "so that", "the goal is"), or 20+ prompts over 40 words.
+- Learn it with your agent: Interview me for two minutes about something I'm stuck on this week, the way a colleague would over coffee. Then put the one-liner I'd normally type next to what I just told you, and show me what the longer version gets me that the short one wouldn't.
 - Who does it: Peter Steinberger: “Just talk to it. Play with it. Develop intuition.” (https://steipete.me/posts/just-talk-to-it)
 
 ### 4. Ask it how the code works
@@ -46,6 +47,7 @@ No magic words, no templates. Say what you want and why, the way you'd brief a s
 A picture of the broken layout beats a paragraph. "Fix this" plus an image is a whole prompt.
 
 - How it's checked: 3+ prompts with an image attached ([Image #…]).
+- Learn it with your agent: Ask me to grab a screenshot of anything on my screen that annoys me (on a Mac, ⌘⇧⌃4 copies it) and paste it here. Tell me what you see and what you'd fix, and fix it if it's something you can reach from here.
 - Try: [⌘⇧⌃4 on a Mac](https://support.apple.com/en-us/102646) (copies it, then paste)
 - Who does it: Peter Steinberger: “I’d say at least 50% of my prompts contain a screenshot.” (https://steipete.me/posts/just-talk-to-it)
 
@@ -60,6 +62,7 @@ The full stack trace or log, not your summary of it. It fixes what actually brok
 Dictate with OpenWhispr, Wispr Flow or Claude Code's /voice. You'll say three times what you'd ever bother typing.
 
 - How it's checked: A dictation app is installed (Wispr Flow, superwhisper, MacWhisper, VoiceInk, OpenWhispr, Aqua, Spokenly, Handy), /voice is on in Claude Code, or prompts read like speech (um, uh, long run-ons).
+- Learn it with your agent: Check which dictation tools I already have. If none, help me set one up in five minutes (OpenWhispr is free; Wispr Flow and superwhisper are paid; Claude Code has /voice built in). Then I'll dictate my next request to you as the test, and you tell me how many more words I said than my typed prompts usually have.
 - Try: [OpenWhispr](https://openwhispr.com) (free, open source), [Wispr Flow](https://wisprflow.ai), [superwhisper](https://superwhisper.com), [/voice](https://code.claude.com/docs/en/voice-dictation) (built into Claude Code)
 - Who does it: Andrej Karpathy: “Also I just talk to Composer with SuperWhisper so I barely even touch the keyboard.” (https://x.com/karpathy/status/1886192184808149383)
 
@@ -82,6 +85,7 @@ Press Esc the moment it heads the wrong way. Redirecting beats waiting for the w
 Rename 400 photos, sort the receipts for taxes, find the odd charges in a bank export. It's a computer that does what you ask.
 
 - How it's checked: 1+ session in a folder that isn't a git repo (Downloads, Documents, home).
+- Learn it with your agent: Look at my Downloads folder (names, sizes and dates only) and tell me the three most satisfying cleanups you could do there, with how many files each would touch. Don't move or delete anything until I pick one.
 - Who does it: Simon Willison: “I’ve been saying for a while now that Claude Code is a “general agent” disguised as a developer tool.” (https://simonwillison.net/2026/Jan/12/claude-cowork/)
 
 ## Levels 11–20: Fire · Context
@@ -100,6 +104,7 @@ Or CLAUDE.md: how to build, test and run this repo, read at the start of every s
 One global file, read in every project: what you do, your tools, your taste, your pet peeves.
 
 - How it's checked: ~/.claude/CLAUDE.md or ~/.codex/AGENTS.md exists and isn't empty.
+- Learn it with your agent: Interview me for five minutes: what I do, the tools I like, the answers that drive me nuts. Then write it as my global rules file (~/.claude/CLAUDE.md or ~/.codex/AGENTS.md, whichever I use), under 30 lines, and show it to me before you save it.
 
 ### 13. Point at the right file
 
@@ -139,6 +144,7 @@ Of the UI, the name, the approach. Variants cost almost nothing now, so pick the
 Lay out the options and what you care about, then ask what it would pick and what you're missing. Ask it to push back, or it will just agree.
 
 - How it's checked: 5+ prompts asking for a decision or a critique ("should I", "help me decide", "what am I missing", "push back", "poke holes", "devil's advocate").
+- Learn it with your agent: Ask me which decision I'm sitting on right now. Lay out the options, then argue for the one I'm leaning against as well as you can. Finish with what you'd pick, and what would change your mind.
 - Who does it: Ethan Mollick: “AI can provide good strategic or entrepreneurial advice if you are capable of executing on it.” (https://www.oneusefulthing.org/p/getting-started-with-ai-good-enough)
 
 ### 19. Write the spec first
@@ -218,6 +224,7 @@ An allowlist for tests, lint and git status. Fewer prompts, so you stop clicking
 Deny it .env and ~/.ssh, keep prod keys out of its shell. It can't leak what it never saw.
 
 - How it's checked: Deny rules that cover .env, keys or credential files, or a secrets manager (1Password CLI, Doppler, Infisical) that agents call instead of reading raw keys.
+- Learn it with your agent: Check where secrets could reach you on this machine (.env files in my projects, keys in my shell profile, SSH keys), names only, never printing a value. Propose deny rules for my agent settings and show me the diff. Once I approve, prove they work: try to read a .env file and get blocked.
 - Try: [1Password CLI](https://developer.1password.com/docs/cli/) (op run), [Doppler](https://www.doppler.com)
 - Who does it: Ryan Dahl: “A compromised agent process can’t leak keys it never held in the first place.” (https://deno.com/blog/clawpatrol)
 
@@ -242,6 +249,7 @@ gh, aws, stripe, supabase. "Run foo --help" and it learns the rest on its own.
 Disk full, Python broken, the printer gone again. It finds the cause and explains each fix before it runs it.
 
 - How it's checked: Sessions about the machine itself: disk space, installs, PATH, a slow Mac (du, df, brew doctor, prompts like "why is my mac slow"), 3+.
+- Learn it with your agent: Give my computer a checkup: what's eating the disk, anything obviously broken (brew doctor, a stale Python, a cluttered PATH). One line per finding, with what fixing it would do. Don't change anything until I say which.
 - Who does it: Lenny Rachitsky: “How can I clear some storage on my computer?” (https://www.lennysnewsletter.com/p/everyone-should-be-using-claude-code)
 
 ### 33. Build a tiny tool just for you
@@ -249,6 +257,7 @@ Disk full, Python broken, the printer gone again. It finds the cause and explain
 A one-page app that converts, counts or tracks the one thing you care about. Software for an audience of one.
 
 - How it's checked: Small single-purpose tools started in agent sessions: a single HTML file, a one-off script, a repo with a handful of commits.
+- Learn it with your agent: Ask me what small annoyance I'd fix if software were free: a converter, a tracker, a calculator for one odd thing. Build it as a single HTML file I can open by double-clicking, then open it for me.
 - Try: [Simon's 150+ tools](https://tools.simonwillison.net) (for ideas)
 - Who does it: Simon Willison: “I have built over 150 of these in the past two years, almost all of them written by LLMs.” (https://simonwillison.net/2025/Dec/10/html-tools/)
 
@@ -296,6 +305,7 @@ A status line with context, model and cost, plus /usage. No surprise compactions
 Gmail, Slack, calendar. It drafts the replies, you edit and send. Or ask: "What did I promise people this week?"
 
 - How it's checked: A mail, chat or calendar connector or MCP configured (names only).
+- Learn it with your agent: If you can reach my email, find the five threads that have waited on me longest and draft replies in my tone, as drafts I edit and send. If you can't reach it yet, show me the quickest way to connect it first.
 - Who does it: Harper Reed: “I go to my email client, and check the drafts. Edit and send most of them cuz they are great.” (https://harper.blog/2025/12/03/claude-code-email-productivity-mcp-agents/)
 
 ## Levels 41–50: Iron Age · Your setup
@@ -356,6 +366,7 @@ A map to your docs, not an encyclopedia. Every line costs context in every sessi
 A hook, a sound, a push to your phone. Then go do something else.
 
 - How it's checked: A hook or script that notifies you when it's done (sound, push, notification), or a rule telling it to.
+- Learn it with your agent: Set up a notification for when you finish: a sound on this computer, or a push to my phone with ntfy if I want that. Then do a ten-second task so I hear it work.
 - Try: [ntfy](https://ntfy.sh) (push to your phone, open source)
 - Who does it: Chris McCord: “when it's done work it runs a `notify msg` bash function I have” (https://x.com/chris_mccord/status/2016576023400181773)
 - Who disagrees: Mitchell Hashimoto: Turns agent notifications off, so he decides when to switch context. (https://mitchellh.com/writing/my-ai-adoption-journey)
@@ -483,6 +494,7 @@ For later, or every morning: /loop, /schedule, cron. Work starts without you.
 Start a few tasks before bed, review them with coffee.
 
 - How it's checked: Agent activity between 1am and 6am while you typed nothing.
+- Learn it with your agent: Before I go to bed, help me pick three tasks you can do without me tonight, each with a finish line you can check yourself. Write them up so I can start them now and review them over coffee.
 - Who does it: Calvin French-Owen: “This is over-hyped on Twitter, but I do really try and kick off 3-4 tasks in Codex before going to bed, so they'll be ready for review in the morning.” (https://calv.info/agents-feb-2026)
 
 ### 65. Drive it from your phone
@@ -662,6 +674,7 @@ It watches errors and alerts, and has a fix open before you've read the page.
 The repo that stopped building in 2019. It upgrades everything, fixes what broke, and gets it running again.
 
 - How it's checked: A repo you're committing to again after a year or more without a commit.
+- Learn it with your agent: Find my oldest repo on this machine that nobody has touched for a year or more (names only), tell me what it was and what it would take to get it running again. If I say go, bring it back.
 - Who does it: Bryan Cantrill: “It is no exaggeration to say that this was brought to us by Claude.” (https://bcantrill.dtrace.org/2026/05/25/a-portentous-reunion/)
 
 ### 90. Build on an agent SDK
@@ -744,6 +757,7 @@ A scheduled agent reads your recent sessions, finds the friction, and fixes your
 A model, a loop and a few tools, in a few hundred lines. After that, nothing on this list is magic.
 
 - How it's checked: A project of yours that calls a model API with tools in a loop you wrote, not only an SDK or someone else's harness.
+- Learn it with your agent: Let's build a tiny agent together in one file, in a language I like: a model API call, a loop, and two tools (read a file, run a command). Under 150 lines. Then let it fix one small thing in this project while I watch.
 - Try: [How to build an agent](https://ampcode.com/how-to-build-an-agent) (Thorsten Ball's walkthrough)
 - Who does it: Thorsten Ball: “It’s an LLM, a loop, and enough tokens.” (https://ampcode.com/notes/how-to-build-an-agent)
 

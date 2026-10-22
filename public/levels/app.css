@@ -267,6 +267,9 @@ h1{font:600 clamp(36px,5.4vw,60px)/1.02 var(--sans);letter-spacing:-.035em;margi
 .row-d{display:grid;gap:12px;padding:2px 0 20px 86px;font-size:14px;max-width:780px}
 .how-t{font:12.5px/1.55 var(--mono);color:var(--muted);margin:0}
 .how-t b{color:var(--fg);font-weight:600;margin-right:6px}
+.noticed{list-style:none;margin:-14px 0 26px;padding:0;display:grid;gap:6px;font-size:12.5px;max-width:52ch}
+.noticed li{display:flex;gap:8px}
+.noticed li::before{content:"✦";color:var(--hazard-deep)}
 .try-t{font:12.5px/1.7 var(--mono);color:var(--muted);margin:0}
 .try-t b{color:var(--fg);font-weight:600;margin-right:6px}
 .try-t a{color:var(--fg)}

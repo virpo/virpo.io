@@ -83,23 +83,38 @@ Write this JSON to `/tmp/levels-result.json`:
   "a": ["Claude Code", "Codex"],
   "pi": 1,
   "p": [[19, "<why, one short sentence>"], [53, "…"], [69, "…"]],
-  "e": { "5": "332 prompts with screenshots", "7": "superwhisper installed" }
+  "e": { "5": "332 prompts with screenshots", "7": "superwhisper installed" },
+  "f": ["332 screenshots attached. Picture-book territory.", "Your agents worked 14 nights while you slept.", "4,146 prompts since March 2025."]
 }
 ```
 
 `a` lists the agents they use (product names only). `e` holds up to 30 evidence notes for `y` levels, a few words
 each: counts and well-known tool names only. Their own scripts and projects are "own script" or "own CLI", never named.
 
-Print a short summary for them: the level (the number of `y`), up to ten of the most telling `y` levels with their
-evidence, and your three picks. Then open the page:
+`f` holds up to three things you noticed that will make them smile: true, specific, and from the probe's counts and
+dates, the kind of number people screenshot. A little wit is welcome; flattery and invented numbers are not. Same rules:
+no names, paths or projects. They appear on their result page, only for them.
+
+Print a short summary for them:
+
+- Open with the best of those facts.
+- The level (the number of `y`) and up to ten of the most telling `y` levels, with their evidence.
+- One place they skipped ahead, if there is one: a level they do that sits well above one they don't. Say it as the
+  compliment it is, and name the easy gap.
+- Your three picks.
+
+Then open the page:
 
 ```bash
 python3 -c 'import base64,json,webbrowser; d=json.load(open("/tmp/levels-result.json")); u="https://virpo.io/levels/#"+base64.urlsafe_b64encode(json.dumps(d,separators=(",",":")).encode()).decode().rstrip("="); print(u); webbrowser.open(u)'
 ```
 
 If opening fails (a sandbox, a remote shell), print the URL for them to click. Delete `/tmp/levels-probe.py`,
-`/tmp/levels-probe.json` and `/tmp/levels-result.json`, then finish with one line: "Your level is open in the
-browser. Nothing was sent anywhere; it's all in the link."
+`/tmp/levels-probe.json` and `/tmp/levels-result.json`, then say: "Your level is open in the browser. Nothing was
+sent anywhere; it's all in the link."
+
+If your first pick is something you could set up with them in a few minutes (a hook, a deny rule, a rules file, a
+notification), end by offering to do it now, in one sentence. Don't start without a yes.
 
 ## The 100
 
