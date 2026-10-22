@@ -78,7 +78,7 @@ Write this JSON to `/tmp/levels-result.json`:
 
 ```json
 {
-  "v": 2,
+  "v": 3,
   "s": "<100 characters, y/n/?, level 1 first>",
   "a": ["Claude Code", "Codex"],
   "pi": 1,
@@ -167,14 +167,14 @@ browser. Nothing was sent anywhere; it's all in the link."
 
 | # | Level | Check |
 |---|---|---|
-| 41 | Write your own skill | A skill you wrote yourself: no upstream source or lockfile entry, or it lives in your own repo. |
-| 42 | Save a prompt as a command | 1+ custom command in .claude/commands, or a user-invoked skill you wrote. |
-| 43 | Use subagents | 10+ subagent runs in session logs. |
-| 44 | Add a hook that formats every edit | A post-edit hook that runs a formatter or linter. |
-| 45 | Add a hook that blocks rm -rf | A pre-tool hook that blocks or guards commands. |
-| 46 | Let it keep notes and hand off | 5+ memory notes, Codex memories on, notes, PROGRESS or HANDOFF files in your repos, or a handoff skill. |
-| 47 | Symlink CLAUDE.md to AGENTS.md | A CLAUDE.md that is a symlink to, or imports, an AGENTS.md (or the other way round). |
-| 48 | Keep AGENTS.md short | The rules file of the repo you work in most is under 150 lines and points to other docs for the rest. |
+| 41 | Write your own skill | A skill or custom command you wrote yourself (no upstream source or lockfile entry, or it lives in your own repo); .claude/commands counts. |
+| 42 | Use subagents | 10+ subagent runs in session logs. |
+| 43 | Add a hook that formats every edit | A post-edit hook that runs a formatter or linter. |
+| 44 | Add a hook that blocks risky commands | A pre-tool hook that blocks or guards commands. |
+| 45 | Let it keep notes and hand off | 5+ memory notes, Codex memories on, notes, PROGRESS or HANDOFF files in your repos, or a handoff skill. |
+| 46 | Symlink CLAUDE.md to AGENTS.md | A CLAUDE.md that is a symlink to, or imports, an AGENTS.md (or the other way round). |
+| 47 | Keep AGENTS.md short | The rules file of the repo you work in most is under 150 lines and points to other docs for the rest. |
+| 48 | Get pinged when it's done | A hook or script that notifies you when it's done (sound, push, notification), or a rule telling it to. |
 | 49 | Run two agents at once | Two sessions active in the same 10 minutes, on 5+ occasions (from prompt timestamps). |
 | 50 | One worktree per agent | git worktree list shows 2+ in any repo. |
 
@@ -197,10 +197,10 @@ browser. Nothing was sent anywhere; it's all in the link."
 
 | # | Level | Check |
 |---|---|---|
-| 61 | Get pinged when it's done | A hook or script that notifies you when it's done (sound, push, notification), or a rule telling it to. |
-| 62 | Go YOLO, but only in a box | Permission prompts off AND a sandbox (devcontainer, Docker, VM, /sandbox). Prompts off without a box doesn't count. |
-| 63 | Break the lethal trifecta | Agent network access restricted (a sandbox domain allowlist, or network off in Codex) on a machine where it can read private data or mail. |
-| 64 | Schedule a prompt | A scheduled or recurring agent run (loop/cron tools, a launchd or cron entry that calls an agent). |
+| 61 | Go YOLO, but only in a box | Permission prompts off AND a sandbox (devcontainer, Docker, VM, /sandbox). Prompts off without a box doesn't count. |
+| 62 | Break the lethal trifecta | Agent network access restricted (a sandbox domain allowlist, or network off in Codex) on a machine where it can read private data or mail. |
+| 63 | Schedule a prompt | A scheduled or recurring agent run (loop/cron tools, a launchd or cron entry that calls an agent). |
+| 64 | Let it work while you sleep | Agent activity between 1am and 6am while you typed nothing. |
 | 65 | Drive it from your phone *(self)* | Remote control set up, a mobile session, or mosh/Tailscale used to reach your agent box. |
 | 66 | Hand chores to a cloud agent *(self)* | Cloud or remote agent tasks in your history. |
 | 67 | Give it a finish line it can't fake | 3+ prompts like "don't stop until" / "keep going until", or a goal set with /goal. |
@@ -213,8 +213,8 @@ browser. Nothing was sent anywhere; it's all in the link."
 | # | Level | Check |
 |---|---|---|
 | 71 | Run it four times, keep the best | The same task run in 2+ parallel sessions or worktrees. |
-| 72 | Let one agent run the others | One agent messaging or steering others (agent teams, SendMessage, an orchestrator session). |
-| 73 | Let your agents talk to each other | Agents sending each other messages or reading each other's output, without you relaying it. |
+| 72 | Run five at once | 5+ sessions or background agents running at the same time. |
+| 73 | Let your agents talk to each other | One agent messaging or steering others (agent teams, SendMessage, an orchestrator session), or agents reading each other's output without you relaying it. |
 | 74 | Strong model plans, fast model builds | Per-agent model settings, or 3+ prompts assigning models to roles. |
 | 75 | Write your own subagents | 2+ custom agent definitions (.claude/agents/*.md or equivalent). |
 | 76 | Turn your routine into a workflow | A workflow tool used, or a script that chains several agent runs. |

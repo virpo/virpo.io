@@ -17,22 +17,27 @@ const TOUCH = matchMedia("(hover: none) and (pointer: coarse)").matches;   /* a 
 const day = at => new Date(at).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
 
 /* ---------- results */
-/* results carry the version of the list they were judged against. v1 results (list 1.0) are read by level id: each answer
-   moves to wherever that level is now, a level that absorbed others counts the best answer among them, and a level that
-   didn't exist yet is "?". A v1 level that was dropped just drops out. */
-const V = 2;
-const V1 = (() => {
-  const at = new Map(L.map(l => [l.id, l.n])), to = D.v1.order.map(id => at.get(id) || 0);
-  for (const [id, more] of Object.entries(D.v1.folds)) for (const m of more) to[D.v1.order.indexOf(m)] = at.get(id);
-  return { n: n => to[n - 1] || 0, s: s => L.map(l => { const own = to.flatMap((n, i) => n === l.n ? [s[i]] : []); return "ysn?".split("").find(c => own.includes(c)) || "?"; }).join("") };
+/* results carry the version of the list they were judged against. An older result is read by level id: each answer moves
+   to wherever that level is now, a level that absorbed others counts the best answer among them, and a level that didn't
+   exist yet is "?". A level that was dropped just drops out. */
+const V = 3;
+const PAST = (() => {
+  const at = new Map(L.map(l => [l.id, l.n])), where = id => at.get(id) || at.get(D.past.absorbed[id]) || 0;
+  return Object.fromEntries(Object.entries(D.past.versions).map(([v, order]) => { const to = order.map(where); return [v, {
+    n: n => to[n - 1] || 0,
+    s: s => L.map(l => { const own = to.flatMap((n, i) => n === l.n ? [s[i]] : []); return "ysn?".split("").find(c => own.includes(c)) || "?"; }).join(""),
+  }]; }));
 })();
 function norm(p) {
   if (!p || typeof p.s !== "string" || !/^[yns?]{100}$/.test(p.s)) return null;
-  if (p.v === 1) p = { ...p, s: V1.s(p.s), v1s: p.s, p: (Array.isArray(p.p) ? p.p : []).map(x => [V1.n(+x?.[0]), x?.[1]]),
-    e: Object.fromEntries(Object.entries(p.e && typeof p.e === "object" ? p.e : {}).map(([k, v]) => [V1.n(+k), v]).filter(([k]) => k)) };
-  else if (p.v != null && p.v !== V) return null;
+  if (p.v != null && p.v !== V) {
+    const m = PAST[p.v];
+    if (!m) return null;
+    p = { ...p, s: m.s(p.s), was: { v: p.v, s: p.s }, p: (Array.isArray(p.p) ? p.p : []).map(x => [m.n(+x?.[0]), x?.[1]]),
+      e: Object.fromEntries(Object.entries(p.e && typeof p.e === "object" ? p.e : {}).map(([k, v]) => [m.n(+k), v]).filter(([k]) => k)) };
+  }
   return {
-    s: p.s, v1s: p.v1s, name: String(p.name ?? "").slice(0, 32), pi: !!p.pi,
+    s: p.s, was: p.was, name: String(p.name ?? "").slice(0, 32), pi: !!p.pi,
     a: (Array.isArray(p.a) ? p.a : []).slice(0, 6).map(x => String(x).slice(0, 40)),
     p: (Array.isArray(p.p) ? p.p : []).slice(0, 3).map(x => [Math.round(+x?.[0]) || 0, String(x?.[1] ?? "").slice(0, 160)]).filter(x => x[0] >= 1 && x[0] <= 100),
     e: Object.fromEntries(Object.entries(p.e && typeof p.e === "object" ? p.e : {}).slice(0, 40).map(([k, v]) => [String(+k), String(v).slice(0, 60)])),
@@ -67,7 +72,8 @@ const whose = () => MODE === "mine" ? "Your" : (WHO?.first || SUBJ.name.split(" 
 
 /* ---------- small pieces */
 const icon = n => ICON[L[n - 1].id] ? `<img src="${ICON[L[n - 1].id]}" alt="" width="34" height="34" loading="lazy">` : `<span>${n}</span>`;
-const promptFor = l => `Help me reach level ${l.n} of ${SITE}: "${l.title}". ${l.line} Look at how I work here, suggest the smallest setup that would do it, then do it with me and show me it working.`;
+const promptFor = l => `Help me reach level ${l.n} of ${SITE}: "${l.title}". ${l.line}${l.try ? ` Worth a look: ${l.try.map(x => x.name).join(", ")}.` : ""} Look at how I work here, suggest the smallest setup that would do it, then do it with me and show me it working.`;
+const tryHTML = (l, short) => !l.try ? "" : `<p class="try-t"><b>Try</b>${l.try.map(x => `<a href="${esc(x.url)}" rel="noopener" target="_blank">${esc(x.name)}</a>${x.note && !short ? ` <span>${esc(x.note)}</span>` : ""}`).join(" · ")}</p>`;
 function toast(t) { const el = $("#toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 2600); }
 async function copy(text) { try { await navigator.clipboard.writeText(text); return true; } catch { return false; } }
 const quote = (f, vs) => !f ? "" : `<blockquote class="quote${vs ? " vs" : ""}">${vs ? `<div class="vs-k">Pros disagree</div>` : ""}
@@ -163,6 +169,7 @@ function rowHTML(l) {
     </button>${mine ? `<div class="row-q">${quick}</div>` : ""}
     <div class="row-d" id="d${l.n}" hidden>
       <p class="how-t"><b>How it's checked</b>${esc(l.check)}${l.how === "self" && l.check !== "Only you know." ? " Usually only you can tell, so you tick it." : ""}</p>
+      ${tryHTML(l)}
       ${ev && done(l.n) ? `<p class="evidence">${whose()} agent found: <b>${esc(ev)}</b></p>` : ""}
       ${quote(l.from)}${quote(l.vs, true)}
       <div class="row-acts"><button class="key mini" type="button" data-act="learn">Copy a prompt to learn this</button>${act}</div>
@@ -270,7 +277,7 @@ function renderPicks() {
   const picks = SUBJ.p.length ? SUBJ.p : L.filter(l => !done(l.n)).slice(0, 3).map(l => [l.n, ""]);   /* picks */
   $("#picks").innerHTML = picks.map(([n, why]) => { const l = L[n - 1];
     return `<div class="pick"><span class="ico">${icon(n)}</span><div><h3><span class="n">${n}</span>${esc(l.title)}</h3>
-      <p>${why ? `<span class="why">${esc(why)}</span> ` : ""}${esc(l.line)}</p>
+      <p>${why ? `<span class="why">${esc(why)}</span> ` : ""}${esc(l.line)}</p>${tryHTML(l, true)}
       <div class="pick-acts"><button class="key mini" type="button" data-learn="${n}">Copy a prompt for your agent</button><button class="linkish mono" type="button" data-goto="${n}">How it's checked</button></div></div></div>`; }).join("");
 }
 $("#picks").addEventListener("click", async e => {
@@ -547,9 +554,9 @@ function boot() {
   SHARE_URL = null; $("#share-note").textContent = NOTE;
   if (mine) {
     MODE = "mine"; SUBJ = mine; WHO = PHOTO ? { photo: PHOTO } : null;
-    if (mine.v1s && !store.get(okey())) {   /* ticks made on this result under list 1.0 follow their levels */
-      const ov1 = store.get("levels-ov-" + mine.v1s);
-      if (ov1) store.set(okey(), Object.fromEntries(Object.entries(ov1).map(([n, v]) => [V1.n(+n), v]).filter(([n]) => n)));
+    if (mine.was && !store.get(okey())) {   /* ticks made on this result under an earlier list follow their levels */
+      const ov = store.get("levels-ov-" + mine.was.s), m = PAST[mine.was.v];
+      if (ov) store.set(okey(), Object.fromEntries(Object.entries(ov).map(([n, v]) => [m.n(+n), v]).filter(([n]) => n)));
     }
     OV = store.get(okey()) || {}; $("#card-name").value = store.get("levels-name") || "";
     $("#photo-rm").hidden = !PHOTO;

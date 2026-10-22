@@ -126,6 +126,13 @@
    "line": "A picture of the broken layout beats a paragraph. \"Fix this\" plus an image is a whole prompt.",
    "check": "3+ prompts with an image attached ([Image #…]).",
    "how": "history",
+   "try": [
+    {
+     "name": "⌘⇧⌃4 on a Mac",
+     "url": "https://support.apple.com/en-us/102646",
+     "note": "copies it, then paste"
+    }
+   ],
    "from": {
     "h": "steipete",
     "name": "Peter Steinberger",
@@ -146,9 +153,29 @@
    "n": 7,
    "id": "voice",
    "title": "Talk instead of type",
-   "line": "Dictate your prompts. You'll give it three times the context you'd ever bother typing.",
+   "line": "Dictate with OpenWhispr, Wispr Flow or Claude Code's /voice. You'll say three times what you'd ever bother typing.",
    "check": "A dictation app is installed (Wispr Flow, superwhisper, MacWhisper, VoiceInk, OpenWhispr, Aqua, Spokenly, Handy), /voice is on in Claude Code, or prompts read like speech (um, uh, long run-ons).",
    "how": "file",
+   "try": [
+    {
+     "name": "OpenWhispr",
+     "url": "https://openwhispr.com",
+     "note": "free, open source"
+    },
+    {
+     "name": "Wispr Flow",
+     "url": "https://wisprflow.ai"
+    },
+    {
+     "name": "superwhisper",
+     "url": "https://superwhisper.com"
+    },
+    {
+     "name": "/voice",
+     "url": "https://code.claude.com/docs/en/voice-dictation",
+     "note": "built into Claude Code"
+    }
+   ],
    "from": {
     "h": "karpathy",
     "name": "Andrej Karpathy",
@@ -383,7 +410,21 @@
    "title": "Let it use a browser",
    "line": "Playwright, agent-browser or Chrome. It clicks through what it built instead of assuming it works.",
    "check": "A browser MCP or skill installed, or 10+ browser-automation calls.",
-   "how": "file"
+   "how": "file",
+   "try": [
+    {
+     "name": "agent-browser",
+     "url": "https://github.com/vercel-labs/agent-browser"
+    },
+    {
+     "name": "Playwright MCP",
+     "url": "https://github.com/microsoft/playwright-mcp"
+    },
+    {
+     "name": "Claude in Chrome",
+     "url": "https://claude.com/chrome"
+    }
+   ]
   },
   {
    "n": 25,
@@ -438,6 +479,17 @@
    "line": "Deny it .env and ~/.ssh, keep prod keys out of its shell. It can't leak what it never saw.",
    "check": "Deny rules that cover .env, keys or credential files, or a secrets manager (1Password CLI, Doppler, Infisical) that agents call instead of reading raw keys.",
    "how": "file",
+   "try": [
+    {
+     "name": "1Password CLI",
+     "url": "https://developer.1password.com/docs/cli/",
+     "note": "op run"
+    },
+    {
+     "name": "Doppler",
+     "url": "https://www.doppler.com"
+    }
+   ],
    "from": {
     "h": "ry",
     "name": "Ryan Dahl",
@@ -484,6 +536,13 @@
    "line": "A one-page app that converts, counts or tracks the one thing you care about. Software for an audience of one.",
    "check": "Small single-purpose tools started in agent sessions: a single HTML file, a one-off script, a repo with a handful of commits.",
    "how": "history",
+   "try": [
+    {
+     "name": "Simon's 150+ tools",
+     "url": "https://tools.simonwillison.net",
+     "note": "for ideas"
+    }
+   ],
    "from": {
     "h": "simonw",
     "name": "Simon Willison",
@@ -498,7 +557,17 @@
    "title": "Install a skill",
    "line": "Someone else's packaged know-how, loaded only when the task needs it.",
    "check": "1+ skill folder in ~/.claude/skills, ~/.codex/skills, ~/.agents/skills or a repo's .claude/skills.",
-   "how": "file"
+   "how": "file",
+   "try": [
+    {
+     "name": "anthropics/skills",
+     "url": "https://github.com/anthropics/skills"
+    },
+    {
+     "name": "mattpocock/skills",
+     "url": "https://github.com/mattpocock/skills"
+    }
+   ]
   },
   {
    "n": 35,
@@ -546,7 +615,17 @@
    "title": "Watch the context and the bill",
    "line": "A status line with context, model and cost, plus /usage. No surprise compactions, no surprise invoice.",
    "check": "A statusLine configured, a usage tracker installed (ccusage, CodexBar), or /context, /usage, /stats or /cost used 3+ times.",
-   "how": "file"
+   "how": "file",
+   "try": [
+    {
+     "name": "ccusage",
+     "url": "https://github.com/ryoppippi/ccusage"
+    },
+    {
+     "name": "CodexBar",
+     "url": "https://github.com/steipete/CodexBar"
+    }
+   ]
   },
   {
    "n": 40,
@@ -567,20 +646,12 @@
    "n": 41,
    "id": "write-a-skill",
    "title": "Write your own skill",
-   "line": "The thing you keep explaining, written once as a SKILL.md. Every session starts knowing it.",
-   "check": "A skill you wrote yourself: no upstream source or lockfile entry, or it lives in your own repo.",
+   "line": "The prompt you type every week, or the thing you keep explaining, written once as a SKILL.md. Call it as /ship, or let it load when it's needed.",
+   "check": "A skill or custom command you wrote yourself (no upstream source or lockfile entry, or it lives in your own repo); .claude/commands counts.",
    "how": "file"
   },
   {
    "n": 42,
-   "id": "slash-command",
-   "title": "Save a prompt as a command",
-   "line": "The prompt you type every week, saved as /ship or /review.",
-   "check": "1+ custom command in .claude/commands, or a user-invoked skill you wrote.",
-   "how": "file"
-  },
-  {
-   "n": 43,
    "id": "subagents",
    "title": "Use subagents",
    "line": "Helpers search and read in parallel, so your main session stays focused and fast.",
@@ -595,7 +666,7 @@
    }
   },
   {
-   "n": 44,
+   "n": 43,
    "id": "format-hook",
    "title": "Add a hook that formats every edit",
    "line": "A formatter or linter after each write. Guaranteed, unlike \"please run prettier\" in a rules file.",
@@ -610,10 +681,10 @@
    }
   },
   {
-   "n": 45,
+   "n": 44,
    "id": "guard-hook",
-   "title": "Add a hook that blocks rm -rf",
-   "line": "Block force pushes, rm -rf, pip when you use uv. Rules are advice; hooks are enforced.",
+   "title": "Add a hook that blocks risky commands",
+   "line": "rm -rf, force pushes, pip when you use uv. Rules are advice; hooks are enforced.",
    "check": "A pre-tool hook that blocks or guards commands.",
    "how": "file",
    "from": {
@@ -625,7 +696,7 @@
    }
   },
   {
-   "n": 46,
+   "n": 45,
    "id": "memory",
    "title": "Let it keep notes and hand off",
    "line": "notes.md, memory, a PROGRESS.md written before the context fills. The next session picks up in one read.",
@@ -640,7 +711,7 @@
    }
   },
   {
-   "n": 47,
+   "n": 46,
    "id": "one-rules-file",
    "title": "Symlink CLAUDE.md to AGENTS.md",
    "line": "One set of rules, whichever agent you open.",
@@ -655,7 +726,7 @@
    }
   },
   {
-   "n": 48,
+   "n": 47,
    "id": "small-rules",
    "title": "Keep AGENTS.md short",
    "line": "A map to your docs, not an encyclopedia. Every line costs context in every session.",
@@ -670,12 +741,49 @@
    }
   },
   {
+   "n": 48,
+   "id": "ping-when-done",
+   "title": "Get pinged when it's done",
+   "line": "A hook, a sound, a push to your phone. Then go do something else.",
+   "check": "A hook or script that notifies you when it's done (sound, push, notification), or a rule telling it to.",
+   "how": "file",
+   "try": [
+    {
+     "name": "ntfy",
+     "url": "https://ntfy.sh",
+     "note": "push to your phone, open source"
+    }
+   ],
+   "from": {
+    "h": "chrismccord",
+    "name": "Chris McCord",
+    "q": "when it's done work it runs a `notify msg` bash function I have",
+    "url": "https://x.com/chris_mccord/status/2016576023400181773",
+    "x": "chris_mccord"
+   },
+   "vs": {
+    "h": "mitchellh",
+    "name": "Mitchell Hashimoto",
+    "q": "Turns agent notifications off, so he decides when to switch context.",
+    "url": "https://mitchellh.com/writing/my-ai-adoption-journey",
+    "paraphrase": true,
+    "x": "mitchellh"
+   }
+  },
+  {
    "n": 49,
    "id": "two-at-once",
    "title": "Run two agents at once",
    "line": "One on the bug, one on the feature. Twice the work while you review.",
    "check": "Two sessions active in the same 10 minutes, on 5+ occasions (from prompt timestamps).",
-   "how": "history"
+   "how": "history",
+   "try": [
+    {
+     "name": "Conductor",
+     "url": "https://conductor.build",
+     "note": "parallel agents, each in its own worktree"
+    }
+   ]
   },
   {
    "n": 50,
@@ -788,6 +896,12 @@
    "line": "A second model reads each commit as it lands, not once per PR when nobody wants to hear it.",
    "check": "roborev, or a git post-commit hook that runs a reviewing agent (codex exec, claude -p).",
    "how": "file",
+   "try": [
+    {
+     "name": "roborev",
+     "url": "https://github.com/kenn-io/roborev"
+    }
+   ],
    "from": {
     "h": "wesm",
     "name": "Wes McKinney",
@@ -817,6 +931,16 @@
    "line": "Several reviewers in parallel, then one agent rules out the false positives.",
    "check": "Findings from 2+ review tools merged into one triaged list.",
    "how": "history",
+   "try": [
+    {
+     "name": "Cursor Bugbot",
+     "url": "https://cursor.com/bugbot"
+    },
+    {
+     "name": "CodeRabbit",
+     "url": "https://www.coderabbit.ai"
+    }
+   ],
    "from": {
     "h": "nolanlawson",
     "name": "Nolan Lawson",
@@ -848,34 +972,22 @@
   },
   {
    "n": 61,
-   "id": "ping-when-done",
-   "title": "Get pinged when it's done",
-   "line": "A hook, a sound, a push to your phone. Then go do something else.",
-   "check": "A hook or script that notifies you when it's done (sound, push, notification), or a rule telling it to.",
-   "how": "file",
-   "from": {
-    "h": "chrismccord",
-    "name": "Chris McCord",
-    "q": "when it's done work it runs a `notify msg` bash function I have",
-    "url": "https://x.com/chris_mccord/status/2016576023400181773",
-    "x": "chris_mccord"
-   },
-   "vs": {
-    "h": "mitchellh",
-    "name": "Mitchell Hashimoto",
-    "q": "Turns agent notifications off, so he decides when to switch context.",
-    "url": "https://mitchellh.com/writing/my-ai-adoption-journey",
-    "paraphrase": true,
-    "x": "mitchellh"
-   }
-  },
-  {
-   "n": 62,
    "id": "yolo-in-a-box",
    "title": "Go YOLO, but only in a box",
    "line": "Full autonomy in a container or a fresh VM with no prod keys. All the speed, none of the risk.",
    "check": "Permission prompts off AND a sandbox (devcontainer, Docker, VM, /sandbox). Prompts off without a box doesn't count.",
    "how": "file",
+   "try": [
+    {
+     "name": "Dev Containers",
+     "url": "https://containers.dev"
+    },
+    {
+     "name": "/sandbox",
+     "url": "https://code.claude.com/docs/en/sandboxing",
+     "note": "built into Claude Code"
+    }
+   ],
    "from": {
     "h": "crawshaw",
     "name": "David Crawshaw",
@@ -885,12 +997,19 @@
    }
   },
   {
-   "n": 63,
+   "n": 62,
    "id": "lethal-trifecta",
    "title": "Break the lethal trifecta",
    "line": "Private data, untrusted input, a way to send things out: never all three in one run. Cut the network first.",
    "check": "Agent network access restricted (a sandbox domain allowlist, or network off in Codex) on a machine where it can read private data or mail.",
    "how": "file",
+   "try": [
+    {
+     "name": "/sandbox",
+     "url": "https://code.claude.com/docs/en/sandboxing",
+     "note": "limits its network to domains you allow"
+    }
+   ],
    "from": {
     "h": "simonw",
     "name": "Simon Willison",
@@ -900,7 +1019,7 @@
    }
   },
   {
-   "n": 64,
+   "n": 63,
    "id": "schedule",
    "title": "Schedule a prompt",
    "line": "For later, or every morning: /loop, /schedule, cron. Work starts without you.",
@@ -915,12 +1034,42 @@
    }
   },
   {
+   "n": 64,
+   "id": "overnight",
+   "title": "Let it work while you sleep",
+   "line": "Start a few tasks before bed, review them with coffee.",
+   "check": "Agent activity between 1am and 6am while you typed nothing.",
+   "how": "history",
+   "from": {
+    "h": "calvinfo",
+    "name": "Calvin French-Owen",
+    "q": "This is over-hyped on Twitter, but I do really try and kick off 3-4 tasks in Codex before going to bed, so they'll be ready for review in the morning.",
+    "url": "https://calv.info/agents-feb-2026",
+    "x": "calvinfo"
+   }
+  },
+  {
    "n": 65,
    "id": "from-your-phone",
    "title": "Drive it from your phone",
    "line": "Remote Control, the Codex app, ssh and tmux. Unblock it from the couch.",
    "check": "Remote control set up, a mobile session, or mosh/Tailscale used to reach your agent box.",
    "how": "self",
+   "try": [
+    {
+     "name": "Remote Control",
+     "url": "https://code.claude.com/docs/en/remote-control",
+     "note": "Claude Code"
+    },
+    {
+     "name": "Termius",
+     "url": "https://termius.com"
+    },
+    {
+     "name": "Tailscale",
+     "url": "https://tailscale.com"
+    }
+   ],
    "from": {
     "h": "harperreed",
     "name": "Harper Reed",
@@ -1008,10 +1157,25 @@
   },
   {
    "n": 72,
+   "id": "five-at-once",
+   "title": "Run five at once",
+   "line": "Five agents on five problems, and you still know what each one is doing.",
+   "check": "5+ sessions or background agents running at the same time.",
+   "how": "history",
+   "from": {
+    "h": "t3dotgg",
+    "name": "Theo Browne",
+    "q": "I regularly have 40+ threads running concurrently.",
+    "url": "https://x.com/theo/status/2102704338582032575",
+    "x": "theo"
+   }
+  },
+  {
+   "n": 73,
    "id": "coordinator",
-   "title": "Let one agent run the others",
-   "line": "It hands out the work, checks on the others, and reports back to you.",
-   "check": "One agent messaging or steering others (agent teams, SendMessage, an orchestrator session).",
+   "title": "Let your agents talk to each other",
+   "line": "One hands out the work and checks on the rest, or two pass findings directly. No more \"Codex says: [paste]\".",
+   "check": "One agent messaging or steering others (agent teams, SendMessage, an orchestrator session), or agents reading each other's output without you relaying it.",
    "how": "history",
    "from": {
     "h": "awesomekling",
@@ -1020,14 +1184,6 @@
     "url": "https://x.com/awesomekling/status/2102089363631059199",
     "x": "awesomekling"
    }
-  },
-  {
-   "n": 73,
-   "id": "agents-talk",
-   "title": "Let your agents talk to each other",
-   "line": "No more \"Codex says: [paste]\". They pass findings directly while you do something else.",
-   "check": "Agents sending each other messages or reading each other's output, without you relaying it.",
-   "how": "history"
   },
   {
    "n": 74,
@@ -1172,7 +1328,13 @@
    "title": "Have it make a video",
    "line": "A 30-second explainer of what you shipped, for the colleague who won't read the PR.",
    "check": "Remotion, Hyperframes or ffmpeg renders from a session, or a video skill installed.",
-   "how": "history"
+   "how": "history",
+   "try": [
+    {
+     "name": "Remotion",
+     "url": "https://www.remotion.dev"
+    }
+   ]
   },
   {
    "n": 85,
@@ -1188,7 +1350,17 @@
    "title": "Let it click through your apps",
    "line": "Desktop apps, the simulator, your logged-in browser. It works the screen, not just files and a terminal.",
    "check": "Computer-use or desktop-control tools used: computer use, Peekaboo, Claude in Chrome, simulator control.",
-   "how": "history"
+   "how": "history",
+   "try": [
+    {
+     "name": "Claude in Chrome",
+     "url": "https://claude.com/chrome"
+    },
+    {
+     "name": "Peekaboo",
+     "url": "https://github.com/steipete/Peekaboo"
+    }
+   ]
   },
   {
    "n": 87,
@@ -1212,7 +1384,13 @@
    "title": "Put it on call",
    "line": "It watches errors and alerts, and has a fix open before you've read the page.",
    "check": "An error-tracking or alerting connector (Sentry, Datadog, PagerDuty, Grafana) or alerts sent into an agent session.",
-   "how": "file"
+   "how": "file",
+   "try": [
+    {
+     "name": "Sentry MCP",
+     "url": "https://docs.sentry.io/product/sentry-mcp/"
+    }
+   ]
   },
   {
    "n": 89,
@@ -1234,7 +1412,17 @@
    "title": "Build on an agent SDK",
    "line": "Your own agent product, with the same loop the big ones use under the hood.",
    "check": "An agent SDK in a project's dependencies (Claude Agent SDK, Codex SDK, OpenAI Agents).",
-   "how": "file"
+   "how": "file",
+   "try": [
+    {
+     "name": "Claude Agent SDK",
+     "url": "https://code.claude.com/docs/en/agent-sdk/overview"
+    },
+    {
+     "name": "OpenAI Agents SDK",
+     "url": "https://openai.github.io/openai-agents-python/"
+    }
+   ]
   },
   {
    "n": 91,
@@ -1331,7 +1519,17 @@
    "title": "Run it on a local model",
    "line": "Open weights on your own machine: private, offline, and nobody can take it away.",
    "check": "Ollama, LM Studio, llama.cpp or MLX installed, and an agent pointed at a local model.",
-   "how": "file"
+   "how": "file",
+   "try": [
+    {
+     "name": "Ollama",
+     "url": "https://ollama.com"
+    },
+    {
+     "name": "LM Studio",
+     "url": "https://lmstudio.ai"
+    }
+   ]
   },
   {
    "n": 98,
@@ -1340,6 +1538,16 @@
    "line": "Pi, OpenClaw, Hermes, or one you built. You choose the tools, the prompts and the loop.",
    "check": "Pi, OpenClaw, Hermes or a harness you wrote, installed and in use.",
    "how": "file",
+   "try": [
+    {
+     "name": "Pi",
+     "url": "https://github.com/badlogic/pi-mono"
+    },
+    {
+     "name": "OpenClaw",
+     "url": "https://openclaw.ai"
+    }
+   ],
    "from": {
     "h": "steipete",
     "name": "Peter Steinberger",
@@ -1370,6 +1578,13 @@
    "line": "A model, a loop and a few tools, in a few hundred lines. After that, nothing on this list is magic.",
    "check": "A project of yours that calls a model API with tools in a loop you wrote, not only an SDK or someone else's harness.",
    "how": "file",
+   "try": [
+    {
+     "name": "How to build an agent",
+     "url": "https://ampcode.com/how-to-build-an-agent",
+     "note": "Thorsten Ball's walkthrough"
+    }
+   ],
    "from": {
     "h": "mrnugget",
     "name": "Thorsten Ball",
@@ -1436,6 +1651,6 @@
    "line": "Retired as a benchmark. Still a good party trick."
   }
  ],
- "version": "1.1",
+ "version": "1.2",
  "updated": "2026-10-23"
 }

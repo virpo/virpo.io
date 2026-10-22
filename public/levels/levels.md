@@ -4,7 +4,7 @@ The 100 tricks worth your time with coding agents, from pasting screenshots to w
 
 - Page: https://virpo.io/levels/
 - Check your own level: paste this into your coding agent: What level am I with coding agents? Follow virpo.io/levels/check.md. It has you run a read-only script that counts things on this machine (no file contents, nothing uploaded), then open my result in the browser. Read the script and tell me what it does before you run it.
-- Data: https://virpo.io/levels/levels.json · version 1.1, updated 2026-10-23
+- Data: https://virpo.io/levels/levels.json · version 1.2, updated 2026-10-23
 
 Your level is how many of the 100 you do. The list is always 100: when a new level earns its place, one goes extinct.
 
@@ -46,6 +46,7 @@ No magic words, no templates. Say what you want and why, the way you'd brief a s
 A picture of the broken layout beats a paragraph. "Fix this" plus an image is a whole prompt.
 
 - How it's checked: 3+ prompts with an image attached ([Image #…]).
+- Try: [⌘⇧⌃4 on a Mac](https://support.apple.com/en-us/102646) (copies it, then paste)
 - Who does it: Peter Steinberger: “I’d say at least 50% of my prompts contain a screenshot.” (https://steipete.me/posts/just-talk-to-it)
 
 ### 6. Paste the whole error
@@ -56,9 +57,10 @@ The full stack trace or log, not your summary of it. It fixes what actually brok
 
 ### 7. Talk instead of type
 
-Dictate your prompts. You'll give it three times the context you'd ever bother typing.
+Dictate with OpenWhispr, Wispr Flow or Claude Code's /voice. You'll say three times what you'd ever bother typing.
 
 - How it's checked: A dictation app is installed (Wispr Flow, superwhisper, MacWhisper, VoiceInk, OpenWhispr, Aqua, Spokenly, Handy), /voice is on in Claude Code, or prompts read like speech (um, uh, long run-ons).
+- Try: [OpenWhispr](https://openwhispr.com) (free, open source), [Wispr Flow](https://wisprflow.ai), [superwhisper](https://superwhisper.com), [/voice](https://code.claude.com/docs/en/voice-dictation) (built into Claude Code)
 - Who does it: Andrej Karpathy: “Also I just talk to Composer with SuperWhisper so I barely even touch the keyboard.” (https://x.com/karpathy/status/1886192184808149383)
 
 ### 8. Interrupt it early
@@ -183,6 +185,7 @@ The command it ran and the real output. A screenshot. A recording of it working.
 Playwright, agent-browser or Chrome. It clicks through what it built instead of assuming it works.
 
 - How it's checked: A browser MCP or skill installed, or 10+ browser-automation calls.
+- Try: [agent-browser](https://github.com/vercel-labs/agent-browser), [Playwright MCP](https://github.com/microsoft/playwright-mcp), [Claude in Chrome](https://claude.com/chrome)
 
 ### 25. Write the failing test first
 
@@ -215,6 +218,7 @@ An allowlist for tests, lint and git status. Fewer prompts, so you stop clicking
 Deny it .env and ~/.ssh, keep prod keys out of its shell. It can't leak what it never saw.
 
 - How it's checked: Deny rules that cover .env, keys or credential files, or a secrets manager (1Password CLI, Doppler, Infisical) that agents call instead of reading raw keys.
+- Try: [1Password CLI](https://developer.1password.com/docs/cli/) (op run), [Doppler](https://www.doppler.com)
 - Who does it: Ryan Dahl: “A compromised agent process can’t leak keys it never held in the first place.” (https://deno.com/blog/clawpatrol)
 
 ### 30. Keep typing while it works
@@ -245,6 +249,7 @@ Disk full, Python broken, the printer gone again. It finds the cause and explain
 A one-page app that converts, counts or tracks the one thing you care about. Software for an audience of one.
 
 - How it's checked: Small single-purpose tools started in agent sessions: a single HTML file, a one-off script, a repo with a handful of commits.
+- Try: [Simon's 150+ tools](https://tools.simonwillison.net) (for ideas)
 - Who does it: Simon Willison: “I have built over 150 of these in the past two years, almost all of them written by LLMs.” (https://simonwillison.net/2025/Dec/10/html-tools/)
 
 ### 34. Install a skill
@@ -252,6 +257,7 @@ A one-page app that converts, counts or tracks the one thing you care about. Sof
 Someone else's packaged know-how, loaded only when the task needs it.
 
 - How it's checked: 1+ skill folder in ~/.claude/skills, ~/.codex/skills, ~/.agents/skills or a repo's .claude/skills.
+- Try: [anthropics/skills](https://github.com/anthropics/skills), [mattpocock/skills](https://github.com/mattpocock/skills)
 
 ### 35. Connect a tool server (MCP)
 
@@ -283,6 +289,7 @@ Low effort for chores, high for the gnarly bug. Fast and cheap where it doesn't 
 A status line with context, model and cost, plus /usage. No surprise compactions, no surprise invoice.
 
 - How it's checked: A statusLine configured, a usage tracker installed (ccusage, CodexBar), or /context, /usage, /stats or /cost used 3+ times.
+- Try: [ccusage](https://github.com/ryoppippi/ccusage), [CodexBar](https://github.com/steipete/CodexBar)
 
 ### 40. Let it work through your inbox
 
@@ -297,45 +304,39 @@ Rules, skills, hooks and memory that you wrote yourself.
 
 ### 41. Write your own skill
 
-The thing you keep explaining, written once as a SKILL.md. Every session starts knowing it.
+The prompt you type every week, or the thing you keep explaining, written once as a SKILL.md. Call it as /ship, or let it load when it's needed.
 
-- How it's checked: A skill you wrote yourself: no upstream source or lockfile entry, or it lives in your own repo.
+- How it's checked: A skill or custom command you wrote yourself (no upstream source or lockfile entry, or it lives in your own repo); .claude/commands counts.
 
-### 42. Save a prompt as a command
-
-The prompt you type every week, saved as /ship or /review.
-
-- How it's checked: 1+ custom command in .claude/commands, or a user-invoked skill you wrote.
-
-### 43. Use subagents
+### 42. Use subagents
 
 Helpers search and read in parallel, so your main session stays focused and fast.
 
 - How it's checked: 10+ subagent runs in session logs.
 - Who does it: Alexander Embiricos: “Then, when I need anything new, I say "using a subagent in parallel, do X"” (https://x.com/embirico/status/2046033614106931414)
 
-### 44. Add a hook that formats every edit
+### 43. Add a hook that formats every edit
 
 A formatter or linter after each write. Guaranteed, unlike "please run prettier" in a rules file.
 
 - How it's checked: A post-edit hook that runs a formatter or linter.
 - Who does it: Boris Cherny: “We use a PostToolUse hook to format Claude's code.” (https://x.com/bcherny/status/2007179852047335529)
 
-### 45. Add a hook that blocks rm -rf
+### 44. Add a hook that blocks risky commands
 
-Block force pushes, rm -rf, pip when you use uv. Rules are advice; hooks are enforced.
+rm -rf, force pushes, pip when you use uv. Rules are advice; hooks are enforced.
 
 - How it's checked: A pre-tool hook that blocks or guards commands.
 - Who does it: Armin Ronacher: “Replaces the bash tool with a `uv`-aware version that injects Python command shims and blocks common non-`uv` workflows.” (https://github.com/mitsuhiko/agent-stuff/blob/0865c849befd2021490679f96a8dee58c84ac857/README.md#L63)
 
-### 46. Let it keep notes and hand off
+### 45. Let it keep notes and hand off
 
 notes.md, memory, a PROGRESS.md written before the context fills. The next session picks up in one read.
 
 - How it's checked: 5+ memory notes, Codex memories on, notes, PROGRESS or HANDOFF files in your repos, or a handoff skill.
 - Who does it: Simon Willison: “Create a notes.md file in that folder and append notes to it as you work, tracking what you tried and anything you learned along the way.” (https://github.com/simonw/research/blob/ba0cb97b42da153c13c465fb617f5c45f1f03b04/AGENTS.md#L3)
 
-### 47. Symlink CLAUDE.md to AGENTS.md
+### 46. Symlink CLAUDE.md to AGENTS.md
 
 One set of rules, whichever agent you open.
 
@@ -343,18 +344,28 @@ One set of rules, whichever agent you open.
 - Who does it: Peter Steinberger: “~/.codex/AGENTS.md -> ~/Projects/agent-scripts/AGENTS.MD
 ~/.claude/CLAUDE.md -> ~/Projects/agent-scripts/AGENTS.MD” (https://github.com/steipete/agent-scripts/blob/79150cfac4a6ba4df13cf30176bf2db85170ae6c/README.md#L65-L67)
 
-### 48. Keep AGENTS.md short
+### 47. Keep AGENTS.md short
 
 A map to your docs, not an encyclopedia. Every line costs context in every session.
 
 - How it's checked: The rules file of the repo you work in most is under 150 lines and points to other docs for the rest.
 - Who does it: Kent C. Dodds: “This file is included in full context for every agent conversation. Keep it tiny and stable.” (https://github.com/kentcdodds/kentcdodds.com/blob/b61c7ff4200c4aa0e35326d1a7baeb8a51d86673/AGENTS.md#L3-L4)
 
+### 48. Get pinged when it's done
+
+A hook, a sound, a push to your phone. Then go do something else.
+
+- How it's checked: A hook or script that notifies you when it's done (sound, push, notification), or a rule telling it to.
+- Try: [ntfy](https://ntfy.sh) (push to your phone, open source)
+- Who does it: Chris McCord: “when it's done work it runs a `notify msg` bash function I have” (https://x.com/chris_mccord/status/2016576023400181773)
+- Who disagrees: Mitchell Hashimoto: Turns agent notifications off, so he decides when to switch context. (https://mitchellh.com/writing/my-ai-adoption-journey)
+
 ### 49. Run two agents at once
 
 One on the bug, one on the feature. Twice the work while you review.
 
 - How it's checked: Two sessions active in the same 10 minutes, on 5+ occasions (from prompt timestamps).
+- Try: [Conductor](https://conductor.build) (parallel agents, each in its own worktree)
 
 ### 50. One worktree per agent
 
@@ -414,6 +425,7 @@ claude -p, codex exec: from your scripts, your Makefile, or from inside another 
 A second model reads each commit as it lands, not once per PR when nobody wants to hear it.
 
 - How it's checked: roborev, or a git post-commit hook that runs a reviewing agent (codex exec, claude -p).
+- Try: [roborev](https://github.com/kenn-io/roborev)
 - Who does it: Wes McKinney: “I do not code with agents without a continuous reviewer running in the background.” (https://wesmckinney.com/transcripts/2026-02-10-rill-data-podcast)
 
 ### 58. Make two reviewers compete
@@ -428,6 +440,7 @@ Two refuters per change, and points for every real bug. They try much harder tha
 Several reviewers in parallel, then one agent rules out the false positives.
 
 - How it's checked: Findings from 2+ review tools merged into one triaged list.
+- Try: [Cursor Bugbot](https://cursor.com/bugbot), [CodeRabbit](https://www.coderabbit.ai)
 - Who does it: Nolan Lawson: “Run a Claude sub-agent, Codex, and Cursor Bugbot to find bugs in this PR ranked by critical/high/medium/low.” (https://nolanlawson.com/2026/05/25/using-ai-to-write-better-code-more-slowly/)
 
 ### 60. Review by risk, not by habit
@@ -442,40 +455,42 @@ A copy fix gets a glance. Auth, money and migrations get every line.
 
 It works while you sleep, sit on the couch, or close the laptop.
 
-### 61. Get pinged when it's done
-
-A hook, a sound, a push to your phone. Then go do something else.
-
-- How it's checked: A hook or script that notifies you when it's done (sound, push, notification), or a rule telling it to.
-- Who does it: Chris McCord: “when it's done work it runs a `notify msg` bash function I have” (https://x.com/chris_mccord/status/2016576023400181773)
-- Who disagrees: Mitchell Hashimoto: Turns agent notifications off, so he decides when to switch context. (https://mitchellh.com/writing/my-ai-adoption-journey)
-
-### 62. Go YOLO, but only in a box
+### 61. Go YOLO, but only in a box
 
 Full autonomy in a container or a fresh VM with no prod keys. All the speed, none of the risk.
 
 - How it's checked: Permission prompts off AND a sandbox (devcontainer, Docker, VM, /sandbox). Prompts off without a box doesn't count.
+- Try: [Dev Containers](https://containers.dev), [/sandbox](https://code.claude.com/docs/en/sandboxing) (built into Claude Code)
 - Who does it: David Crawshaw: “You have to turn off the sandbox, which means you have to provide your own sandbox. I have tried just about everything and I highly recommend: use a fresh VM.” (https://crawshaw.io/blog/eight-more-months-of-agents)
 
-### 63. Break the lethal trifecta
+### 62. Break the lethal trifecta
 
 Private data, untrusted input, a way to send things out: never all three in one run. Cut the network first.
 
 - How it's checked: Agent network access restricted (a sandbox domain allowlist, or network off in Codex) on a machine where it can read private data or mail.
+- Try: [/sandbox](https://code.claude.com/docs/en/sandboxing) (limits its network to domains you allow)
 - Who does it: Simon Willison: “The only way to stay safe there is to avoid that lethal trifecta combination entirely.” (https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/)
 
-### 64. Schedule a prompt
+### 63. Schedule a prompt
 
 For later, or every morning: /loop, /schedule, cron. Work starts without you.
 
 - How it's checked: A scheduled or recurring agent run (loop/cron tools, a launchd or cron entry that calls an agent).
 - Who does it: Thibault Sottiaux: “One automation I have runs multiple times a day. It picks a random file and finds and fixes a subtle bug.” (https://every.to/podcast/transcript-how-openai-s-codex-team-uses-their-coding-agent)
 
+### 64. Let it work while you sleep
+
+Start a few tasks before bed, review them with coffee.
+
+- How it's checked: Agent activity between 1am and 6am while you typed nothing.
+- Who does it: Calvin French-Owen: “This is over-hyped on Twitter, but I do really try and kick off 3-4 tasks in Codex before going to bed, so they'll be ready for review in the morning.” (https://calv.info/agents-feb-2026)
+
 ### 65. Drive it from your phone
 
 Remote Control, the Codex app, ssh and tmux. Unblock it from the couch.
 
 - How it's checked: Remote control set up, a mobile session, or mosh/Tailscale used to reach your agent box.
+- Try: [Remote Control](https://code.claude.com/docs/en/remote-control) (Claude Code), [Termius](https://termius.com), [Tailscale](https://tailscale.com)
 - Who does it: Harper Reed: Claude Code is better on your phone (https://harper.blog/2026/01/05/claude-code-is-better-on-your-phone/)
 
 ### 66. Hand chores to a cloud agent
@@ -522,18 +537,19 @@ The same task in parallel, thirty seconds each to judge. Throwing work away is c
 - How it's checked: The same task run in 2+ parallel sessions or worktrees.
 - Who does it: Alexander Embiricos: “So I might kind of throw throw codex at it but I might just do it four times in parallel instead.” (https://www.youtube.com/watch?v=xeZDHGjG5zM&t=1375)
 
-### 72. Let one agent run the others
+### 72. Run five at once
 
-It hands out the work, checks on the others, and reports back to you.
+Five agents on five problems, and you still know what each one is doing.
 
-- How it's checked: One agent messaging or steering others (agent teams, SendMessage, an orchestrator session).
-- Who does it: Andreas Kling: “Tell coordinator to parallelize the work over 4 separate computers via SSH” (https://x.com/awesomekling/status/2102089363631059199)
+- How it's checked: 5+ sessions or background agents running at the same time.
+- Who does it: Theo Browne: “I regularly have 40+ threads running concurrently.” (https://x.com/theo/status/2102704338582032575)
 
 ### 73. Let your agents talk to each other
 
-No more "Codex says: [paste]". They pass findings directly while you do something else.
+One hands out the work and checks on the rest, or two pass findings directly. No more "Codex says: [paste]".
 
-- How it's checked: Agents sending each other messages or reading each other's output, without you relaying it.
+- How it's checked: One agent messaging or steering others (agent teams, SendMessage, an orchestrator session), or agents reading each other's output without you relaying it.
+- Who does it: Andreas Kling: “Tell coordinator to parallelize the work over 4 separate computers via SSH” (https://x.com/awesomekling/status/2102089363631059199)
 
 ### 74. Strong model plans, fast model builds
 
@@ -612,6 +628,7 @@ Tag it in Slack and it opens the PR. Teammates use it without installing anythin
 A 30-second explainer of what you shipped, for the colleague who won't read the PR.
 
 - How it's checked: Remotion, Hyperframes or ffmpeg renders from a session, or a video skill installed.
+- Try: [Remotion](https://www.remotion.dev)
 
 ### 85. Give your agents a wiki about you
 
@@ -624,6 +641,7 @@ How you think, what you've decided, what you can't stand. Loaded only when it's 
 Desktop apps, the simulator, your logged-in browser. It works the screen, not just files and a terminal.
 
 - How it's checked: Computer-use or desktop-control tools used: computer use, Peekaboo, Claude in Chrome, simulator control.
+- Try: [Claude in Chrome](https://claude.com/chrome), [Peekaboo](https://github.com/steipete/Peekaboo)
 
 ### 87. Give it a release checklist
 
@@ -637,6 +655,7 @@ Every release, the same long QA script, run start to finish by the agent.
 It watches errors and alerts, and has a fix open before you've read the page.
 
 - How it's checked: An error-tracking or alerting connector (Sentry, Datadog, PagerDuty, Grafana) or alerts sent into an agent session.
+- Try: [Sentry MCP](https://docs.sentry.io/product/sentry-mcp/)
 
 ### 89. Put hardware in the loop
 
@@ -650,6 +669,7 @@ It designs the bracket, flashes the board, reads the serial port, and checks its
 Your own agent product, with the same loop the big ones use under the hood.
 
 - How it's checked: An agent SDK in a project's dependencies (Claude Agent SDK, Codex SDK, OpenAI Agents).
+- Try: [Claude Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview), [OpenAI Agents SDK](https://openai.github.io/openai-agents-python/)
 
 ## Levels 91–100: Stone, again · Full circle
 
@@ -702,12 +722,14 @@ A daily limit on agent code, sized to how much you can actually read. Anything p
 Open weights on your own machine: private, offline, and nobody can take it away.
 
 - How it's checked: Ollama, LM Studio, llama.cpp or MLX installed, and an agent pointed at a local model.
+- Try: [Ollama](https://ollama.com), [LM Studio](https://lmstudio.ai)
 
 ### 98. Run your own harness
 
 Pi, OpenClaw, Hermes, or one you built. You choose the tools, the prompts and the loop.
 
 - How it's checked: Pi, OpenClaw, Hermes or a harness you wrote, installed and in use.
+- Try: [Pi](https://github.com/badlogic/pi-mono), [OpenClaw](https://openclaw.ai)
 - Who does it: Peter Steinberger: “I use OpenClaw (which uses Codex) and web sessions.” (https://x.com/steipete/status/2102641364681048328)
 
 ### 99. Let it improve your setup
@@ -722,6 +744,7 @@ A scheduled agent reads your recent sessions, finds the friction, and fixes your
 A model, a loop and a few tools, in a few hundred lines. After that, nothing on this list is magic.
 
 - How it's checked: A project of yours that calls a model API with tools in a loop you wrote, not only an SDK or someone else's harness.
+- Try: [How to build an agent](https://ampcode.com/how-to-build-an-agent) (Thorsten Ball's walkthrough)
 - Who does it: Thorsten Ball: “It’s an LLM, a loop, and enough tokens.” (https://ampcode.com/notes/how-to-build-an-agent)
 
 ## Fossil record

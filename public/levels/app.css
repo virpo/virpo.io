@@ -267,6 +267,11 @@ h1{font:600 clamp(36px,5.4vw,60px)/1.02 var(--sans);letter-spacing:-.035em;margi
 .row-d{display:grid;gap:12px;padding:2px 0 20px 86px;font-size:14px;max-width:780px}
 .how-t{font:12.5px/1.55 var(--mono);color:var(--muted);margin:0}
 .how-t b{color:var(--fg);font-weight:600;margin-right:6px}
+.try-t{font:12.5px/1.7 var(--mono);color:var(--muted);margin:0}
+.try-t b{color:var(--fg);font-weight:600;margin-right:6px}
+.try-t a{color:var(--fg)}
+.try-t span{color:var(--muted)}
+.pick .try-t{margin-top:6px}
 .evidence{font:12.5px var(--mono);margin:0}
 .evidence b{background:var(--glow);padding:1px 4px;border-radius:3px;font-weight:500}
 .quote{margin:0;padding:0 0 0 14px;border-left:2px solid var(--line-strong)}
