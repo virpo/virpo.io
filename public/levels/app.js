@@ -191,6 +191,7 @@ $("#tiers").addEventListener("click", async e => {
   const n = +row.dataset.n, act = e.target.closest("[data-act]")?.dataset.act;
   if (act === "learn") { toast(await copy(promptFor(L[n - 1])) ? "Prompt copied. Paste it into your agent." : "Couldn't copy here."); track("learn_copy", { n }); return; }
   if (act) {
+    OV = store.get(okey()) || {};   /* start from what's saved: another tab of this result may have ticked since */
     if (act === "self") OV[n] = "self"; else if (act === "no") OV[n] = "no"; else delete OV[n];
     store.set(okey(), OV); track("override", { n, act }); cardChanged(); refreshRow(n); return;
   }
@@ -206,7 +207,12 @@ function refreshRow(n) {
   r.outerHTML = rowHTML(L[n - 1]);
   if (open) openRow(n);
   const c = $(`#tier-${t} .tier-count b`); if (c) c.textContent = L.filter(l => Math.ceil(l.n / 10) === t && done(l.n)).length;
-  filterLabels(); renderCopy(); $("#fan").innerHTML = fanHTML(false);
+  filterLabels(); renderCopy(); $("#fan").innerHTML = fanHTML(false); keepLast();
+}
+/* "Your level" elsewhere on the page follows the ticks on this result */
+function keepLast() {
+  if (MODE !== "mine" || LAST?.hash !== location.hash.slice(1)) return;
+  LAST.lv = level(); store.set("levels-last", LAST); $("#live").textContent = `Level ${LAST.lv}`;
 }
 function syncFilters() { $$("#filters button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.f === FILTER))); }
 $("#filters").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setFilter(b.dataset.f); });
@@ -471,7 +477,11 @@ function arrived(hash, lv) {
   $("#show-here").onclick = () => { location.hash = hash; };
 }
 chan && (chan.onmessage = e => e.data?.hash && arrived(e.data.hash, e.data.lv));
-addEventListener("storage", e => { if (e.key === "levels-last" && e.newValue) { try { const v = JSON.parse(e.newValue); arrived(v.hash, v.lv); } catch {} } });
+/* other tabs: a new result or a new level (arrived), or ticks on the result open here (redrawn from what's saved) */
+addEventListener("storage", e => {
+  if (e.key === "levels-last" && e.newValue) { try { LAST = JSON.parse(e.newValue); arrived(LAST.hash, LAST.lv); if (canWait()) renderCopy(); } catch {} }
+  if (MODE === "mine" && e.key === okey()) { OV = store.get(okey()) || {}; cardChanged(); renderAll(false); }
+});
 document.addEventListener("click", e => { if (!e.target.closest("#pop, #bar-cta")) $("#pop").hidden = true; });
 addEventListener("scroll", () => bar.classList.toggle("scrolled", scrollY > 8), { passive: true });
 new IntersectionObserver(([en]) => bar.classList.toggle("show-cta", MODE !== "mine" && !en.isIntersecting), { rootMargin: "-60px 0px 0px 0px" }).observe($("#cta-box"));
