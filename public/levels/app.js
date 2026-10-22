@@ -298,7 +298,7 @@ $("#mail").addEventListener("submit", async e => {
   e.preventDefault();
   const email = $("#mail-email").value.trim();
   try { await post(D.api + "/api/notify", { email, level: SUBJ && MODE === "mine" ? String(level()) : "" });
-    $("#mail-note").textContent = "Done. One email when 20 new levels are in. Nothing else."; $("#mail").querySelector("button").disabled = true; track("mail_joined"); }
+    $("#mail-note").textContent = "Done. You'll hear from me when 20 new levels are in. Nothing else."; $("#mail").querySelector("button").disabled = true; track("mail_joined"); }
   catch { $("#mail-note").textContent = "Couldn't save that right now. Try again in a minute."; }
 });
 
