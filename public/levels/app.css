@@ -46,8 +46,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .bar-r{display:flex;align-items:center;gap:10px}
 .theme{width:32px;height:32px;display:grid;place-items:center;border-radius:50%;background:transparent;border:1px solid var(--line-strong);color:var(--muted);cursor:pointer;padding:0}
 .theme svg{width:15px;height:15px}
-.bar-cta{opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .2s,transform .2s}
-.bar.show-cta .bar-cta{opacity:1;transform:none;pointer-events:auto}
+/* hidden, it takes no room, so the rest of the bar sits flush right */
+.bar-cta{opacity:0;max-width:0;padding-inline:0;border-width:0;overflow:hidden;margin-left:-10px;pointer-events:none;transition:opacity .2s,max-width .25s,padding .25s,margin .25s}
+.bar.show-cta .bar-cta{opacity:1;max-width:260px;padding-inline:14px;border-width:1px;margin-left:0;pointer-events:auto}
 .bar-cta .dots{display:none;gap:4px;padding:0}
 .bar-cta .dots i{width:6px;height:6px}
 .bar.waiting .bar-cta .dots{display:flex}
@@ -255,6 +256,13 @@ h1{font:600 clamp(36px,5.4vw,60px)/1.02 var(--sans);letter-spacing:-.035em;margi
 .lit .row.is-self .ico{background:color-mix(in srgb,var(--hazard) 50%,var(--tile))}
 .lit .row:not(.is-y):not(.is-self) .ico img{opacity:.4;filter:grayscale(1)}
 .lit .row:not(.is-y):not(.is-self) .ico{background:transparent;box-shadow:inset 0 0 0 1px var(--line-strong)}
+/* your result: a quick answer at the end of each row; in the "to check" view it's the yellow key */
+.row.has-q{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:14px;align-items:center}
+.row.has-q .row-d{grid-column:1/-1}
+.row-q:empty{display:none}
+.reviewing .row-q .key[data-act="self"]{background:var(--hazard);color:var(--hazard-ink);border-color:var(--hazard-deep);box-shadow:inset 0 -3px 0 var(--hazard-deep)}
+.review{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:0 0 18px;font-size:14px}
+.mine.live{background:var(--hazard);color:var(--hazard-ink)}
 .row-d{display:grid;gap:12px;padding:2px 0 20px 86px;font-size:14px;max-width:780px}
 .how-t{font:12.5px/1.55 var(--mono);color:var(--muted);margin:0}
 .how-t b{color:var(--fg);font-weight:600;margin-right:6px}

@@ -128,21 +128,26 @@ function startTicker() {
 }
 
 /* ---------- the list */
-let FILTER = "all", STATS = null;
+/* FILTER: all · y (lit) · todo (not lit). A filter keeps the rows it showed when chosen, so ticking one in the "to check"
+   view leaves it in place, ticked and undoable, instead of pulling it out from under the pointer */
+let FILTER = "all", SHOWN = null, STATS = null;
+const todoCount = () => L.filter(l => !done(l.n)).length;
 const pct = n => STATS ? Math.round(100 * (STATS.found[n - 1] + STATS.ticked[n - 1]) / STATS.n) : null;
 function rowHTML(l) {
   const s = st(l.n), ev = SUBJ?.e?.[l.n], mine = MODE === "mine";
   const badge = !mine ? "" : s === "y" ? `<span class="state y">found</span>` : s === "self" ? `<span class="state self">ticked</span>`
     : s === "q" ? `<span class="state q">unsure</span>` : `<span class="state n">not yet</span>`;
+  /* the quick answer sits on the row itself; correcting what the agent found lives inside it */
+  const quick = !mine ? "" : s === "self" ? `<button class="key mini" type="button" data-act="undo">Undo</button>`
+    : s === "y" ? "" : `<button class="key mini" type="button" data-act="self">I do this</button>`;
   const act = !mine ? "" : s === "y" ? `<button class="key mini" type="button" data-act="no">That's wrong</button>`
-    : s === "self" ? `<button class="key mini" type="button" data-act="undo">Undo</button>`
-    : `<button class="key mini" type="button" data-act="self">I do this</button>`;
-  return `<div class="row${s ? " is-" + s : ""}" id="level-${l.n}" data-n="${l.n}">
+    : OV[l.n] === "no" ? `<button class="key mini" type="button" data-act="undo">It was right</button>` : "";
+  return `<div class="row${s ? " is-" + s : ""}${mine ? " has-q" : ""}" id="level-${l.n}" data-n="${l.n}">
     <button class="row-b" type="button" aria-expanded="false" aria-controls="d${l.n}">
       <span class="ico">${icon(l.n)}</span><span class="num">${l.n}</span>
       <span class="row-t"><b>${esc(l.title)}</b><span>${esc(l.line)}</span></span>
       <span class="row-m">${badge}${!mine && l.from?.x ? `<span class="who">@${esc(l.from.x)}</span>` : ""}${STATS ? `<span title="of ${STATS.n} people who added theirs">${pct(l.n)}%</span>` : ""}<span class="chev" aria-hidden="true">›</span></span>
-    </button>
+    </button>${mine ? `<div class="row-q">${quick}</div>` : ""}
     <div class="row-d" id="d${l.n}" hidden>
       <p class="how-t"><b>How it's checked</b>${esc(l.check)}${l.how === "self" && l.check !== "Only you know." ? " Usually only you can tell, so you tick it." : ""}</p>
       ${ev && done(l.n) ? `<p class="evidence">${whose()} agent found: <b>${esc(ev)}</b></p>` : ""}
@@ -150,9 +155,13 @@ function rowHTML(l) {
       <div class="row-acts"><button class="key mini" type="button" data-act="learn">Copy a prompt to learn this</button>${act}</div>
     </div></div>`;
 }
+function setFilter(f) {
+  FILTER = f; SHOWN = f === "all" ? null : new Set(L.filter(l => f === "y" ? done(l.n) : !done(l.n)).map(l => l.n));
+  syncFilters(); renderList();
+}
 function renderList() {
-  const show = l => FILTER === "all" ? true : FILTER === "y" ? done(l.n) : !done(l.n);
-  $("#tiers").classList.toggle("lit", !!SUBJ);
+  const show = l => !SHOWN || SHOWN.has(l.n);
+  $("#tiers").classList.toggle("lit", !!SUBJ); $("#tiers").classList.toggle("reviewing", MODE === "mine" && FILTER === "todo");
   $("#tiers").innerHTML = T.map(t => {
     const ls = L.filter(l => Math.ceil(l.n / 10) === t.n), have = ls.filter(l => done(l.n)).length;
     const rows = ls.filter(show).map(l => rowHTML(l) + (l.n === 3 && D.pi && FILTER === "all" ? `<div class="pi"><span class="num">π</span><span><b>${esc(D.pi.title)}</b> ${esc(D.pi.line)}</span></div>` : "")).join("");
@@ -164,11 +173,15 @@ function renderList() {
   }).join("");
   $("#list-sub").textContent = MODE === "mine" ? "Lit up: yours. Open any level for how it's checked, what your agent found, and a prompt to learn it."
     : `Lit up: what ${whose()} agent found on their machine. Yours will light up differently.`;
-  $$("#filters button")[1].textContent = MODE === "mine" ? "Yours" : "Lit";
+  filterLabels();
+}
+function filterLabels() {
+  const [, lit, todo] = $$("#filters button");
+  lit.textContent = MODE === "mine" ? "Yours" : "Lit"; todo.textContent = MODE === "mine" ? `To check · ${todoCount()}` : "Not yet";
 }
 function openRow(n, scroll) {
   let r = $("#level-" + n);
-  if (!r) { FILTER = "all"; syncFilters(); renderList(); r = $("#level-" + n); }
+  if (!r) { setFilter("all"); r = $("#level-" + n); }
   r.dataset.open = ""; r.querySelector(".row-b").setAttribute("aria-expanded", "true"); r.querySelector(".row-d").hidden = false;
   if (scroll) r.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
 }
@@ -178,7 +191,7 @@ $("#tiers").addEventListener("click", async e => {
   if (act === "learn") { toast(await copy(promptFor(L[n - 1])) ? "Prompt copied. Paste it into your agent." : "Couldn't copy here."); track("learn_copy", { n }); return; }
   if (act) {
     if (act === "self") OV[n] = "self"; else if (act === "no") OV[n] = "no"; else delete OV[n];
-    store.set(okey(), OV); track("override", { n, act }); cardChanged(); renderAll(false); openRow(n); return;
+    store.set(okey(), OV); track("override", { n, act }); cardChanged(); refreshRow(n); return;
   }
   if (e.target.closest(".row-b")) {
     const d = row.querySelector(".row-d"), open = d.hidden;
@@ -186,12 +199,20 @@ $("#tiers").addEventListener("click", async e => {
     if (open) { row.dataset.open = ""; track("row_open", { n }); } else delete row.dataset.open;
   }
 });
+/* one answer changed: that row, its tier's count, the card and the level, all in place */
+function refreshRow(n) {
+  const r = $("#level-" + n), open = r.hasAttribute("data-open"), t = Math.ceil(n / 10);
+  r.outerHTML = rowHTML(L[n - 1]);
+  if (open) openRow(n);
+  const c = $(`#tier-${t} .tier-count b`); if (c) c.textContent = L.filter(l => Math.ceil(l.n / 10) === t && done(l.n)).length;
+  filterLabels(); renderCopy(); $("#fan").innerHTML = fanHTML(false);
+}
 function syncFilters() { $$("#filters button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.f === FILTER))); }
-$("#filters").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; FILTER = b.dataset.f; syncFilters(); renderList(); });
+$("#filters").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setFilter(b.dataset.f); });
 
 /* ---------- hero copy for a result */
 function renderCopy() {
-  $("#copy-home").hidden = MODE !== "show"; $("#copy-result").hidden = MODE === "show";
+  $("#copy-home").hidden = MODE !== "show"; $("#copy-result").hidden = MODE === "show"; $("#live").hidden = MODE !== "mine";
   $("#go").hidden = !canWait(); $("#getyours").hidden = MODE !== "chat";
   $("#next").hidden = MODE !== "mine" && MODE !== "chat";
   $("#mine").hidden = !(canWait() && LAST);
@@ -215,9 +236,15 @@ function renderCopy() {
   $("#res-title").textContent = `Level ${lv}. ${t.era}.`;
   $("#res-line").textContent = MODE === "pub"
     ? `Their own agent found ${lv - sc} of the 100 on their machine${sc ? `, and they ticked ${sc} more` : ""}. ${t.line}`
-    : `Your agent found ${lv - sc} of the 100${sc ? `, and you ticked ${sc}` : ""}. ${unsure ? `It couldn't see ${unsure} from your machine; open them below and tick the ones you do.` : t.line}${from}`;
+    : `Your agent found ${lv - sc} of the 100${sc ? `, and you ticked ${sc}` : ""}. ${unsure ? `It couldn't see ${unsure} from your machine.` : t.line}${from}`;
   $$("#share, #share-note, #res-foot").forEach(el => el.hidden = MODE === "pub");
   $("#keep").hidden = MODE !== "mine";
+  /* before sharing, the ones it didn't find are worth a look: the agent can't see everything from a machine */
+  const todo = MODE === "mine" ? todoCount() : 0, looked = todo && store.get("levels-rv-" + SUBJ.s);
+  $("#review").hidden = !todo;
+  $("#review-b").textContent = looked ? `Back to the ${todo} to check` : `Check the ${todo} it didn't find`;
+  $("#review-b").classList.toggle("acc", !looked); $("#share-x").classList.toggle("acc", !todo || !!looked);
+  $("#live").textContent = `Level ${lv}`;
   renderPicks();
 }
 function renderPicks() {
@@ -231,6 +258,11 @@ $("#picks").addEventListener("click", async e => {
   const a = e.target.closest("[data-learn]"), g = e.target.closest("[data-goto]");
   if (a) { toast(await copy(promptFor(L[a.dataset.learn - 1])) ? "Prompt copied. Paste it into your agent." : "Couldn't copy here."); track("pick_copy", { n: +a.dataset.learn }); }
   if (g) openRow(+g.dataset.goto, true);
+});
+$("#review-b").addEventListener("click", () => {
+  store.set("levels-rv-" + SUBJ.s, 1); track("review_start", { todo: todoCount() });
+  setFilter("todo"); renderCopy();
+  $("#list").scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
 });
 /* a card link shows the card as it was when made; change the card and the next share makes a new one */
 const NOTE = $("#share-note").textContent;
@@ -505,6 +537,7 @@ function boot() {
   }
   else { const p = SHOW[0]; MODE = "show"; SUBJ = norm(p.result); SUBJ.name = p.name; WHO = { first: p.name.split(" ")[0], photo: p.photo }; }
   if (!canWait()) stopWaiting();
+  FILTER = "all"; SHOWN = null; syncFilters();
   renderAll();
   if (OG === "site") { document.body.classList.add("og-only"); $("#og").className = "og site"; $("#og").innerHTML = ogHTML("site"); return; }
   if (mine) { track("result_open", { lv: level() }); scrollTo(0, 0); chan?.postMessage({ hash: LAST.hash, lv: LAST.lv }); }
