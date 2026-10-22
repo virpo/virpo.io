@@ -22,6 +22,8 @@ const serif = Newsreader({
   style: ["normal", "italic"],
   axes: ["opsz"],
   display: "swap",
+  // only the post pages read in the serif; don't preload it on the landing
+  preload: false,
 });
 
 export const metadata: Metadata = {

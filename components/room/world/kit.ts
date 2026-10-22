@@ -44,7 +44,7 @@ export const C = {
   skin: "#f3c9a7",
   skinShade: "#e5ad8c",
   hair: "#3b2b22",
-  hairFade: "#a58a78",
+  hairFade: "#856b5b",
   water: "#7fb7cf",
   clay: "#b77a52",
 } as const;
