@@ -63,10 +63,11 @@ const quote = (f, vs) => !f ? "" : `<blockquote class="quote${vs ? " vs" : ""}">
   <cite>${f.x ? `<a href="https://x.com/${esc(f.x)}" rel="noopener" target="_blank">${esc(f.name)}</a>` : esc(f.name)}${f.paraphrase ? ", paraphrased" : ""} · <a href="${esc(f.url)}" rel="noopener" target="_blank">source</a></cite></blockquote>`;
 
 /* ---------- cards */
+const CAMERA = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 5.2c0-.6.5-1.1 1.1-1.1h1.6l1-1.4h3.6l1 1.4h1.6c.6 0 1.1.5 1.1 1.1v6.6c0 .6-.5 1.1-1.1 1.1H3.6c-.6 0-1.1-.5-1.1-1.1z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="8" cy="8.4" r="2.3" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>`;
 function card(o) {
   return `<div class="tcard ${o.cls || ""}" style="--tc:var(--t${o.tier.n})"><div class="tc-in">
     <div class="tc-top"><div class="tc-lvl">${o.top}${o.small ? `<small>${o.small}</small>` : ""}</div><div class="tc-era">Tier ${o.tier.n}<b>${esc(o.tier.era)}</b></div></div>
-    <div class="tc-art${o.photo ? " photo" : ""}${o.add === "add" ? " ph" : ""}">${o.img ? `<img src="${o.img}" alt="" style="object-position:${o.pos || "50% 50%"}">` : ""}${o.pi ? `<span class="tc-pi" title="Says please">π</span>` : ""}<div class="tc-name">${esc(o.name)}</div>${o.add ? `<button class="tc-add ${o.add}" type="button" data-photo>${o.add === "add" ? "<b>+</b> Add your photo" : "Change photo"}</button>` : ""}</div>
+    <div class="tc-art${o.photo ? " photo" : ""}${o.add ? " can-add" : ""}"${o.add ? " data-photo" : ""}>${o.img ? `<img src="${o.img}" alt="" style="object-position:${o.pos || "50% 50%"}">` : ""}${o.pi ? `<span class="tc-pi" title="Says please">π</span>` : ""}<div class="tc-name">${esc(o.name)}</div>${o.add ? `<button class="tc-add" type="button" data-photo>${CAMERA}<span>${o.add === "add" ? "Add your photo" : "Change photo"}</span></button>` : ""}</div>
     <div class="tc-body"><div class="tc-grid">${o.cells.map((c, i) => `<i data-n="${i + 1}" class="${c}"></i>`).join("")}</div>
     <div class="tc-lines">${o.lines.map(([k, v]) => `<div><span>${k}</span><b>${esc(v)}</b></div>`).join("")}</div></div>
     <div class="tc-foot"><span>${esc(o.foot)}</span><b>levels</b></div></div><i class="hcard sheen"></i><i class="hcard glare"></i></div>`;

@@ -171,15 +171,16 @@ h1{font:600 clamp(36px,5.4vw,60px)/1.02 var(--sans);letter-spacing:-.035em;margi
 .tc-art.photo::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:var(--tc);mix-blend-mode:screen;opacity:.22}
 .tc-art.photo::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.24;mix-blend-mode:multiply;background:radial-gradient(circle at 1px 1px,rgba(14,13,10,.35) .7px,transparent 1.2px) 0 0/4px 4px}
 .tc-art .tc-name,.tc-art .tc-pi{z-index:2}
-/* your own card without a photo: the tier's caveman, faded, asking for you */
-.tc-art.ph img{filter:grayscale(1) contrast(.85) brightness(1.08);opacity:.5}
-.tc-add{position:absolute;z-index:3;left:50%;top:44%;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
-  font:600 13px/1 var(--sans);color:var(--ink);background:rgba(244,240,231,.94);border:1.5px dashed rgba(14,13,10,.5);border-radius:999px;padding:9px 15px 9px 12px;cursor:pointer}
-.tc-add b{font-size:17px;font-weight:500;line-height:.6}
-.tc-add:hover{background:var(--paper);border-style:solid;border-color:var(--ink)}
-.tc-add.change{top:8px;left:auto;right:40px;transform:none;padding:6px 10px;font-size:11px;opacity:0;transition:opacity .2s}
-.tc-art:hover .tc-add.change,.tc-add.change:focus-visible{opacity:1}
-@media (hover:none){.tc-add.change{opacity:1}}
+/* your own card: the picture is yours to replace. A quiet camera chip in the corner; hovering the picture spells it out,
+   and the whole picture takes the click */
+.tc-art.can-add{cursor:pointer}
+.tc-add{position:absolute;z-index:3;left:8px;top:8px;display:inline-flex;align-items:center;gap:0;height:28px;padding:0 7px;border:0;border-radius:999px;
+  background:rgba(244,240,231,.62);color:var(--ink);font:600 12px/1 var(--sans);cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:background .2s,gap .25s}
+.tc-add svg{width:15px;height:15px;flex:none}
+.tc-add span{max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .25s}
+.tc-art.can-add:hover .tc-add,.tc-add:focus-visible{gap:6px;background:rgba(244,240,231,.95)}
+.tc-art.can-add:hover .tc-add span,.tc-add:focus-visible span{max-width:130px}
+@media (hover:none){.tc-add{gap:6px}.tc-add span{max-width:130px}}
 .tc-name{position:absolute;left:8px;bottom:8px;background:var(--ink);color:var(--paper);font:800 18px/1 var(--display);padding:5px 8px 4px;text-transform:uppercase;letter-spacing:.02em;max-width:calc(100% - 16px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tc-pi{position:absolute;right:8px;top:8px;background:var(--paper);color:var(--ink);font:600 12px var(--mono);border-radius:50%;width:24px;height:24px;display:grid;place-items:center}
 .tc-body{display:grid;grid-template-columns:112px minmax(0,1fr);gap:12px;align-items:start;padding:12px 12px 10px}
