@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono } from "next/font/google";
 import type { ReactNode } from "react";
+import { rssAlternates } from "../../components/sidecar/meta";
 import styles from "./sidecar.module.css";
 
 const plexMono = IBM_Plex_Mono({
@@ -13,9 +14,7 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: { default: "Sidecar · virpo", template: "%s · Sidecar · virpo" },
   robots: { index: false, follow: true },
-  alternates: {
-    types: { "application/rss+xml": [{ url: "/rss.xml", title: "virpo · Writing" }] },
-  },
+  alternates: { types: rssAlternates },
 };
 
 export default function SidecarLayout({ children }: { children: ReactNode }) {

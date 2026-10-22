@@ -125,7 +125,8 @@
   vertical-align: 1px;
 }
 
-.indexStrip {
+.indexStrip,
+.ruleRow {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -138,6 +139,30 @@
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+}
+
+.trail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 10px;
+}
+
+.trail a {
+  color: var(--ink-2);
+  text-decoration: none;
+}
+
+.trail a:hover {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+}
+
+.trail [aria-current="page"] {
+  color: var(--ink);
 }
 
 /* Landing */
@@ -562,10 +587,10 @@
   text-decoration-color: var(--accent);
 }
 
-@media (min-width: 1040px) {
+@media (min-width: 760px) {
   .landing {
     grid-template-columns: minmax(0, 540px) minmax(0, 1fr);
-    column-gap: clamp(48px, 6vw, 112px);
+    column-gap: clamp(32px, 6vw, 112px);
     padding-top: 40px;
   }
 
@@ -630,6 +655,10 @@
   }
 
   .indexStrip {
+    display: none;
+  }
+
+  .ruleRow > span:last-child {
     display: none;
   }
 
@@ -740,28 +769,6 @@
 .postMainColumn {
   min-width: 0;
   max-width: 46rem;
-}
-
-.crumbs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 18px 0 0;
-  color: var(--muted);
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.crumbs a {
-  text-decoration: none;
-}
-
-.crumbs a:hover {
-  color: var(--ink);
-  text-decoration: underline;
-  text-decoration-color: var(--accent);
-  text-underline-offset: 4px;
 }
 
 .articleHeader,
@@ -919,34 +926,68 @@
   font-size: 12px;
 }
 
-.articleEnd {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 8px 14px;
-  align-items: baseline;
+.endOfPost {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   max-width: 36rem;
-  margin-top: 40px;
-  padding-top: 18px;
-  border-top: 1px solid var(--rule);
+  margin: 56px 0 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
-.articleEnd p {
+.endDots {
+  flex: 1;
+  height: 7px;
+  background: radial-gradient(circle, var(--accent) 0 2px, transparent 2.5px) 0 50% / 14px 7px repeat-x;
+  opacity: 0.85;
+}
+
+.author {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  align-items: start;
+  gap: 20px;
+  max-width: 36rem;
+  margin-top: 28px;
+  padding: 20px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--paper-3);
+}
+
+.authorFace {
+  display: block;
+  width: 80px;
+  height: 80px;
+  border-radius: 4px;
+  background: #d4d7c8;
+  box-shadow: 0 0 0 4px #1d1e1b, 0 0 0 5px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  image-rendering: pixelated;
+  margin: 4px 0 0 4px;
+}
+
+.authorText p {
   margin: 0;
+  color: var(--ink-2);
+  font-family: var(--serif);
+  font-size: 1.02rem;
+  line-height: 1.55;
 }
 
-.endMark {
-  width: 10px;
-  height: 10px;
-  background: var(--accent);
+.authorText .endLinks {
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 13px;
 }
 
 .endLinks {
   display: flex;
   flex-wrap: wrap;
-  grid-column: 2;
-  gap: 6px 20px;
+  gap: 0 20px;
 }
 
 .endLinks a {
@@ -1074,13 +1115,46 @@
   letter-spacing: 0.04em;
 }
 
+.factsRail {
+  display: none;
+}
+
+.facts {
+  display: grid;
+  gap: 18px;
+  margin: 0;
+}
+
+.facts dt {
+  color: var(--muted);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.facts dd {
+  margin: 5px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.facts a {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+}
+
+.facts .tags {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
 @media (min-width: 901px) {
   .postLayout {
-    grid-template-columns: minmax(0, 46rem) minmax(32px, 1fr) clamp(230px, 21vw, 290px);
-  }
-
-  .rail {
-    grid-column: 3;
+    grid-template-columns: minmax(0, 42rem) clamp(240px, 25vw, 290px);
+    column-gap: clamp(40px, 5vw, 80px);
   }
 
   .railSticky {
@@ -1090,9 +1164,45 @@
   }
 }
 
+/* Wide screens: a field-guide rail of facts on the left, text, device on the right. */
+@media (min-width: 1200px) {
+  .postLayout {
+    grid-template-columns: 172px minmax(0, 40rem) 280px;
+    column-gap: clamp(44px, 4.6vw, 80px);
+    justify-content: center;
+  }
+
+  .factsRail {
+    display: block;
+  }
+
+  .factsRail .facts {
+    position: sticky;
+    top: 28px;
+    padding-top: 30px;
+  }
+
+  .articleHeader .articleMeta {
+    display: none;
+  }
+
+  .articleHeader .standfirst {
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--ink);
+  }
+}
+
+/* Phones and tablets: the device folds into a strip above the article, in the flow. */
 @media (max-width: 900px) {
-  .page:has([data-variant="dock"]) {
-    padding-bottom: 88px;
+  .rail {
+    order: -1;
+    padding-top: 14px;
+  }
+
+  /* On the archive the list comes first; the device follows it. */
+  .rail.railAfter {
+    order: 0;
+    padding-top: 40px;
   }
 
   .railNote {
@@ -1126,6 +1236,18 @@
     min-height: 0;
   }
 
+  .pagerEmpty {
+    display: none;
+  }
+
+  .pagerLink + .pagerLink {
+    border-top: 1px solid var(--rule);
+  }
+
+  .pagerEmpty + .pagerLink {
+    border-top: 0;
+  }
+
   .prose :global(.articleImagePair) {
     gap: 8px;
   }
@@ -1134,5 +1256,228 @@
 @media (prefers-reduced-motion: reduce) {
   .root * {
     transition-duration: 0ms !important;
+  }
+}
+
+@media (min-width: 1200px) {
+  .factsRail,
+  .postMainColumn,
+  .rail {
+    grid-row: 1;
+  }
+
+  .factsRail {
+    grid-column: 1;
+  }
+
+  .postMainColumn {
+    grid-column: 2;
+  }
+
+  .rail {
+    grid-column: 3;
+  }
+}
+
+/* Tablets: device and list side by side, with dates tucked under titles. */
+@media (min-width: 760px) and (max-width: 1039px) {
+  .landing {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr);
+  }
+
+  .writing .postRow {
+    grid-template-columns: 34px minmax(0, 1fr) 18px;
+  }
+
+  .writing .postDate {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .writing .postArrow {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .sectionHead h2 {
+    font-size: 2.2rem;
+  }
+
+  .instrument {
+    grid-template-columns: 26px 64px minmax(0, 1fr);
+  }
+
+  .instrumentKey {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .rail {
+    width: 100%;
+    max-width: 560px;
+  }
+}
+
+/* The hero device's column on the landing page. */
+.deviceColumn [data-sidecar-device] {
+  margin: 0 auto;
+}
+
+/*
+ * Phones. Every link and control gets a 44 px target, and the landing page
+ * keeps all three newest posts on the first screen (390 x 664 and up).
+ */
+@media (max-width: 640px) {
+  .header {
+    padding: 10px 0 4px;
+  }
+
+  .wordmark {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+  }
+
+  .nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0;
+  }
+
+  .deviceColumn {
+    width: min(100%, 300px);
+  }
+
+  .deviceSticky {
+    padding: 2px 0 0;
+  }
+
+  .writing {
+    padding-top: 18px;
+  }
+
+  .writing .sectionHead {
+    grid-template-columns: auto auto 1fr;
+    align-items: center;
+    padding-bottom: 8px;
+  }
+
+  .writing .sectionHead h2 {
+    font-size: 1.75rem;
+  }
+
+  .writing .sectionNumber {
+    padding-top: 0;
+  }
+
+  .writing .badge {
+    justify-self: start;
+  }
+
+  .writing .postRow {
+    grid-template-columns: 76px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-items: start;
+    gap: 2px 12px;
+    padding: 11px 0 12px;
+  }
+
+  .writing .postNumber {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .writing .postDate {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: 11px;
+  }
+
+  .writing .postMain {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .writing .postTitle {
+    font-size: 0.97rem;
+    line-height: 1.3;
+  }
+
+  .allLink {
+    align-items: center;
+    min-height: 44px;
+    margin-top: 6px;
+    padding-bottom: 0;
+    border-bottom: 0;
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 6px;
+  }
+
+  .aboutLinks {
+    gap: 0 22px;
+    margin-top: 12px;
+  }
+
+  .aboutLinks a,
+  .footerLinks a,
+  .endLinks a,
+  .backHome a,
+  .trail a,
+  .skip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .trail a {
+    margin: -14px 0;
+  }
+
+  .nav a {
+    min-width: 44px;
+    justify-content: center;
+  }
+
+  .wordmark {
+    min-height: 44px;
+  }
+
+  .ruleRow {
+    display: flex;
+    padding: 9px 0;
+  }
+
+  .footerLinks {
+    gap: 0 20px;
+  }
+
+  .backHome {
+    gap: 0 12px;
+  }
+
+  .author {
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .authorFace {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+/* Short phones: shrink the hero a little more so three posts still fit. */
+@media (max-width: 640px) and (max-height: 700px) {
+  .deviceColumn {
+    width: min(100%, 284px);
   }
 }

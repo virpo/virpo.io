@@ -1,4 +1,5 @@
-import { hash, LCD_H, LCD_W, type Framebuffer, type Tone } from "../framebuffer";
+import { ACCENT, hash, LCD_H, LCD_W, type Framebuffer, type Tone } from "../framebuffer";
+import { ARRIVED_AT, nextStation, STATIONS } from "../route";
 import { fillLeds, type Scene, type SceneContext } from "../types";
 
 // WINDOW: a seat on the Tokaido shinkansen. Everything outside is procedural
@@ -6,14 +7,6 @@ import { fillLeds, type Scene, type SceneContext } from "../types";
 
 const WIN = { x0: 23, y0: 7, x1: 153, y1: 83, r: 9 };
 const HORIZON = 58;
-const STATIONS = [
-  { at: 0, name: "TOKYO" },
-  { at: 0.12, name: "SHINAGAWA" },
-  { at: 0.26, name: "SHIN-YOKOHAMA" },
-  { at: 0.52, name: "NAGOYA" },
-  { at: 0.8, name: "KYOTO" },
-  { at: 1, name: "SHIN-OSAKA" },
-];
 const LOOP_SECONDS = 180;
 const CRUISE = 285;
 
@@ -38,9 +31,6 @@ function journey(context: SceneContext) {
   return context.progress ?? wrap(context.t, LOOP_SECONDS) / LOOP_SECONDS;
 }
 
-function nextStation(progress: number) {
-  return STATIONS.find((station) => station.at > progress + 0.001) ?? STATIONS[STATIONS.length - 1];
-}
 
 export function createWindowScene(): Scene {
   let distance = 1830;
@@ -48,9 +38,10 @@ export function createWindowScene(): Scene {
   let target: number | null = null;
   let nightOverride: boolean | null = null;
   let arrivedAnnounced = false;
+  let boardRise = 0;
 
   const isNight = (context: SceneContext) => nightOverride ?? context.night;
-  const arrived = (context: SceneContext) => context.progress !== null && context.progress >= 0.995;
+  const arrived = (context: SceneContext) => context.progress !== null && context.progress >= ARRIVED_AT;
 
   function drawSky(fb: Framebuffer, night: boolean, t: number) {
     for (let y = 0; y < HORIZON; y += 1) {
@@ -251,6 +242,27 @@ export function createWindowScene(): Scene {
     }
   }
 
+  /** At the end of a post the train stops at a platform name board. */
+  function drawStationBoard(fb: Framebuffer, night: boolean, rise: number) {
+    const w = 78;
+    const h = 27;
+    const x = Math.round((WIN.x0 + WIN.x1) / 2 - w / 2 - 6);
+    const y = Math.round(30 + (1 - rise) * 50);
+    // Two posts down to the platform.
+    for (const px of [x + 9, x + w - 10]) {
+      for (let yy = y + h; yy < WIN.y1; yy += 1) {
+        fb.px(px, yy, 3);
+        fb.px(px + 1, yy, 2);
+      }
+    }
+    fb.rect(x - 1, y - 1, w + 2, h + 2, 3);
+    fb.rect(x, y, w, h, night ? 1 : 0);
+    fb.rect(x, y, w, 3, ACCENT);
+    fb.text("SHIN-OSAKA", x + w / 2, y + 6, 3, { font: "m", align: "center" });
+    fb.hline(x + 5, x + w - 6, y + 16, 2);
+    fb.text("THANKS FOR READING", x + w / 2, y + 19, 2, { align: "center" });
+  }
+
   function drawInterior(fb: Framebuffer, night: boolean, t: number, reduced: boolean) {
     for (let y = 0; y < LCD_H; y += 1) {
       for (let x = 0; x < LCD_W; x += 1) {
@@ -317,10 +329,8 @@ export function createWindowScene(): Scene {
     const right = WIN.x1 - 5;
     const progress = journey(context);
     if (context.progress !== null) {
-      if (arrived(context)) {
-        fb.label("ARRIVED", right, 13, ink, halo, { align: "right" });
-        fb.label("SHIN-OSAKA", right, 19, ink, halo, { align: "right" });
-      } else {
+      // On arrival the platform's name board takes over from the HUD.
+      if (!arrived(context)) {
         fb.label(`NEXT ${nextStation(progress).name}`, right, 13, ink, halo, { align: "right" });
         fb.label(`${Math.round(speed)} KM/H`, right, 19, ink, halo, { align: "right" });
       }
@@ -370,6 +380,13 @@ export function createWindowScene(): Scene {
         if (tunnel < 3.2) drawTunnel(fb, near);
       }
 
+      if (arrived(context)) {
+        boardRise = context.reduced ? 1 : Math.min(1, boardRise + context.dt * 1.6);
+        drawStationBoard(fb, night, 1 - Math.pow(1 - boardRise, 3));
+      } else {
+        boardRise = 0;
+      }
+
       drawInterior(fb, night, t, context.reduced);
       drawHud(fb, context, night);
 
@@ -396,7 +413,7 @@ export function createWindowScene(): Scene {
       return fillLeds(journey(context));
     },
     describe(context) {
-      const where = context.progress !== null && arrived(context) ? "arrived at Shin-Osaka" : `heading for ${nextStation(journey(context)).name.toLowerCase()}`;
+      const where = context.progress !== null && arrived(context) ? "arrived at Shin-Osaka" : `heading for ${nextStation(journey(context)).title}`;
       return `Window seat on the shinkansen, ${where}, Mount Fuji outside.`;
     },
     softkeys(context) {

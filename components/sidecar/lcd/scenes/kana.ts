@@ -176,7 +176,7 @@ export function createKanaScene(): Scene {
       return `Kana flashcards. ${describeCard()}`;
     },
     softkeys() {
-      return revealed ? ["Again", "Hide", "Got it"] : ["Reveal", "Reveal", "Reveal"];
+      return revealed ? ["Again", "Hide", "Got it"] : ["Show", "Show", "Show"];
     },
   };
 }

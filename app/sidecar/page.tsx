@@ -5,12 +5,13 @@ import { Device } from "../../components/sidecar/Device";
 import { Instruments } from "../../components/sidecar/Instruments";
 import { getLatestPostDate, getPostSummaries } from "../../lib/blog";
 import { labAbout, labProjects } from "../../lib/lab/catalog";
+import { rssAlternates } from "../../components/sidecar/meta";
 import styles from "./sidecar.module.css";
 
 export const metadata: Metadata = {
   title: { absolute: "virpo · Peter Hraska · Sidecar" },
   description: "Peter Hraska writes about building with AI, making physical things, and Japan.",
-  alternates: { canonical: "/" },
+  alternates: { canonical: "/", types: rssAlternates },
 };
 
 export default function SidecarHome() {
@@ -50,7 +51,7 @@ export default function SidecarHome() {
           <ol className={styles.postList}>
             {latest.map((post, index) => (
               <li key={post.slug}>
-                <Link className={styles.postRow} href={`/sidecar/blog/${post.slug}/`}>
+                <Link className={styles.postRow} href={`/sidecar/blog/${post.slug}/`} data-lcd-ticker={`Note ${noteNumber(index, posts.length)}: ${post.title}`}>
                   <span className={styles.postNumber}>{noteNumber(index, posts.length)}</span>
                   <span className={styles.postMain}>
                     <span className={styles.postTitle}>{post.title}</span>
@@ -82,7 +83,7 @@ export default function SidecarHome() {
           <ul className={styles.projectList}>
             {labProjects.map((project) => (
               <li key={project.slug}>
-                <a className={styles.projectRow} href={project.href}>
+                <a className={styles.projectRow} href={project.href} data-lcd-ticker={`${project.title} → ${new URL(project.href).host.replace(/^www\./, "")}`}>
                   <span className={styles.projectTitle}>{project.title}</span>
                   <span className={styles.projectType}>{project.type}</span>
                   <span className={styles.projectBlurb}>{project.blurb}</span>

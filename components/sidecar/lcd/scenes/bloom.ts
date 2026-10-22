@@ -1,7 +1,7 @@
 import { bloomEntries } from "../../../../lib/japan/bloom-data";
 import { getBloomTimeline, getTokyoParts, type BloomTimelineItem } from "../../../../lib/japan/bloom";
 import { lcdSafe, measure } from "../font";
-import { hash, type Framebuffer, type Tone } from "../framebuffer";
+import { ACCENT, hash, type Framebuffer, type Tone } from "../framebuffer";
 import { fillLeds, type Scene, type SceneContext } from "../types";
 
 // BLOOM: the next flower season in Japan, with the main site's pixel flowers
@@ -40,6 +40,20 @@ function loadSprite(src: string, onReady: () => void) {
   };
   image.onerror = () => sprites.delete(src);
   image.src = src;
+}
+
+const DAY_MS = 86_400_000;
+const TOKYO_OFFSET_MS = 9 * 3_600_000;
+const pad = (value: number) => String(value).padStart(2, "0");
+
+/** Live countdown to Tokyo midnight `days` days from now, as "T-12D 04:31:07". */
+export function tMinus(now: Date, days: number) {
+  const { year, month, day } = getTokyoParts(now);
+  const target = Date.UTC(year, month - 1, day) - TOKYO_OFFSET_MS + days * DAY_MS;
+  const left = Math.max(0, target - now.getTime());
+  const whole = Math.floor(left / DAY_MS);
+  const rest = Math.floor((left % DAY_MS) / 1000);
+  return `T-${whole}D ${pad(Math.floor(rest / 3600))}:${pad(Math.floor((rest % 3600) / 60))}:${pad(rest % 60)}`;
 }
 
 export function createBloomScene(): Scene {
@@ -127,7 +141,7 @@ export function createBloomScene(): Scene {
       const name = lcdSafe(item.bloom.name);
       fb.text(name, x, 22, 3, { font: measure(name, "m") > 88 ? "s" : "m" });
       const days = String(item.days);
-      const digitsWidth = fb.text(days, x, 34, 3, { font: "m", scale: 3 });
+      const digitsWidth = fb.text(days, x, 34, ACCENT, { font: "m", scale: 3 });
       fb.text(item.days === 1 ? "DAY" : "DAYS", x + digitsWidth + 3, 46, 3);
       fb.text(active ? "LEFT" : "TO GO", x + digitsWidth + 3, 53, 2);
       const place = lcdSafe(item.bloom.place);
@@ -136,7 +150,9 @@ export function createBloomScene(): Scene {
 
       // Pager.
       for (let i = 0; i < timeline.length; i += 1) fb.rect(x + i * 6, 82, 4, 2, i === index ? 3 : 1);
-      fb.text("◀ ▶ SEASON", 157, 93, 2, { align: "right" });
+      // A live T-minus to the first (or last) day, ticking in Tokyo time.
+      fb.text(active ? "ENDS" : "OPENS", x, 91, 2);
+      fb.text(tMinus(context.now, active ? item.days + 1 : item.days), 157, 91, ACCENT, { align: "right" });
     },
     live() {
       return petals.length > 0;

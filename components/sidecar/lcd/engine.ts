@@ -1,5 +1,6 @@
 import { getTokyoParts } from "../../../lib/japan/bloom";
-import { Framebuffer } from "./framebuffer";
+import { lcdSafe, measure } from "./font";
+import { ACCENT, Framebuffer, LCD_H, LCD_W } from "./framebuffer";
 import { createBloomScene } from "./scenes/bloom";
 import { createFaceScene } from "./scenes/face";
 import { createKanaScene } from "./scenes/kana";
@@ -30,6 +31,8 @@ export type Engine = {
   setProgress(progress: number | null): void;
   setReducedMotion(reduced: boolean): void;
   setGaze(x: number, y: number): void;
+  /** Scroll a line of text (a post title, say) along the bottom of the LCD; null clears it. */
+  setTicker(text: string | null): void;
   destroy(): void;
 };
 
@@ -56,6 +59,7 @@ export function createEngine(options: EngineOptions): Engine {
   let accumulator = 0;
   let lastDraw = performance.now();
   let lastLeds = "";
+  let ticker: { text: string; width: number; since: number } | null = null;
   const started = performance.now();
 
   const context: SceneContext = {
@@ -90,6 +94,29 @@ export function createEngine(options: EngineOptions): Engine {
     return !reduced || Boolean(scene.live?.(context));
   }
 
+  /** A ticker strip along the bottom edge, drawn over whatever scene is showing. */
+  function drawTicker(now: number) {
+    if (!ticker) return;
+    const top = LCD_H - 10;
+    fb.rect(0, top, LCD_W, 10, 3);
+    fb.hline(0, LCD_W - 1, top - 1, 0);
+    const lane = LCD_W - 14;
+    const elapsed = (now - ticker.since) / 1000;
+    let x = 13;
+    if (ticker.width > lane && !reduced) {
+      // Hold for a beat so the start is readable, then loop.
+      const cycle = ticker.width + 40;
+      x = 13 - (Math.max(0, elapsed * 34 - 30) % cycle);
+      fb.text(ticker.text, Math.round(x + cycle), top + 3, 0);
+    }
+    const still = ticker.width > lane && reduced ? `${ticker.text.slice(0, Math.floor(lane / 4) - 3)}...` : ticker.text;
+    fb.text(still, Math.round(x), top + 3, 0);
+    // Keep the bullet clean where the text scrolls under it.
+    fb.rect(0, top, 11, 10, 3);
+    fb.rect(2, top + 2, 7, 7, ACCENT);
+    fb.text("▶", 4, top + 3, 3);
+  }
+
   function draw(now: number) {
     const scene = scenes[mode];
     context.t = (now - started) / 1000;
@@ -100,6 +127,7 @@ export function createEngine(options: EngineOptions): Engine {
     context.night = isNight(context.now);
     lastDraw = now;
     scene.draw(fb, context);
+    drawTicker(now);
     if (context2d) fb.blit(context2d);
     const levels = scene.leds(context);
     const key = levels.map((value) => value.toFixed(2)).join();
@@ -115,12 +143,13 @@ export function createEngine(options: EngineOptions): Engine {
     const elapsed = Math.min(0.25, (now - last) / 1000);
     last = now;
     accumulator += elapsed;
-    if (dirty || (animating() && accumulator >= FRAME)) {
+    const moving = animating() || (ticker !== null && !reduced);
+    if (dirty || (moving && accumulator >= FRAME)) {
       accumulator = accumulator % FRAME;
       dirty = false;
       draw(now);
     }
-    if (animating()) schedule();
+    if (moving) schedule();
   }
 
   function schedule() {
@@ -192,6 +221,13 @@ export function createEngine(options: EngineOptions): Engine {
         dirty = true;
         schedule();
       }
+    },
+    setTicker(text) {
+      const value = text ? lcdSafe(text).replace(/\s+/g, " ").trim() : "";
+      if ((ticker?.text ?? "") === value) return;
+      ticker = value ? { text: value, width: measure(value), since: performance.now() } : null;
+      dirty = true;
+      schedule();
     },
     destroy() {
       if (raf) cancelAnimationFrame(raf);

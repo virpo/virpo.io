@@ -9,6 +9,7 @@ const engine = {
   setProgress: vi.fn(),
   setReducedMotion: vi.fn(),
   setGaze: vi.fn(),
+  setTicker: vi.fn(),
   destroy: vi.fn(),
 };
 
@@ -18,7 +19,9 @@ vi.mock("../../components/sidecar/lcd/engine", () => ({
 
 import { Device } from "../../components/sidecar/Device";
 import { Instruments } from "../../components/sidecar/Instruments";
-import { Framebuffer } from "../../components/sidecar/lcd/framebuffer";
+import { ACCENT, Framebuffer } from "../../components/sidecar/lcd/framebuffer";
+import { nextStation, tripCaption } from "../../components/sidecar/lcd/route";
+import { tMinus } from "../../components/sidecar/lcd/scenes/bloom";
 import { lcdSafe, measure } from "../../components/sidecar/lcd/font";
 import { fillLeds } from "../../components/sidecar/lcd/types";
 
@@ -76,6 +79,48 @@ describe("Sidecar device", () => {
     expect(screen.getByRole("button", { name: /^02\s*KANA/ })).toHaveAttribute("aria-pressed", "true");
   });
 
+  it("scrolls a hovered post title across the LCD", async () => {
+    render(
+      <>
+        <Device />
+        <a href="/sidecar/blog/x/" data-lcd-ticker="Note 003: Detective skills">
+          Detective skills
+        </a>
+      </>,
+    );
+    await flush();
+    const link = screen.getByRole("link", { name: "Detective skills" });
+    fireEvent.pointerOver(link);
+    expect(engine.setTicker).toHaveBeenLastCalledWith("Note 003: Detective skills");
+    fireEvent.pointerOut(link, { relatedTarget: document.body });
+    expect(engine.setTicker).toHaveBeenLastCalledWith(null);
+    fireEvent.focusIn(link);
+    expect(engine.setTicker).toHaveBeenLastCalledWith("Note 003: Detective skills");
+  });
+
+  it("says what the LCD shows under the hero, and the trip under the dock", async () => {
+    const { unmount } = render(<Device />);
+    await flush();
+    expect(screen.getByText(/shinkansen, Tokyo to Osaka/)).toBeInTheDocument();
+    unmount();
+    render(
+      <div data-article style={{ height: 2000 }}>
+        <Device variant="dock" progressTarget="[data-article]" />
+      </div>,
+    );
+    await flush();
+    expect(screen.getByText(/% read · /)).toBeInTheDocument();
+  });
+
+  it("gives the soft keys short labels that fit on a phone", async () => {
+    render(<Device />);
+    await flush();
+    for (const name of ["Slower", "Night", "Faster"]) {
+      expect(name.length).toBeLessThanOrEqual(7);
+      expect(screen.getByRole("button", { name })).toBeInTheDocument();
+    }
+  });
+
   it("toggles the key click switch", async () => {
     render(<Device />);
     await flush();
@@ -97,6 +142,28 @@ describe("LCD primitives", () => {
 
   it("strips diacritics for the LCD font", () => {
     expect(lcdSafe("Žltá stopa")).toBe("ZLTA STOPA");
+  });
+
+  it("keeps the orange accent when inverting", () => {
+    const fb = new Framebuffer();
+    fb.clear(0);
+    fb.px(1, 1, ACCENT);
+    fb.invert();
+    expect(fb.get(0, 0)).toBe(3);
+    expect(fb.get(1, 1)).toBe(ACCENT);
+  });
+
+  it("turns reading progress into a trip caption", () => {
+    expect(tripCaption(0)).toBe("0% read · next stop Shinagawa");
+    expect(tripCaption(0.4)).toBe("40% read · next stop Nagoya");
+    expect(tripCaption(1)).toBe("100% read · arrived at Shin-Osaka");
+    expect(nextStation(0.9).name).toBe("SHIN-OSAKA");
+  });
+
+  it("counts down to Tokyo midnight for the bloom clock", () => {
+    // 23:40 in Tokyo, three days to go: 2 days, 20 minutes.
+    expect(tMinus(new Date("2026-10-22T14:40:00Z"), 3)).toBe("T-2D 00:20:00");
+    expect(tMinus(new Date("2026-10-22T14:40:00Z"), 0)).toBe("T-0D 00:00:00");
   });
 
   it("fills LED levels proportionally", () => {

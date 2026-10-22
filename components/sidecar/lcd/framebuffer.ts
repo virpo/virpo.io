@@ -3,12 +3,16 @@ import { glyphFor, measure, type FontName } from "./font";
 export const LCD_W = 160;
 export const LCD_H = 100;
 
-/** Four tones of a reflective monochrome LCD: 0 = lit glass, 3 = darkest segment. */
-export const PALETTE = ["#d4d7c8", "#a2a798", "#5b6156", "#1d211b"] as const;
+/**
+ * Four tones of a reflective monochrome LCD (0 = lit glass, 3 = darkest
+ * segment), plus one orange accent segment (4) used sparingly for emphasis.
+ */
+export const PALETTE = ["#d4d7c8", "#a2a798", "#5b6156", "#1d211b", "#e4521b"] as const;
 
-export type Tone = 0 | 1 | 2 | 3;
+export type Tone = 0 | 1 | 2 | 3 | 4;
+export const ACCENT: Tone = 4;
 
-const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+export const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
 
 function rgba(hex: string) {
   const value = Number.parseInt(hex.slice(1), 16);
@@ -153,8 +157,9 @@ export class Framebuffer {
   invert(x = 0, y = 0, w = LCD_W, h = LCD_H) {
     for (let yy = y; yy < y + h; yy += 1) {
       for (let xx = x; xx < x + w; xx += 1) {
+        if (xx < 0 || yy < 0 || xx >= LCD_W || yy >= LCD_H) continue;
         const i = yy * LCD_W + xx;
-        this.pixels[i] = (3 - this.pixels[i]) as Tone;
+        if (this.pixels[i] !== ACCENT) this.pixels[i] = (3 - this.pixels[i]) as Tone;
       }
     }
   }

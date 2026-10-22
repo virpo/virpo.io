@@ -1,6 +1,6 @@
 import { JAPAN_SOUNDS } from "../../../toys/SoundsToy";
 import { lcdSafe, measure } from "../font";
-import type { Framebuffer } from "../framebuffer";
+import { ACCENT, type Framebuffer } from "../framebuffer";
 import { fillLeds, type Scene, type SceneContext } from "../types";
 
 // SOUND: the ten Japan sounds from the main site, with a live oscilloscope.
@@ -215,7 +215,8 @@ export function createSoundScene(): Scene {
       fb.frame(4, 85, 108, 5, 3);
       fb.rect(5, 86, Math.round((elapsed / length) * 106), 3, 3);
       fb.text(`${time(elapsed)}/${time(length)}`, 157, 85, 3, { align: "right" });
-      fb.text(error || (playing ? "▶ PLAYING" : wanted ? "● LOADING" : "‖ PAUSED"), 4, 93, error ? 3 : 2);
+      if (playing) fb.rect(4, 94, 3, 3, ACCENT);
+      fb.text(error || (playing ? "PLAYING" : wanted ? "● LOADING" : "‖ PAUSED"), playing ? 9 : 4, 93, error ? 3 : 2);
       fb.text("◀ ▶ TRACK", 157, 93, 2, { align: "right" });
     },
     action(context) {
@@ -240,7 +241,7 @@ export function createSoundScene(): Scene {
       return `Japan sounds, ${index + 1} of ${JAPAN_SOUNDS.length}: ${segment().title}${playing ? ", playing" : ", paused"}.`;
     },
     softkeys() {
-      return ["Prev sound", wanted ? "Pause" : "Play", "Next sound"];
+      return ["Prev", wanted ? "Pause" : "Play", "Next"];
     },
   };
 }

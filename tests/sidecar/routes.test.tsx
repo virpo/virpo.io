@@ -21,6 +21,7 @@ describe("sidecar landing", () => {
   it("server-renders the three newest posts and the archive link", () => {
     for (const post of posts.slice(0, 3)) {
       expect(html).toMatch(link(`/sidecar/blog/${post.slug}/`));
+      expect(html).toContain(`data-lcd-ticker="Note`);
     }
     expect(html).toMatch(link("/sidecar/writing/"));
     expect(html).toContain("All writing");
@@ -39,11 +40,17 @@ describe("sidecar landing", () => {
     }
     expect(html).toMatch(/aria-pressed="true"[^>]*aria-keyshortcuts="3"/);
     expect(html).toContain("/lab/sidecar/lcd-window.png");
-    expect(existsSync(resolve(process.cwd(), "public/lab/sidecar/lcd-window.png"))).toBe(true);
+    expect(html).toContain("/lab/sidecar/lcd-window-night.png");
+    for (const poster of ["lcd-window.png", "lcd-window-night.png"]) {
+      expect(existsSync(resolve(process.cwd(), "public/lab/sidecar", poster))).toBe(true);
+    }
   });
 
-  it("points search engines at the real homepage", () => {
+  it("points search engines at the real homepage and keeps RSS discoverable", () => {
     expect(homeMetadata.alternates?.canonical).toBe("/");
+    for (const alternates of [homeMetadata.alternates, writingMetadata.alternates, layoutMetadata.alternates]) {
+      expect(alternates?.types).toMatchObject({ "application/rss+xml": [{ url: "/rss.xml" }] });
+    }
     expect(layoutMetadata.robots).toMatchObject({ index: false });
     expect(writingMetadata.alternates?.canonical).toBe("/blog/");
   });
@@ -66,10 +73,20 @@ describe("sidecar posts", () => {
     expect(html).toMatch(link("/sidecar/"));
   });
 
-  it("is noindex with a canonical pointing at the real post", async () => {
+  it("is noindex with a canonical pointing at the real post, and keeps RSS", async () => {
     const metadata = await generateMetadata({ params: Promise.resolve({ slug: posts[0].slug }) });
     expect(metadata.robots).toMatchObject({ index: false });
     expect(metadata.alternates?.canonical).toBe(`/blog/${posts[0].slug}/`);
+    expect(metadata.alternates?.types).toMatchObject({ "application/rss+xml": [{ url: "/rss.xml" }] });
+  });
+
+  it("ends with a divider, an author card and the facts rail", async () => {
+    const html = renderToStaticMarkup(await SidecarPost({ params: Promise.resolve({ slug: posts[0].slug }) }));
+    expect(html).toContain("End of note 003");
+    expect(html).toContain("/lab/sidecar/peter-lcd.png");
+    expect(html).toContain("Write back");
+    expect(html).toMatch(/aria-label="About this note"/);
+    expect(html).toMatch(/aria-label="Breadcrumb"/);
   });
 
   it("links previous and next notes", async () => {
@@ -91,8 +108,8 @@ describe("sidecar writing index", () => {
 });
 
 describe("sidecar assets", () => {
-  it("keeps the dithered face sprite small", () => {
-    const sprite = resolve(process.cwd(), "public/lab/sidecar/face-sprite.png");
-    expect(statSync(sprite).size).toBeLessThan(120_000);
+  it("keeps the face sheet and the avatar small", () => {
+    expect(statSync(resolve(process.cwd(), "public/lab/sidecar/face-sheet.webp")).size).toBeLessThan(180_000);
+    expect(statSync(resolve(process.cwd(), "public/lab/sidecar/peter-lcd.png")).size).toBeLessThan(8_000);
   });
 });
