@@ -1,5 +1,5 @@
 /* levels: the 100, always shown with a result. On arrival that's a real person's (the showcase); after the check it's
-   yours, read from the link (#base64url JSON from check.md); on /u/ it is someone's published card. */
+   yours, read from the link (#base64url JSON from check.md); opened from a card's link (?u=id) it is that card. */
 (() => {
 const D = JSON.parse(document.getElementById("data").textContent);
 const L = D.levels, T = D.tiers, ICON = D.icons || {}, ART = D.art || {}, SHOW = D.showcase || [];
@@ -9,10 +9,12 @@ const tierOf = n => T[Math.min(9, Math.max(0, Math.ceil(n / 10) - 1))];
 const store = { get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
                 set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
 const track = (e, p) => { try { window.posthog?.capture("levels_" + e, p); } catch {} };
-const SITE = D.site, PROMPT = `Read ${D.site}/check.md and do what it says.`;
+const SITE = D.site, PROMPT = D.prompt;
 const fmtDate = d => new Date(d + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const OG = new URLSearchParams(location.search).get("og");
+const TOUCH = matchMedia("(hover: none) and (pointer: coarse)").matches;   /* a phone or tablet: the check runs on a computer */
+const day = at => new Date(at).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
 
 /* ---------- results */
 function norm(p) {
@@ -35,15 +37,18 @@ function decode(h) {
 /* MODE: show (a showcase person, on arrival) · mine (your result, from the link) · pub (a published card)
    · chat (the prompt landed in a chat app that can't look at the computer, which sends people to #chat) */
 let MODE = "show", SUBJ = null, WHO = null, OV = {}, SHARE_URL = null, LAST = store.get("levels-last");
+/* CARD: the published card this page was opened for · FROM: the last card someone else sent you, kept in this browser so
+   it can sit next to your own result · EX: Grug, the example caveman, on day 1 and day 400 */
+let CARD = null, FROM = norm(store.get("levels-from"));
+const EX = (D.examples || []).map(x => ({ name: x.name, r: norm(x.result) }));
 const okey = () => "levels-ov-" + SUBJ.s;
-const st = n => {   /* y: their agent found it · self: ticked by hand · q: unsure · n */
-  if (!SUBJ) return null;
-  const o = MODE === "mine" ? OV[n] : null, a = SUBJ.s[n - 1];
-  if (o === "self") return "self";
-  if (o === "no") return "n";
-  return a === "y" ? "y" : a === "s" ? "self" : a === "?" ? "q" : "n";
-};
+/* y: their agent found it · self: ticked by hand · q: unsure · n */
+const stateOf = (r, ov) => n => { const o = ov?.[n], a = r.s[n - 1];
+  return o === "self" ? "self" : o === "no" ? "n" : a === "y" ? "y" : a === "s" ? "self" : a === "?" ? "q" : "n"; };
+const st = n => SUBJ ? stateOf(SUBJ, MODE === "mine" ? OV : null)(n) : null;
 const done = n => ["y", "self"].includes(st(n));
+const levelOf = r => [...r.s].filter(c => c === "y" || c === "s").length;   /* as their agent and they answered, before any change here */
+const canWait = () => MODE === "show" || MODE === "pub";   /* the page offers the check: nobody's own result is open */
 const level = () => L.filter(l => done(l.n)).length;
 const selfCount = () => L.filter(l => st(l.n) === "self").length;
 const whose = () => MODE === "mine" ? "Your" : (WHO?.first || SUBJ.name.split(" ")[0] || "Their") + "'s";
@@ -61,30 +66,32 @@ const quote = (f, vs) => !f ? "" : `<blockquote class="quote${vs ? " vs" : ""}">
 function card(o) {
   return `<div class="tcard ${o.cls || ""}" style="--tc:var(--t${o.tier.n})"><div class="tc-in">
     <div class="tc-top"><div class="tc-lvl">${o.top}${o.small ? `<small>${o.small}</small>` : ""}</div><div class="tc-era">Tier ${o.tier.n}<b>${esc(o.tier.era)}</b></div></div>
-    <div class="tc-art${o.photo ? " photo" : ""}">${o.img ? `<img src="${o.img}" alt="" style="object-position:${o.pos || "50% 50%"}">` : ""}${o.pi ? `<span class="tc-pi" title="Says please">π</span>` : ""}<div class="tc-name">${esc(o.name)}</div></div>
+    <div class="tc-art${o.photo ? " photo" : ""}${o.add === "add" ? " ph" : ""}">${o.img ? `<img src="${o.img}" alt="" style="object-position:${o.pos || "50% 50%"}">` : ""}${o.pi ? `<span class="tc-pi" title="Says please">π</span>` : ""}<div class="tc-name">${esc(o.name)}</div>${o.add ? `<button class="tc-add ${o.add}" type="button" data-photo>${o.add === "add" ? "<b>+</b> Add your photo" : "Change photo"}</button>` : ""}</div>
     <div class="tc-body"><div class="tc-grid">${o.cells.map((c, i) => `<i data-n="${i + 1}" class="${c}"></i>`).join("")}</div>
     <div class="tc-lines">${o.lines.map(([k, v]) => `<div><span>${k}</span><b>${esc(v)}</b></div>`).join("")}</div></div>
     <div class="tc-foot"><span>${esc(o.foot)}</span><b>levels</b></div></div><i class="hcard sheen"></i><i class="hcard glare"></i></div>`;
 }
-function subjectCard(cls, blank) {
-  const lv = level(), t = tierOf(Math.max(1, lv)), best = [...L].reverse().find(l => st(l.n) === "y" && l.how !== "self") || [...L].reverse().find(l => done(l.n));
-  const nx = SUBJ.p.find(p => !done(p[0]))?.[0] || L.find(l => !done(l.n))?.n, sc = selfCount();
-  const name = MODE === "mine" ? ($("#card-name").value || "").trim() || t.name : SUBJ.name || t.name;
-  return card({ cls, tier: t, top: blank ? 0 : lv, small: "/100", img: WHO?.photo || ART[t.n], photo: !!WHO?.photo, pos: WHO?.photo ? "50% 30%" : "50% 50%", name, pi: SUBJ.pi,
-    cells: L.map(l => blank ? "" : st(l.n) === "y" ? "y" : st(l.n) === "self" ? "self" : ""),
-    lines: [best && ["Best", `${best.n}. ${best.title}`], nx && ["Next", `${nx}. ${L[nx - 1].title}`], SUBJ.a.length && ["Uses", SUBJ.a.join(", ")]].filter(Boolean),
-    foot: MODE === "chat" ? "a chat tab can't check" : sc ? `${lv - sc} found · ${sc} ticked` : `v${D.version} · checked locally` });
+/* anyone's card. o: { st: their state per level, r: their result (picks, agents, π), name, photo, foot, add: the photo button } */
+function resultCard(o, cls, blank) {
+  const is = n => ["y", "self"].includes(o.st(n)), lv = L.filter(l => is(l.n)).length, t = tierOf(Math.max(1, lv));
+  const best = [...L].reverse().find(l => o.st(l.n) === "y" && l.how !== "self") || [...L].reverse().find(l => is(l.n));
+  const nx = o.r.p.find(p => !is(p[0]))?.[0] || L.find(l => !is(l.n))?.n;
+  return card({ cls, tier: t, top: blank ? 0 : lv, small: "/100", img: o.photo || ART[t.n], photo: !!o.photo, pos: o.photo ? "50% 30%" : "50% 50%", name: o.name || t.name, pi: o.r.pi, add: o.add,
+    cells: L.map(l => blank ? "" : o.st(l.n) === "y" ? "y" : o.st(l.n) === "self" ? "self" : ""),
+    lines: [best && ["Best", `${best.n}. ${best.title}`], nx && ["Next", `${nx}. ${L[nx - 1].title}`], o.r.a.length && ["Uses", o.r.a.join(", ")]].filter(Boolean), foot: o.foot });
 }
-const tierCard = (n, cls) => { const t = T[n - 1];
-  return card({ cls, tier: t, top: `${n * 10 - 9}–${n * 10}`, img: ART[n], name: t.name,
-    cells: L.map(l => Math.ceil(l.n / 10) === n ? "y" : ""), lines: [["Tier", t.line]], foot: `Levels ${n * 10 - 9} to ${n * 10}` }); };
+const cardName = () => ($("#card-name").value || "").trim();
+function subjectCard(cls, blank) {
+  const lv = level(), sc = selfCount(), add = MODE === "mine" && cls === "front" ? (WHO?.photo ? "change" : "add") : undefined;
+  return resultCard({ st, r: SUBJ, photo: WHO?.photo, add, name: MODE === "mine" ? cardName() : SUBJ.name,
+    foot: MODE === "chat" ? "a chat tab can't check" : sc ? `${lv - sc} found · ${sc} ticked` : `v${D.version} · checked locally` }, cls, blank);
+}
+const otherCard = (r, name, foot, cls) => resultCard({ st: stateOf(r), r, name, foot }, cls);
 function fanHTML(blank) {
-  /* on arrival: the first and last tier around a real card; for a result: the tiers either side of it */
-  const t = tierOf(Math.max(1, level())).n;
-  let [a, b] = MODE === "show" ? [1, 10] : [t - 1, t + 1];
-  if (a < 1) [a, b] = [t + 1, t + 2];
-  if (b > 10) [a, b] = [t - 2, t - 1];
-  return tierCard(a, "back-l") + tierCard(b, "back-r") + subjectCard("front", blank);
+  /* on arrival, a real card between Grug on day 1 and on day 400, for scale; anyone's own result stands alone */
+  if (MODE !== "show") return subjectCard("front", blank);
+  const [noob, pro] = EX, ex = "an example, not a check";
+  return otherCard(noob.r, noob.name, ex, "back-l") + otherCard(pro.r, pro.name, ex, "back-r") + subjectCard("front", blank);
 }
 
 /* the front card fills in, square by square, then the ticker walks through what the agent found */
@@ -171,7 +178,7 @@ $("#tiers").addEventListener("click", async e => {
   if (act === "learn") { toast(await copy(promptFor(L[n - 1])) ? "Prompt copied. Paste it into your agent." : "Couldn't copy here."); track("learn_copy", { n }); return; }
   if (act) {
     if (act === "self") OV[n] = "self"; else if (act === "no") OV[n] = "no"; else delete OV[n];
-    store.set(okey(), OV); track("override", { n, act }); renderAll(false); openRow(n); return;
+    store.set(okey(), OV); track("override", { n, act }); cardChanged(); renderAll(false); openRow(n); return;
   }
   if (e.target.closest(".row-b")) {
     const d = row.querySelector(".row-d"), open = d.hidden;
@@ -185,29 +192,32 @@ $("#filters").addEventListener("click", e => { const b = e.target.closest("butto
 /* ---------- hero copy for a result */
 function renderCopy() {
   $("#copy-home").hidden = MODE !== "show"; $("#copy-result").hidden = MODE === "show";
-  $("#next").hidden = MODE === "show";
-  $("#mine").hidden = !(MODE === "show" && LAST);
+  $("#go").hidden = !canWait(); $("#getyours").hidden = MODE !== "chat";
+  $("#next").hidden = MODE !== "mine" && MODE !== "chat";
+  $("#mine").hidden = !(canWait() && LAST);
   if (LAST) { $("#mine").href = "#" + LAST.hash; $("#mine").textContent = `Your level: ${LAST.lv}`; }
   if (MODE === "show") return;
-  $("#install").hidden = MODE !== "chat";
   if (MODE === "chat") {
     $("#res-kicker").textContent = "Level 0 · you're in a chat tab";
     $("#res-title").textContent = "Level 0. Everyone starts here.";
     $("#res-line").textContent = "Your chat assistant read the check, but it can't look at your computer, so it can't run it. That's the whole difference between a chat and an agent: an agent works in your folders, runs things, and shows you what it did. It's less scary than it sounds. It asks before it does anything you haven't allowed.";
     $$("#share, #share-note, #res-foot, #keep").forEach(el => el.hidden = true);
-    $("#getyours").hidden = false; $("#getyours-h").textContent = "Try an agent in ten minutes";
-    $("#getyours-p").textContent = "Install one of these, open a folder you care about, and paste the same line. It will find your real level.";
     $("#picks-h").textContent = "Where you'd start";
-  } else { $("#getyours-h").textContent = "Get yours"; $("#picks-h").textContent = "Learn next"; }
-  if (MODE === "chat") return renderPicks();
+    return renderPicks();
+  }
+  $("#picks-h").textContent = "Learn next";
   const lv = level(), t = tierOf(Math.max(1, lv)), sc = selfCount(), unsure = L.filter(l => st(l.n) === "q").length;
-  $("#res-kicker").textContent = MODE === "pub" ? `${SUBJ.name ? SUBJ.name + "'s card" : "A card"} · published by them` : "Your result · from the link, nothing uploaded";
+  /* a second run in this browser: how it moved since the one before */
+  const prev = MODE === "mine" && LAST?.prev, moved = prev && levelOf(SUBJ) - prev.lv;
+  const since = !prev ? "" : moved > 0 ? ` · up ${moved} since ${day(prev.at)}` : moved < 0 ? ` · down ${-moved} since ${day(prev.at)}` : ` · same as on ${day(prev.at)}`;
+  const from = MODE === "mine" && FROM && FROM.s !== SUBJ.s ? ` ${FROM.name ? FROM.name + ", whose card sent you here, is" : "The card that sent you here is"} level ${levelOf(FROM)}.` : "";
+  $("#res-kicker").textContent = MODE === "pub" ? `${SUBJ.name ? SUBJ.name + "'s card" : "A card"} · published by them` : "Your result · from the link, nothing uploaded" + since;
   $("#res-title").textContent = `Level ${lv}. ${t.era}.`;
   $("#res-line").textContent = MODE === "pub"
     ? `Their own agent found ${lv - sc} of the 100 on their machine${sc ? `, and they ticked ${sc} more` : ""}. ${t.line}`
-    : `Your agent found ${lv - sc} of the 100${sc ? `, and you ticked ${sc}` : ""}. ${unsure ? `It couldn't see ${unsure} from your machine; open them below and tick the ones you do.` : t.line}`;
+    : `Your agent found ${lv - sc} of the 100${sc ? `, and you ticked ${sc}` : ""}. ${unsure ? `It couldn't see ${unsure} from your machine; open them below and tick the ones you do.` : t.line}${from}`;
   $$("#share, #share-note, #res-foot").forEach(el => el.hidden = MODE === "pub");
-  $("#keep").hidden = MODE !== "mine"; $("#getyours").hidden = MODE !== "pub";
+  $("#keep").hidden = MODE !== "mine";
   renderPicks();
 }
 function renderPicks() {
@@ -222,15 +232,48 @@ $("#picks").addEventListener("click", async e => {
   if (a) { toast(await copy(promptFor(L[a.dataset.learn - 1])) ? "Prompt copied. Paste it into your agent." : "Couldn't copy here."); track("pick_copy", { n: +a.dataset.learn }); }
   if (g) openRow(+g.dataset.goto, true);
 });
-$("#card-name").addEventListener("input", () => { store.set("levels-name", $("#card-name").value); SHARE_URL = null; renderFan(); });
+/* a card link shows the card as it was when made; change the card and the next share makes a new one */
+const NOTE = $("#share-note").textContent;
+const cardChanged = () => { if (SHARE_URL) { SHARE_URL = null; $("#share-note").textContent = NOTE; } };
+$("#card-name").addEventListener("input", () => { store.set("levels-name", $("#card-name").value); cardChanged(); renderFan(); });
+/* your photo on your card: cut to the card's picture here, kept in this browser, and sent only inside a card you share */
+let PHOTO = store.get("levels-photo");
+function setPhoto(p) {
+  PHOTO = p; try { p ? localStorage.setItem("levels-photo", JSON.stringify(p)) : localStorage.removeItem("levels-photo"); } catch {}
+  WHO = PHOTO ? { photo: PHOTO } : null; $("#photo-rm").hidden = !PHOTO; cardChanged(); renderAll(false);
+}
+async function cutPhoto(file) {
+  const img = new Image(), url = URL.createObjectURL(file);
+  try {
+    img.src = url; await img.decode();
+    const W = 632, H = 408, k = Math.max(W / img.naturalWidth, H / img.naturalHeight), c = document.createElement("canvas");
+    c.width = W; c.height = H;
+    const w = img.naturalWidth * k, h = img.naturalHeight * k;
+    c.getContext("2d").drawImage(img, (W - w) / 2, (H - h) * 0.3, w, h);   /* faces sit high in most photos */
+    return c.toDataURL("image/jpeg", 0.85);
+  } finally { URL.revokeObjectURL(url); }
+}
+$("#fan").addEventListener("click", e => { if (e.target.closest("[data-photo]")) $("#photo-in").click(); });
+$("#photo-in").addEventListener("change", async e => {
+  const f = e.target.files?.[0]; e.target.value = "";
+  if (!f) return;
+  try { setPhoto(await cutPhoto(f)); track("photo_added"); toast("On your card. It stays in this browser unless you share the card."); }
+  catch { toast("Couldn't read that image. Try a JPEG or PNG."); }
+});
+$("#photo-rm").addEventListener("click", () => { setPhoto(null); toast("Photo removed"); });
 
-/* ---------- the share image (1200x630), drawn here so it matches the page exactly */
+/* ---------- the share images, drawn here from the real card: a card taped to paper, its level ringed in red pen
+   site: the link preview for the page (1200x630) · wide: a card link's preview (1200x630) · square: Save image (1200x1200) */
+const TAPE = `<i class="tape"></i>`;
+const RING = `<svg class="ring" viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><path d="M122 9C64 1 9 20 11 52s62 44 112 40 74-26 68-52S142 3 84 11" vector-effect="non-scaling-stroke"/></svg>`;
+const ME = `<div class="me"><span>me</span><svg viewBox="0 0 80 60" aria-hidden="true"><path d="M6 8c22 2 44 12 58 38M64 46l-14-3M64 46l2-14"/></svg></div>`;
 function ogHTML(kind) {
-  const lv = level(), t = tierOf(Math.max(1, lv));
-  const left = kind === "site"
-    ? `<div class="og-copy"><div class="og-brand">levels <span>by @virpo</span></div><h2 class="og-h">What level are you with agents?</h2><p class="og-sub">100 levels. <b>One prompt.</b> Checked on your own machine.</p></div>`
-    : `<div class="og-copy"><div class="og-brand">levels <span>by @virpo</span></div><p class="og-big">${lv}<small>/100</small></p><p class="og-sub"><b>${esc(t.era)}</b> · ${esc(t.name.toLowerCase())}<br>checked by ${MODE === "mine" ? "my" : "their"} own agent</p></div>`;
-  return `${left}<div class="og-cards">${fanHTML(false)}</div><div class="og-url">${SITE}</div>`;
+  const ask = `<div class="og-copy"><div class="og-brand">levels <span>by @virpo</span></div><h2 class="og-h">What level are you with agents?</h2>
+    <p class="og-sub">100 levels. Your own agent checks which you do, on your own machine.</p></div><div class="og-url">${SITE}</div>`;
+  if (kind === "site") return `${ask}<div class="og-cards">${fanHTML(false).replace('<div class="tcard front', TAPE + '<div class="tcard front')}</div>`;
+  const digits = String(level()).length;
+  const mine = `<div class="og-card" style="--d:${digits}">${TAPE}${subjectCard("solo")}${RING}${ME}</div>`;
+  return kind === "square" ? `${mine}<div class="og-foot mono">what level are you with agents? <b>${SITE}</b></div>` : `${mine}${ask}`;
 }
 /* html-to-image can't read the Google Fonts stylesheet across origins, so the faces the card uses (Latin only) are
    fetched once and handed to it inline; without them the image falls back to system fonts */
@@ -248,30 +291,34 @@ const embedFonts = () => fontCSS ??= (async () => {
   }));
   return data.reduce((c, [u, d]) => c.split(u).join(d), latin);
 })().catch(() => (fontCSS = null, ""));
-async function ogImage(type) {
-  const el = $("#og"); el.innerHTML = ogHTML("result");
+async function ogImage(kind) {   /* wide: a JPEG data URL for the card link · square: a PNG blob to keep */
+  const el = $("#og"); el.className = "og " + kind; el.innerHTML = ogHTML(kind);
   await Promise.all([...el.querySelectorAll("img")].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
   if (!window.htmlToImage) throw new Error("renderer not loaded");
   await document.fonts.ready;
-  const o = { width: 1200, height: 630, pixelRatio: type === "jpeg" ? 1 : 2, backgroundColor: "#0E0D0A", fontEmbedCSS: await embedFonts() };
-  return type === "jpeg" ? htmlToImage.toJpeg(el, { ...o, quality: .9 }) : htmlToImage.toBlob(el, o);
+  const o = { width: 1200, height: kind === "square" ? 1200 : 630, backgroundColor: "#EFE8DA", fontEmbedCSS: await embedFonts() };
+  return kind === "square" ? htmlToImage.toBlob(el, { ...o, pixelRatio: 1.5 }) : htmlToImage.toJpeg(el, { ...o, pixelRatio: 1, quality: .9 });
 }
 
 /* ---------- share */
-const squares = () => `levels ${level()}/100\n` + [...Array(10)].map((_, r) => L.slice(r * 10, r * 10 + 10).map(l => done(l.n) ? "🟨" : "⬛").join("")).join("\n") + `\n${SITE}`;
+const squares = () => `My AI level is ${level()}/100\n\n` + [...Array(10)].map((_, r) => L.slice(r * 10, r * 10 + 10).map(l => done(l.n) ? "🟨" : "⬛").join("")).join("\n") + `\n\nfrom ${SITE}`;
 $("#share-copy").addEventListener("click", async () => { toast(await copy(squares()) ? "Squares copied" : "Couldn't copy here."); track("share_squares"); });
-$("#share-x").addEventListener("click", async () => {
-  const lv = level(), t = tierOf(Math.max(1, lv));
-  let copied = false;
-  if (!SHARE_URL) { try { const b = await ogImage("png"); await navigator.clipboard.write([new ClipboardItem({ "image/png": b })]); copied = true; } catch {} }
-  const text = `Level ${lv} of 100 at working with agents. ${t.era}.\n\nChecked by my own agent: ${SHARE_URL || "https://www." + SITE}`;
-  toast(SHARE_URL ? "Opening X" : copied ? "Image copied. Paste it into the post." : "Opening X");
-  track("share_x", { lv, linked: !!SHARE_URL, copied });
-  window.open("https://x.com/intent/post?text=" + encodeURIComponent(text), "_blank", "noopener");
-});
+const lower = s => /^[A-Z][a-z]/.test(s) ? s[0].toLowerCase() + s.slice(1) : s;
+function postText() {
+  const nx = SUBJ.p.find(p => !done(p[0]))?.[0] || L.find(l => !done(l.n))?.n;
+  return `I'm level ${level()} of 100 with agents.${nx ? `\nNext up: ${lower(L[nx - 1].title)}.` : ""}`;
+}
+/* the image goes to the clipboard, ready to paste into a post. The item is handed over inside the click, with the image
+   still drawing, which is what Safari needs; where images can't go on the clipboard, it downloads instead */
 $("#share-png").addEventListener("click", async () => {
-  try { const b = await ogImage("png"), a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = `levels-${level()}.png`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); track("share_png"); }
-  catch { toast("Couldn't draw the image here"); }
+  const drawing = ogImage("square");
+  try {
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": drawing })]);
+    toast("Image copied. Paste it into your post."); track("share_png", { how: "clipboard" });
+  } catch {
+    try { const b = await drawing, a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = `levels-${level()}.png`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); toast("Saved the image"); track("share_png", { how: "download" }); }
+    catch { toast("Couldn't draw the image here"); }
+  }
 });
 const answers = () => ({ s: L.map(l => ({ y: "y", self: "s", q: "?", n: "n" })[st(l.n)]).join(""), a: SUBJ.a, pi: SUBJ.pi ? 1 : 0 });
 async function post(path, body) {
@@ -279,20 +326,39 @@ async function post(path, body) {
   if (!r.ok) throw new Error(r.status);
   return r.json();
 }
-$("#share-link").addEventListener("click", async () => {
-  const note = $("#share-note");
-  if (SHARE_URL) { toast(await copy(SHARE_URL) ? "Link copied" : SHARE_URL); return; }
-  note.textContent = "Making your card page…";
-  try {
-    const r = await post(D.api + "/api/card", { ...answers(), name: ($("#card-name").value || "").trim(), image: await ogImage("jpeg") });
-    SHARE_URL = r.url;
-    note.innerHTML = `Your card: <a href="${esc(r.url)}">${esc(r.url.replace(/^https?:\/\/(www\.)?/, ""))}</a>. Links to it show the card. Only the answers and name are stored.`;
-    toast(await copy(r.url) ? "Link copied" : "Link ready"); track("card_published");
-  } catch { note.textContent = "Couldn't make the link right now. Nothing was saved."; }
+/* sharing is a public page for the card, made once, on the first press of Post or Copy a link; its preview is the card */
+async function cardLink() {
+  if (SHARE_URL) return SHARE_URL;
+  $("#share-note").textContent = "Making your card page…";
+  const r = await post(D.api + "/api/card", { ...answers(), name: cardName(), image: await ogImage("wide"), ...(PHOTO ? { photo: PHOTO } : {}) });
+  SHARE_URL = r.url; store.set("levels-own", r.id); track("card_published");
+  $("#share-note").innerHTML = `Your card: <a href="${esc(r.url)}">${esc(r.url.replace(/^https?:\/\//, ""))}</a>. Links to it show the card. Only the answers and the name are stored.`;
+  return SHARE_URL;
+}
+$("#share-x").addEventListener("click", async () => {
+  const w = window.open("", "_blank");   /* opened inside the click, so it isn't blocked; pointed at X once the link exists */
+  let url = `https://${SITE}/`;
+  try { url = await cardLink(); } catch { $("#share-note").textContent = "Couldn't make your card page right now, so the post links to the list instead."; }
+  const x = "https://x.com/intent/post?text=" + encodeURIComponent(`${postText()}\n\n${url}`);
+  track("share_x", { lv: level(), linked: url !== `https://${SITE}/` });
+  if (w) { w.opener = null; w.location.href = x; } else location.href = x;
 });
+$("#share-link").addEventListener("click", async () => {
+  try { const url = await cardLink(); toast(await copy(url) ? "Link copied" : url); }
+  catch { $("#share-note").textContent = "Couldn't make the link right now. Nothing was saved."; }
+});
+/* opting in pays back at once: where this level stands among everyone who added theirs */
+function standing(t, lv) {
+  if (!t?.n || t.n < 20) return `You're one of the first ${t?.n || 1}. Come back in a few days to see where you stand.`;
+  const below = t.levels.slice(0, lv).reduce((a, b) => a + b, 0);
+  return `You're above ${Math.round(100 * below / t.n)}% of the ${t.n} people who added theirs.`;
+}
 $("#pub-anon").addEventListener("click", async () => {
-  try { await post(D.api + "/api/count", answers()); $("#pub-note").textContent = "Added. No name, no link: the 100 answers and the date."; $("#pub-anon").disabled = true; track("count_added"); }
-  catch { $("#pub-note").textContent = "Couldn't add it right now. Nothing was saved."; }
+  try {
+    await post(D.api + "/api/count", answers()); $("#pub-anon").disabled = true; track("count_added");
+    const t = await fetch(D.api + "/api/stats", { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null);
+    $("#pub-note").textContent = `Added: the 100 answers and the date, no name, no link. ${standing(t, levelOf({ s: answers().s }))}`;
+  } catch { $("#pub-note").textContent = "Couldn't add it right now. Nothing was saved."; }
 });
 $("#mail").addEventListener("submit", async e => {
   e.preventDefault();
@@ -302,24 +368,54 @@ $("#mail").addEventListener("submit", async e => {
   catch { $("#mail-note").textContent = "Couldn't save that right now. Try again in a minute."; }
 });
 
-/* ---------- the one action: copy the line */
+/* ---------- the one action: copy the line. The yellow key then turns into the wait, with a clock, until the agent is back */
 $$("[data-prompt]").forEach(el => el.textContent = PROMPT);
-function waitForAgent(copied = true) {
-  $("#wait").hidden = false; $("#wait").classList.remove("got");
-  $("#wait-h").textContent = copied ? "Copied. Now paste it into your agent." : "Copy the line above, then paste it into your agent.";
-  $("#wait-p").textContent = "Claude Code, Codex or Cursor. It looks around your machine for a few minutes, then opens your card. Everything stays on your computer; nothing reaches us unless you choose to save your card.";
+const bar = $("#bar"), STAYS = "Nothing leaves your computer unless you choose to save your card.";
+let waitClock = null;
+function waitForAgent(h, p) {
+  const box = $("#cta-box"), w = $("#wait");
+  if (!box.classList.contains("waiting")) {   /* grow out of the key's own size */
+    w.style.setProperty("--kw", $("#cta").offsetWidth + "px"); w.style.setProperty("--kh", $("#cta").offsetHeight + "px");
+    const at = Date.now(), tick = () => { const s = Math.floor((Date.now() - at) / 1000); $("#wait-t").textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
+    tick(); clearInterval(waitClock); waitClock = setInterval(tick, 1000);
+  }
+  box.classList.add("waiting"); w.classList.remove("got"); bar.classList.add("waiting");
+  $("#bar-cta .bar-cta-t").textContent = "Waiting for your agent";
+  $("#wait-h").textContent = h; $("#wait-p").textContent = p;
+}
+function stopWaiting() {
+  clearInterval(waitClock); $("#cta-box").classList.remove("waiting"); bar.classList.remove("waiting");
+  $("#bar-cta .bar-cta-t").textContent = "See your level";
+}
+const waiting = () => $("#cta-box").classList.contains("waiting");
+const pasteIt = ok => waitForAgent(ok ? "Copied. Now paste it into your agent." : "Copy the line below, then paste it into your agent.",
+  `Claude Code, Codex or Cursor, any session. It tells you what the script does, then asks before running it. In a few minutes your card opens in your browser. ${STAYS}`);
+/* on a phone there is no agent to paste into: send the line to the computer instead (AirDrop, Messages, a note to self) */
+async function sendToComputer() {
+  const ok = await copy(PROMPT);
+  try { await navigator.share({ text: PROMPT, url: `https://${SITE}/` }); } catch {}
+  track("cta_send", { ok });
+  waitForAgent("Now open it on your computer.", `The check runs where you code. Paste the line into Claude Code, Codex or Cursor there${ok ? "; it's on this clipboard too" : ""}. ${STAYS}`);
+  $("#wait").classList.add("got");
 }
 $$("[data-cta]").forEach(b => b.addEventListener("click", async () => {
-  const ok = await copy(PROMPT), from = b.dataset.from;
+  const from = b.dataset.from;
+  if (TOUCH && canWait()) { if (from === "bar") scrollTo({ top: 0, behavior: calm ? "auto" : "smooth" }); return sendToComputer(); }
+  const ok = await copy(PROMPT);
   track("cta_copy", { from, ok });
-  if (!ok && MODE === "show") { if (from === "bar") scrollTo({ top: 0, behavior: calm ? "auto" : "smooth" }); waitForAgent(false); return; }
-  if (!ok) { toast("Copy this line into your agent: " + PROMPT); return; }
-  if (from === "bar") { $("#pop").hidden = false; clearTimeout(b.t); b.t = setTimeout(() => ($("#pop").hidden = true), 6000); }
-  if (MODE === "show") waitForAgent(); else if (from !== "bar") toast("Copied. Paste it into your agent.");
+  if (!canWait()) return toast(ok ? "Copied. Paste it into your agent." : "Copy this line into your agent: " + PROMPT);
+  if (from === "bar") {
+    if (ok) { $("#pop").hidden = false; clearTimeout(b.t); b.t = setTimeout(() => ($("#pop").hidden = true), 6000); }
+    else scrollTo({ top: 0, behavior: calm ? "auto" : "smooth" });
+  }
+  pasteIt(ok);
 }));
-/* open it in the agent directly where the agent supports a prompt link (Claude Code, Cursor); always copy as well,
-   because a link to an app that isn't installed does nothing */
-const OPEN = { claudecode: "claude-cli://open?q=" + encodeURIComponent(PROMPT), cursor: "cursor://anysphere.cursor-deeplink/prompt?text=" + encodeURIComponent(PROMPT) };
+$("#wait-again").addEventListener("click", async () => { toast(await copy(PROMPT) ? "Copied again" : "Copy the line below"); });
+if (TOUCH) { $("#cta .cta-t").textContent = "Send it to my computer"; $("#assure").firstChild.textContent = "It runs on your computer, not your phone: send yourself the line, then paste it into Claude Code, Codex or Cursor there. Nothing is shared with us unless you want it to be. "; }
+/* Cursor's prompt link fills the chat of the Cursor you already have open, so it opens there; always copy as well,
+   because a link to an app that isn't installed does nothing. Claude Code's link starts a new terminal session that
+   asks for folder trust first, which is worse than pasting into the session you already have, so it only copies */
+const OPEN = { cursor: "cursor://anysphere.cursor-deeplink/prompt?text=" + encodeURIComponent(PROMPT) };
 $$(".agent").forEach(a => {
   a.querySelector("i").innerHTML = D.agents?.[a.dataset.agent] || "";
   if (OPEN[a.dataset.agent]) a.href = OPEN[a.dataset.agent];
@@ -327,26 +423,25 @@ $$(".agent").forEach(a => {
     const ok = await copy(PROMPT), name = a.dataset.name;
     track("agent_open", { agent: a.dataset.agent, ok });
     if (!OPEN[a.dataset.agent]) e.preventDefault();
-    waitForAgent(ok);
-    $("#wait-h").textContent = OPEN[a.dataset.agent] ? `Opening ${name}…` : ok ? `Copied. Paste it into ${name}.` : `Copy the line above into ${name}.`;
-    if (OPEN[a.dataset.agent]) $("#wait-p").textContent = `It opens with the line typed in; press Enter. Nothing happened? It's on your clipboard too: paste it into ${name}. Everything stays on your computer; nothing reaches us unless you choose to save your card.`;
+    if (OPEN[a.dataset.agent]) waitForAgent(`Opening ${name}…`, `It opens with the line typed in; press Enter. Nothing opened? It's on your clipboard too: paste it into ${name}. ${STAYS}`);
+    else waitForAgent(ok ? `Copied. Paste it into ${name}.` : `Copy the line below into ${name}.`, `Any session, any folder. It tells you what the script does, then asks before running it. In a few minutes your card opens in your browser. ${STAYS}`);
   });
 });
 /* the agent opens the result in a new tab; that tab tells this one, which offers to show it here */
 const chan = "BroadcastChannel" in window ? new BroadcastChannel("levels") : null;
 function arrived(hash, lv) {
-  if (MODE !== "show" || $("#wait").hidden) return;
+  if (!canWait() || !waiting()) return;
+  clearInterval(waitClock);
   $("#wait").classList.add("got");
   $("#wait-h").textContent = `Your agent is back: level ${lv}.`;
-  $("#wait-p").innerHTML = `It opened in another tab. <button class="key acc mini" type="button" id="show-here">Show it here</button>`;
+  $("#wait-p").innerHTML = `It opened in another tab. <button class="key ink mini" type="button" id="show-here">Show it here</button>`;
   $("#show-here").onclick = () => { location.hash = hash; };
 }
 chan && (chan.onmessage = e => e.data?.hash && arrived(e.data.hash, e.data.lv));
 addEventListener("storage", e => { if (e.key === "levels-last" && e.newValue) { try { const v = JSON.parse(e.newValue); arrived(v.hash, v.lv); } catch {} } });
 document.addEventListener("click", e => { if (!e.target.closest("#pop, #bar-cta")) $("#pop").hidden = true; });
-const bar = $("#bar");
 addEventListener("scroll", () => bar.classList.toggle("scrolled", scrollY > 8), { passive: true });
-new IntersectionObserver(([en]) => bar.classList.toggle("show-cta", MODE !== "mine" && !en.isIntersecting), { rootMargin: "-60px 0px 0px 0px" }).observe($("#cta"));
+new IntersectionObserver(([en]) => bar.classList.toggle("show-cta", MODE !== "mine" && !en.isIntersecting), { rootMargin: "-60px 0px 0px 0px" }).observe($("#cta-box"));
 
 /* ---------- the fan: hover a back card and it comes forward; the cards tilt and catch the light under the pointer */
 const fanEl = $("#fan"), tilt = new WeakMap();
@@ -391,30 +486,44 @@ $("[data-home]").addEventListener("click", e => { e.preventDefault(); history.pu
 
 /* ---------- boot */
 function renderAll(fan = true) { renderCopy(); renderList(); if (fan) renderFan(); else $("#fan").innerHTML = fanHTML(false); }
+const cardId = () => { const u = new URLSearchParams(location.search).get("u"); return /^[a-z2-9]{6}$/.test(u || "") ? u : null; };
 function boot() {
-  const h = location.hash, pre = document.documentElement.dataset.card, mine = decode(h), pub = pre ? decode("#" + pre) : null;
-  SHARE_URL = null;
-  if (mine) { MODE = "mine"; SUBJ = mine; WHO = null; OV = store.get(okey()) || {}; $("#card-name").value = store.get("levels-name") || ""; }
-  else if (h === "#chat") { MODE = "chat"; SUBJ = norm({ s: "n".repeat(100), name: "Chat tab", p: [[1, "This is the whole step: ten minutes, then paste the same line into it."], [5, "Easiest first win: show it the thing that's broken."], [10, "Try it on a chore first, not code."]] }); WHO = null; }
-  else if (pub) { MODE = "pub"; SUBJ = pub; WHO = null; }
-  else { const p = SHOW[0]; MODE = "show"; SUBJ = norm(p.result); SUBJ.name = p.name; WHO = { first: p.name.split(" ")[0], photo: p.photo }; }
-  bar.classList.toggle("show-cta", MODE === "pub");
-  renderAll();
-  if (OG === "site") { document.body.classList.add("og-only"); $("#og").innerHTML = ogHTML("site"); return; }
+  const h = location.hash, mine = decode(h), pub = CARD && CARD.id === cardId() ? CARD : null;
+  SHARE_URL = null; $("#share-note").textContent = NOTE;
   if (mine) {
-    track("result_open", { lv: level() }); scrollTo(0, 0);
-    LAST = { hash: h.slice(1), lv: level(), at: Date.now() }; store.set("levels-last", LAST);
-    chan?.postMessage({ hash: LAST.hash, lv: LAST.lv });
+    MODE = "mine"; SUBJ = mine; WHO = PHOTO ? { photo: PHOTO } : null; OV = store.get(okey()) || {}; $("#card-name").value = store.get("levels-name") || "";
+    $("#photo-rm").hidden = !PHOTO;
+    FROM = norm(store.get("levels-from"));
+    /* remember it, and the run before it, so a later run can say how far you moved */
+    const hash = h.slice(1), prev = !LAST ? null : LAST.hash === hash ? LAST.prev : { lv: LAST.base ?? LAST.lv, at: LAST.at };
+    LAST = { hash, lv: level(), base: levelOf(mine), at: LAST?.hash === hash ? LAST.at : Date.now(), prev }; store.set("levels-last", LAST);
   }
+  else if (h === "#chat") { MODE = "chat"; SUBJ = norm({ s: "n".repeat(100), name: "Chat tab", p: [[1, "This is the whole step: ten minutes, then paste the same line into it."], [5, "Easiest first win: show it the thing that's broken."], [10, "Try it on a chore first, not code."]] }); WHO = null; }
+  else if (pub) {
+    MODE = "pub"; SUBJ = pub; WHO = pub.photo ? { photo: pub.photo } : null;
+    if (pub.id !== store.get("levels-own")) store.set("levels-from", { v: 1, s: pub.s, a: pub.a, pi: pub.pi ? 1 : 0, name: pub.name });
+  }
+  else { const p = SHOW[0]; MODE = "show"; SUBJ = norm(p.result); SUBJ.name = p.name; WHO = { first: p.name.split(" ")[0], photo: p.photo }; }
+  if (!canWait()) stopWaiting();
+  renderAll();
+  if (OG === "site") { document.body.classList.add("og-only"); $("#og").className = "og site"; $("#og").innerHTML = ogHTML("site"); return; }
+  if (mine) { track("result_open", { lv: level() }); scrollTo(0, 0); chan?.postMessage({ hash: LAST.hash, lv: LAST.lv }); }
   if (MODE === "chat") track("chat_landed");
   const m = /^#level-(\d{1,3})$/.exec(h); if (m && +m[1] >= 1 && +m[1] <= 100) openRow(+m[1], true);
 }
-window.levelsShareImage = () => ogImage("jpeg");   /* the exact image a share link uses, for checking it */
+window.levelsShareImage = kind => ogImage(kind || "wide");   /* the exact images sharing makes, for checking them */
 $("#forget").addEventListener("click", () => {
-  try { localStorage.removeItem("levels-last"); localStorage.removeItem(okey()); localStorage.removeItem("levels-name"); } catch {}
-  LAST = null; history.pushState(null, "", location.pathname); boot(); scrollTo(0, 0); toast("Forgotten. It only ever lived in this browser.");
+  try { for (const k of ["levels-last", okey(), "levels-name", "levels-from", "levels-own", "levels-photo"]) localStorage.removeItem(k); } catch {}
+  LAST = null; FROM = null; PHOTO = null; history.pushState(null, "", location.pathname); boot(); scrollTo(0, 0); toast("Forgotten. It only ever lived in this browser.");
 });
 addEventListener("hashchange", boot);
-boot();
+/* opened from a card's link: fetch the card first, so the page doesn't flash someone else's on the way */
+if (cardId()) {
+  document.body.classList.add("pending");
+  fetch(`${D.api}/api/card/${cardId()}`).then(r => r.ok ? r.json() : null).catch(() => null).then(c => {
+    CARD = norm(c); if (CARD) Object.assign(CARD, { id: cardId(), photo: /^https:\/\//.test(c.photo || "") ? c.photo : null }); else toast("Couldn't open that card. It may have been taken down.");
+    document.body.classList.remove("pending"); boot();
+  });
+} else boot();
 fetch(D.api + "/api/stats").then(r => r.ok ? r.json() : null).then(t => { if (t?.n >= 50) { STATS = t; renderList(); } }).catch(() => {});
 })();

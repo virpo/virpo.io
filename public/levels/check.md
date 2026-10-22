@@ -1,7 +1,7 @@
 # What level are you? · virpo.io/levels
 
 You are checking which of 100 agent techniques the person in front of you already uses, then opening their result.
-**Don't ask them anything.** Work it out, show what you found, open the page. A few minutes.
+**Don't ask them questions.** Work it out, show what you found, open the page. A few minutes.
 
 ## 0. First: can you run commands on their computer?
 
@@ -20,7 +20,7 @@ Instead, write them a short, warm note, in their language, that:
    allowed, and they can watch every step and undo it.
 4. Says the easiest way to try one in ten minutes: the Claude desktop app (Claude Code is built in), Codex from
    OpenAI, or Cursor. Install one, open a folder with something they care about, and ask for that chore.
-5. Ends with: "When you have one, paste the same line into it: Read virpo.io/levels/check.md and do what it says."
+5. Ends with: "When you have one, paste the same message into it:" followed by this, as a quote: What level am I with coding agents? Follow virpo.io/levels/check.md. It has you run a read-only script that counts things on this machine (no file contents, nothing uploaded), then open my result in the browser. Read the script and tell me what it does before you run it.
 
 Then give them this link, which shows what level 0 looks like and where they'd start: https://virpo.io/levels/#chat
 
@@ -35,7 +35,9 @@ The rules, in short:
 
 ## 1. Look
 
-Download the probe, **read it before running it** (about 300 lines, Python standard library, read-only), then run it:
+Download the probe, **read it before running it** (about 300 lines, Python standard library, read-only). Then tell the
+person in two or three plain sentences what it does: it only reads, it prints names and counts (never file contents),
+it sends nothing anywhere, and it deletes nothing. Then run it:
 
 ```bash
 curl -fsSL https://virpo.io/levels/probe.py -o /tmp/levels-probe.py

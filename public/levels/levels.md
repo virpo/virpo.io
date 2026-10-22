@@ -3,7 +3,7 @@
 The 100 tricks worth your time with coding agents, from pasting screenshots to writing your own agent, collected from 94 engineers worth watching. Paste one prompt: your agent checks which you use, on your own machine, and suggests what to try next.
 
 - Page: https://virpo.io/levels/
-- Check your own level: paste `Read virpo.io/levels/check.md and do what it says.` into your coding agent
+- Check your own level: paste this into your coding agent: What level am I with coding agents? Follow virpo.io/levels/check.md. It has you run a read-only script that counts things on this machine (no file contents, nothing uploaded), then open my result in the browser. Read the script and tell me what it does before you run it.
 - Data: https://virpo.io/levels/levels.json · version 1.0, updated 2026-10-22
 
 Your level is how many of the 100 you do. The list is always 100: when a new level earns its place, one goes extinct.
