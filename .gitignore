@@ -7,3 +7,5 @@ dist/
 .superpowers/
 test-results/
 playwright-report/
+.claude/worktrees/
+components/room/tools/art/work/

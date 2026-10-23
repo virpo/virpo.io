@@ -13,7 +13,7 @@ import numpy as np
 from PIL import Image, ImageFilter
 from scipy import ndimage as ndi
 
-# Source PNGs (plate-b.png, view.png, trains.png, peter-sheet.png, props.png) live outside git.
+# Source PNGs (plate-b.png, view.png, trains.png, peter-sheet.png, props.png) are in art/.
 HERE = Path(os.environ.get("ROOM_ART", Path(__file__).parent / "art"))
 WORK = HERE / "work"
 WORK.mkdir(exist_ok=True)

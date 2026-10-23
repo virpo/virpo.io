@@ -9,8 +9,10 @@ from PIL import Image, ImageDraw
 from scipy import ndimage as ndi
 
 from cut import inpaint, magenta_alpha, object_mask, preview, soft
+from fixes import apply_fixes
 
-# Source PNGs (plate-b.png, view.png, trains.png, peter-sheet.png, props.png) live outside git.
+# Source PNGs (plate-b.png, view.png, trains.png, peter-sheet.png, props.png) are in art/;
+# repairs painted over them (art/fixes/) are applied by fixes.py before keying.
 HERE = Path(os.environ.get("ROOM_ART", Path(__file__).parent / "art"))
 REPO = Path(__file__).resolve().parents[3]
 OUT = REPO / "public/lab/room"
@@ -134,7 +136,7 @@ manifest["view"] = {"w": 1536, "h": 1024, "track": 528}
 
 # --- sprites on magenta ----------------------------------------------------------------------
 def keyed(name):
-    src = np.asarray(Image.open(HERE / f"{name}.png").convert("RGB"))
+    src = apply_fixes(name, np.asarray(Image.open(HERE / f"{name}.png").convert("RGB")))
     out, a = magenta_alpha(src)
     return out, a
 

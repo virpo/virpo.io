@@ -17,6 +17,8 @@ import RoomWritingPage, { metadata as writingMetadata } from "../../app/room/wri
 import { LAYERS } from "../../components/room/scene/layers";
 import { nextTrain, readingPose, timeForHour } from "../../components/room/scene/life";
 import { cycle, hullClip, neighbour, objectById, pickAt, ROOM_OBJECTS, TOY_OBJECTS } from "../../components/room/scene/objects";
+import { cardArt } from "../../components/room/screens/Apps";
+import { CARD_ART } from "../../components/room/screens/cards";
 import { getPostSlugs, getPostSummaries } from "../../lib/blog";
 import { labProjects } from "../../lib/lab/catalog";
 
@@ -231,6 +233,21 @@ describe("Pocket Room assets", () => {
       total += size;
     }
     expect(total).toBeLessThan(1_200_000);
+  });
+
+  it("gives every project card its own painted art, small and crisp at 2x", () => {
+    for (const item of ROOM_OBJECTS.filter((entry) => entry.kind === "project")) {
+      const id = item.layer.replace(/^obj-/, "");
+      const card = CARD_ART[id];
+      expect(card, id).toBeDefined();
+      expect(cardArt(item.layer).src).toBe(`/lab/room/card-${id}.webp`);
+      // the art column is at most about 285 x 346 CSS px (2560-wide desktop)
+      expect(Math.max(card.width / 285, card.height / 346), id).toBeGreaterThanOrEqual(1.9);
+      const path = resolve(process.cwd(), "public", card.src.slice(1));
+      expect(existsSync(path), id).toBe(true);
+      expect(statSync(path).size, id).toBeLessThan(120_000);
+      expect(existsSync(resolve(process.cwd(), `components/room/tools/prompts/card-${id}.txt`)), id).toBe(true);
+    }
   });
 
   it("keeps the room free of three.js and WebGL", () => {

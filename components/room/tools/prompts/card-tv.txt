@@ -1,0 +1,8 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out>
+
+Attached: crop-tv.png is a tiny retro CRT television standing on a low cabinet, cut from the room illustration plate-b.png (also attached). Paint a NEW, large, high-detail version of exactly this object, on its own, as a clean sticker-like illustration for an app card.
+Keep its design: the same shape, proportions, colours, details and the same three-quarter camera seen slightly from above, as in crop-tv.png. It must look like the same object from the same room, painted bigger and crisper.
+Style: exactly plate-b.png's style: cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm afternoon light from the upper left. Not 3D, not vinyl, not pixel art, not a photo.
+The TV: a small cream-coloured boxy CRT with rounded corners, a dark grey-green curved glass screen with a soft highlight, a column of round dark knobs and a speaker grille on the right side, a few small buttons under the screen, four short little feet.
+Background: a perfectly flat, solid magenta (#FF00FF) everywhere around the object. No wall, no desk, no shelf, no floor, no plants, no neighbouring objects, no cast shadow and no contact shadow on the background, no glow, no border, no text other than what is on the object itself. The whole object fits inside the frame with generous magenta margin on every side (at least 8% of the width), nothing cropped.
+Square 1024x1024.

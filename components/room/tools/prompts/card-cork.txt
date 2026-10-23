@@ -1,0 +1,8 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out>
+
+Attached: crop-cork.png is a cork board hanging on a wall, cut from the room illustration plate-b.png (also attached). Paint a NEW, large, high-detail version of exactly this object, on its own, as a clean sticker-like illustration for an app card.
+Keep its design: the same shape, proportions, colours, details and the same three-quarter camera seen slightly from above, as in crop-cork.png. It must look like the same object from the same room, painted bigger and crisper.
+Style: exactly plate-b.png's style: cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm afternoon light from the upper left. Not 3D, not vinyl, not pixel art, not a photo.
+The board: a light wooden frame around warm cork, with pinned notes and red pins, red string zig-zagging between the pins, small landscape photos, a pale green paper map, lined notes, and one bright yellow note with a black footprint on it. Paint it at the same angle as the crop but WITHOUT the hanging vine plant that crosses it in the crop: the whole cork surface is visible.
+Background: a perfectly flat, solid magenta (#FF00FF) everywhere around the object. No wall, no desk, no shelf, no floor, no plants, no neighbouring objects, no cast shadow and no contact shadow on the background, no glow, no border, no text other than what is on the object itself. The whole object fits inside the frame with generous magenta margin on every side (at least 8% of the width), nothing cropped.
+Square 1024x1024.

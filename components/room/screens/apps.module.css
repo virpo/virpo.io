@@ -423,17 +423,52 @@ button:disabled {
   height: 100%;
 }
 
-.projectArt img {
+/* the painted object, scaled to fill the art column (the card art is about 2x its largest size) */
+.figure {
+  position: relative;
+  display: grid;
+  place-items: center;
   max-width: 100%;
-  max-height: 46cqw;
-  object-fit: contain;
-  filter: drop-shadow(0 1.4cqw 1.2cqw rgba(60, 30, 0, 0.25));
+}
+
+.figure img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 42cqw;
+  filter: drop-shadow(0 1.4cqw 1.2cqw rgba(60, 30, 0, 0.22));
   animation: float 4s ease-in-out infinite alternate;
+}
+
+/* standing things get a soft contact shadow that breathes with the float */
+.figure[data-grounded] img {
+  filter: drop-shadow(0 0.5cqw 0.6cqw rgba(60, 30, 0, 0.2));
+}
+
+.figure[data-grounded]::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -2.2cqw;
+  width: 78%;
+  height: 4.4cqw;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(70, 40, 10, 0.34), rgba(70, 40, 10, 0.12) 60%, transparent);
+  transform: translateX(-50%);
+  animation: ground 4s ease-in-out infinite alternate;
 }
 
 @keyframes float {
   from { transform: translateY(0.6cqw) rotate(-1deg); }
   to { transform: translateY(-0.6cqw) rotate(1deg); }
+}
+
+@keyframes ground {
+  from { transform: translateX(-50%) scale(1); opacity: 1; }
+  to { transform: translateX(-50%) scale(0.86); opacity: 0.7; }
 }
 
 .projectText {
@@ -482,7 +517,8 @@ button:disabled {
 
 @media (prefers-reduced-motion: reduce) {
   .rideView,
-  .projectArt img {
+  .figure img,
+  .figure::after {
     animation: none;
   }
 }

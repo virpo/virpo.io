@@ -1,0 +1,156 @@
+{
+  "1440:arcade": {
+    "css": [
+      172,
+      249
+    ],
+    "natural": [
+      512,
+      700,
+      "/lab/room/card-arcade.webp"
+    ]
+  },
+  "1440:tv": {
+    "css": [
+      220,
+      224
+    ],
+    "natural": [
+      580,
+      559,
+      "/lab/room/card-tv.webp"
+    ]
+  },
+  "1440:printer": {
+    "css": [
+      210,
+      249
+    ],
+    "natural": [
+      580,
+      654,
+      "/lab/room/card-printer.webp"
+    ]
+  },
+  "1440:deck": {
+    "css": [
+      219,
+      155
+    ],
+    "natural": [
+      580,
+      378,
+      "/lab/room/card-deck.webp"
+    ]
+  },
+  "1440:cork": {
+    "css": [
+      220,
+      203
+    ],
+    "natural": [
+      580,
+      504,
+      "/lab/room/card-cork.webp"
+    ]
+  },
+  "1440:aiposter": {
+    "css": [
+      109,
+      245
+    ],
+    "natural": [
+      323,
+      700,
+      "/lab/room/card-aiposter.webp"
+    ]
+  },
+  "1440:peter": {
+    "css": [
+      156,
+      247
+    ],
+    "natural": [
+      298,
+      452,
+      "/lab/room/peter-wave.webp"
+    ]
+  },
+  "2560:arcade": {
+    "css": [
+      220,
+      318
+    ],
+    "natural": [
+      512,
+      700,
+      "/lab/room/card-arcade.webp"
+    ]
+  },
+  "2560:tv": {
+    "css": [
+      281,
+      288
+    ],
+    "natural": [
+      580,
+      559,
+      "/lab/room/card-tv.webp"
+    ]
+  },
+  "2560:printer": {
+    "css": [
+      268,
+      319
+    ],
+    "natural": [
+      580,
+      654,
+      "/lab/room/card-printer.webp"
+    ]
+  },
+  "2560:deck": {
+    "css": [
+      279,
+      199
+    ],
+    "natural": [
+      580,
+      378,
+      "/lab/room/card-deck.webp"
+    ]
+  },
+  "2560:cork": {
+    "css": [
+      280,
+      261
+    ],
+    "natural": [
+      580,
+      504,
+      "/lab/room/card-cork.webp"
+    ]
+  },
+  "2560:aiposter": {
+    "css": [
+      139,
+      314
+    ],
+    "natural": [
+      323,
+      700,
+      "/lab/room/card-aiposter.webp"
+    ]
+  },
+  "2560:peter": {
+    "css": [
+      199,
+      316
+    ],
+    "natural": [
+      298,
+      452,
+      "/lab/room/peter-wave.webp"
+    ]
+  }
+}
