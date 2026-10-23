@@ -623,3 +623,31 @@
   height: 100%;
   display: block;
 }
+
+/* on a phone-sized screen the label stays readable, and its Open button gets a finger-sized target */
+@container (max-width: 520px) {
+  .label {
+    max-width: 88cqw;
+    font-size: max(2.15cqw, 13px);
+  }
+
+  .labelOpen {
+    font-size: max(2.2cqw, 13px);
+  }
+}
+
+@media (pointer: coarse) {
+  .labelOpen {
+    position: relative;
+  }
+
+  .labelOpen::after {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 48px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+
+}

@@ -130,6 +130,17 @@
   margin: 2.2em 0;
 }
 
+/* code scrolls inside its own box instead of widening the page */
+.body pre {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  background: #f3ede4;
+  font-size: 0.8em;
+  line-height: 1.55;
+}
+
 .body :global(.articleMedia) video,
 .body :global(.articleMedia) img {
   display: block;

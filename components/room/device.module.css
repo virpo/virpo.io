@@ -1463,3 +1463,33 @@
     transition: none;
   }
 }
+
+/* the app bar and its way back, readable and tappable on a phone-sized screen */
+@container (max-width: 520px) {
+  .appBar p {
+    font-size: max(2.5cqw, 14px);
+  }
+
+  .appBar p span {
+    font-size: max(1.7cqw, 11px);
+  }
+
+  .appBack {
+    min-width: 72px;
+    font-size: max(2.2cqw, 14px);
+  }
+}
+
+/* touch: no keyboard hint in the app bar */
+@media (hover: none) {
+  .appBar kbd {
+    display: none;
+  }
+}
+
+/* on touch, a vertical swipe that starts on the knob still scrolls the page; turning it is a sideways or circular drag */
+@media (pointer: coarse) {
+  .knob {
+    touch-action: pan-y;
+  }
+}

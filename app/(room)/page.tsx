@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Device } from "../../components/room/Device";
+import { CardsInView } from "../../components/room/CardsInView";
 import { ProjectLogo } from "../../components/room/ProjectLogo";
 import { PROJECT_META, projectLine } from "../../components/room/projects";
 import { roomDate, RoomFooter, RoomSocial } from "../../components/room/RoomChrome";
@@ -126,7 +127,7 @@ export default function RoomPage() {
                 const item = objectForProject(project.slug);
                 return (
                   <li key={project.slug}>
-                    <a className={styles.projectCard} href={project.href} target="_blank" rel="noreferrer" data-room-target={item?.id}>
+                    <a className={styles.projectCard} href={project.href} target="_blank" rel="noreferrer" data-room-target={item?.id} data-project-card>
                       <span className={styles.projectArt}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img className={styles.projectPencil} src={`/lab/room/projects/${project.slug}-pencil-720.webp`} srcSet={cardSrcSet(`${project.slug}-pencil`)} sizes={CARD_SIZES} alt="" width={1080} height={720} loading="lazy" decoding="async" />
@@ -169,6 +170,7 @@ export default function RoomPage() {
         </div>
       </main>
       <RoomFooter />
+      <CardsInView />
     </div>
   );
 }

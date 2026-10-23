@@ -530,3 +530,89 @@ button:disabled {
   vertical-align: -0.12em;
   font-size: 1.15em;
 }
+
+/* On a phone the screen is about 300 px wide, and text sized in cqw drops to 4-7 px. Below
+   520 px of screen, every size gets a floor it can be read at; the app body scrolls. */
+@container (max-width: 520px) {
+  .kicker {
+    font-size: max(1.7cqw, 12px);
+  }
+
+  .hint {
+    font-size: max(2.2cqw, 13px);
+  }
+
+  .radioKeys button {
+    font-size: max(2.3cqw, 13px);
+  }
+
+  .windowBar p {
+    font-size: max(2.2cqw, 13px);
+  }
+
+  .cardReading {
+    font-size: max(2.6cqw, 13px);
+  }
+
+  .cardMeaning {
+    font-size: max(2.2cqw, 13px);
+  }
+
+  .kanaBar {
+    font-size: max(1.9cqw, 12px);
+  }
+
+  .station {
+    font-size: max(4.4cqw, 16px);
+  }
+
+  .station small {
+    font-size: max(1.8cqw, 12px);
+  }
+
+  .aside {
+    font-size: max(1.9cqw, 12px);
+  }
+
+  .bloomName {
+    font-size: max(4.6cqw, 19px);
+  }
+
+  .bloomMeta {
+    font-size: max(2.1cqw, 13px);
+  }
+
+  .bloomList strong {
+    font-size: max(2.3cqw, 13px);
+  }
+
+  .bloomList small {
+    font-size: max(1.8cqw, 12px);
+  }
+
+  .bloomList em {
+    font-size: max(1.8cqw, 12px);
+  }
+
+  .projectTitle {
+    font-size: max(5.4cqw, 19px);
+  }
+
+  .aboutHeadline {
+    font-size: max(3.3cqw, 16px);
+  }
+
+  .projectBlurb {
+    font-size: max(2.3cqw, 13px);
+  }
+
+  .links a {
+    font-size: max(2.2cqw, 13px);
+  }
+
+  .links a,
+  .radioKeys button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}

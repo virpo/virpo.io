@@ -78,6 +78,8 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
   const [timeChoice, setTimeChoice] = useState<TimeChoice>("auto");
   const [time, setTime] = useState<TimeOfDay>("day");
   const [touch, setTouch] = useState(false);
+  const touchRef = useRef(false);
+  touchRef.current = touch;
   const [allTags, setAllTags] = useState(false);
   const [paused, setPaused] = useState(false);
   const [reduced, setReduced] = useState(false);
@@ -87,6 +89,9 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
   const [progress, setProgress] = useState(0);
   const [turning, setTurning] = useState(false);
   const [clock, setClock] = useState<string | null>(null);
+  // the bezel briefly says what the side button just did
+  const [flash, setFlash] = useState<string | null>(null);
+  const flashTimer = useRef(0);
 
   const lit = hover ?? external ?? selected;
 
@@ -321,6 +326,8 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
     setHover(null);
     const item = objectById.get(id);
     if (item) setAnnounce(`${figLabel(item.fig)}, ${titleFor(item)}`);
+    // on touch the d-pad and knob show the label with its Open button, like a first tap does
+    if (touchRef.current) setLabelOpen(true);
     if (focus) rootRef.current?.querySelector<HTMLElement>(`[data-hit="${id}"]`)?.focus({ preventScroll: true });
   }, [titleFor]);
 
@@ -385,7 +392,12 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
   };
 
   const cycleTime = () => {
-    const next = TIME_CHOICES[(TIME_CHOICES.indexOf(timeChoice) + 1) % TIME_CHOICES.length];
+    let next = TIME_CHOICES[(TIME_CHOICES.indexOf(timeChoice) + 1) % TIME_CHOICES.length];
+    // skip a choice that looks the same as now, so every press visibly changes the light
+    if (next !== "auto" && next === time) next = TIME_CHOICES[(TIME_CHOICES.indexOf(next) + 1) % TIME_CHOICES.length];
+    setFlash(`Light: ${TIME_LABEL[next]}`);
+    window.clearTimeout(flashTimer.current);
+    flashTimer.current = window.setTimeout(() => setFlash(null), 1600);
     setTimeChoice(next);
     try {
       window.localStorage.setItem(TIME_KEY, next);
@@ -674,7 +686,7 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
             {/* the light in the room follows Tokyo, so the bezel says what time it is there */}
             {clock ? (
               <span className={styles.clock} title="Time in Tokyo, where the room is">
-                Tokyo {clock}
+                {flash ?? `Tokyo ${clock}`}
               </span>
             ) : null}
           </div>

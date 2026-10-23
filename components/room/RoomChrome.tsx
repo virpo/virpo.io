@@ -55,7 +55,7 @@ export function RoomFooter() {
 }
 
 /** A small device-style key that leads back into the room. */
-export function RoomBackKey({ label = "Pocket Room" }: { label?: string }) {
+export function RoomBackKey({ label = "Peter Hraska" }: { label?: string }) {
   return (
     <Link href="/" className={styles.backKey}>
       <span className={styles.backKeyCap} aria-hidden="true">
