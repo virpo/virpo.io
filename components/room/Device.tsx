@@ -30,6 +30,21 @@ const APP_TITLES: Record<RoomToyId, string> = {
 
 /** z of each slab of the case, in cqw (the face sits in front at +6) */
 const SLABS = [-6, -4, -2, 0, 2, 4];
+// the controls are solid too: wall layers under each key cap, knurled rings stacked into the knob,
+// and a microSD card a few layers thick
+const KNOB_RINGS = Array.from({ length: 16 }, (_, r) => r);
+const SD_LAYERS = [0, 1, 2];
+const GRILLE = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+
+function Walls({ n = 4 }: { n?: number }) {
+  return (
+    <>
+      {Array.from({ length: n }, (_, index) => (
+        <i key={index} className={styles.wall} style={{ "--w": index + 1, "--n": n } as CSSProperties} aria-hidden="true" />
+      ))}
+    </>
+  );
+}
 
 const TIME_LABEL: Record<TimeChoice, string> = { auto: "Tokyo time", morning: "Morning", day: "Day", evening: "Evening", night: "Night" };
 
@@ -496,15 +511,20 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
           <path className={styles.cordTwist} d="M37 34 C 22 52, 15 120, 15 240 C 15 330, 17 392, 29 401 C 41 409, 45 378, 43 326 C 41 250, 36 130, 41 66" />
           <path className={styles.cordShade} d="M37 34 C 22 52, 15 120, 15 240 C 15 330, 17 392, 29 401 C 41 409, 45 378, 43 326 C 41 250, 36 130, 41 66" />
           <path className={styles.cordShine} d="M37 34 C 22 52, 15 120, 15 240 C 15 330, 17 392, 29 401 C 41 409, 45 378, 43 326 C 41 250, 36 130, 41 66" />
-          <rect className={styles.sleeve} x="13" y="238" width="33" height="44" rx="7" />
-          <rect className={styles.sleeveHi} x="16" y="242" width="6" height="36" rx="3" />
           <circle className={styles.lug} cx="38" cy="36" r="5" />
         </svg>
+        {/* a microSD card half in its slot */}
+        <div className={styles.sd} aria-hidden="true">
+          {SD_LAYERS.map((l) => (
+            <i key={l} style={{ "--l": l } as CSSProperties} />
+          ))}
+        </div>
         {/* the left side of the case, with the light button on it */}
         <div className={styles.side}>
           <i className={styles.sideSlots} aria-hidden="true" />
+          <i className={styles.sdSlot} aria-hidden="true" />
           <button type="button" className={styles.sideButton} onClick={hero ? () => (press("side"), cycleTime()) : undefined} aria-label={`Light in the room: ${TIME_LABEL[timeChoice]}. Change`} title={`Light: ${TIME_LABEL[timeChoice]}`} {...btn("side")}>
-            <i />
+            <Walls n={8} />
           </button>
         </div>
 
@@ -561,21 +581,30 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
                   aria-label={hero ? `Select the object ${direction === "up" ? "above" : direction === "down" ? "below" : `to the ${direction}`}` : undefined}
                   onClick={hero ? () => (press(direction), move(direction)) : undefined}
                   {...btn(direction)}
-                />
+                >
+                  <Walls />
+                </button>
               ))}
             </div>
             <button type="button" className={styles.round} aria-label={hero ? "Open the selected object" : undefined} onClick={hero ? () => (press("round"), primary()) : undefined} {...btn("round")}>
-              <i />
+              <i className={styles.roundDot} />
+              <Walls />
             </button>
             <div className={styles.pill}>
               <button type="button" className={styles.pillKey} aria-label={hero ? (allTags ? "Hide all Fig. numbers" : "Show all Fig. numbers") : undefined} aria-pressed={hero ? allTags : undefined} onClick={hero ? () => (press("menu"), setAllTags((value) => !value)) : undefined} {...btn("menu")}>
                 <i className={styles.menuIcon} />
+                <Walls />
               </button>
               <button type="button" className={styles.pillKey} aria-label={hero ? (app ? "Back to the room" : "Clear the selection") : undefined} onClick={hero ? () => (press("stop"), back()) : undefined} {...btn("stop")}>
                 <i className={styles.stopIcon} />
+                <Walls />
               </button>
             </div>
-            <i className={styles.grille} aria-hidden="true" />
+            <i className={styles.grille} aria-hidden="true">
+              {GRILLE.map((hole) => (
+                <i key={hole} />
+              ))}
+            </i>
             <button
               ref={knobRef}
               type="button"
@@ -616,6 +645,9 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
               }}
               {...btn("knob")}
             >
+              {KNOB_RINGS.map((r) => (
+                <i key={r} className={r === KNOB_RINGS.length - 1 ? `${styles.ring} ${styles.ringTop}` : styles.ring} style={{ "--r": r } as CSSProperties} />
+              ))}
               <i className={styles.knobCap}>
                 <i className={styles.knobMark} />
               </i>

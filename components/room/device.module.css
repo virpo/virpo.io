@@ -439,7 +439,7 @@
   place-items: center;
 }
 
-.round i {
+.roundDot {
   width: 1.1cqw;
   height: 1.1cqw;
   border-radius: 50%;
@@ -492,14 +492,32 @@
   background: rgba(50, 44, 38, 0.8);
 }
 
+/* the speaker grille: nine holes drilled into the face. The lit rim casts a shadow inside each
+   hole and the far rim catches the light, and both slide a little as the device turns. */
 .grille {
   position: absolute;
   left: 53.2cqw;
   top: 7.4cqw;
   width: 6.4cqw;
   height: 6.4cqw;
-  background: radial-gradient(circle, rgba(40, 34, 28, 0.78) 0 0.55cqw, transparent 0.62cqw) 0 0 / 2.13cqw 2.13cqw;
-  filter: drop-shadow(0 0.12cqw 0 rgba(255, 255, 255, 0.7));
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  place-items: center;
+  --hole: 1.15cqw;
+}
+
+.grille i {
+  width: var(--hole);
+  height: var(--hole);
+  border-radius: 50%;
+  /* the floor of the hole, lit from the far side, with the rim's shadow falling across the top */
+  background: radial-gradient(120% 100% at calc(50% - var(--tx) * 20%) calc(85% + var(--ty) * 15%), #6b6156 0%, #3d352d 45%, #241e18 100%);
+  box-shadow:
+    inset calc(0.08cqw + var(--tx) * 0.2cqw) calc(0.3cqw - var(--ty) * 0.14cqw) 0.12cqw rgba(20, 14, 8, 0.85),
+    inset 0 -0.06cqw 0.05cqw rgba(255, 255, 255, 0.18),
+    0 0.13cqw 0.02cqw rgba(255, 255, 255, 0.85),
+    0 -0.08cqw 0.04cqw rgba(60, 50, 40, 0.3);
 }
 
 /* the knob: a knurled orange cylinder. The knurl and the mark turn, the light on it does not. */
@@ -658,16 +676,6 @@
   transform: translate(-1.6px, 0);
 }
 
-.sleeve {
-  fill: #7a756d;
-  stroke: #57524b;
-  stroke-width: 1.2;
-}
-
-.sleeveHi {
-  fill: rgba(255, 255, 255, 0.24);
-}
-
 .lug {
   fill: #8f877c;
   stroke: #645d54;
@@ -700,6 +708,220 @@
   filter: blur(1.2cqw);
   transform: translateX(calc(var(--tx) * -3cqw));
   transition: transform 900ms cubic-bezier(0.16, 0.84, 0.24, 1);
+}
+
+/* a microSD card half in its slot on the left side: three thin layers, a label on top */
+.sd {
+  position: absolute;
+  left: -2.4cqw;
+  top: 60cqw;
+  width: 4.6cqw;
+  height: 7.4cqw;
+  transform-style: preserve-3d;
+  transform: translateZ(1.7cqw);
+  pointer-events: none;
+}
+
+.sd i {
+  position: absolute;
+  inset: 0;
+  border-radius: 0.55cqw;
+  transform: translateZ(calc(var(--l) * -0.24cqw));
+  background: linear-gradient(180deg, #4b4f58, #2b2e35);
+}
+
+/* the face of the card: dark plastic, a printed label and a little grip at the end */
+.sd i:first-child {
+  background:
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0 0.18cqw, transparent 0.18cqw 0.55cqw) 0.35cqw 1.2cqw / 0.7cqw 5cqw no-repeat,
+    linear-gradient(90deg, transparent 1.5cqw, #b9b2a6 1.5cqw 3.6cqw, transparent 3.6cqw) 0 1.4cqw / 100% 4.6cqw no-repeat,
+    linear-gradient(90deg, transparent 1.5cqw, var(--orange) 1.5cqw 3.6cqw, transparent 3.6cqw) 0 1.4cqw / 100% 0.9cqw no-repeat,
+    linear-gradient(160deg, #50555f, #24272d 70%);
+  box-shadow: inset 0 0.14cqw 0 rgba(255, 255, 255, 0.22), inset 0.12cqw 0 0 rgba(255, 255, 255, 0.12);
+}
+
+.sd i:last-child {
+  box-shadow: calc(-0.3cqw - var(--tx) * 0.5cqw) calc(0.5cqw + var(--ty) * 0.3cqw) 0.8cqw rgba(40, 30, 20, 0.35);
+}
+
+/* the slot it sits in, cut into the side */
+.sdSlot {
+  position: absolute;
+  left: 6.75cqw;
+  top: 52.1cqw;
+  width: 1.2cqw;
+  height: 8.2cqw;
+  border-radius: 0.5cqw;
+  background: #2a241e;
+  box-shadow: inset 0.2cqw 0 0.3cqw rgba(0, 0, 0, 0.7), 0 0 0 0.12cqw rgba(255, 255, 255, 0.16);
+}
+
+/* ---- real depth on the controls: desktops, where the device is turned in 3D ----
+ * Each key is a cap lifted off the face with three wall layers under it, the knob is a stack of
+ * knurled rings with the cap on top, and the side button stands off the side the same way, so
+ * turning the device shows their sides. The light stays put: contact shadows slide against the
+ * tilt. (No filters on these: a filter would flatten the 3D.) */
+.wall,
+.ring {
+  display: none;
+}
+
+@media (min-width: 900px) and (hover: hover) and (pointer: fine) {
+  .face,
+  .controls,
+  .dpad,
+  .pill {
+    transform-style: preserve-3d;
+  }
+
+  .dkey,
+  .round,
+  .pillKey,
+  .sideButton {
+    --lift: 1.5cqw;
+    transform-style: preserve-3d;
+    transform: translateZ(var(--lift));
+    box-shadow:
+      inset 0 0.2cqw 0 rgba(255, 255, 255, 0.95),
+      inset 0 -0.3cqw 0.3cqw rgba(0, 0, 0, 0.12);
+  }
+
+  .dkey:hover,
+  .round:hover,
+  .pillKey:hover,
+  .sideButton:hover {
+    filter: none;
+    box-shadow:
+      inset 0 0.2cqw 0 rgba(255, 255, 255, 0.95),
+      inset 0 -0.3cqw 0.3cqw rgba(0, 0, 0, 0.12),
+      inset 0 0 0 40cqw rgba(255, 255, 255, 0.07);
+  }
+
+  /* pressed: the cap travels down along its walls, and the walls slide into the face */
+  .dkey:active,
+  .dkey[data-pressed="true"],
+  .round:active,
+  .round[data-pressed="true"],
+  .pillKey:active,
+  .pillKey[data-pressed="true"] {
+    transform: translateZ(0.3cqw);
+    filter: none;
+    box-shadow:
+      inset 0 0.2cqw 0 rgba(255, 255, 255, 0.55),
+      inset 0 0.3cqw 0.4cqw rgba(0, 0, 0, 0.12);
+  }
+
+  .wall {
+    display: block;
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    transform: translateZ(calc(var(--lift) * var(--w) / (var(--n) + 0.1) * -1));
+    background: linear-gradient(180deg, #b9b1a5, var(--key-wall) 60%, #8a8276);
+    pointer-events: none;
+  }
+
+  /* the wall at the face carries the contact shadow */
+  .wall:last-child {
+    box-shadow: calc(0.3cqw - var(--tx) * 0.7cqw) calc(0.55cqw + var(--ty) * 0.35cqw) 0.9cqw rgba(50, 40, 30, 0.42);
+  }
+
+  /* the side button: an orange block standing off the side */
+  .sideButton {
+    --lift: 1.5cqw;
+    box-shadow:
+      inset 0 0.25cqw 0.15cqw rgba(255, 255, 255, 0.45),
+      inset 0 -0.3cqw 0.3cqw rgba(110, 40, 5, 0.35);
+  }
+
+  .sideButton:hover {
+    box-shadow:
+      inset 0 0.25cqw 0.15cqw rgba(255, 255, 255, 0.5),
+      inset 0 -0.3cqw 0.3cqw rgba(110, 40, 5, 0.3),
+      inset 0 0 0 40cqw rgba(255, 255, 255, 0.08);
+  }
+
+  .sideButton:active,
+  .sideButton[data-pressed="true"] {
+    transform: translateZ(0.45cqw);
+  }
+
+  .sideButton .wall {
+    background: linear-gradient(180deg, #e0662a, #b4491a 60%, #8f3812);
+  }
+
+  .sideButton .wall:last-child {
+    box-shadow: calc(0.2cqw + var(--tx) * 0.5cqw) 0.6cqw 0.8cqw rgba(50, 30, 15, 0.4);
+  }
+
+  /* the knob: twelve knurled rings make the cylinder, the domed cap sits on top */
+  .knob {
+    --h: 4.2cqw;
+    transform-style: preserve-3d;
+  }
+
+  .knob::before {
+    display: none;
+  }
+
+  .knob::after {
+    content: "";
+    position: absolute;
+    inset: 3%;
+    border-radius: 50%;
+    transform: translate(calc(0.7cqw - var(--tx) * 1.8cqw), calc(1.5cqw + var(--ty) * 1.1cqw));
+    background: rgba(60, 30, 10, 0.5);
+    filter: blur(1.3cqw);
+    pointer-events: none;
+  }
+
+  .ring {
+    display: block;
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    transform: translateZ(calc(var(--h) * (var(--r) + 1) / 16));
+    /* lower rings are darker: the side of the cylinder falls off away from the light */
+    background:
+      linear-gradient(rgb(60 20 0 / calc(0.36 - var(--r) * 0.022)), rgb(60 20 0 / calc(0.36 - var(--r) * 0.022))),
+      repeating-conic-gradient(from var(--knob), #ec6d2c 0 3.2deg, #b8471a 3.2deg 6.4deg);
+    pointer-events: none;
+  }
+
+  .ringTop {
+    background:
+      radial-gradient(circle, transparent 60%, rgba(0, 0, 0, 0.18) 72%, transparent 73%),
+      repeating-conic-gradient(from var(--knob), #ec6d2c 0 3.2deg, #b8471a 3.2deg 6.4deg);
+    box-shadow: inset 0 0 0 0.3cqw rgba(0, 0, 0, 0.12);
+  }
+
+  .knobCap {
+    transform-style: preserve-3d;
+    transform: translateZ(calc(var(--h) + 0.5cqw));
+    transition: transform 140ms var(--ease-press);
+  }
+
+  /* the cap's own edge, so it reads as a dome standing on the knurl */
+  .knobCap::before,
+  .knobCap::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: #c9521c;
+    transform: translateZ(-0.25cqw);
+    pointer-events: none;
+  }
+
+  .knobCap::after {
+    background: #a8421a;
+    transform: translateZ(-0.5cqw);
+  }
+
+  .knob:active .knobCap,
+  .knob[data-pressed="true"] .knobCap {
+    transform: translateZ(calc(var(--h) + 0.3cqw));
+  }
 }
 
 /* ---- flat: touch screens and narrow windows ----
@@ -738,8 +960,24 @@
     background: none;
   }
 
-  .sideSlots {
+  .sideSlots,
+  .sdSlot {
     display: none;
+  }
+
+  .sd {
+    left: -1.7cqw;
+    top: 64cqw;
+    width: 3cqw;
+    transform: none;
+  }
+
+  .sd i {
+    transform: none;
+  }
+
+  .sd i:first-child {
+    box-shadow: inset 0 0.14cqw 0 rgba(255, 255, 255, 0.22), 0 0.35cqw 0 #1c1e23;
   }
 
   .sideButton {
@@ -837,7 +1075,7 @@
     height: 12cqw;
   }
 
-  .wrap[data-variant="hero"] .round i {
+  .wrap[data-variant="hero"] .roundDot {
     width: 1.8cqw;
     height: 1.8cqw;
   }
@@ -874,8 +1112,12 @@
     top: 32.4cqw;
     width: 9cqw;
     height: 4.6cqw;
-    background-size: 3cqw 2.3cqw;
-    background-image: radial-gradient(circle, rgba(40, 34, 28, 0.7) 0 0.6cqw, transparent 0.68cqw);
+    grid-template-rows: repeat(2, 1fr);
+    --hole: 1.25cqw;
+  }
+
+  .wrap[data-variant="hero"] .grille i:nth-child(n + 7) {
+    display: none;
   }
 
   .wrap[data-variant="hero"] .knob {
@@ -896,7 +1138,8 @@
   }
 
   .wrap[data-variant="hero"] .lanyard,
-  .wrap[data-variant="hero"] .legend {
+  .wrap[data-variant="hero"] .legend,
+  .wrap[data-variant="hero"] .sd {
     display: none;
   }
 
@@ -992,11 +1235,17 @@
     top: 38cqw;
     width: 6cqw;
     height: 4cqw;
-    background-size: 2cqw 2cqw;
+    grid-template-rows: repeat(2, 1fr);
+    --hole: 1.1cqw;
+  }
+
+  .wrap[data-variant="hero"] .grille i:nth-child(n + 7) {
+    display: none;
   }
 
   .wrap[data-variant="hero"] .lanyard,
-  .wrap[data-variant="hero"] .legend {
+  .wrap[data-variant="hero"] .legend,
+  .wrap[data-variant="hero"] .sd {
     display: none;
   }
 
@@ -1027,6 +1276,7 @@
 }
 
 .wrap[data-variant="dock"] .lanyard,
+.wrap[data-variant="dock"] .sd,
 .wrap[data-variant="dock"] .stand,
 .wrap[data-variant="dock"] .legend,
 .wrap[data-variant="dock"] .model {
