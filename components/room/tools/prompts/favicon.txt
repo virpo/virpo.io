@@ -1,0 +1,7 @@
+Use your image generation tool to create exactly ONE square image (1024x1024). Do not write code to draw it. Then copy the resulting PNG file to <art dir>/brand/favicon-art.png and print its absolute path.
+
+It is an app icon / favicon for a personal website. Subject: the same mini character as in the attached sprite (peter-wave.png): a young man with short dark-brown hair, faded short sides and a swept-up textured top, prominent ears, fair skin, sage-green hoodie with drawstrings. Pose and expression copied from the attached photo (x-avatar.jpg): a joyful SHOUT, mouth wide open, eyebrows up, head tilted slightly, shot as a close selfie, head and shoulders only.
+
+Style: exactly the ink-line and soft watercolor illustration style of the attached sprite (cozy Japanese illustration, clean confident ink outlines, flat soft washes). Background: a single flat vermilion torii orange (#E8541E), with two or three thick darker-orange torii posts and one crossbeam receding behind him, very simplified, like the Fushimi Inari tunnel in the photo.
+
+It must read at 32 pixels: big head filling about 70% of the frame, centered, strong contrast between face and the orange, few details, thick outlines, no text, no border, no rounded corners, no shadow outside the square.
