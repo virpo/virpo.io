@@ -1,0 +1,99 @@
+---
+title: A room I did not draw
+description: Claude built my website, ChatGPT painted it, and my job was to put two pictures side by side and point at one.
+publishedAt: 2026-10-23
+tags:
+  - Weird use of AI
+  - Design
+socialImage: /assets/blog/pocket-room/social.jpg
+draft: false
+---
+
+This website is a little grey handheld with my room inside it. A shinkansen passes the window every twenty seconds or so, and every numbered thing in the room opens something: the arcade, the bookshelf, me. I did not draw any of it, and I wrote very little of the code. Mostly I pointed at things.
+
+<ArticleImage src="/assets/blog/pocket-room/hero.webp" alt="The Pocket Room: a grey handheld with a painted room on its screen, an orange knob and a wrist strap" />
+
+## The mockup is the spec
+
+I asked Claude for ten concepts, then ten more, and picked one: a Teenage Engineering-style device with my room on its screen. Several agents and several tries later, I got a 3D vinyl diorama. It was nice. It looked nothing like what I had picked.
+
+<ImagePair
+  left={{ src: "/assets/blog/pocket-room/first-try.webp", alt: "The first attempt: a 3D vinyl diorama of a house next to a list of posts", caption: "What I got." }}
+  right={{ src: "/assets/blog/pocket-room/mockup.webp", alt: "The picked mockup: a grey handheld with a hand-drawn room on its screen", caption: "What I had picked." }}
+/>
+
+So now there is a rule, saved in Claude's memory word for word: "picked mockup = visual spec; compare side by side before reporting".
+
+## Claude calls ChatGPT
+
+Claude Code cannot paint, but ChatGPT can, and the Codex CLI puts its image tool in a terminal. So Claude runs it, attaching references with `-i` and piping the prompt in:
+
+```sh
+codex exec --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox \
+  -i art/plate-b.png -i crop-arcade.png - < prompts/card-arcade.txt
+```
+
+`-i` takes several files, so every reference goes before the lone `-`, or the `-` is read as another image. The bypass flag lets Codex save the PNG outside its sandbox, to the exact path a script is waiting on. Each image takes about fifty seconds, so Claude runs six at once and looks at every one before keeping it. The wrapper is [paint.sh](https://github.com/virpo/virpo.io/blob/main/components/room/tools/paint.sh).
+
+Every prompt then lives in a text file, 23 of them so far, next to the painting it made and the photo it started from:
+
+```text
+components/room/tools/
+  prompts/card-arcade.txt   what was asked
+  art/cards/arcade.png      what came back
+  cards.py                  how it gets onto the site
+```
+
+An `AGENTS.md` tells the next agent where all of it lives and which looks I already turned down.
+
+## One painting, cut into pieces
+
+The whole room is one 1536 × 1024 painting. The windows are painted flat magenta, and a script turns magenta into glass, so the train can run behind it. Every object you can hover is cut out of the same painting: inside the object's box, whatever you can reach from the edge without crossing an ink line is background, and the rest is the object. The hole it leaves is painted over. That is why everything lines up exactly.
+
+<ArticleImage src="/assets/blog/pocket-room/plate.webp" alt="The single painting of the room, with its windows painted flat magenta" title="The whole room. The magenta is where the window view goes." />
+
+Cut-outs are small, though, and they drag bits of the room along. Opening the arcade used to show a 326-pixel crop with a plant stuck to it. So every object that opens was repainted on its own, with its cut-out as the reference.
+
+<ImagePair
+  left={{ src: "/assets/blog/pocket-room/arcade-before.webp", alt: "The arcade cut from the room, blurry with leaves and desk around it", caption: "Cut from the room." }}
+  right={{ src: "/assets/blog/pocket-room/arcade-after.webp", alt: "The arcade repainted on its own, crisp, with nothing around it", caption: "Repainted on its own." }}
+/>
+
+## Picking by looking
+
+I cannot describe what I want, but I recognise it. So Claude stopped asking and built comparison pages: five ways to show the projects, then each picture from barely traced to full manga.
+
+<ArticleImage src="/assets/blog/pocket-room/five-ways.webp" alt="One project card shown five ways: a riso print, painted, a live illustration, on a mini device, and taped into a notebook" title="Five ways to show the same project. Painted won." />
+
+<ArticleImage src="/assets/blog/pocket-room/manga-scale.webp" alt="The Levels page four ways: the original screenshot, a light trace, a medium painting and full manga" title="The original, light, medium and full manga. Medium stuck." />
+
+The project cards stay in pencil until you point at one. We also tried an ink drop rippling out from the cursor. Fun once, distracting the eighth time. A plain fade won.
+
+<ImagePair
+  left={{ src: "/assets/blog/pocket-room/card-pencil.webp", alt: "A painted contract card in pencil and paper tones", caption: "At rest." }}
+  right={{ src: "/assets/blog/pocket-room/card-colour.webp", alt: "The same contract card in colour, with a red FLAGGED stamp", caption: "When you point at it." }}
+/>
+
+## Three hands and a flat screen
+
+Mini me had three hands: the waving pose kept a spare one on my lap. Repainting only that patch and blending it back in fixed it.
+
+<ImagePair
+  left={{ src: "/assets/blog/pocket-room/wave-before.webp", alt: "Mini Peter waving, with an extra hand on his lap circled", caption: "A spare arm on my lap." }}
+  right={{ src: "/assets/blog/pocket-room/wave-after.webp", alt: "Mini Peter waving with the extra hand painted out", caption: "Gone." }}
+/>
+
+The room is flat layers, but the device around it is 3D in plain CSS, no three.js. The knob is sixteen stacked rings, each key is a cap on a few walls, and the device leans when you move the mouse.
+
+<ImagePair
+  left={{ src: "/assets/blog/pocket-room/controls-before.webp", alt: "The knob painted flat onto the device", caption: "Painted on." }}
+  right={{ src: "/assets/blog/pocket-room/controls-after.webp", alt: "The knob standing off the device, its knurled side showing", caption: "Sixteen rings." }}
+/>
+
+That broke the mouse. The screen sat in exactly the same plane as the face, so the browser sometimes hit the face instead of the room, and half the objects stopped answering. `translateZ(0.02cqw)` on the screen, a hair off the face, fixed it.
+
+<ArticleImage src="/assets/blog/pocket-room/shapes.webp" alt="The device as a tall handheld on a phone and a wide one on a phone held sideways" title="On a phone it becomes a tall PR-03 mini; turn the phone and it gets wide." />
+
+<ArticleVideo src="/assets/blog/pocket-room/room-loop.mp4" poster="/assets/blog/pocket-room/room-loop.jpg" label="A calm loop of the room: a train passes the window while mini Peter types" title="The home page has an og:video too, so where link previews play video, the train passes right in the preview." />
+
+The agents made things; choosing is the part I am still learning. Everything is in [the repo](https://github.com/virpo/virpo.io), prompts included, if you want to make your own.

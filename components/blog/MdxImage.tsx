@@ -1,9 +1,5 @@
 import type { ComponentPropsWithoutRef } from "react";
-
-const imageDimensions: Record<string, { width: number; height: number }> = {
-  "/assets/blog/ai-build-day.png": { width: 1902, height: 994 },
-  "/assets/blog/detective-skills.png": { width: 1602, height: 882 },
-};
+import { imageDimensions } from "./media-dimensions";
 
 export function ArticleImage({ src, alt = "", title, ...props }: ComponentPropsWithoutRef<"img">) {
   const dimensions = typeof src === "string" ? imageDimensions[src] : undefined;

@@ -1,13 +1,11 @@
+import { imageDimensions } from "./media-dimensions";
+
 type ImageDetails = {
   src: string;
   alt: string;
   caption?: string;
 };
 
-const imageDimensions: Record<string, { width: number; height: number }> = {
-  "/assets/blog/pegboard-sketch.jpg": { width: 1200, height: 1600 },
-  "/assets/blog/pegboard-finished.jpg": { width: 1000, height: 1283 },
-};
 
 export function ImagePair({ left, right }: { left: ImageDetails; right: ImageDetails }) {
   return (

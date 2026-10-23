@@ -1,0 +1,22 @@
+// Natural sizes of the local images posts use, so the page reserves their space before they load.
+export const imageDimensions: Record<string, { width: number; height: number }> = {
+  "/assets/blog/pegboard-sketch.jpg": { width: 1200, height: 1600 },
+  "/assets/blog/pegboard-finished.jpg": { width: 1000, height: 1283 },
+  "/assets/blog/ai-build-day.png": { width: 1902, height: 994 },
+  "/assets/blog/detective-skills.png": { width: 1602, height: 882 },
+  "/assets/blog/pocket-room/arcade-after.webp": { width: 462, height: 618 },
+  "/assets/blog/pocket-room/arcade-before.webp": { width: 326, height: 458 },
+  "/assets/blog/pocket-room/card-colour.webp": { width: 1080, height: 720 },
+  "/assets/blog/pocket-room/card-pencil.webp": { width: 1080, height: 720 },
+  "/assets/blog/pocket-room/controls-after.webp": { width: 378, height: 508 },
+  "/assets/blog/pocket-room/controls-before.webp": { width: 378, height: 508 },
+  "/assets/blog/pocket-room/first-try.webp": { width: 1200, height: 750 },
+  "/assets/blog/pocket-room/five-ways.webp": { width: 2000, height: 1270 },
+  "/assets/blog/pocket-room/hero.webp": { width: 1600, height: 1541 },
+  "/assets/blog/pocket-room/manga-scale.webp": { width: 1712, height: 1152 },
+  "/assets/blog/pocket-room/mockup.webp": { width: 1200, height: 800 },
+  "/assets/blog/pocket-room/plate.webp": { width: 1536, height: 1024 },
+  "/assets/blog/pocket-room/shapes.webp": { width: 1800, height: 907 },
+  "/assets/blog/pocket-room/wave-after.webp": { width: 834, height: 870 },
+  "/assets/blog/pocket-room/wave-before.webp": { width: 834, height: 870 },
+};

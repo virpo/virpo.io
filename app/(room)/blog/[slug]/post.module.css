@@ -130,6 +130,7 @@
   margin: 2.2em 0;
 }
 
+.body :global(.articleMedia) video,
 .body :global(.articleMedia) img {
   display: block;
   width: 100%;

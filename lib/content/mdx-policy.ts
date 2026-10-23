@@ -68,6 +68,28 @@ function validateArticleImage(node: MdxNode) {
   if (node.children?.length) reject("children inside ArticleImage");
 }
 
+function validateArticleVideo(node: MdxNode) {
+  const allowed = new Set(["src", "poster", "title", "label"]);
+  const values = new Map<string, string>();
+  for (const attribute of node.attributes ?? []) {
+    if (
+      attribute.type !== "mdxJsxAttribute" ||
+      !attribute.name ||
+      !allowed.has(attribute.name) ||
+      typeof attribute.value !== "string" ||
+      values.has(attribute.name)
+    ) {
+      reject("ArticleVideo attributes other than literal src, poster, title, and label");
+    }
+    values.set(attribute.name, attribute.value);
+  }
+  requireBlogAsset(values.get("src"), "ArticleVideo");
+  if (!values.get("src")?.endsWith(".mp4")) reject("ArticleVideo sources that are not .mp4");
+  if (values.has("poster")) requireBlogAsset(values.get("poster"), "ArticleVideo poster");
+  if (!values.get("label")?.trim()) reject("ArticleVideo without a literal label");
+  if (node.children?.length) reject("children inside ArticleVideo");
+}
+
 function literalDescriptor(attribute: MdxAttribute, side: string) {
   if (
     attribute.type !== "mdxJsxAttribute" ||
@@ -146,6 +168,7 @@ function validateNode(node: MdxNode) {
   if (node.type === "mdxJsxFlowElement") {
     if (node.name === "ArticleImage") validateArticleImage(node);
     else if (node.name === "ImagePair") validateImagePair(node);
+    else if (node.name === "ArticleVideo") validateArticleVideo(node);
     else reject(`component <${node.name ?? "unknown"}>`);
   }
 
@@ -154,7 +177,7 @@ function validateNode(node: MdxNode) {
 
 /**
  * Repository posts are trusted author input, not arbitrary remote MDX. This
- * allowlist still blocks executable MDX and limits JSX to two media components.
+ * allowlist still blocks executable MDX and limits JSX to three media components.
  */
 export function enforceTrustedMdxPolicy() {
   return (tree: MdxNode) => validateNode(tree);
