@@ -667,7 +667,7 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
                     </button>
                     <p>
                       {appItem ? <span>{figLabel(appItem.fig)}</span> : null}
-                      {appTitle}
+                      <b className={styles.appTitle}>{appTitle}</b>
                     </p>
                     <kbd aria-hidden="true">esc</kbd>
                   </header>
@@ -675,6 +675,11 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
                     {appBody}
                   </div>
                 </section>
+              ) : null}
+              {flash ? (
+                <span className={styles.flash} aria-hidden="true">
+                  {flash}
+                </span>
               ) : null}
               <i className={styles.glare} aria-hidden="true" />
             </div>
@@ -686,7 +691,7 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
             {/* the light in the room follows Tokyo, so the bezel says what time it is there */}
             {clock ? (
               <span className={styles.clock} title="Time in Tokyo, where the room is">
-                {flash ?? `Tokyo ${clock}`}
+                Tokyo {clock}
               </span>
             ) : null}
           </div>

@@ -244,6 +244,7 @@
   inset: 0;
   z-index: 70;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto 1fr;
   background: #fbf7ef;
   animation: appIn 280ms cubic-bezier(0.2, 0.9, 0.25, 1);
@@ -1491,5 +1492,61 @@
 @media (pointer: coarse) {
   .knob {
     touch-action: pan-y;
+  }
+}
+
+/* the title in the app bar ends in an ellipsis instead of being cut mid-word */
+.appBar p {
+  min-width: 0;
+}
+
+.appTitle {
+  overflow: hidden;
+  font: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* what the side button just did, shown on the screen where it can be read */
+.flash {
+  position: absolute;
+  left: 50%;
+  top: 5%;
+  z-index: 95;
+  padding: 0.5em 1em;
+  border-radius: 999px;
+  background: rgba(42, 33, 24, 0.82);
+  color: #fff;
+  font: 600 max(2.2cqw, 12px)/1 var(--font-room-mono), ui-monospace, monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  pointer-events: none;
+  animation: flashIn 220ms ease-out;
+}
+
+@keyframes flashIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -30%);
+  }
+}
+
+/* phones held sideways: the controls sit around the screen, so their layer must not catch taps
+   meant for the screen; and the d-pad's keys touch, so their tap areas stay their own size */
+@media (orientation: landscape) and (max-height: 520px) {
+  .wrap[data-variant="hero"] .controls {
+    pointer-events: none;
+  }
+
+  .wrap[data-variant="hero"] .controls > * {
+    pointer-events: auto;
+  }
+
+  .wrap[data-variant="hero"] .dkey::after {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
   }
 }

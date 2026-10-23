@@ -279,3 +279,10 @@
     text-align: left;
   }
 }
+
+@media (pointer: coarse) {
+  .crumbs a {
+    display: inline-block;
+    padding: 0.7rem 0.2rem;
+  }
+}

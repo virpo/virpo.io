@@ -615,4 +615,39 @@ button:disabled {
     min-height: 44px;
     min-width: 44px;
   }
+
+  .primary,
+  .windowBar button,
+  .kanaButtons button {
+    font-size: max(2.3cqw, 13px);
+  }
+
+  /* one column that scrolls, instead of two squeezed side by side */
+  .project,
+  .bloom {
+    position: relative;
+    min-height: 100%;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+  }
+
+  .project {
+    gap: 12px;
+    padding: 14px 16px 18px;
+  }
+
+  .projectArt {
+    height: auto;
+    max-height: 44cqw;
+  }
+
+  .bloomNow {
+    flex-wrap: wrap;
+  }
+
+  .bloomNow > *,
+  .bloomList,
+  .bloomList > * {
+    min-width: 0;
+  }
 }

@@ -1054,9 +1054,12 @@
 @media (pointer: coarse) {
   .links a,
   .footer p a,
-  .writingHead p a {
+  .writingHead p a,
+  .allWriting {
     display: inline-block;
+    min-width: 44px;
     padding: 0.7rem 0.1rem;
+    text-align: center;
   }
 }
 
