@@ -100,6 +100,12 @@ export default function RoomPage() {
                   </li>
                 );
               })}
+              <li className={styles.moreItem}>
+                <a className={styles.moreCard} href="https://github.com/virpo" target="_blank" rel="noreferrer">
+                  <strong>More on GitHub →</strong>
+                  <span>Smaller tools and experiments</span>
+                </a>
+              </li>
             </ul>
           </section>
 
