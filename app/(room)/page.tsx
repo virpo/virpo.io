@@ -7,13 +7,32 @@ import { roomDate, RoomFooter, RoomSocial } from "../../components/room/RoomChro
 import { objectForProject, roomPostHref } from "../../components/room/scene/objects";
 import { getPostSummaries } from "../../lib/blog";
 import { labAbout, labProjects } from "../../lib/lab/catalog";
+import { jsonLd, OG_IMAGE, OG_VIDEO, PERSON, SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "../../lib/site";
 import styles from "./room.module.css";
 
 export const metadata: Metadata = {
-  title: { absolute: "Peter Hraska · Pocket Room" },
-  description: "Peter Hraska’s writing and projects, with a tiny painted room where a shinkansen passes the window.",
+  title: { absolute: SITE_TITLE },
+  description: SITE_DESCRIPTION,
   alternates: { canonical: "/" },
-  robots: { index: false, follow: true },
+  openGraph: {
+    type: "profile",
+    url: "/",
+    siteName: SITE_NAME,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [OG_IMAGE],
+    // a calm loop of the room, for previews that play video
+    videos: [OG_VIDEO],
+  },
+};
+
+// who this is and what the site is, for search engines and answer engines
+const STRUCTURED = {
+  "@context": "https://schema.org",
+  "@graph": [
+    { "@type": "WebSite", "@id": `${SITE_URL}/#site`, url: `${SITE_URL}/`, name: SITE_NAME, description: SITE_DESCRIPTION, author: { "@id": PERSON["@id"] }, inLanguage: "en" },
+    { "@type": "ProfilePage", "@id": `${SITE_URL}/#profile`, url: `${SITE_URL}/`, name: SITE_TITLE, mainEntity: PERSON },
+  ],
 };
 
 // a project that lives outside the catalog: the Slush side event we ran in Bratislava
@@ -54,6 +73,7 @@ export default function RoomPage() {
 
   return (
     <div className={styles.page}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(STRUCTURED) }} />
       <main>
         <section className={styles.hero} aria-label="Peter Hraska">
           <div className={styles.deviceCol} id="room">
@@ -83,7 +103,7 @@ export default function RoomPage() {
                 </li>
               ))}
             </ol>
-            <Link href="/room/writing/" className={styles.allWriting} data-room-target="bookshelf">
+            <Link href="/blog/" className={styles.allWriting} data-room-target="bookshelf">
               All writing <span aria-hidden="true">→</span>
             </Link>
           </div>
@@ -129,7 +149,7 @@ export default function RoomPage() {
               {labAbout.headline} {labAbout.body}
             </p>
             <ul className={styles.links}>
-              {labAbout.links.map((link) => (
+              {[...labAbout.links, { label: "Agent skills", href: "/skills/" }].map((link) => (
                 <li key={link.label}>
                   <a href={link.href} {...(link.href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}>
                     {link.label}

@@ -26,11 +26,6 @@ export function buildSitemap(posts: PostSummary[]): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: `${SITE_URL}/projects/`,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
       url: `${SITE_URL}/skills/`,
       changeFrequency: "monthly",
       priority: 0.6,

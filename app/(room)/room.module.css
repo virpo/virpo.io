@@ -919,3 +919,95 @@
     font-size: 2.4rem;
   }
 }
+
+/* ---- skills: one card per skill, with its install command ---- */
+.skillList {
+  display: grid;
+  gap: 1.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.skill {
+  display: grid;
+  gap: 0.6rem;
+  padding: 1.4rem 1.5rem 1.3rem;
+  border: 1px solid var(--hair);
+  border-radius: 14px;
+  background: #fffdf8;
+}
+
+.skill h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.skill p {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.skill .skillProof {
+  color: var(--orange-ink);
+  font-weight: 500;
+}
+
+.skillActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1.2rem;
+  margin-top: 0.4rem;
+}
+
+.skillActions > a {
+  color: var(--ink-2);
+  font-weight: 500;
+  text-underline-offset: 0.2em;
+}
+
+.skillActions :global(.skillInstall) {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 100%;
+  padding: 0.35rem 0.35rem 0.35rem 0.8rem;
+  border: 1px solid #ddd5ca;
+  border-radius: 10px;
+  background: #f6f1e9;
+}
+
+.skillActions :global(.skillInstall) code {
+  overflow-x: auto;
+  color: var(--ink);
+  font: 500 0.85rem/1.4 var(--font-room-mono), ui-monospace, monospace;
+  white-space: nowrap;
+}
+
+.skillActions :global(.skillInstall) button {
+  flex: none;
+  min-height: 36px;
+  padding: 0 0.9rem;
+  border: 1px solid #ddd5ca;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font: 600 0.85rem/1 var(--font-room-sans), system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.skillActions :global(.skillInstall) button[data-copied] {
+  border-color: var(--orange);
+  color: var(--orange-ink);
+}
+
+.skillActions :global(.visuallyHidden) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}

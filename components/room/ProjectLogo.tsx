@@ -1,4 +1,4 @@
-import styles from "../../app/room/room.module.css";
+import styles from "../../app/(room)/room.module.css";
 import { V2SocialIcon } from "../v2/V2SocialIcon";
 
 const REPOS: Record<string, string> = { "pegboard-toy": "virpo/pegboard", "cmux-deck": "virpo/cmux-deck" };

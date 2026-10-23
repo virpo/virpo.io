@@ -14,6 +14,9 @@ const requiredFiles = [
   "dist/rss.xml",
   "dist/sitemap.xml",
   "dist/robots.txt",
+  "dist/llms.txt",
+  "dist/v2/index.html",
+  "dist/levels/index.html",
 ];
 
 for (const file of requiredFiles) {
@@ -61,44 +64,26 @@ for (const slug of articleSlugs) {
   assertIncludes(html, 'property="og:type" content="article"', file);
   assertIncludes(html, 'name="twitter:card"', file);
   assertIncludes(html, "application/ld+json", file);
-  assertIncludes(html, '"@type":"Article"', file);
-  assertIncludes(html, 'aria-label="Continue exploring"', file);
+  assertIncludes(html, '"@type":"BlogPosting"', file);
+  assertIncludes(html, 'aria-label="More posts"', file);
+  assertExcludes(html, 'content="noindex', file);
   for (const invalidMarkup of ["<p><figure", "</figure></p>", "<p></p>"]) {
     assertExcludes(html, invalidMarkup, file);
   }
 }
 
-const projectsFile = "dist/projects/index.html";
-const projectsHtml = await readFile(resolve(projectsFile), "utf8");
-assertIncludes(
-  projectsHtml,
-  'rel="canonical" href="https://virpo.io/projects/"',
-  projectsFile,
-);
-assertIncludes(
-  projectsHtml,
-  'property="og:url" content="https://virpo.io/projects/"',
-  projectsFile,
-);
-assertIncludes(projectsHtml, 'property="og:type" content="website"', projectsFile);
-assertIncludes(projectsHtml, 'name="twitter:card"', projectsFile);
-assertIncludes(projectsHtml, 'name="twitter:title"', projectsFile);
-
-const projectCardCount = (projectsHtml.match(/class="projectCard /g) ?? []).length;
-if (projectCardCount !== 6) {
-  throw new Error(`Expected ${projectsFile} to include 6 project cards`);
+// the old projects page and the old v2 home page are redirects now
+for (const [file, target] of [["dist/projects/index.html", "/#projects"], ["dist/v2/index.html", "/"]]) {
+  const html = await readFile(resolve(file), "utf8");
+  assertIncludes(html, `http-equiv="refresh" content="0; url=${target}"`, file);
+  assertIncludes(html, 'name="robots" content="noindex, follow"', file);
 }
 
-for (const media of [
-  "/assets/projects/youtldr-home.png",
-  "/assets/projects/zltastopa-sk-thumb.png",
-  "/assets/projects/mood-radio.jpg",
-  "/assets/projects/pegboard.jpg",
-  "/assets/projects/ai-build-week.jpg",
-  "/assets/projects/cmux-deck.jpeg",
-]) {
-  assertIncludes(projectsHtml, `src="${media}"`, projectsFile);
-}
+assertIncludes(homeHtml, 'rel="canonical" href="https://virpo.io/"', homeFile);
+assertIncludes(homeHtml, 'property="og:image" content="https://virpo.io/og/og-image.png"', homeFile);
+assertIncludes(homeHtml, 'property="og:video" content="https://virpo.io/og/room-loop.mp4"', homeFile);
+assertIncludes(homeHtml, '"@type":"ProfilePage"', homeFile);
+assertExcludes(homeHtml, 'content="noindex', homeFile);
 
 const skillsFile = "dist/skills/index.html";
 const skillsHtml = await readFile(resolve(skillsFile), "utf8");

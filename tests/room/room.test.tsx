@@ -11,9 +11,9 @@ vi.mock("next/navigation", () => ({
   },
 }));
 
-import RoomPostPage, { generateMetadata, generateStaticParams } from "../../app/room/blog/[slug]/page";
-import RoomPage, { metadata as landingMetadata } from "../../app/room/page";
-import RoomWritingPage, { metadata as writingMetadata } from "../../app/room/writing/page";
+import RoomPostPage, { generateMetadata, generateStaticParams } from "../../app/(room)/blog/[slug]/page";
+import RoomPage, { metadata as landingMetadata } from "../../app/(room)/page";
+import RoomWritingPage, { metadata as writingMetadata } from "../../app/(room)/blog/page";
 import { LAYERS } from "../../components/room/scene/layers";
 import { nextTrain, readingPose, timeForHour, tokyoClock } from "../../components/room/scene/life";
 import { cycle, hullClip, neighbour, objectById, pickAt, ROOM_OBJECTS, TOY_OBJECTS } from "../../components/room/scene/objects";
@@ -34,11 +34,11 @@ describe("Pocket Room landing", () => {
   it("shows the name, the three newest posts with real dates, and All writing", () => {
     expect(markup).toMatch(/<h1[^>]*>Peter Hraska<\/h1>/);
     for (const post of newest) {
-      expect(markup).toMatch(href(`/room/blog/${post.slug}/`));
+      expect(markup).toMatch(href(`/blog/${post.slug}/`));
       expect(markup).toContain(escape(post.title));
       expect(markup).toContain(`dateTime="${post.publishedAt.toISOString()}"`);
     }
-    expect(markup).toMatch(/href="\/room\/writing\/?"[^>]*>All writing/);
+    expect(markup).toMatch(/href="\/blog\/?"[^>]*>All writing/);
   });
 
   it("server-renders the painted room: plate, window view, every object layer and Peter", () => {
@@ -53,7 +53,7 @@ describe("Pocket Room landing", () => {
     expect(hits).toHaveLength(ROOM_OBJECTS.length);
     for (const item of ROOM_OBJECTS) expect(markup, item.id).toMatch(new RegExp(`aria-label="Fig\\. ${String(item.fig).padStart(2, "0")}, `));
     // notebooks are links to their posts
-    newest.forEach((post, index) => expect(markup).toMatch(new RegExp(`href="/room/blog/${post.slug}/?"[^>]*data-hit="post-${index}"|data-hit="post-${index}"[^>]*href="/room/blog/${post.slug}/?"`)));
+    newest.forEach((post, index) => expect(markup).toMatch(new RegExp(`href="/blog/${post.slug}/?"[^>]*data-hit="post-${index}"|data-hit="post-${index}"[^>]*href="/blog/${post.slug}/?"`)));
   });
 
   it("links the plain lists to their objects both ways", () => {
@@ -92,8 +92,13 @@ describe("Pocket Room landing", () => {
     }
   });
 
-  it("is kept out of search results while it is an experiment", () => {
-    expect(landingMetadata.robots).toMatchObject({ index: false });
+  it("is the home page: canonical /, indexable, with a preview image and the room's video loop", () => {
+    expect(landingMetadata.alternates?.canonical).toBe("/");
+    expect(landingMetadata.robots).toBeUndefined();
+    const og = landingMetadata.openGraph as { images?: unknown[]; videos?: { url: string }[] };
+    expect(og.images?.length).toBeGreaterThan(0);
+    expect(og.videos?.[0].url).toBe("https://virpo.io/og/room-loop.mp4");
+    expect(markup).toContain('"@type":"ProfilePage"');
   });
 });
 
@@ -186,11 +191,13 @@ describe("Pocket Room post page", () => {
     expect(generateStaticParams().map((params) => params.slug).sort()).toEqual([...getPostSlugs()].sort());
   });
 
-  it("points canonical at the original post and stays out of the index", async () => {
+  it("is the canonical, indexable post with article previews", async () => {
     const slug = getPostSlugs()[0];
     const meta = await generateMetadata({ params: Promise.resolve({ slug }) });
     expect(meta.alternates?.canonical).toBe(`/blog/${slug}/`);
-    expect(meta.robots).toMatchObject({ index: false });
+    expect(meta.robots).toBeUndefined();
+    expect(meta.openGraph).toMatchObject({ type: "article" });
+    expect(meta.twitter).toMatchObject({ card: "summary_large_image" });
   });
 
   it("renders one readable column with date, reading time, tags, body, neighbours and the docked device", async () => {
@@ -202,8 +209,8 @@ describe("Pocket Room post page", () => {
     expect(markup).toContain(post.readingTime.label);
     for (const tag of post.tags) expect(markup).toContain(tag);
     expect(markup).toContain('id="room-article"');
-    expect(markup).toMatch(href(`/room/blog/${posts[0].slug}/`));
-    expect(markup).toMatch(href(`/room/blog/${posts[2].slug}/`));
+    expect(markup).toMatch(href(`/blog/${posts[0].slug}/`));
+    expect(markup).toMatch(href(`/blog/${posts[2].slug}/`));
     expect(markup).toContain('data-variant="dock"');
     expect(markup).toContain('role="progressbar"');
     expect(markup).toContain("/lab/room/peter-reading.webp");
@@ -215,7 +222,7 @@ describe("Pocket Room post page", () => {
 describe("Pocket Room writing index", () => {
   it("lists every post and points canonical at /blog/", () => {
     const markup = html(<RoomWritingPage />);
-    for (const post of getPostSummaries()) expect(markup).toMatch(href(`/room/blog/${post.slug}/`));
+    for (const post of getPostSummaries()) expect(markup).toMatch(href(`/blog/${post.slug}/`));
     expect(writingMetadata.alternates?.canonical).toBe("/blog/");
   });
 });

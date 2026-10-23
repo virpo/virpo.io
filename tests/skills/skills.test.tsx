@@ -1,8 +1,10 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import SkillsPage, { metadata } from "../../app/skills/page";
-import { SiteFooter } from "../../components/site/SiteFooter";
+import SkillsPage, { metadata } from "../../app/(room)/skills/page";
+import RoomPage from "../../app/(room)/page";
 import { installCommand, skills, sourceUrl } from "../../lib/skills";
+
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), prefetch: vi.fn() }) }));
 
 afterEach(() => {
   cleanup();
@@ -73,12 +75,8 @@ describe("skills page", () => {
     ).toHaveTextContent("Copied");
   });
 
-  it("links to the skills page from the footer", () => {
-    render(<SiteFooter />);
-
-    expect(screen.getByRole("link", { name: "Skills" })).toHaveAttribute(
-      "href",
-      expect.stringMatching(/^\/skills\/?$/),
-    );
+  it("is linked from the About section of the home page", () => {
+    render(<RoomPage />);
+    expect(screen.getByRole("link", { name: "Agent skills" })).toHaveAttribute("href", expect.stringMatching(/^\/skills\/?$/));
   });
 });

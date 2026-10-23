@@ -1,62 +1,53 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Righteous, Source_Serif_4 } from "next/font/google";
+import { AUTHOR, OG_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "../lib/site";
 import "./globals.css";
 
-const righteous = Righteous({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-righteous",
-  display: "swap",
-});
-
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-fraunces",
-  display: "swap",
-});
-
-const sourceSerif = Source_Serif_4({
-  subsets: ["latin"],
-  variable: "--font-source-serif",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  metadataBase: new URL("https://virpo.io"),
-  title: { default: "virpo · Peter Hraska", template: "%s · virpo" },
-  description:
-    "Peter Hraska lives somewhere between product, design, and engineering.",
-  applicationName: "virpo",
+  metadataBase: new URL(SITE_URL),
+  title: { default: SITE_TITLE, template: `%s · ${SITE_TITLE}` },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  authors: [{ name: AUTHOR, url: `${SITE_URL}/` }],
+  creator: AUTHOR,
+  // mini-Peter shouting under the torii, like the X avatar: the same face in the tab and on X
   icons: {
-    icon: "/assets/brand-mark.svg",
-    apple: "/assets/apple-touch-icon.png",
+    icon: [
+      { url: "/lab/room/brand/icon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/lab/room/brand/icon-16.png", sizes: "16x16", type: "image/png" },
+      { url: "/lab/room/brand/icon-48.png", sizes: "48x48", type: "image/png" },
+      { url: "/lab/room/brand/icon-64.png", sizes: "64x64", type: "image/png" },
+    ],
+    apple: "/lab/room/brand/apple-touch-icon.png",
+  },
+  alternates: {
+    types: { "application/rss+xml": [{ url: "/rss.xml", title: "Peter Hraska · writing" }] },
   },
   openGraph: {
     type: "website",
-    siteName: "virpo",
-    title: "virpo · Peter Hraska",
-    description:
-      "Peter Hraska lives somewhere between product, design, and engineering.",
+    siteName: SITE_NAME,
+    locale: "en_US",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [OG_IMAGE],
   },
   twitter: {
-    card: "summary",
-    title: "virpo · Peter Hraska",
-    description:
-      "Peter Hraska lives somewhere between product, design, and engineering.",
+    card: "summary_large_image",
+    site: "@virpo",
+    creator: "@virpo",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [OG_IMAGE.url],
   },
 };
 
 export const viewport: Viewport = {
   colorScheme: "light",
-  themeColor: "#fff4df",
+  themeColor: "#faf7f2",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${righteous.variable} ${fraunces.variable} ${sourceSerif.variable}`}
-    >
+    <html lang="en">
       <body>{children}</body>
     </html>
   );

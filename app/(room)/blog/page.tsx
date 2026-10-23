@@ -4,14 +4,14 @@ import type { CSSProperties } from "react";
 import { RoomBackKey, roomDate, RoomFooter } from "../../../components/room/RoomChrome";
 import { roomPostHref } from "../../../components/room/scene/objects";
 import { getPostSummaries } from "../../../lib/blog";
+import { pageMeta } from "../../../lib/site";
 import shell from "../room.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Writing",
-  description: "Every post by Peter Hraska, newest first.",
-  alternates: { canonical: "/blog/" },
-  robots: { index: false, follow: true },
-};
+  description: "Every post by Peter Hraska, newest first: notes from making real things with AI agents, small teams and objects you can hold.",
+  path: "/blog/",
+});
 
 /** the notebooks on the desk are orange, yellow and blue; older posts sit on the shelf */
 const NOTEBOOK_COLORS = ["#e8621c", "#e5b23a", "#3f78c0"];

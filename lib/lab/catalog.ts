@@ -33,8 +33,8 @@ export const labProjects: readonly LabProject[] = [
     slug: "levels",
     title: "Levels",
     type: "Game · Web",
-    href: "https://prehistoriq.com/levels",
-    blurb: "A small game of levels, moving from prehistoriq.com to virpo.io.",
+    href: "/levels/",
+    blurb: "What level are you with agents? Your agent checks 100 tricks and deals you a card.",
   },
   {
     slug: "prehistoriq",

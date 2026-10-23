@@ -218,9 +218,9 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
     (item: RoomObject) => {
       if (item.kind === "post") {
         const post = posts[item.postIndex ?? 0];
-        return post ? roomPostHref(post.slug) : "/room/writing/";
+        return post ? roomPostHref(post.slug) : "/blog/";
       }
-      if (item.kind === "writing") return "/room/writing/";
+      if (item.kind === "writing") return "/blog/";
       if (item.kind === "project") return projects.find((project) => project.slug === item.projectSlug)?.href ?? "#projects";
       if (item.kind === "about") return "#about";
       return `#toy-${item.toy}`;
@@ -622,7 +622,7 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
               {hero ? (
                 scene
               ) : (
-                <a className={styles.dockLink} href="/room/" aria-label="Mini Peter reading this post in the Pocket Room. Go to the room">
+                <a className={styles.dockLink} href="/" aria-label="Mini Peter reading this post in the Pocket Room. Go to the room">
                   <span className={styles.strip}>
                     <span className={styles.stripScene}>{scene}</span>
                   </span>

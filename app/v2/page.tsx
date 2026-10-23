@@ -1,114 +1,12 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { FaceToy } from "../../components/home/FaceToy";
-import { SiteFooter } from "../../components/site/SiteFooter";
-import { SoundsToy } from "../../components/toys/SoundsToy";
-import { StudyToy } from "../../components/toys/StudyToy";
-import { WindowSeatToy } from "../../components/toys/WindowSeatToy";
-import { V2Masthead } from "../../components/v2/V2Masthead";
-import { V2SocialIcon } from "../../components/v2/V2SocialIcon";
-import { V2WritingPreview } from "../../components/v2/V2WritingPreview";
-import { getPostSummaries } from "../../lib/blog";
-import styles from "./v2.module.css";
+import { Redirect } from "../../components/site/Redirect";
 
+// The old v2 home page; the home page is the room now.
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
-  openGraph: {
-    type: "website",
-    siteName: "virpo",
-    title: "virpo · Peter Hraska",
-    description:
-      "Peter Hraska lives somewhere between product, design, and engineering.",
-    url: "/",
-  },
+  robots: { index: false, follow: true },
 };
 
-export default function HomePageV2() {
-  const posts = getPostSummaries().slice(0, 3);
-  const socialLinks = [
-    { label: "GitHub", icon: "github" as const, href: "https://github.com/virpo" },
-    {
-      label: "Instagram",
-      icon: "instagram" as const,
-      href: "https://www.instagram.com/virpo.san/",
-    },
-    {
-      label: "LinkedIn",
-      icon: "linkedin" as const,
-      href: "https://www.linkedin.com/in/hraska/",
-    },
-    { label: "X", icon: "x" as const, href: "https://x.com/virpo" },
-    { label: "Email", icon: "email" as const, href: "mailto:peter@hraska.sk" },
-  ];
-
-  return (
-    <div className={styles.page} data-v2-home>
-      <V2Masthead className={styles.masthead} />
-      <main className={styles.main}>
-        <section className={styles.hero} data-v2-hero>
-          <div className={styles.face}>
-            <FaceToy />
-          </div>
-          <div className={styles.intro} id="about" aria-label="About Peter">
-            <p className={styles.eyebrow}>Hello, I’m Peter.</p>
-            <h1>
-              I like living somewhere between product, design, and engineering.
-            </h1>
-            <p>
-              I’ve been doing that at Slido for 10+ years. Since 2021, we’ve
-              been part of Cisco. Sometimes it’s a product, sometimes a tool,
-              sometimes a toy.
-            </p>
-            <div className={styles.links} aria-label="Peter elsewhere">
-              {socialLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  aria-label={link.label}
-                  title={link.label}
-                  {...(link.href.startsWith("http")
-                    ? { target: "_blank", rel: "noreferrer" }
-                    : {})}
-                >
-                  <V2SocialIcon name={link.icon} />
-                </a>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className={styles.toys} data-v2-toys aria-label="Small Japan toys">
-          <div className={styles.toyGrid}>
-            <div className={styles.radio} data-v2-toy="radio">
-              <SoundsToy />
-            </div>
-            <div className={styles.window} data-v2-toy="window-seat">
-              <WindowSeatToy />
-            </div>
-            <div className={styles.study} data-v2-toy="study">
-              <StudyToy promptLabel="Click me" />
-            </div>
-          </div>
-        </section>
-
-        <section className={styles.writing} data-v2-writing aria-label="Latest writing">
-          <header className={styles.sectionHeading}>
-            <div>
-              <p>Latest writing</p>
-              <span>Short notes from making real things.</span>
-            </div>
-            <Link href="/blog/" prefetch={false}>
-              All writing →
-            </Link>
-          </header>
-          <div className={styles.writingGrid}>
-            {posts.map((post, index) => (
-              <V2WritingPreview key={post.slug} post={post} featured={index === 0} />
-            ))}
-          </div>
-        </section>
-      </main>
-      <SiteFooter />
-    </div>
-  );
+export default function V2Redirect() {
+  return <Redirect to="/" label="Go to the home page" />;
 }

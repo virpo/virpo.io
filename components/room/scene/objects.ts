@@ -56,7 +56,7 @@ export const objectForToy = (toy: RoomToyId) => ROOM_OBJECTS.find((item) => item
 export const TOY_OBJECTS = ROOM_OBJECTS.filter((item) => item.kind === "toy");
 
 export const figLabel = (fig: number) => `Fig. ${String(fig).padStart(2, "0")}`;
-export const roomPostHref = (slug: string) => `/room/blog/${slug}/`;
+export const roomPostHref = (slug: string) => `/blog/${slug}/`;
 
 export const PLATE_W = LAYERS.plate.w;
 export const PLATE_H = LAYERS.plate.h;

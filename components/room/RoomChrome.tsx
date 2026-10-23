@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { V2SocialIcon } from "../v2/V2SocialIcon";
-import styles from "../../app/room/room.module.css";
+import styles from "../../app/(room)/room.module.css";
 
 /** "October 12, 2026", as in the agreed mockup. */
 export const roomDate = new Intl.DateTimeFormat("en-US", {
@@ -57,7 +57,7 @@ export function RoomFooter() {
 /** A small device-style key that leads back into the room. */
 export function RoomBackKey({ label = "Pocket Room" }: { label?: string }) {
   return (
-    <Link href="/room/" className={styles.backKey}>
+    <Link href="/" className={styles.backKey}>
       <span className={styles.backKeyCap} aria-hidden="true">
         ←
       </span>

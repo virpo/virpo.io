@@ -5,7 +5,8 @@ import { compilePostMdx } from "../../../../components/blog/mdx-components";
 import { Device } from "../../../../components/room/Device";
 import { RoomBackKey, roomDate, RoomFooter } from "../../../../components/room/RoomChrome";
 import { roomPostHref } from "../../../../components/room/scene/objects";
-import { getPost, getPostSlugs, getPostSummaries } from "../../../../lib/blog";
+import { getPost, getPostSlugs, getPostSummaries, type PostSource } from "../../../../lib/blog";
+import { absolute, AUTHOR, jsonLd, OG_IMAGE, PERSON, SITE_URL } from "../../../../lib/site";
 import shell from "../../room.module.css";
 import styles from "./post.module.css";
 
@@ -24,21 +25,51 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: post.title,
       description: post.description,
-      // The Pocket Room is an experiment; the original post stays canonical.
       alternates: { canonical: `/blog/${post.slug}/` },
-      robots: { index: false, follow: true },
+      authors: [{ name: AUTHOR, url: `${SITE_URL}/` }],
       openGraph: {
         type: "article",
+        siteName: "virpo",
         title: post.title,
         description: post.description,
         url: `/blog/${post.slug}/`,
         publishedTime: post.publishedAt.toISOString(),
-        images: post.socialImage ? [{ url: post.socialImage, alt: post.title }] : undefined,
+        modifiedTime: post.updatedAt?.toISOString(),
+        authors: [`${SITE_URL}/`],
+        tags: post.tags,
+        images: post.socialImage ? [{ url: post.socialImage, alt: post.title }] : [OG_IMAGE],
+      },
+      twitter: {
+        card: "summary_large_image",
+        site: "@virpo",
+        creator: "@virpo",
+        title: post.title,
+        description: post.description,
+        images: [post.socialImage ?? OG_IMAGE.url],
       },
     };
   } catch {
     return {};
   }
+}
+
+export function articleJsonLd(post: Pick<PostSource, "slug" | "title" | "description" | "publishedAt" | "updatedAt" | "socialImage" | "tags">) {
+  const url = `${SITE_URL}/blog/${post.slug}/`;
+  return jsonLd({
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.description,
+    datePublished: post.publishedAt.toISOString(),
+    dateModified: (post.updatedAt ?? post.publishedAt).toISOString(),
+    mainEntityOfPage: url,
+    url,
+    keywords: post.tags.join(", "),
+    inLanguage: "en",
+    author: PERSON,
+    publisher: { "@id": PERSON["@id"] },
+    image: absolute(post.socialImage ?? OG_IMAGE.url),
+  });
 }
 
 export default async function RoomPostPage({ params }: Props) {
@@ -58,6 +89,7 @@ export default async function RoomPostPage({ params }: Props) {
 
   return (
     <div className={shell.page}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: articleJsonLd(post) }} />
       <div className={styles.layout}>
         <aside className={styles.margin} aria-label="Pocket Room">
           <div className={styles.sticky}>
@@ -69,7 +101,7 @@ export default async function RoomPostPage({ params }: Props) {
           <nav className={styles.crumbs} aria-label="Breadcrumb">
             <RoomBackKey label="Peter Hraska" />
             <span aria-hidden="true">/</span>
-            <Link href="/room/writing/">Writing</Link>
+            <Link href="/blog/">Writing</Link>
           </nav>
 
           <header className={styles.header}>
@@ -109,7 +141,7 @@ export default async function RoomPostPage({ params }: Props) {
                   <time dateTime={older.publishedAt.toISOString()}>{roomDate.format(older.publishedAt)}</time>
                 </Link>
               ) : (
-                <Link href="/room/writing/" className={styles.pageLink}>
+                <Link href="/blog/" className={styles.pageLink}>
                   <span>The first post</span>
                   <strong>See every post on the shelf</strong>
                   <em>All writing →</em>
@@ -122,7 +154,7 @@ export default async function RoomPostPage({ params }: Props) {
                   <time dateTime={newer.publishedAt.toISOString()}>{roomDate.format(newer.publishedAt)}</time>
                 </Link>
               ) : (
-                <Link href="/room/" className={styles.pageLink} data-align="end">
+                <Link href="/" className={styles.pageLink} data-align="end">
                   <span>The newest post</span>
                   <strong>Back to the room, where this notebook sits on the desk</strong>
                   <em>Pocket Room →</em>
