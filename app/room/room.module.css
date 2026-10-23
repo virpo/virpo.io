@@ -412,7 +412,7 @@
   color: var(--orange);
 }
 
-/* the ninth slot of the three-column grid: everything else lives on GitHub */
+/* everything else lives on GitHub */
 .moreCard {
   display: grid;
   place-content: center;
@@ -449,19 +449,28 @@
   color: var(--orange-ink);
 }
 
+/* nine projects fill three columns; the GitHub tile only rounds off the two-column grid */
+.moreItem {
+  display: none;
+}
+
 @media (max-width: 1099px) {
   .projectGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .moreItem {
-    display: none;
+    display: block;
   }
 }
 
 @media (max-width: 699px) {
   .projectGrid {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .moreItem {
+    display: none;
   }
 }
 

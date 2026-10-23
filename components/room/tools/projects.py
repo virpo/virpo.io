@@ -25,7 +25,7 @@ ART = HERE / "art" / "projects"
 OUT = HERE.parents[2] / "public" / "lab" / "room" / "projects"
 SIZE = (1080, 720)
 
-SLUGS = ["levels", "youtldr", "zlta-stopa", "mood-radio", "pegboard-toy", "ai-build-week", "cmux-deck", "bratislava-slushd"]
+SLUGS = ["levels", "youtldr", "zlta-stopa", "mood-radio", "pegboard-toy", "ai-build-week", "cmux-deck", "bratislava-slushd", "advent-of-no-code"]
 SOFT = {"pegboard-toy", "ai-build-week", "cmux-deck", "bratislava-slushd"}
 
 PAPER = np.array([0.947, 0.921, 0.876])

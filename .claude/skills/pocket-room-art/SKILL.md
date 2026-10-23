@@ -1,6 +1,6 @@
 ---
 name: pocket-room-art
-description: How the Pocket Room (/room/) art is painted and cut, and the playbook for changing it. Use when adding, replacing, repainting or fixing anything in the Pocket Room's painted room or its app screens - a new project object, swapping an object (e.g. "replace the cat with a new project"), new card art, a Peter pose, the plate, the trains or the view - or when touching components/room/tools/ (build.py, cut.py, cards.py, fixes.py, paint.sh).
+description: How every generated image of the Pocket Room (/room/) was made, the decisions on its look, and the playbook for changing or adding art so it matches. Use for ANY image work on the room or its pages - the painted room and its objects, a new project object (e.g. "replace the cat with a new project"), app-screen card art, a Peter pose, the plate, trains or view, the Projects cards under the room (a new project card, repainting one, the pencil versions, logos), the favicon or X avatar - or when touching components/room/tools/ (build.py, cut.py, cards.py, fixes.py, projects.py, brand.py, paint.sh).
 ---
 
 # Pocket Room art
@@ -8,7 +8,61 @@ description: How the Pocket Room (/room/) art is painted and cut, and the playbo
 The room on `/room/` is one hand-painted ink-and-watercolour plate with every clickable thing cut
 out of it as its own layer, plus sprites (Peter, notebooks, cat, trains) painted on magenta and
 keyed. Everything is ChatGPT image generation driven through `codex exec`, then cut by Python.
-Background reading: `docs/lab/v2-layers.md` (what the room does and why).
+Background reading: `docs/lab/v2-layers.md` (what the room does and why). Every painting, its
+prompt and its references are in the repo, so any image can be redone or extended the same way.
+
+## Look and feel: decisions to keep
+
+These were chosen by Peter after side-by-side comparisons (October 2026). Follow them; don't
+re-explore a rejected direction unless he asks.
+
+- **The room** is cozy Japanese manga in ink and watercolour (fine confident black outlines, soft
+  warm washes, paper texture), seen from above at three-quarters. The agreed mockup
+  (`docs/lab/refs/pocket-room-mockup.jpg`, screen crop `art/mock-screen.png`) is the spec.
+- **The window always shows daylight.** Time in Tokyo shows only as the "TOKYO 20:41" print on the
+  bezel and the desk lamp at night. No dark night sky, no darkened room.
+- **App-screen cards** (what opens on the device's screen): a large, clean repaint of the same
+  object, on magenta, keyed. Never the blurry cut from the plate.
+- **Project cards** (the Projects section under the room):
+  - ONE clean thing per project, isolated on plain paper, everything around it left out. It must
+    say what the project does at first sight, like the YouTube thumbnail -> "No." for YouTLDR.
+  - "Medium" manga strength: hand-drawn, layout and text kept, people recognisable. Not the
+    barely-traced version, not full manga, not a whole web page repainted.
+  - Photos stay true to the real thing: same real people, nobody added or removed.
+  - All painted text in English, even when the source is Slovak.
+  - The project's own logo sits in the bottom-left corner as real HTML, never painted.
+  - At rest a pencil-on-paper version; on hover the colour eases in (about 240 ms in, 360 ms out,
+    plain cross-fade). No shader, ripple or ink-drop reveal: those were tried and felt
+    distracting.
+  - Under each card: title, two tags and the years ("Game · Agents · 2026"). No blurb.
+- **Hover labels in the room** say only what you get ("Fig. 07 · Face tracker"), never the object's
+  name. Projects whose name explains nothing get their two tags in grey after it.
+- **Favicon**: mini-Peter shouting under the Fushimi Inari torii, on torii orange, matching his X
+  avatar (a shouting selfie at the torii).
+- Rejected along the way: a riso/halftone two-ink print look, "live trick" HTML illustrations,
+  screenshots on mini devices, scrapbook field notes, full-page manga repaints, and the room going
+  dark at night.
+
+## Every generated image
+
+| What | Ships as | Painting (source of truth) | Prompt | Attached references | Made into the shipped files by |
+|---|---|---|---|---|---|
+| The room plate | `public/lab/room/plate.webp`, `plate-800.webp`, every `obj-*.webp`, `glass-mask.png` | `art/plate-b.png` (`plate-a.png` was the first try) | `prompts/plate.txt`, `prompts/plate-b.txt` | `art/mock-screen.png`, `art/plate-a.png` | `build.py` (objects cut from the plate) |
+| View through the window | `view.webp` | `art/view.png` | `prompts/view.txt` | `mock-screen.png`, `plate-a.png` | `build.py` |
+| Trains | `train-shinkansen.webp`, `train-local.webp` | `art/trains.png` (on magenta) | `prompts/trains.txt` | `mock-screen.png` | `build.py` |
+| Peter's six poses | `peter-*.webp` | `art/peter-sheet.png` (on magenta) | `prompts/peter.txt` | `mock-screen.png`, `art/peter-character-ink.jpg`, `art/peter-photo.png` | `build.py` |
+| Peter's wave, extra arm removed | `peter-wave.webp` | `art/fixes/peter-wave-fix.png` | `prompts/peter-wave-fix.txt` | `art/fixes/peter-wave-crop.png` | `fixes.py` (inside `build.py`) |
+| Notebooks, cat, mug, printed part | `notebook-*.webp`, `cat.webp`, `part.webp` | `art/props.png` (on magenta) | `prompts/props.txt` | `art/plate-b.png` | `build.py` |
+| App-screen object cards | `card-<id>.webp` | `art/cards/<id>.png` (on magenta) | `prompts/card-<id>.txt` | plate crop (`cards.py refs`), `plate-b.png` | `cards.py` |
+| Project cards | `projects/<slug>.webp` and `projects/<slug>-pencil.webp` | `art/projects/<slug>.png` (on paper) | `prompts/project-<slug>.txt` | the real screenshot or photo in `art/projects/refs/` (+ `art/plate-b.png` as the style) | `projects.py` |
+| Favicon and X avatar | `brand/icon-{16,32,48,64}.png`, `brand/apple-touch-icon.png`, `output/lab/brand/x-avatar-400.jpg` | `art/brand/favicon-art.png` | `prompts/favicon.txt` | `art/brand/x-avatar.jpg` (the real X avatar), the `peter-wave` sprite | `brand.py` |
+
+Not generated: the project logos in `public/lab/room/projects/logos/` are the real marks from each
+project's site, recoloured to ink (`#2a2118`); their originals are in `art/projects/logos/` and
+`art/projects/slushd-logo.svg` (co-branded; only the part left of the "x" is used).
+
+In every prompt, "style.png" means `art/plate-b.png` and file names like `refs/...` are relative to
+`art/projects/`. `<art dir>` means `components/room/tools/art`.
 
 ## Style and references
 
@@ -56,7 +110,7 @@ Quirks:
 
 | What | Where |
 |---|---|
-| Prompts | `components/room/tools/prompts/*.txt` (`plate-b`, `view`, `trains`, `peter`, `props`, `card-<id>`, `peter-wave-fix`, `favicon`) |
+| Prompts | `components/room/tools/prompts/*.txt` (`plate-b`, `view`, `trains`, `peter`, `props`, `card-<id>`, `project-<slug>`, `peter-wave-fix`, `favicon`) |
 | Source paintings | `components/room/tools/art/` (`plate-b.png` is THE room; `peter-sheet.png`, `props.png`, `trains.png`, `view.png`; `brand/` favicon) |
 | Card sources | `components/room/tools/art/cards/<id>.png` (one object on magenta, 1024-1536 px) |
 | Repairs | `components/room/tools/art/fixes/<name>.png` (GPT edit of a crop) + the polygon in `fixes.py` |
@@ -73,6 +127,8 @@ python3 components/room/tools/cards.py     # card-<id>.webp for the app screens 
 python3 components/room/tools/cards.py tv  # one card
 python3 components/room/tools/cards.py refs  # plate crops to attach to card prompts
 python3 components/room/tools/fixes.py     # before | mask | after check images of each repair
+python3 components/room/tools/projects.py  # project cards: colour + pencil WebP for every slug
+python3 components/room/tools/brand.py     # favicon sizes, touch icon, X avatar
 ```
 
 Needs numpy, scipy, scikit-image and Pillow. `build.py` is deterministic: with unchanged sources it
@@ -146,25 +202,42 @@ the user before touching files outside the art pipeline.
   (`cp -cR`) instead.
 - `npm test` and `npm run build` must pass.
 
-## Project cards (the Projects section under the room)
+## Playbook: a new project card (or repaint one)
 
-Each project card is ONE clean thing, painted from the project's real screenshot or photo, with
-everything around it left out: Levels = its fanned cards, YouTLDR = a YouTube card -> "No." with the
-green staircase mark, Žltá stopa = one flagged contract, Mood Radio = its mood buttons, CMUX Deck =
-the Stream Deck alone, the two events = their real group photos. At rest the card shows a pencil
-version; on hover the colour eases in (CSS cross-fade, no shader). The project's own logo sits in the
-bottom-left corner as HTML (`components/room/ProjectLogo.tsx`, files in
-`public/lab/room/projects/logos/`), never painted in. Under the card: title, two tags and the years
-(`components/room/projects.ts`).
+1. **Find the one clean thing** that says what the project does at first sight (the "No." of
+   YouTLDR, the flagged contract of Žltá stopa, the Stream Deck alone). For an event or a team, use
+   the real group photo.
+2. **Save the real reference** (a screenshot via Playwright, or the photo Peter gives you) in
+   `art/projects/refs/<slug>-<what>.jpg`.
+3. **Write `prompts/project-<slug>.txt`** by copying a close one (`project-cmux-deck.txt` for an
+   object, `project-ai-build-week.txt` for a group photo). Keep these parts:
+   - "Show ONLY this one thing, centred, filling about 70% of the frame, on a plain empty warm
+     off-white watercolor paper background (#F1EADF) with a soft natural shadow under it. Nothing
+     else from the page: no navigation, no other text, no buttons, no logos, no background UI."
+   - For people: "Keep every real person where they are, with the same faces, hair, clothes and
+     poses; do not add, remove or invent anyone."
+   - Every word that should be painted, spelled out, in English.
+   - The style paragraph: "Style: exactly the attached room illustration (style.png): cozy Japanese
+     manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle
+     paper texture. Full colour. Not 3D, not vinyl, not a photo, not pixel art." and
+     "Landscape 1536x1024. No border, no frame."
+4. **Paint**: `paint.sh prompts/project-<slug>.txt <scratch>/<slug>-1.png art/plate-b.png
+   art/projects/refs/<file>`. Look at it next to the reference: right people, right words, nothing
+   invented, nothing extra. Retry with a sharper prompt if not. Copy the keeper to
+   `art/projects/<slug>.png`.
+5. **Wire it up**: add the slug to `SLUGS` in `projects.py` (and to `SOFT` if it is a photo of
+   people or a dark object, which get a lighter pencil without outlines, or faces turn eerie), its
+   two tags and years to `PROJECT_META` in `components/room/projects.ts`, and its logo to
+   `components/room/ProjectLogo.tsx` (an SVG or PNG in `public/lab/room/projects/logos/`, or a
+   wordmark). A project that isn't in `lib/lab/catalog.ts` is added on the page itself
+   (`app/room/page.tsx`, like `SLUSHD` and `ADVENT`).
+6. **Ship**: `python3 components/room/tools/projects.py`, then look at the Projects section at
+   1440 and 900 wide, at rest (pencil) and on hover (colour). Nine cards fill three columns; with
+   two columns a GitHub tile rounds off the last row.
 
-- Prompts: `prompts/project-<slug>.txt`. Paintings: `art/projects/<slug>.png`. Real references:
-  `art/projects/refs/`. Paint at "medium" strength, isolated on plain #F1EADF paper:
-  "Show ONLY this one thing, centred, filling about 70% of the frame ... no navigation, no other
-  text, no buttons, no logos".
-- Photos of real people: "keep every real person where they are, same faces, clothes and poses; do
-  not add, remove or invent anyone". Never let the painter invent a crowd.
-- Ship: `python3 components/room/tools/projects.py` writes `public/lab/room/projects/<slug>.webp`
-  (colour) and `<slug>-pencil.webp` (pencil, computed in numpy; photos and dark objects are in
-  `SOFT` for a lighter pencil without outlines, or faces turn eerie).
-- A new project: paint `art/projects/<slug>.png`, add the slug to `SLUGS` (and `SOFT` if it is a
-  photo), add its tags and years to `PROJECT_META`, its logo to `ProjectLogo`, then run the script.
+## Playbook: the favicon
+
+Repaint `art/brand/favicon-art.png` with `prompts/favicon.txt` (attach the X avatar photo and the
+`peter-wave` sprite; it must read at 32 px: big head, few details, thick outlines), then run
+`brand.py`. If the head moves, adjust `TIGHT` (the crop used for 16 to 64 px). The icons are wired in
+`app/room/layout.tsx`.

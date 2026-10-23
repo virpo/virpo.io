@@ -1,0 +1,7 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <art dir>/projects/advent-of-no-code.png and print its path.
+
+Attached: style.png (the style to match) and refs/advent-of-no-code-site.jpg, the Advent of No-Code web page: a calendar of 24 daily no-code challenges.
+Paint just its advent calendar: two rows of six square white tiles with a dark crimson shadow edge, numbered 1 to 12 in grey in their top-left corners, each with one big emoji-like icon in the middle (1 game controller, 2 green snake, 3 ping-pong paddle, 4 piano keys, 5 music notes, 6 framed landscape picture, 7 money bag, 8 red ring, 9 loudspeaker, 10 raised hand, 11 giraffe, 12 blue spiral) and a small dark badge in the top-right corner with a people icon and a number (113, 60, 45, 36, 26, 21, 16, 12, 13, 8, 14, 14). A red and white candy cane leaning against the first tile.
+Show ONLY this, centred, filling about 75% of the frame, on a plain empty warm off-white watercolor paper background (#F1EADF) with a soft natural shadow. No page heading, no other text, no email field.
+Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture. Full colour. Not 3D, not vinyl, not a photo, not pixel art.
+Landscape 1536x1024. No border, no frame.

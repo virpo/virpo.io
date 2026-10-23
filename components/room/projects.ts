@@ -12,6 +12,7 @@ export const PROJECT_META: Record<string, ProjectMeta> = {
   "ai-build-week": { tags: ["Event", "Bratislava"], years: "2026" },
   "cmux-deck": { tags: ["Hardware", "Agents"], years: "2026" },
   "bratislava-slushd": { tags: ["Event", "Startups"], years: "2025" },
+  "advent-of-no-code": { tags: ["Challenge", "No-code"], years: "2024" },
 };
 
 /** "Game · Agents · 2026" */

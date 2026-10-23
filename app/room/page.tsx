@@ -25,6 +25,15 @@ const SLUSHD = {
   blurb: "The official Slush spin-off in Bratislava: founder stories, workshops and 1-on-1s with VCs. 21 October 2025, Nová Cvernovka.",
 };
 
+// 24 daily no-code challenges, December 2024
+const ADVENT = {
+  slug: "advent-of-no-code",
+  title: "Advent of No-Code",
+  type: "Challenge · No-code",
+  href: "https://www.adventofnocode.io/",
+  blurb: "Build something new every day: 24 days, 10 minutes each, no code. 229 people joined.",
+};
+
 export default function RoomPage() {
   const posts = getPostSummaries();
   const newest = posts.slice(0, 3);
@@ -33,7 +42,7 @@ export default function RoomPage() {
   const shown = labProjects
     .filter((project) => project.slug !== "prehistoriq")
     .map((project) => (project.slug === "levels" ? { ...project, blurb: "What level are you with agents? Your agent checks 100 tricks and deals you a card." } : project))
-    .concat(SLUSHD);
+    .concat(SLUSHD, ADVENT);
   const projects = shown.map((project) => ({
     slug: project.slug,
     title: project.title,
