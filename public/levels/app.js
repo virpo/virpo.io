@@ -10,7 +10,6 @@ const store = { get(k) { try { return JSON.parse(localStorage.getItem(k)); } cat
                 set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
 const track = (e, p) => { try { window.posthog?.capture("levels_" + e, p); } catch {} };
 const SITE = D.site, PROMPT = D.prompt;
-const fmtDate = d => new Date(d + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const OG = new URLSearchParams(location.search).get("og");
 const TOUCH = matchMedia("(hover: none) and (pointer: coarse)").matches;   /* a phone or tablet: the check runs on a computer */
@@ -109,7 +108,7 @@ const cardName = () => ($("#card-name").value || "").trim();
 function subjectCard(cls, blank) {
   const lv = level(), sc = selfCount(), add = MODE === "mine" && cls === "front" ? (WHO?.photo ? "change" : "add") : undefined;
   return resultCard({ st, r: SUBJ, photo: WHO?.photo, add, name: MODE === "mine" ? cardName() : SUBJ.name,
-    foot: MODE === "chat" ? "a chat tab can't check" : sc ? `${lv - sc} found · ${sc} ticked` : `v${D.version} · checked locally` }, cls, blank);
+    foot: MODE === "chat" ? "a chat tab can't check" : sc ? `${lv - sc} found · ${sc} ticked` : "checked locally" }, cls, blank);
 }
 const otherCard = (r, name, foot, cls) => resultCard({ st: stateOf(r), r, name, foot }, cls);
 function fanHTML(blank) {
@@ -119,7 +118,8 @@ function fanHTML(blank) {
   return otherCard(noob.r, noob.name, ex, "back-l") + otherCard(pro.r, pro.name, ex, "back-r") + subjectCard("front", blank);
 }
 
-/* the front card fills in, square by square, then the ticker walks through what the agent found */
+/* the front card fills in, square by square, and on a result the map lights up with it, then the ticker walks through
+   what the agent found */
 let tickTimer = null, fillTimer = null;
 function renderFan() {
   clearTimeout(fillTimer); clearInterval(tickTimer);
@@ -127,177 +127,229 @@ function renderFan() {
   if (calm || OG) { fan.innerHTML = fanHTML(false); return startTicker(); }
   fan.innerHTML = fanHTML(true);
   const cells = [...fan.querySelectorAll(".front .tc-grid i")], num = fan.querySelector(".front .tc-lvl");
+  const big = MODE === "show" ? null : $("#res-num"), tiles = lights() ? new Map($$("#board .tile").map(t => [+t.dataset.n, t])) : null;
   const order = L.filter(l => done(l.n)).map(l => [l.n, st(l.n) === "self" ? "self" : "y"]);
+  if (tiles) order.forEach(([n]) => tiles.get(n).className = "tile off");
+  if (big) big.textContent = 0;
   let i = 0;
   const step = () => {
     const [n, c] = order[i]; cells[n - 1].className = c; i++;
-    num.firstChild.textContent = i;
-    if (i < order.length) fillTimer = setTimeout(step, 18); else setTimeout(startTicker, 500);
+    if (tiles) tiles.get(n).className = tileCls(n) + " just";
+    num.firstChild.textContent = i; if (big) big.textContent = i;
+    if (i < order.length) fillTimer = setTimeout(step, 16); else setTimeout(startTicker, 500);
   };
   fillTimer = setTimeout(() => order.length ? step() : startTicker(), 350);
 }
 function startTicker() {
   const tk = $("#ticker"), ev = Object.entries(SUBJ.e).map(([n, v]) => [+n, v]).filter(([n]) => done(n)).sort((a, b) => a[0] - b[0]);
   const items = ev.length ? ev : L.filter(l => done(l.n)).map(l => [l.n, ""]);
-  if (!items.length) { tk.textContent = ""; return; }
+  if (!items.length || MODE === "mine") { tk.textContent = ""; return; }   /* on your own result, the map below does this */
   let k = 0;
   const show = () => {
     const [n, v] = items[k % items.length], l = L[n - 1];
     $$("#fan .front .tc-grid i.hl").forEach(i => i.classList.remove("hl"));
     $(`#fan .front .tc-grid i[data-n="${n}"]`)?.classList.add("hl");
-    tk.innerHTML = `<span class="n">${n}</span><b>${esc(l.title)}</b>${v ? `<span class="ev">${MODE === "mine" ? "Your" : whose()} agent found: ${esc(v)}</span>` : ""}`;
+    tk.innerHTML = `<span class="n">${n}</span><b>${esc(l.title)}</b>${v ? `<span class="ev">${whose()} agent found: ${esc(v)}</span>` : ""}`;
     tk.classList.remove("fade"); k++;
   };
   show();
   if (!calm && !OG) tickTimer = setInterval(() => { tk.classList.add("fade"); setTimeout(show, 260); }, 2800);
 }
 
-/* ---------- the list */
-/* FILTER: all · y (lit) · todo (not lit). A filter keeps the rows it showed when chosen, so ticking one in the "to check"
-   view leaves it in place, ticked and undoable, instead of pulling it out from under the pointer */
-let FILTER = "all", SHOWN = null, STATS = null;
+/* ---------- the map: ten eras of ten, each row led by its caveman. On a result the keys you have are lit and the rest
+   are sunk, waiting; on arrival it's the catalogue, every key up. Click one (or walk it with the arrow keys) and the
+   inspector beside it says what it is */
+let STATS = null, SEL = null;   /* SEL: what the inspector shows, { n } a level or { t } an era */
+const lights = () => MODE === "mine" || MODE === "pub";
+const picked = () => MODE === "mine" ? SUBJ.p.map(p => p[0]).filter(n => !done(n)) : [];
 const todoCount = () => L.filter(l => !done(l.n)).length;
 const pct = n => STATS ? Math.round(100 * (STATS.found[n - 1] + STATS.ticked[n - 1]) / STATS.n) : null;
-function rowHTML(l) {
-  const s = st(l.n), ev = SUBJ?.e?.[l.n], mine = MODE === "mine";
-  const badge = !mine ? "" : s === "y" ? `<span class="state y">found</span>` : s === "self" ? `<span class="state self">ticked</span>`
-    : s === "q" ? `<span class="state q">unsure</span>` : `<span class="state n">not yet</span>`;
-  /* the quick answer sits on the row itself; correcting what the agent found lives inside it */
-  const quick = !mine ? "" : s === "self" ? `<button class="key mini" type="button" data-act="undo">Undo</button>`
-    : s === "y" ? "" : `<button class="key mini" type="button" data-act="self">I do this</button>`;
-  const act = !mine ? "" : s === "y" ? `<button class="key mini" type="button" data-act="no">That's wrong</button>`
-    : OV[l.n] === "no" ? `<button class="key mini" type="button" data-act="undo">It was right</button>` : "";
-  return `<div class="row${s ? " is-" + s : ""}${mine ? " has-q" : ""}" id="level-${l.n}" data-n="${l.n}">
-    <button class="row-b" type="button" aria-expanded="false" aria-controls="d${l.n}">
-      <span class="ico">${icon(l.n)}</span><span class="num">${l.n}</span>
-      <span class="row-t"><b>${esc(l.title)}</b><span>${esc(l.line)}</span></span>
-      <span class="row-m">${badge}${!mine && l.from?.x ? `<span class="who">@${esc(l.from.x)}</span>` : ""}${STATS ? `<span title="of ${STATS.n} people who added theirs">${pct(l.n)}%</span>` : ""}<span class="chev" aria-hidden="true">›</span></span>
-    </button>${mine ? `<div class="row-q">${quick}</div>` : ""}
-    <div class="row-d" id="d${l.n}" hidden>
-      <p class="how-t"><b>How it's checked</b>${esc(l.check)}${l.how === "self" && l.check !== "Only you know." ? " Usually only you can tell, so you tick it." : ""}</p>
-      ${tryHTML(l)}
-      ${ev && done(l.n) ? `<p class="evidence">${whose()} agent found: <b>${esc(ev)}</b></p>` : ""}
-      ${quote(l.from)}${quote(l.vs, true)}
-      <div class="row-acts"><button class="key mini" type="button" data-act="learn">Copy a prompt to learn this</button>${act}</div>
-    </div></div>`;
+const stateWord = n => ({ y: "found", self: "ticked", q: "couldn't see", n: "not yet" })[st(n)];
+function tileCls(n) {
+  if (!lights()) return "tile";
+  const s = st(n);
+  return "tile " + (s === "y" ? "on" : s === "self" ? "on self" : s === "q" ? "off q" : "off") + (picked().includes(n) ? " pick" : "");
 }
-function setFilter(f) {
-  FILTER = f; SHOWN = f === "all" ? null : new Set(L.filter(l => f === "y" ? done(l.n) : !done(l.n)).map(l => l.n));
-  syncFilters(); renderList();
-}
-function renderList() {
-  const show = l => !SHOWN || SHOWN.has(l.n);
-  $("#tiers").classList.toggle("lit", !!SUBJ); $("#tiers").classList.toggle("reviewing", MODE === "mine" && FILTER === "todo");
-  $("#tiers").innerHTML = T.map(t => {
-    const ls = L.filter(l => Math.ceil(l.n / 10) === t.n), have = ls.filter(l => done(l.n)).length;
-    const rows = ls.filter(show).map(l => rowHTML(l) + (l.n === 3 && D.pi && FILTER === "all" ? `<div class="pi"><span class="num">π</span><span><b>${esc(D.pi.title)}</b> ${esc(D.pi.line)}</span></div>` : "")).join("");
-    if (!rows) return "";
-    return `<section class="tier" id="tier-${t.n}" style="--tc:var(--t${t.n})"><div class="tier-h">
-      <div class="tier-art">${ART[t.n] ? `<img src="${ART[t.n]}" alt="The caveman at tier ${t.n}, ${esc(t.era)}" loading="lazy">` : ""}</div>
-      <div><div class="tier-k">Levels ${t.n * 10 - 9}–${t.n * 10} · ${esc(t.era)}</div><h3>${esc(t.name)}</h3><p>${esc(t.line)}</p></div>
-      ${SUBJ ? `<div class="tier-count"><b>${have}</b>/10</div>` : ""}</div>${rows}</section>`;
+const tierLevels = t => L.slice(t * 10 - 10, t * 10);
+function renderBoard() {
+  const b = $("#board");
+  b.classList.toggle("lights", lights());
+  b.innerHTML = T.map(t => {
+    const have = tierLevels(t.n).filter(l => done(l.n)).length;
+    return `<div class="b-row"><button type="button" class="emb${lights() && have === 10 ? " full" : ""}" data-tier="${t.n}" data-tip="${esc(t.era)}"
+      style="--tc:var(--t${t.n});--p:${lights() ? have * 10 : 100}%" aria-label="Levels ${t.n * 10 - 9} to ${t.n * 10}: ${esc(t.era)}, ${esc(t.name)}${lights() ? `, ${have} of 10` : ""}">${ART[t.n] ? `<img src="${ART[t.n]}" alt="" loading="lazy">` : ""}</button>${tierLevels(t.n).map(l =>
+      `<button type="button" class="${tileCls(l.n)}" data-n="${l.n}" data-tip="${l.n}. ${esc(l.title)}" aria-label="${l.n}. ${esc(l.title)}${lights() ? ", " + stateWord(l.n) : ""}">${icon(l.n)}</button>`).join("")}</div>`;
   }).join("");
-  $("#list-sub").textContent = MODE === "mine" ? "Lit up: yours. Open any level for how it's checked, what your agent found, and a prompt to learn it."
-    : `Lit up: what ${whose()} agent found on their machine. Yours will light up differently.`;
-  filterLabels();
+  markSel();
 }
-function filterLabels() {
-  const [, lit, todo] = $$("#filters button");
-  lit.textContent = MODE === "mine" ? "Yours" : "Lit"; todo.textContent = MODE === "mine" ? `To check · ${todoCount()}` : "Not yet";
+function markSel() {
+  $$("#board .sel").forEach(el => el.classList.remove("sel"));
+  if (SEL) $(SEL.t ? `#board [data-tier="${SEL.t}"]` : `#board [data-n="${SEL.n}"]`)?.classList.add("sel");
+}
+/* what the result says about one level: found (and how), ticked, couldn't see, or not yet */
+function stateHTML(l) {
+  if (!lights()) return "";
+  const s = st(l.n), ev = SUBJ.e[l.n], who = whose();
+  return s === "y" ? `<p class="insp-st on mono">${ev ? `${who} agent found: <b>${esc(ev)}</b>` : `${who} agent found it`}</p>`
+    : s === "self" ? `<p class="insp-st on mono">${MODE === "mine" ? "You ticked this one" : "Ticked by them"}</p>`
+    : s === "q" ? `<p class="insp-st mono">${who} agent couldn't see this from ${MODE === "mine" ? "your" : "their"} machine</p>`
+    : `<p class="insp-st mono">Not yet</p>`;
+}
+const detailHTML = (l, ev) => `<p class="how-t"><b>How it's checked</b>${esc(l.check)}${l.how === "self" && l.check !== "Only you know." ? " Usually only you can tell, so you tick it." : ""}</p>
+  ${tryHTML(l)}${ev && SUBJ?.e?.[l.n] && done(l.n) ? `<p class="evidence">${whose()} agent found: <b>${esc(SUBJ.e[l.n])}</b></p>` : ""}${quote(l.from)}${quote(l.vs, true)}`;
+/* on your own result, every level can be corrected: tick what the agent missed, untick what it got wrong */
+function fixHTML(l) {
+  if (MODE !== "mine") return "";
+  const s = st(l.n);
+  return s === "self" ? `<button class="key mini" type="button" data-act="undo">Undo my tick</button>`
+    : s === "y" ? `<button class="key mini" type="button" data-act="no">That's wrong</button>`
+    : OV[l.n] === "no" ? `<button class="key mini" type="button" data-act="undo">It was right</button>`
+    : `<button class="key mini acc" type="button" data-act="self">I do this</button>`;
+}
+const LEARN = `<button class="key mini" type="button" data-act="learn">Copy a prompt to learn this</button>`;
+function renderInsp() {
+  const el = $("#insp");
+  if (!SEL) { el.innerHTML = ""; return; }
+  if (SEL.t) {
+    const t = T[SEL.t - 1], have = tierLevels(t.n).filter(l => done(l.n)).length;
+    el.innerHTML = `<div class="insp-art" style="--tc:var(--t${t.n})">${ART[t.n] ? `<img src="${ART[t.n]}" alt="The caveman at tier ${t.n}, ${esc(t.era)}">` : ""}</div>
+      <p class="insp-k mono">Levels ${t.n * 10 - 9}–${t.n * 10} · ${esc(t.era)}</p><h3>${esc(t.name)}</h3><p class="insp-line">${esc(t.line)}</p>
+      ${lights() ? `<p class="insp-st${have === 10 ? " on" : ""} mono">${have === 10 ? "All ten. Era cleared." : `${have} of 10`}</p>` : ""}`;
+  } else {
+    const l = L[SEL.n - 1];
+    el.innerHTML = `<div class="insp-top"><span class="${tileCls(l.n)} big">${icon(l.n)}</span><div><p class="insp-k mono">Level ${l.n} · ${esc(tierOf(l.n).era)}</p><h3>${esc(l.title)}</h3></div></div>
+      <p class="insp-line">${esc(l.line)}</p>${stateHTML(l)}${detailHTML(l, false)}<div class="acts" data-n="${l.n}">${fixHTML(l)}${LEARN}</div>`;
+  }
+  markSel();
+}
+const boardEl = $("#board");
+boardEl.addEventListener("click", e => {
+  const el = e.target.closest("[data-n], [data-tier]"); if (!el) return;
+  SEL = el.dataset.tier ? { t: +el.dataset.tier } : { n: +el.dataset.n };
+  renderInsp(); track("map_open", SEL);
+  if (matchMedia("(max-width: 980px)").matches && e.detail) $("#insp").scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "nearest" });
+});
+/* the arrow keys walk the map, eleven keys to a row, and the inspector follows */
+boardEl.addEventListener("keydown", e => {
+  const k = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -11, ArrowDown: 11 }[e.key]; if (!k) return;
+  const all = $$("#board button"), j = all.indexOf(document.activeElement) + k;
+  if (j < 0 || j >= all.length || all.indexOf(document.activeElement) < 0) return;
+  e.preventDefault(); all[j].focus(); all[j].click();
+});
+
+/* ---------- the lists. On arrival (and under someone else's card) it's all 100 in order, to read. On your result it's
+   only what's left to unlock, the three picks first, with what you have folded away below */
+let TODO = null;   /* the levels the unlock list holds, fixed when it opens, so ticking one leaves it in place, ticked and undoable */
+function rowHTML(l, kind) {   /* kind: list · todo (yours, not lit) · have (yours, lit) */
+  const s = st(l.n), pick = kind === "todo" && SUBJ.p.find(p => p[0] === l.n && TODO.has(p[0]));
+  const tag = kind === "list" ? "" : s === "self" ? `<span class="tag on mono">ticked</span>` : kind === "have" && !done(l.n) ? `<span class="tag mono">not yours</span>`
+    : pick ? `<span class="tag start mono">Start here</span>` : s === "q" ? `<span class="tag mono">couldn't see</span>` : "";
+  const sub = kind === "have" && s === "y" && SUBJ.e[l.n] ? `<span class="ev mono">${esc(SUBJ.e[l.n])}</span>` : `<span>${esc(l.line)}</span>`;
+  const meta = kind === "list" ? `${l.from?.x ? `<span class="who">@${esc(l.from.x)}</span>` : ""}${STATS ? `<span title="of ${STATS.n} people who added theirs">${pct(l.n)}%</span>` : ""}` : "";
+  return `<div class="row k-${kind} is-${s || "x"}" id="level-${l.n}" data-n="${l.n}" data-kind="${kind}">
+    <button class="row-b" type="button" aria-expanded="false" aria-controls="d${l.n}">
+      <span class="num">${l.n}</span><span class="${kind === "have" ? tileCls(l.n) : "tile"}">${icon(l.n)}</span>
+      <span class="row-t">${tag}<b>${esc(l.title)}</b>${sub}${pick?.[1] ? `<span class="why">${esc(pick[1])}</span>` : ""}</span>
+      <span class="row-m">${meta}<span class="chev" aria-hidden="true">›</span></span>
+    </button>${kind === "todo" ? `<div class="row-q">${fixHTML(l).replace("Undo my tick", "Undo")}<button class="key mini" type="button" data-act="learn">Learn it</button></div>` : ""}
+    <div class="row-d" id="d${l.n}" hidden>${detailHTML(l, kind !== "list")}${kind === "todo" ? "" : `<div class="acts">${fixHTML(l)}${LEARN}</div>`}</div></div>`;
+}
+function renderLists() {
+  $("#list").hidden = MODE === "mine"; $("#unlock").hidden = MODE !== "mine";
+  if (MODE === "mine") {
+    TODO ??= new Set(L.filter(l => !done(l.n)).map(l => l.n));
+    const first = SUBJ.p.map(p => p[0]).filter(n => TODO.has(n)), rest = [...TODO].filter(n => !first.includes(n)).sort((a, b) => a - b);
+    $("#unlock-list").innerHTML = TODO.size ? [...first, ...rest].map(n => rowHTML(L[n - 1], "todo")).join("")
+      : `<p class="all-done">Nothing left to unlock. Know a trick that belongs here? Tell <a href="https://x.com/virpo">@virpo</a>.</p>`;
+    $("#have-list").innerHTML = L.filter(l => !TODO.has(l.n)).map(l => rowHTML(l, "have")).join("");
+    return unlockCounts();
+  }
+  $("#tiers").innerHTML = T.map(t => `<section class="tier" id="tier-${t.n}" style="--tc:var(--t${t.n})"><div class="tier-h">
+      <div class="tier-art">${ART[t.n] ? `<img src="${ART[t.n]}" alt="The caveman at tier ${t.n}, ${esc(t.era)}" loading="lazy">` : ""}</div>
+      <div><div class="tier-k">Levels ${t.n * 10 - 9}–${t.n * 10} · ${esc(t.era)}</div><h3>${esc(t.name)}</h3><p>${esc(t.line)}</p></div></div>
+      ${tierLevels(t.n).map(l => rowHTML(l, "list") + (l.n === 3 && D.pi ? `<div class="pi"><span class="num">π</span><span><b>${esc(D.pi.title)}</b> ${esc(D.pi.line)}</span></div>` : "")).join("")}</section>`).join("");
+}
+function unlockCounts() {
+  const left = todoCount(), have = L.filter(l => !TODO.has(l.n) && done(l.n)).length;
+  $("#unlock-n").textContent = left || "";
+  $("#unlock-sub").textContent = left ? "Your agent didn't find these. Already do one? Tick it and your level goes up." : "";
+  $("#have-t").textContent = `The ${have} you have`;
 }
 function openRow(n, scroll) {
-  let r = $("#level-" + n);
-  if (!r) { setFilter("all"); r = $("#level-" + n); }
+  const r = $("#level-" + n); if (!r) return;
+  if (r.closest("#have")) $("#have").open = true;
   r.dataset.open = ""; r.querySelector(".row-b").setAttribute("aria-expanded", "true"); r.querySelector(".row-d").hidden = false;
   if (scroll) r.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
 }
-$("#tiers").addEventListener("click", async e => {
-  const row = e.target.closest(".row"); if (!row) return;
-  const n = +row.dataset.n, act = e.target.closest("[data-act]")?.dataset.act;
+document.addEventListener("click", async e => {
+  const rb = e.target.closest(".row-b");
+  if (rb) {
+    const row = rb.closest(".row"), d = row.querySelector(".row-d"), open = d.hidden;
+    d.hidden = !open; rb.setAttribute("aria-expanded", String(open));
+    if (open) { row.dataset.open = ""; track("row_open", { n: +row.dataset.n }); } else delete row.dataset.open;
+    return;
+  }
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  const n = +b.closest("[data-n]").dataset.n, act = b.dataset.act, from = b.closest("#insp") ? "#insp" : `#level-${n} .row-q`;
   if (act === "learn") { toast(await copy(promptFor(L[n - 1])) ? "Prompt copied. Paste it into your agent." : "Couldn't copy here."); track("learn_copy", { n }); return; }
-  if (act) {
-    OV = store.get(okey()) || {};   /* start from what's saved: another tab of this result may have ticked since */
-    if (act === "self") OV[n] = "self"; else if (act === "no") OV[n] = "no"; else delete OV[n];
-    store.set(okey(), OV); track("override", { n, act }); cardChanged(); refreshRow(n); return;
-  }
-  if (e.target.closest(".row-b")) {
-    const d = row.querySelector(".row-d"), open = d.hidden;
-    d.hidden = !open; row.querySelector(".row-b").setAttribute("aria-expanded", String(open));
-    if (open) { row.dataset.open = ""; track("row_open", { n }); } else delete row.dataset.open;
-  }
+  OV = store.get(okey()) || {};   /* start from what's saved: another tab of this result may have ticked since */
+  if (act === "self") OV[n] = "self"; else if (act === "no") OV[n] = "no"; else delete OV[n];
+  store.set(okey(), OV); track("override", { n, act }); changed(n);
+  $(`${from} [data-act]:not([data-act="learn"])`)?.focus();
 });
-/* one answer changed: that row, its tier's count, the card and the level, all in place */
-function refreshRow(n) {
-  const r = $("#level-" + n), open = r.hasAttribute("data-open"), t = Math.ceil(n / 10);
-  r.outerHTML = rowHTML(L[n - 1]);
-  if (open) openRow(n);
-  const c = $(`#tier-${t} .tier-count b`); if (c) c.textContent = L.filter(l => Math.ceil(l.n / 10) === t && done(l.n)).length;
-  filterLabels(); renderCopy(); $("#fan").innerHTML = fanHTML(false); keepLast();
+/* one answer changed: its row, the map, the inspector, the counts, the card and the level, all in place */
+function changed(n) {
+  const r = $("#level-" + n);
+  if (r) { const open = r.hasAttribute("data-open"); r.outerHTML = rowHTML(L[n - 1], r.dataset.kind); if (open) openRow(n); }
+  cardChanged(); renderBoard(); $(`#board .tile[data-n="${n}"]`)?.classList.add("just"); renderInsp(); unlockCounts(); renderCopy();
+  $("#fan").innerHTML = fanHTML(false); keepLast();
 }
 /* "Your level" elsewhere on the page follows the ticks on this result */
 function keepLast() {
   if (MODE !== "mine" || LAST?.hash !== location.hash.slice(1)) return;
   LAST.lv = level(); store.set("levels-last", LAST); $("#live").textContent = `Level ${LAST.lv}`;
 }
-function syncFilters() { $$("#filters button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.f === FILTER))); }
-$("#filters").addEventListener("click", e => { const b = e.target.closest("button"); if (b) setFilter(b.dataset.f); });
 
-/* ---------- hero copy for a result */
+/* ---------- the hero. Your own result takes over the top of the page in yellow: it's yours, and it should look it */
 function renderCopy() {
+  document.body.dataset.mode = MODE;
   $("#copy-home").hidden = MODE !== "show"; $("#copy-result").hidden = MODE === "show"; $("#live").hidden = MODE !== "mine";
-  $("#go").hidden = !canWait(); $("#getyours").hidden = MODE !== "chat";
-  $("#next").hidden = MODE !== "mine" && MODE !== "chat";
+  $("#go").hidden = !canWait(); $("#next").hidden = MODE !== "chat";
+  $("#card-tools").hidden = MODE !== "mine"; $("#ticker").hidden = MODE === "mine" || MODE === "chat";
   $("#mine").hidden = !(canWait() && LAST);
   if (LAST) { $("#mine").href = "#" + LAST.hash; $("#mine").textContent = `Your level: ${LAST.lv}`; }
+  const lv = level(), t = tierOf(Math.max(1, lv)), sc = selfCount(), unsure = L.filter(l => st(l.n) === "q").length;
+  $("#map-title").textContent = MODE === "mine" ? "Your map" : MODE === "pub" ? `${whose()} map` : "The 100";
+  $("#map-sub").textContent = MODE === "mine" ? (lv === 100 ? "Every key lit." : `${lv} lit, ${100 - lv} to unlock.`)
+    : MODE === "pub" ? `${lv} lit. Yours will light up differently.` : "Ten eras, from first contact to writing your own agent.";
   if (MODE === "show") return;
+  $("#res-num").textContent = MODE === "chat" ? 0 : lv;
   if (MODE === "chat") {
-    $("#res-kicker").textContent = "Level 0 · you're in a chat tab";
-    $("#res-title").textContent = "Level 0. Everyone starts here.";
-    $("#res-line").textContent = "Your chat assistant read the check, but it can't look at your computer, so it can't run it. That's the whole difference between a chat and an agent: an agent works in your folders, runs things, and shows you what it did. It's less scary than it sounds. It asks before it does anything you haven't allowed.";
-    $$("#share, #share-note, #res-foot, #keep").forEach(el => el.hidden = true);
-    $("#picks-h").textContent = "Where you'd start";
+    $("#res-kicker").textContent = "You're in a chat tab";
+    $("#res-era").textContent = "Everyone starts here.";
+    $("#res-line").textContent = "A chat can't look at your computer, so it can't run the check. That's the whole difference: an agent works in your folders, runs things, and shows you what it did. It asks before anything you haven't allowed.";
+    $$("#share, #share-note, #noticed").forEach(el => el.hidden = true);
     return renderPicks();
   }
-  $("#picks-h").textContent = "Learn next";
-  const lv = level(), t = tierOf(Math.max(1, lv)), sc = selfCount(), unsure = L.filter(l => st(l.n) === "q").length;
   /* a second run in this browser: how it moved since the one before */
   const prev = MODE === "mine" && LAST?.prev, moved = prev && levelOf(SUBJ) - prev.lv;
   const since = !prev ? "" : moved > 0 ? ` · up ${moved} since ${day(prev.at)}` : moved < 0 ? ` · down ${-moved} since ${day(prev.at)}` : ` · same as on ${day(prev.at)}`;
   const from = MODE === "mine" && FROM && FROM.s !== SUBJ.s ? ` ${FROM.name ? FROM.name + ", whose card sent you here, is" : "The card that sent you here is"} level ${levelOf(FROM)}.` : "";
-  $("#res-kicker").textContent = MODE === "pub" ? `${SUBJ.name ? SUBJ.name + "'s card" : "A card"} · published by them` : "Your result · from the link, nothing uploaded" + since;
-  $("#res-title").textContent = `Level ${lv}. ${t.era}.`;
+  $("#res-kicker").textContent = MODE === "pub" ? `${SUBJ.name ? SUBJ.name + "'s card" : "A card"} · published by them` : "Your level" + since;
+  $("#res-era").textContent = `${t.era}. ${t.name}.`;
   $("#res-line").textContent = MODE === "pub"
-    ? `Their own agent found ${lv - sc} of the 100 on their machine${sc ? `, and they ticked ${sc} more` : ""}. ${t.line}`
-    : `Your agent found ${lv - sc} of the 100${sc ? `, and you ticked ${sc}` : ""}. ${unsure ? `It couldn't see ${unsure} from your machine.` : t.line}${from}`;
+    ? `Their agent found ${lv - sc} on their machine${sc ? `, and they ticked ${sc}` : ""}.`
+    : `Your agent found ${lv - sc}${sc ? `, you ticked ${sc}` : ""}.${unsure ? ` It couldn't see ${unsure} from here.` : ""}${from}`;
   $("#noticed").hidden = !(MODE === "mine" && SUBJ.f.length);
   $("#noticed").innerHTML = MODE === "mine" ? SUBJ.f.map(x => `<li>${esc(x)}</li>`).join("") : "";
-  $$("#share, #share-note, #res-foot").forEach(el => el.hidden = MODE === "pub");
-  $("#keep").hidden = MODE !== "mine";
-  /* before sharing, the ones it didn't find are worth a look: the agent can't see everything from a machine */
-  const todo = MODE === "mine" ? todoCount() : 0, looked = todo && store.get("levels-rv-" + SUBJ.s);
-  $("#review").hidden = !todo;
-  $("#review-b").textContent = looked ? `Back to the ${todo} to check` : `Check the ${todo} it didn't find`;
-  $("#review-b").classList.toggle("acc", !looked); $("#share-x").classList.toggle("acc", !todo || !!looked);
+  $$("#share, #share-note").forEach(el => el.hidden = MODE === "pub");
   $("#live").textContent = `Level ${lv}`;
-  renderPicks();
 }
-function renderPicks() {
-  const picks = SUBJ.p.length ? SUBJ.p : L.filter(l => !done(l.n)).slice(0, 3).map(l => [l.n, ""]);   /* picks */
-  $("#picks").innerHTML = picks.map(([n, why]) => { const l = L[n - 1];
-    return `<div class="pick"><span class="ico">${icon(n)}</span><div><h3><span class="n">${n}</span>${esc(l.title)}</h3>
-      <p>${why ? `<span class="why">${esc(why)}</span> ` : ""}${esc(l.line)}</p>${tryHTML(l, true)}
-      <div class="pick-acts"><button class="key mini" type="button" data-learn="${n}">Copy a prompt for your agent</button><button class="linkish mono" type="button" data-goto="${n}">How it's checked</button></div></div></div>`; }).join("");
+function renderPicks() {   /* level 0, in a chat tab: where they'd start once they have an agent */
+  $("#picks").innerHTML = SUBJ.p.map(([n, why]) => { const l = L[n - 1];
+    return `<div class="pick" data-n="${n}"><span class="tile">${icon(n)}</span><div><h3><span class="n">${n}</span>${esc(l.title)}</h3>
+      <p>${why ? `<span class="why">${esc(why)}</span> ` : ""}${esc(l.line)}</p>${tryHTML(l, true)}</div></div>`; }).join("");
 }
-$("#picks").addEventListener("click", async e => {
-  const a = e.target.closest("[data-learn]"), g = e.target.closest("[data-goto]");
-  if (a) { toast(await copy(promptFor(L[a.dataset.learn - 1])) ? "Prompt copied. Paste it into your agent." : "Couldn't copy here."); track("pick_copy", { n: +a.dataset.learn }); }
-  if (g) openRow(+g.dataset.goto, true);
-});
-$("#review-b").addEventListener("click", () => {
-  store.set("levels-rv-" + SUBJ.s, 1); track("review_start", { todo: todoCount() });
-  setFilter("todo"); renderCopy();
-  $("#list").scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "start" });
-});
 /* a card link shows the card as it was when made; change the card and the next share makes a new one */
 const NOTE = $("#share-note").textContent;
 const cardChanged = () => { if (SHARE_URL) { SHARE_URL = null; $("#share-note").textContent = NOTE; } };
@@ -306,7 +358,7 @@ $("#card-name").addEventListener("input", () => { store.set("levels-name", $("#c
 let PHOTO = store.get("levels-photo");
 function setPhoto(p) {
   PHOTO = p; try { p ? localStorage.setItem("levels-photo", JSON.stringify(p)) : localStorage.removeItem("levels-photo"); } catch {}
-  WHO = PHOTO ? { photo: PHOTO } : null; $("#photo-rm").hidden = !PHOTO; cardChanged(); renderAll(false);
+  WHO = PHOTO ? { photo: PHOTO } : null; cardChanged(); renderAll(false);
 }
 async function cutPhoto(file) {
   const img = new Image(), url = URL.createObjectURL(file);
@@ -319,7 +371,9 @@ async function cutPhoto(file) {
     return c.toDataURL("image/jpeg", 0.85);
   } finally { URL.revokeObjectURL(url); }
 }
-$("#fan").addEventListener("click", e => { if (e.target.closest("[data-photo]")) $("#photo-in").click(); });
+$("#stage").addEventListener("click", e => { if (e.target.closest("[data-photo]")) $("#photo-in").click(); });
+/* under your card: your face and your name on it, the two things that make it yours */
+function renderTools() { $("#photo-b").innerHTML = CAMERA + `<span>${PHOTO ? "Change photo" : "Put your face on it"}</span>`; $("#photo-rm").hidden = !PHOTO; }
 $("#photo-in").addEventListener("change", async e => {
   const f = e.target.files?.[0]; e.target.value = "";
   if (!f) return;
@@ -436,7 +490,7 @@ $("#mail").addEventListener("submit", async e => {
 
 /* ---------- the one action: copy the line. The yellow key then turns into the wait, with a clock, until the agent is back */
 $$("[data-prompt]").forEach(el => el.textContent = PROMPT);
-const bar = $("#bar"), STAYS = "Nothing leaves your computer unless you choose to save your card.";
+const bar = $("#bar"), STAYS = "Nothing leaves your computer unless you save your card.";
 let waitClock = null;
 function waitForAgent(h, p) {
   const box = $("#cta-box"), w = $("#wait");
@@ -455,7 +509,7 @@ function stopWaiting() {
 }
 const waiting = () => $("#cta-box").classList.contains("waiting");
 const pasteIt = ok => waitForAgent(ok ? "Copied. Now paste it into your agent." : "Copy the line below, then paste it into your agent.",
-  `Claude Code, Codex or Cursor, any session. It tells you what the script does, then asks before running it. In a few minutes your card opens in your browser. ${STAYS}`);
+  `Any session. It explains the script, asks before running it, and opens your card here in a few minutes. ${STAYS}`);
 /* on a phone there is no agent to paste into: send the line to the computer instead (AirDrop, Messages, a note to self) */
 async function sendToComputer() {
   const ok = await copy(PROMPT);
@@ -477,22 +531,9 @@ $$("[data-cta]").forEach(b => b.addEventListener("click", async () => {
   pasteIt(ok);
 }));
 $("#wait-again").addEventListener("click", async () => { toast(await copy(PROMPT) ? "Copied again" : "Copy the line below"); });
-if (TOUCH) { $("#cta .cta-t").textContent = "Send it to my computer"; $("#assure").firstChild.textContent = "It runs on your computer, not your phone: send yourself the line, then paste it into Claude Code, Codex or Cursor there. Nothing is shared with us unless you want it to be. "; }
-/* Cursor's prompt link fills the chat of the Cursor you already have open, so it opens there; always copy as well,
-   because a link to an app that isn't installed does nothing. Claude Code's link starts a new terminal session that
-   asks for folder trust first, which is worse than pasting into the session you already have, so it only copies */
-const OPEN = { cursor: "cursor://anysphere.cursor-deeplink/prompt?text=" + encodeURIComponent(PROMPT) };
-$$(".agent").forEach(a => {
-  a.querySelector("i").innerHTML = D.agents?.[a.dataset.agent] || "";
-  if (OPEN[a.dataset.agent]) a.href = OPEN[a.dataset.agent];
-  a.addEventListener("click", async e => {
-    const ok = await copy(PROMPT), name = a.dataset.name;
-    track("agent_open", { agent: a.dataset.agent, ok });
-    if (!OPEN[a.dataset.agent]) e.preventDefault();
-    if (OPEN[a.dataset.agent]) waitForAgent(`Opening ${name}…`, `It opens with the line typed in; press Enter. Nothing opened? It's on your clipboard too: paste it into ${name}. ${STAYS}`);
-    else waitForAgent(ok ? `Copied. Paste it into ${name}.` : `Copy the line below into ${name}.`, `Any session, any folder. It tells you what the script does, then asks before running it. In a few minutes your card opens in your browser. ${STAYS}`);
-  });
-});
+if (TOUCH) $("#cta .cta-t").textContent = "Send it to my computer";
+/* where it works: badges, not buttons. The one action is the yellow key */
+$$(".agent").forEach(a => a.querySelector("i").innerHTML = D.agents?.[a.dataset.agent] || "");
 /* the agent opens the result in a new tab; that tab tells this one, which offers to show it here */
 const chan = "BroadcastChannel" in window ? new BroadcastChannel("levels") : null;
 function arrived(hash, lv) {
@@ -549,13 +590,12 @@ applyTheme(store.get("prq-theme") || "system");
 $("#fossil-grid").innerHTML = D.fossils.map(f => `<div class="fossil ${f.status}"><span class="tag">${f.status} · ${esc(f.era)}</span><b>${esc(f.title)}</b><p>${esc(f.line)}</p></div>`).join("");
 $("[data-l0-title]").textContent = D.level0.title + ".";
 $("[data-l0-line]").textContent = D.level0.line;
-$$("[data-version]").forEach(el => el.textContent = `v${D.version} · updated ${fmtDate(D.updated)}`);
 if (D.repo) { $("#gh").hidden = false; $("#gh").href = D.repo; }
 try { window.posthog?.register?.({ site: location.host }); } catch {}
 $("[data-home]").addEventListener("click", e => { e.preventDefault(); history.pushState(null, "", location.pathname); boot(); scrollTo(0, 0); });
 
 /* ---------- boot */
-function renderAll(fan = true) { renderCopy(); renderList(); if (fan) renderFan(); else $("#fan").innerHTML = fanHTML(false); }
+function renderAll(fan = true) { renderCopy(); renderBoard(); renderInsp(); renderLists(); renderTools(); if (fan) renderFan(); else $("#fan").innerHTML = fanHTML(false); }
 const cardId = () => { const u = new URLSearchParams(location.search).get("u"); return /^[a-z2-9]{6}$/.test(u || "") ? u : null; };
 function boot() {
   const h = location.hash, mine = decode(h), pub = CARD && CARD.id === cardId() ? CARD : null;
@@ -567,7 +607,6 @@ function boot() {
       if (ov) store.set(okey(), Object.fromEntries(Object.entries(ov).map(([n, v]) => [m.n(+n), v]).filter(([n]) => n)));
     }
     OV = store.get(okey()) || {}; $("#card-name").value = store.get("levels-name") || "";
-    $("#photo-rm").hidden = !PHOTO;
     FROM = norm(store.get("levels-from"));
     /* remember it, and the run before it, so a later run can say how far you moved */
     const hash = h.slice(1), prev = !LAST ? null : LAST.hash === hash ? LAST.prev : { lv: LAST.base ?? LAST.lv, at: LAST.at };
@@ -580,12 +619,16 @@ function boot() {
   }
   else { const p = SHOW[0]; MODE = "show"; SUBJ = norm(p.result); SUBJ.name = p.name; WHO = { first: p.name.split(" ")[0], photo: p.photo }; }
   if (!canWait()) stopWaiting();
-  FILTER = "all"; SHOWN = null; syncFilters();
+  /* the inspector opens on where to go next: your first pick, their best, or the first key */
+  const deep = +(/^#level-(\d{1,3})$/.exec(h)?.[1] || 0);
+  TODO = null;
+  SEL = { n: deep >= 1 && deep <= 100 ? deep : MODE === "mine" ? picked()[0] || L.find(l => !done(l.n))?.n || 100
+    : MODE === "pub" ? [...L].reverse().find(l => st(l.n) === "y")?.n || 1 : 1 };
   renderAll();
   if (OG === "site") { document.body.classList.add("og-only"); $("#og").className = "og site"; $("#og").innerHTML = ogHTML("site"); return; }
   if (mine) { track("result_open", { lv: level() }); scrollTo(0, 0); chan?.postMessage({ hash: LAST.hash, lv: LAST.lv }); }
   if (MODE === "chat") track("chat_landed");
-  const m = /^#level-(\d{1,3})$/.exec(h); if (m && +m[1] >= 1 && +m[1] <= 100) openRow(+m[1], true);
+  if (deep >= 1 && deep <= 100) openRow(deep, true);
 }
 window.levelsShareImage = kind => ogImage(kind || "wide");   /* the exact images sharing makes, for checking them */
 $("#forget").addEventListener("click", () => {
@@ -601,5 +644,5 @@ if (cardId()) {
     document.body.classList.remove("pending"); boot();
   });
 } else boot();
-fetch(D.api + "/api/stats").then(r => r.ok ? r.json() : null).then(t => { if (t?.n >= 50) { STATS = t; renderList(); } }).catch(() => {});
+fetch(D.api + "/api/stats").then(r => r.ok ? r.json() : null).then(t => { if (t?.n >= 50) { STATS = t; renderLists(); } }).catch(() => {});
 })();
