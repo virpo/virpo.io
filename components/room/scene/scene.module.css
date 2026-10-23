@@ -293,16 +293,11 @@
   mix-blend-mode: soft-light;
 }
 
-/* The room stays readable at every hour: only a breath of colour inside. The time in Tokyo
-   shows where it would in a real room: in the sky outside, the desk lamp coming on, the
-   laptop glowing, and the trains lit up at night. */
+/* The room stays readable at every hour: only a breath of colour inside, the desk lamp and the
+   laptop glow coming on, and the Tokyo time on the bezel. The window stays in daylight. */
 .viewport[data-time="evening"] .light {
   background: linear-gradient(200deg, rgba(255, 160, 90, 0.14), rgba(160, 90, 100, 0.1));
   mix-blend-mode: multiply;
-}
-
-.viewport[data-time="evening"] .glass {
-  filter: sepia(0.45) saturate(1.35) hue-rotate(-16deg) brightness(0.86);
 }
 
 .viewport[data-time="evening"] .lamp {
@@ -316,20 +311,6 @@
 
 .viewport[data-time="night"] .light i {
   opacity: 1;
-}
-
-.viewport[data-time="night"] .glass {
-  filter: brightness(0.42) saturate(0.7) hue-rotate(12deg) contrast(1.08);
-}
-
-/* lit carriages against the dark sky (the glass filter halves them, so they start bright) */
-.viewport[data-time="night"] .train > img {
-  filter: brightness(2.1) saturate(1.2) drop-shadow(0 0 0.5cqw rgba(255, 214, 140, 0.9));
-}
-
-.viewport[data-time="night"] .glassShine {
-  background: linear-gradient(180deg, rgba(40, 52, 120, 0.42), rgba(60, 60, 110, 0.18));
-  mix-blend-mode: multiply;
 }
 
 /* ---- hover: dim the room, lift the object, trace its own alpha in ink and orange ---- */

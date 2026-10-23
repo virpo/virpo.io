@@ -844,6 +844,12 @@
     transform-style: preserve-3d;
   }
 
+  /* lift the screen a hair off the face: in the same plane, the browser's hit test can pick the
+     face instead of the room, and parts of the room stop answering to the mouse */
+  .bezel {
+    transform: translateZ(0.02cqw);
+  }
+
   .dkey,
   .round,
   .pillKey,

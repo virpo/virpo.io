@@ -395,7 +395,7 @@ export function RoomScene({
                 className={styles.hit}
                 data-hit={item.id}
                 href={hrefFor?.(item) ?? "#"}
-                aria-label={`${figLabel(item.fig)}, ${item.name}: ${titleFor?.(item) ?? item.goes}`}
+                aria-label={`${figLabel(item.fig)}, ${titleFor?.(item) ?? item.goes}`}
                 style={{ ...boxStyle(item.hit ?? item.box), clipPath: hullClip(item.hull) }}
                 onPointerEnter={(event) => {
                   pointerType.current = event.pointerType;
@@ -441,7 +441,7 @@ function Label({ item, open, title, onOpen, frame }: { item: RoomObject; open: b
     >
       <span className={styles.labelFig}>{figLabel(item.fig)}</span>
       <span className={styles.labelText}>
-        {item.name} <b aria-hidden="true">→</b> {title}
+        {title}
       </span>
       {open ? (
         <button type="button" className={styles.labelOpen} onClick={onOpen}>

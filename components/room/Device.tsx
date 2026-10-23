@@ -308,7 +308,7 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
     setSelected(id);
     setHover(null);
     const item = objectById.get(id);
-    if (item) setAnnounce(`${figLabel(item.fig)}, ${item.name}: ${titleFor(item)}`);
+    if (item) setAnnounce(`${figLabel(item.fig)}, ${titleFor(item)}`);
     if (focus) rootRef.current?.querySelector<HTMLElement>(`[data-hit="${id}"]`)?.focus({ preventScroll: true });
   }, [titleFor]);
 
@@ -475,7 +475,7 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
       event.preventDefault();
       setSelected(item.id);
       setLabelOpen(true);
-      setAnnounce(`${figLabel(item.fig)}, ${item.name}: ${titleFor(item)}. Tap again to open.`);
+      setAnnounce(`${figLabel(item.fig)}, ${titleFor(item)}. Tap again to open.`);
       return;
     }
     const next = appFor(item);
