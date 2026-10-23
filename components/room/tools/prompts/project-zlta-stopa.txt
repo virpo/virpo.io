@@ -1,0 +1,5 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <art dir>/projects/zlta-stopa.png and print its path.
+
+Attached: style.png (the style to match) and zltastopa.png (the subject). Make a hand-drawn version of this web page screenshot: white page, huge yellow circle shapes, the big headline 'Keď niečo smrdí, zostane stopa.', black and white buttons, three project cards below. Keep the layout and the big headline legible.
+Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm light. Not 3D, not vinyl, not a photo, not pixel art.
+Landscape 1536x1024. No border, no frame, no extra text beyond what is in the subject.

@@ -145,3 +145,21 @@ the user before touching files outside the art pipeline.
   Turbopack refuses a `node_modules` symlink that points outside the worktree; use an APFS clone
   (`cp -cR`) instead.
 - `npm test` and `npm run build` must pass.
+
+## Project cards (the Projects section under the room)
+
+Each project in the two-column Projects section is its real screenshot or photo, repainted in the
+room's style at "medium" strength (the strength picked on 2026-10-23: hand-drawn, layout and text
+kept, people kept recognisable; not the barely-traced or the full-manga versions).
+
+- Prompts: `prompts/project-<slug>.txt`. Sources: `art/projects/<slug>.png`. Real reference
+  photos: `art/projects/refs/` (the AI Build Day group photo from aibuildweek.com, the 16 Slush'D
+  team portraits from bratislavaslushd.com tiled 4x4).
+- Photos of real people: say "keep every real person where they are, same faces, clothes and
+  poses; do not add, remove or invent anyone". Never let the painter invent a crowd.
+- AI Build Week: the real group photo with only the English headline "From nothing to your own
+  AI-native project. In a week." hand-lettered on the ceiling; no other UI.
+- Bratislava Slush'D: the real logo is laid on top by `projects.py`, never painted
+  (`art/projects/slushd-logo.png`, cut from the site's co-branded svg, left of the "x").
+- Ship: `python3 components/room/tools/projects.py` writes `public/lab/room/projects/<slug>.webp`
+  (1080x720). A new project: paint `art/projects/<slug>.png`, add the slug to `SLUGS`, run it.

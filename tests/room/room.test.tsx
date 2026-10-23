@@ -65,6 +65,14 @@ describe("Pocket Room landing", () => {
     }
   });
 
+  it("shows every project as a painted card, Bratislava Slush’D included", () => {
+    const cards = markup.match(/\/lab\/room\/projects\/[a-z-]+\.webp/g) ?? [];
+    expect(cards.length).toBeGreaterThanOrEqual(8);
+    for (const src of cards) expect(existsSync(resolve(process.cwd(), "public", src.slice(1))), src).toBe(true);
+    expect(markup).toContain("Bratislava Slush’D");
+    expect(markup).toContain('href="https://bratislavaslushd.com/"');
+  });
+
   it("leaves Prehistoriq out of the room for now", () => {
     expect(markup).not.toContain("Prehistoriq");
     expect(markup).not.toMatch(/>[^<]*prehistoriq[^<]*</i);

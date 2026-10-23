@@ -1,0 +1,5 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <art dir>/projects/youtldr.png and print its path.
+
+Attached: style.png (the style to match) and youtldr.png (the subject). Make a hand-drawn version of this web page screenshot: a dark green-black page, headline 'Anti-clickbait for YouTube.', a YouTube thumbnail of a man with the title 'Am I retiring?' and an arrow to a card that answers simply 'No.'. Keep the layout and the before -> after idea crystal clear, legible big text.
+Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm light. Not 3D, not vinyl, not a photo, not pixel art.
+Landscape 1536x1024. No border, no frame, no extra text beyond what is in the subject.

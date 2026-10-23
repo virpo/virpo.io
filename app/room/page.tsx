@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Device } from "../../components/room/Device";
-import { ProjectIcon } from "../../components/room/icons/ProjectIcon";
 import { roomDate, RoomFooter, RoomSocial } from "../../components/room/RoomChrome";
 import { figLabel, objectForProject, roomPostHref } from "../../components/room/scene/objects";
 import { getPostSummaries } from "../../lib/blog";
@@ -15,6 +14,15 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
+// a project that lives outside the catalog: the Slush side event we ran in Bratislava
+const SLUSHD = {
+  slug: "bratislava-slushd",
+  title: "Bratislava Slush’D",
+  type: "Event · Startups",
+  href: "https://bratislavaslushd.com/",
+  blurb: "The official Slush spin-off in Bratislava: founder stories, workshops and 1-on-1s with VCs. 21 October 2025, Nová Cvernovka.",
+};
+
 export default function RoomPage() {
   const posts = getPostSummaries();
   const newest = posts.slice(0, 3);
@@ -22,7 +30,8 @@ export default function RoomPage() {
   // Prehistoriq stays out of the room for now (Levels still lives on its domain).
   const shown = labProjects
     .filter((project) => project.slug !== "prehistoriq")
-    .map((project) => (project.slug === "levels" ? { ...project, blurb: "What is your AI level? A small web game, one level at a time." } : project));
+    .map((project) => (project.slug === "levels" ? { ...project, blurb: "What level are you with agents? Your agent checks 100 tricks and deals you a card." } : project))
+    .concat(SLUSHD);
   const projects = shown.map((project) => ({
     slug: project.slug,
     title: project.title,
@@ -69,20 +78,24 @@ export default function RoomPage() {
         </section>
 
         <div className={styles.below}>
-          <section className={styles.section} id="projects" aria-labelledby="projects-title">
+          <section className={`${styles.section} ${styles.projectsSection}`} id="projects" aria-labelledby="projects-title">
             <h2 id="projects-title">Projects</h2>
-            <ul className={styles.rows}>
+            {/* each project painted in the room's ink and watercolour, from its real screenshot or photo */}
+            <ul className={styles.projectGrid}>
               {shown.map((project) => {
                 const item = objectForProject(project.slug);
                 return (
                   <li key={project.slug}>
-                    <a className={`${styles.row} ${styles.projectRow}`} href={project.href} target="_blank" rel="noreferrer" data-room-target={item?.id} data-icon-play>
-                      <span className={styles.rowIcon}>
-                        <ProjectIcon slug={project.slug} />
+                    <a className={styles.projectCard} href={project.href} target="_blank" rel="noreferrer" data-room-target={item?.id}>
+                      <span className={styles.projectArt}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={`/lab/room/projects/${project.slug}.webp`} alt="" width={1080} height={720} loading="lazy" decoding="async" />
                       </span>
-                      <span className={styles.rowTitle}>{project.title}</span>
+                      <span className={styles.projectHead}>
+                        <span className={styles.rowTitle}>{project.title}</span>
+                        <span className={styles.projectKind}>{item ? `${figLabel(item.fig)} · ${project.type}` : project.type}</span>
+                      </span>
                       <span className={styles.rowMeta}>{project.blurb}</span>
-                      <span className={styles.rowFig}>{item ? `${figLabel(item.fig)} · ${item.name}` : project.type}</span>
                     </a>
                   </li>
                 );
