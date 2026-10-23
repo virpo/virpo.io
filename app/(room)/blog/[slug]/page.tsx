@@ -92,7 +92,7 @@ export default async function RoomPostPage({ params }: Props) {
   return (
     <div className={shell.page}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: articleJsonLd(post) }} />
-      <div className={styles.layout}>
+      <main className={styles.layout}>
         <aside className={styles.margin} aria-label="Pocket Room">
           <div className={styles.sticky}>
             <Device variant="dock" posts={devicePosts} progressTarget="room-article" />
@@ -165,7 +165,7 @@ export default async function RoomPostPage({ params }: Props) {
             </nav>
           </footer>
         </article>
-      </div>
+      </main>
       <RoomFooter />
     </div>
   );

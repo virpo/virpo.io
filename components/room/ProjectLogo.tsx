@@ -17,7 +17,7 @@ export function ProjectLogo({ slug, title }: { slug: string; title: string }) {
     // eslint-disable-next-line @next/next/no-img-element
     mark = (
       <>
-        <img src={image.src} alt="" className={image.tall ? styles.logoTall : undefined} />
+        <img src={image.src} alt="" className={image.tall ? styles.logoTall : undefined} loading="lazy" decoding="async" />
         {image.word ? <span>{image.word}</span> : null}
       </>
     );

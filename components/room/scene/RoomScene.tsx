@@ -10,7 +10,9 @@ const SRC = "/lab/room";
 
 /** Hit order, back to front: small things painted in front of big ones win. */
 const HIT_ORDER = ["window", "kana", "cork", "aiposter", "hydrangea", "printer", "mirror", "bookshelf", "radio", "tv", "arcade", "peter", "deck", "post-2", "post-1", "post-0"];
-const HITS = HIT_ORDER.map((id) => objectById.get(id)!).filter(Boolean);
+// Tab walks the figures in number order; the stacking (which hull wins where they overlap) stays HIT_ORDER
+const HITS = [...HIT_ORDER.map((id) => objectById.get(id)!).filter(Boolean)].sort((a, b) => a.fig - b.fig);
+const HIT_Z = new Map(HIT_ORDER.map((id, index) => [id, index + 1]));
 
 /** Paint order of the object layers (the plate is under all of them). */
 const PAINT_ORDER = ["window", "kana", "cork", "aiposter", "mirror", "radio", "clay", "printer", "tv", "hydrangea", "arcade", "bookshelf", "deck", "post-2", "post-1", "post-0"];
@@ -82,6 +84,8 @@ export type SceneProps = {
   /** ms between trains is shorter in the window toy etc. */
   hrefFor?: (item: RoomObject) => string;
   titleFor?: (item: RoomObject) => string;
+  /** an app is open over the room */
+  blocked?: boolean;
   /** a few quiet words after the title, for names that don't explain themselves */
   noteFor?: (item: RoomObject) => string | undefined;
   onHover?: (id: string | null) => void;
@@ -151,6 +155,7 @@ export function RoomScene({
   reducedMotion = false,
   hrefFor,
   titleFor,
+  blocked = false,
   noteFor,
   onHover,
   onFocusObject,
@@ -384,6 +389,8 @@ export function RoomScene({
         {interactive && !decorative ? (
           <div
             className={styles.hits}
+            // while an app covers the screen, the room behind it is out of reach (no hidden tab stops)
+            inert={blocked || undefined}
             onClick={(event) => {
               // a tap between objects: pick the nearest one (fingers are bigger than a radio)
               if (pointerType.current === "mouse") return;
@@ -401,7 +408,7 @@ export function RoomScene({
                 data-hit={item.id}
                 href={hrefFor?.(item) ?? "#"}
                 aria-label={`${figLabel(item.fig)}, ${titleFor?.(item) ?? item.goes}`}
-                style={{ ...boxStyle(item.hit ?? item.box), clipPath: hullClip(item.hull) }}
+                style={{ ...boxStyle(item.hit ?? item.box), clipPath: hullClip(item.hull), zIndex: HIT_Z.get(item.id) }}
                 onPointerEnter={(event) => {
                   pointerType.current = event.pointerType;
                   if (event.pointerType === "mouse" || event.pointerType === "pen") onHover?.(item.id);
@@ -441,7 +448,6 @@ function Label({ item, open, title, note, onOpen, frame }: { item: RoomObject; o
       className={styles.label}
       data-align={align}
       data-below={below ? "true" : undefined}
-      role="status"
       style={{ left: `${(Math.min(0.97, Math.max(0.03, cx)) * 100).toFixed(2)}%`, top: `${(Math.min(0.96, Math.max(0.04, ay)) * 100).toFixed(2)}%` }}
     >
       <span className={styles.labelFig}>{figLabel(item.fig)}</span>

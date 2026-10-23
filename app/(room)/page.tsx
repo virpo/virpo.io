@@ -81,6 +81,9 @@ export default function RoomPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(STRUCTURED) }} />
       <main>
         <section className={styles.hero} aria-label="Peter Hraska">
+          <a className={styles.skip} href="#writing">
+            Skip to writing
+          </a>
           <div className={styles.deviceCol} id="room">
             <Device posts={devicePosts} projects={projects} about={labAbout} />
             <p className={styles.deviceHint}>
@@ -98,7 +101,7 @@ export default function RoomPage() {
               <h1 className={styles.name}>Peter Hraska</h1>
               <RoomSocial />
             </div>
-            <ol className={styles.posts} aria-label="Newest writing">
+            <ol className={styles.posts} aria-label="Newest writing" id="writing" tabIndex={-1}>
               {newest.map((post, index) => (
                 <li key={post.slug}>
                   <Link href={roomPostHref(post.slug)} className={styles.post} data-room-target={`post-${index}`}>

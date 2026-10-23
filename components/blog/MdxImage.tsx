@@ -6,18 +6,21 @@ export function ArticleImage({ src, alt = "", title, ...props }: ComponentPropsW
 
   return (
     <figure className="articleMedia">
-      {/* Static-exported local editorial images do not need Next image processing. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        {...props}
-        src={src}
-        alt={alt}
-        title={undefined}
-        width={dimensions?.width}
-        height={dimensions?.height}
-        loading="lazy"
-        decoding="async"
-      />
+      {/* the picture opens full size, which the wide ones need */}
+      <a href={typeof src === "string" ? src : undefined} className="articleImageLink">
+        {/* Static-exported local editorial images do not need Next image processing. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          {...props}
+          src={src}
+          alt={alt}
+          title={undefined}
+          width={dimensions?.width}
+          height={dimensions?.height}
+          loading="lazy"
+          decoding="async"
+        />
+      </a>
       {title ? <figcaption>{title}</figcaption> : null}
     </figure>
   );

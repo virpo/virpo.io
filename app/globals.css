@@ -69,7 +69,7 @@ img {
   display: none !important;
 }
 
-:focus-visible {
+:where(.siteShell) :focus-visible {
   outline: 0;
   box-shadow:
     inset 0 0 0 3px var(--white),

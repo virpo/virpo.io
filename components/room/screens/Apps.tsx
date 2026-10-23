@@ -292,7 +292,7 @@ export function ProjectApp({ project, layer, object }: { project: AppProject; la
       <div className={styles.projectArt}>
         <span className={styles.figure} data-grounded={art.grounded ? "" : undefined}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={art.src} width={art.width} height={art.height} alt={`The ${object.toLowerCase()} in the room`} />
+          <img src={art.src} width={art.width} height={art.height} alt={`The ${object.charAt(0).toLowerCase()}${object.slice(1)} in the room`} />
         </span>
       </div>
       <div className={styles.projectText}>

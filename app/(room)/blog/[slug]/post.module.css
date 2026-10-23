@@ -143,6 +143,7 @@
 .body :global(.articleMedia) figcaption,
 .body :global(.articleImageCaption) {
   display: block;
+  font-family: inherit;
   margin-top: 0.6rem;
   color: var(--grey);
   font-size: 0.92rem;

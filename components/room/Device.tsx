@@ -21,11 +21,11 @@ type Props = {
 };
 
 const APP_TITLES: Record<RoomToyId, string> = {
-  window: "Shinkansen window",
-  face: "Mirror",
-  kana: "Hiragana cards",
+  window: "Shinkansen view",
+  face: "Face tracker",
+  kana: "Kana cards",
   sounds: "Sounds of Japan",
-  bloom: "Bloom forecast",
+  bloom: "Japan blooming forecast",
 };
 
 /** z of each slab of the case, in cqw (the face sits in front at +6) */
@@ -265,6 +265,8 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
     setLabelOpen(false);
     const title = next.startsWith("project:") ? projects.find((project) => `project:${project.slug}` === next)?.title : next === "about" ? "About Peter" : APP_TITLES[next as RoomToyId];
     setAnnounce(`${title ?? "App"} open on the device screen. Press Escape or Back to return to the room.`);
+    // keyboard: focus goes into the app, onto its way back
+    if (byKeys) requestAnimationFrame(() => rootRef.current?.querySelector<HTMLElement>("[data-app-back]")?.focus({ preventScroll: true }));
   }, [projects]);
 
   const open = useCallback(
@@ -358,7 +360,23 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
     setSelected(null);
     setLabelOpen(false);
     setAnnounce("Selection cleared.");
+    // nothing is selected, so don't leave focus on an object with no visible ring
+    const active = document.activeElement;
+    if (active instanceof HTMLElement && active.matches("[data-hit]")) active.blur();
   };
+
+  // when keyboard focus leaves the device, the selection goes with it
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || !hero) return;
+    const onFocusOut = (event: FocusEvent) => {
+      const next = event.relatedTarget;
+      if (next instanceof Node && root.contains(next)) return;
+      if (next instanceof Node) setSelected(null);
+    };
+    root.addEventListener("focusout", onFocusOut);
+    return () => root.removeEventListener("focusout", onFocusOut);
+  }, [hero]);
 
   const turnKnob = (step: 1 | -1) => {
     setKnob((value) => value + step * 30);
@@ -502,7 +520,7 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
   const appItem = appFrom ? objectById.get(appFrom) : null;
   const origin = appItem ? appItem.hit ?? appItem.box : null;
   const appOrigin = origin ? `${(((origin[0] + origin[2] / 2) / PLATE_W) * 100).toFixed(1)}% ${(((origin[1] + origin[3] / 2) / PLATE_H) * 100).toFixed(1)}%` : "50% 50%";
-  const appTitle = app ? (app.startsWith("project:") ? projects.find((project) => `project:${project.slug}` === app)?.title : app === "about" ? "About" : APP_TITLES[app as RoomToyId]) : null;
+  const appTitle = app ? (app.startsWith("project:") ? projects.find((project) => `project:${project.slug}` === app)?.title : app === "about" ? "About me" : APP_TITLES[app as RoomToyId]) : null;
 
   let appBody: ReactNode = null;
   if (app === "window") appBody = <WindowApp reducedMotion={reduced} />;
@@ -539,6 +557,7 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
       reducedMotion={reduced}
       hrefFor={hrefFor}
       titleFor={titleFor}
+      blocked={Boolean(app)}
       noteFor={noteFor}
       onHover={(id) => {
         setHover(id);
@@ -604,7 +623,7 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
           ))}
         </div>
         {/* the left side of the case, with the light button on it */}
-        <div className={styles.side}>
+        <div className={styles.side} aria-hidden={hero ? undefined : true} inert={!hero || undefined}>
           <i className={styles.sideSlots} aria-hidden="true">
             {VENTS.map((vent) => (
               <i key={vent} />
@@ -631,7 +650,7 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
               {app ? (
                 <section key={app} className={styles.app} data-app={app} style={{ transformOrigin: appOrigin }} aria-label={appTitle ?? "App"}>
                   <header className={styles.appBar}>
-                    <button type="button" className={styles.appBack} onClick={closeApp}>
+                    <button type="button" className={styles.appBack} onClick={closeApp} data-app-back>
                       <span aria-hidden="true">←</span> Room
                     </button>
                     <p>
