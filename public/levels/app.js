@@ -424,7 +424,7 @@ async function drawOg(kind, as) {
    it a link and count it in the stats. The name and the photo join it the first time you share, and from then on the
    link follows the card. The key that lets this browser change or delete it is kept here, per result */
 const ckey = () => "levels-card-" + SUBJ.s;
-let OWN = null, making = null, syncing = null, syncTimer = null;   /* OWN: { id, key, url, shared, sent } */
+let OWN = null, making = null, syncing = null, syncTimer = null;   /* OWN: { id, key, url, shared, sent, no: its place in line } */
 const answers = () => ({ v: V, s: L.map(l => ({ y: "y", self: "s", q: "?", n: "n" })[st(l.n)]).join(""), a: SUBJ.a, pi: SUBJ.pi ? 1 : 0 });
 const goesOut = () => OWN?.shared ? { name: cardName(), photo: PHOTO } : { name: "", photo: null };
 const sig = () => { const g = goesOut(); return [answers().s, g.name, g.photo ? g.photo.length + g.photo.slice(-32) : ""].join("|"); };
@@ -440,7 +440,7 @@ function ensureCard() {
   if (MODE !== "mine") return Promise.reject(new Error("not yours"));
   if (OWN) return Promise.resolve(OWN);
   return making ??= api("POST", "/api/card", answers()).then(r => {
-    OWN = { id: r.id, key: r.key, url: r.url, shared: false, sent: answers().s + "||" }; keepOwn(); track("card_saved");
+    OWN = { id: r.id, key: r.key, url: r.url, shared: false, sent: answers().s + "||", no: r.stats?.n }; keepOwn(); track("card_saved");
     if (r.stats) { RANK = r.stats; renderRank(); }
     return OWN;
   }).finally(() => { making = null; });
@@ -513,14 +513,14 @@ $("#share-png").addEventListener("click", async () => {
     catch { toast("Couldn't draw the card here"); }
   }
 });
-/* where this level stands among every card saved so far */
+/* where this level stands among every card saved so far; while there are only a few, your place in line instead */
 let RANK = null;
 function renderRank() {
-  const el = $("#res-rank"), t = RANK;
-  el.hidden = MODE !== "mine" || !t?.n;
+  const el = $("#res-rank"), t = RANK, early = t?.n < 50;
+  el.hidden = MODE !== "mine" || !t?.n || (early && !OWN?.no);
   if (el.hidden) return;
   const lv = level(), below = t.levels.slice(0, lv).reduce((a, b) => a + b, 0);
-  el.textContent = t.n < 50 ? `One of the first ${t.n} to check.` : `Higher than ${Math.round(100 * below / t.n)}% of the ${t.n.toLocaleString("en")} who checked.`;
+  el.textContent = early ? `You're #${OWN.no} to check.` : `Higher than ${Math.round(100 * below / t.n)}% of the ${t.n.toLocaleString("en")} who checked.`;
 }
 async function arrive() {
   OWN = store.get(ckey()); renderLink();
