@@ -441,6 +441,7 @@ function ensureCard() {
   if (OWN) return Promise.resolve(OWN);
   return making ??= api("POST", "/api/card", answers()).then(r => {
     OWN = { id: r.id, key: r.key, url: r.url, shared: false, sent: answers().s + "||" }; keepOwn(); track("card_saved");
+    if (r.stats) { RANK = r.stats; renderRank(); }
     return OWN;
   }).finally(() => { making = null; });
 }
@@ -454,6 +455,7 @@ async function syncCard(retry = true) {
   syncing = (async () => {
     const r = await api("PUT", `/api/card/${was.id}`, { ...answers(), name: g.name, photo: g.photo, image: await ogImage("wide", g) });
     Object.assign(was, { url: r.url, sent: want, img: true }); if (OWN === was) keepOwn();
+    if (r.stats) { RANK = r.stats; renderRank(); }
   })();
   try { await syncing; syncing = null; }
   catch (e) {
@@ -523,8 +525,7 @@ function renderRank() {
 async function arrive() {
   OWN = store.get(ckey()); renderLink();
   try { await ensureCard(); } catch { $("#card-url").textContent = "couldn't save your card right now"; return; }
-  RANK = await fetch(D.api + "/api/stats", { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null);
-  renderRank();
+  if (!RANK) { RANK = await fetch(D.api + "/api/stats").then(r => r.ok ? r.json() : null).catch(() => null); renderRank(); }   /* a card saved before: the shared totals */
   setTimeout(() => syncCard().catch(() => {}), calm ? 0 : 3200);   /* the link's preview image, once the card has filled in */
 }
 async function post(path, body) {
