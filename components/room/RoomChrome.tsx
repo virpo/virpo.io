@@ -13,11 +13,7 @@ export function RoomFooter() {
   return (
     <footer className={styles.footer}>
       <p>
-        <Link href="/room/">Pocket Room</Link> is an experiment on <Link href="/">virpo.io</Link>. The room is painted in ink and
-        watercolour, one layer per thing that moves or opens.
-      </p>
-      <p>
-        <a href="/rss.xml">RSS</a> · <a href="https://github.com/virpo">GitHub</a> · <a href="mailto:peter@hraska.sk">peter@hraska.sk</a>
+        Made with love <span aria-label="trademark">™</span> <Link href="/">Virpo</Link>
       </p>
     </footer>
   );

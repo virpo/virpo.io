@@ -96,12 +96,58 @@
   padding-bottom: 3vh;
 }
 
-.name {
+.intro {
   margin: 0 0 clamp(1.4rem, 3.4vw, 3rem);
+}
+
+.name {
+  margin: 0 0 clamp(0.6rem, 1.1vw, 1rem);
   font-size: clamp(2.6rem, min(6vw, 9vh), 7.4rem);
   font-weight: 500;
   letter-spacing: -0.035em;
   line-height: 1;
+}
+
+.social {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem 0.35rem;
+  margin: 0 0 0 -0.55rem;
+  padding: 0;
+  list-style: none;
+}
+
+.social a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 44px;
+  min-height: 44px;
+  justify-content: center;
+  padding: 0 0.55rem;
+  border-radius: 999px;
+  color: var(--grey);
+  font-size: clamp(0.98rem, min(1.4vw, 2vh), 1.35rem);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 160ms ease, background-color 160ms ease;
+}
+
+.social svg {
+  width: 1.05em;
+  height: 1.05em;
+  fill: currentColor;
+}
+
+.social a.socialX {
+  color: var(--ink-2);
+}
+
+.social a:hover,
+.social a:focus-visible {
+  background: rgb(0 0 0 / 0.05);
+  color: var(--orange-ink);
 }
 
 .posts {
@@ -484,8 +530,12 @@
     padding: 0.6rem 0 0;
   }
 
+  .intro {
+    margin-bottom: 0.6rem;
+  }
+
   .name {
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.2rem;
     font-size: 2.3rem;
   }
 
@@ -557,8 +607,12 @@
     padding: 0;
   }
 
+  .intro {
+    margin-bottom: 0.8rem;
+  }
+
   .name {
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.3rem;
     font-size: clamp(2.6rem, 6.4vw, 3.6rem);
   }
 
@@ -593,10 +647,23 @@
     display: contents;
   }
 
-  .name {
+  .intro {
     order: -1;
-    margin: 0 0 0.9rem !important;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 0.6rem;
+    margin: 0 0 0.6rem;
+  }
+
+  .name {
+    margin: 0 !important;
     font-size: 2.1rem !important;
+  }
+
+  .social {
+    margin-right: -0.55rem;
   }
 
   .deviceCol {
@@ -652,8 +719,12 @@
     padding: 0;
   }
 
+  .intro {
+    margin-bottom: 0.6rem;
+  }
+
   .name {
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.2rem;
     font-size: 2.4rem;
   }
 }

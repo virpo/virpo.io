@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Device } from "../../components/room/Device";
 import { ProjectIcon } from "../../components/room/icons/ProjectIcon";
+import { V2SocialIcon } from "../../components/v2/V2SocialIcon";
 import { roomDate, RoomFooter } from "../../components/room/RoomChrome";
 import { figLabel, objectForProject, roomPostHref } from "../../components/room/scene/objects";
 import { getPostSummaries } from "../../lib/blog";
@@ -15,6 +16,13 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
+// under the name: X (where the tips go) with words, the rest as quiet icons
+const SOCIAL = [
+  { label: "GitHub", icon: "github", href: "https://github.com/virpo" },
+  { label: "Instagram", icon: "instagram", href: "https://www.instagram.com/virpo.san/" },
+  { label: "RSS feed", icon: "rss", href: "/rss.xml" },
+] as const;
+
 export default function RoomPage() {
   const posts = getPostSummaries();
   const newest = posts.slice(0, 3);
@@ -22,7 +30,7 @@ export default function RoomPage() {
   // Prehistoriq stays out of the room for now (Levels still lives on its domain).
   const shown = labProjects
     .filter((project) => project.slug !== "prehistoriq")
-    .map((project) => (project.slug === "levels" ? { ...project, blurb: "A small web game: climb one level at a time." } : project));
+    .map((project) => (project.slug === "levels" ? { ...project, blurb: "What is your AI level? A small web game, one level at a time." } : project));
   const projects = shown.map((project) => ({
     slug: project.slug,
     title: project.title,
@@ -48,7 +56,24 @@ export default function RoomPage() {
           </div>
 
           <div className={styles.textCol}>
-            <h1 className={styles.name}>Peter Hraska</h1>
+            <div className={styles.intro}>
+              <h1 className={styles.name}>Peter Hraska</h1>
+              <ul className={styles.social} aria-label="Elsewhere">
+                <li>
+                  <a className={styles.socialX} href="https://x.com/virpo" target="_blank" rel="noreferrer" aria-label="Tips and fun on X">
+                    <V2SocialIcon name="x" />
+                    <span aria-hidden="true">Tips &amp; fun</span>
+                  </a>
+                </li>
+                {SOCIAL.map((link) => (
+                  <li key={link.icon}>
+                    <a href={link.href} aria-label={link.label} title={link.label} {...(link.href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}>
+                      <V2SocialIcon name={link.icon} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
             <ol className={styles.posts} aria-label="Newest writing">
               {newest.map((post, index) => (
                 <li key={post.slug}>
