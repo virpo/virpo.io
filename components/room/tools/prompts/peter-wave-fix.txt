@@ -1,0 +1,7 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out>
+
+Attached: wave-crop.png is a painted sprite of a young man on a wooden chair, turned round towards the viewer and waving with his raised hand (the hand up at the top right). It is a crop of the "wave" cell of peter-sheet.png, upscaled 3x.
+EDIT this exact image. The problem: he has THREE hands. Besides the waving arm and his other arm by the chair back on the left, there is an extra arm on the right side of his back: a green hoodie sleeve that runs from his shoulder down the right side of his back to a cuff and a hand resting on his thigh/lap, just above the jeans on the right. That extra sleeve and hand must go.
+Remove that extra arm and hand completely. Where it was, paint what is behind it: the back and right side of the same sage-green hoodie (same watercolor texture and ink folds, the hoodie hem ending at his waist like on the left side), and his dark jeans on the thigh, continuing naturally. The waving arm stays attached to the shoulder and stays exactly as it is.
+Keep EVERYTHING ELSE pixel-identical: same size, same position, same framing, same face, hair, grin, waving hand, the left arm, the chair, legs, sneakers, the flat magenta background (#FF00FF). Same ink line and watercolor style. Do not zoom, crop, recentre or redraw the rest.
+Portrait 1024x1536, the same as the input.

@@ -1,0 +1,156 @@
+{
+  "1440:arcade": {
+    "css": [
+      104,
+      170
+    ],
+    "natural": [
+      103,
+      160,
+      "/lab/room/obj-arcade.webp"
+    ]
+  },
+  "1440:tv": {
+    "css": [
+      107,
+      99
+    ],
+    "natural": [
+      106,
+      92,
+      "/lab/room/obj-tv.webp"
+    ]
+  },
+  "1440:printer": {
+    "css": [
+      200,
+      224
+    ],
+    "natural": [
+      198,
+      210,
+      "/lab/room/obj-printer.webp"
+    ]
+  },
+  "1440:deck": {
+    "css": [
+      75,
+      67
+    ],
+    "natural": [
+      74,
+      62,
+      "/lab/room/obj-deck.webp"
+    ]
+  },
+  "1440:cork": {
+    "css": [
+      220,
+      228
+    ],
+    "natural": [
+      220,
+      216,
+      "/lab/room/obj-cork.webp"
+    ]
+  },
+  "1440:aiposter": {
+    "css": [
+      135,
+      270
+    ],
+    "natural": [
+      145,
+      277,
+      "/lab/room/obj-aiposter.webp"
+    ]
+  },
+  "1440:peter": {
+    "css": [
+      171,
+      270
+    ],
+    "natural": [
+      298,
+      452,
+      "/lab/room/peter-wave.webp"
+    ]
+  },
+  "2560:arcade": {
+    "css": [
+      104,
+      170
+    ],
+    "natural": [
+      103,
+      160,
+      "/lab/room/obj-arcade.webp"
+    ]
+  },
+  "2560:tv": {
+    "css": [
+      107,
+      99
+    ],
+    "natural": [
+      106,
+      92,
+      "/lab/room/obj-tv.webp"
+    ]
+  },
+  "2560:printer": {
+    "css": [
+      200,
+      225
+    ],
+    "natural": [
+      198,
+      210,
+      "/lab/room/obj-printer.webp"
+    ]
+  },
+  "2560:deck": {
+    "css": [
+      74,
+      67
+    ],
+    "natural": [
+      74,
+      62,
+      "/lab/room/obj-deck.webp"
+    ]
+  },
+  "2560:cork": {
+    "css": [
+      222,
+      232
+    ],
+    "natural": [
+      220,
+      216,
+      "/lab/room/obj-cork.webp"
+    ]
+  },
+  "2560:aiposter": {
+    "css": [
+      146,
+      292
+    ],
+    "natural": [
+      145,
+      277,
+      "/lab/room/obj-aiposter.webp"
+    ]
+  },
+  "2560:peter": {
+    "css": [
+      218,
+      346
+    ],
+    "natural": [
+      298,
+      452,
+      "/lab/room/peter-wave.webp"
+    ]
+  }
+}

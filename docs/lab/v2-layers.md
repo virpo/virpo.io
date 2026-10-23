@@ -136,5 +136,17 @@ JavaScript.
 
 ## Rebuilding the art
 
-Put the six source PNGs in a folder (they are not in git) and run
-`ROOM_ART=<folder> python3 components/room/tools/build.py` (needs numpy, scipy, scikit-image and Pillow).
+The whole recipe (style, references, the `codex exec` command and its quirks, where prompts,
+sources and outputs live, and a step-by-step playbook for adding or replacing an object) is the
+project skill [`.claude/skills/pocket-room-art/SKILL.md`](../../.claude/skills/pocket-room-art/SKILL.md).
+In short, the source paintings are in `components/room/tools/art/` and:
+
+- `python3 components/room/tools/build.py` rebuilds every room layer and `layers.ts`
+  (deterministic; repairs in `art/fixes/`, applied by `fixes.py`, go in before keying);
+- `python3 components/room/tools/cards.py` rebuilds the app-screen card art (`card-<id>.webp`);
+- `components/room/tools/paint.sh <prompt.txt> <out.png> [refs…]` paints one image;
+- `node components/room/tools/shots.mjs <baseUrl> <outDir> <prefix>` screenshots the cards and Peter.
+
+Needs numpy, scipy, scikit-image and Pillow. Since `lab/room-art`, the project cards show their
+own paintings instead of the blurry plate cut, and the waving Peter has two hands, not three
+(screenshots in `output/lab/room-art/`).

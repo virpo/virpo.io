@@ -13,6 +13,7 @@ import type { StudySelection, StudyState } from "../../../lib/study/types";
 import { LAYERS } from "../scene/layers";
 import { nextTrain, type Train } from "../scene/life";
 import { ProjectIcon } from "../icons/ProjectIcon";
+import { CARD_ART } from "./cards";
 import styles from "./apps.module.css";
 
 export type AppProject = { slug: string; title: string; type: string; href: string; blurb: string; image?: { src: string; alt: string; width: number; height: number; fit: string; position?: string } };
@@ -278,12 +279,21 @@ export function BloomApp() {
 
 /* ---------------------------------------------------------------- cards */
 
+/** The object's painted card art (components/room/tools/cards.py), else its in-room layer. */
+export function cardArt(layer: string) {
+  const card = CARD_ART[layer.replace(/^obj-/, "")];
+  return card ?? { src: `/lab/room/${layer}.webp`, width: undefined, height: undefined, grounded: false };
+}
+
 export function ProjectApp({ project, layer, object }: { project: AppProject; layer: string; object: string }) {
+  const art = cardArt(layer);
   return (
     <div className={styles.project}>
       <div className={styles.projectArt}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={`/lab/room/${layer}.webp`} alt={`The ${object.toLowerCase()} in the room`} />
+        <span className={styles.figure} data-grounded={art.grounded ? "" : undefined}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={art.src} width={art.width} height={art.height} alt={`The ${object.toLowerCase()} in the room`} />
+        </span>
       </div>
       <div className={styles.projectText}>
         <p className={styles.kicker}>{project.type}</p>
@@ -306,8 +316,10 @@ export function AboutApp({ about }: { about: AppAbout }) {
   return (
     <div className={styles.project}>
       <div className={styles.projectArt} data-peter>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/lab/room/peter-wave.webp" alt="Mini Peter, waving from his chair" />
+        <span className={styles.figure} data-grounded="">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/lab/room/peter-wave.webp" width={LAYERS.sprites["peter-wave"][2]} height={LAYERS.sprites["peter-wave"][3]} alt="Mini Peter, waving from his chair" />
+        </span>
       </div>
       <div className={styles.projectText}>
         <p className={styles.kicker}>{about.eyebrow}</p>
