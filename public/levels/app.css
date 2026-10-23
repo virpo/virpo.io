@@ -6,6 +6,9 @@
 --hazard:#FFD400;--hazard-deep:#D9B300;--hazard-ink:#0E0D0A;
 --key:#FFFFFF;--key-skirt:#E4DED2;--cmd:#0E0D0A;--cmd-fg:#F2EDE2;--bar:rgba(244,240,231,.82);
 --tile:#E9E3D6;--tile-ink:#8C8577;--glow:rgba(255,212,0,.5);
+/* the keys on the map are printed objects too: their pixel icons are drawn in dark ink for a light cap, so the caps stay
+   light in both themes, a little dimmer in the dark */
+--cap:#FFFFFF;--cap-skirt:#E4DED2;--cap-off:#E9E3D6;--cap-ink:#8C8577;--cap-line:rgba(14,13,10,.18);--cap-dim:.45;
 --lift:0 1px 0 rgba(14,13,10,.04),0 14px 34px -16px rgba(14,13,10,.3);
 /* the card is a printed object: the same in both themes */
 --paper:#F4F0E7;--ink:#0E0D0A;--ink2:#6E685C;--art:#9A958B;
@@ -15,10 +18,12 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
 --bg:#0E0D0A;--sheet:#15140F;--fg:#F2EDE2;--muted:#9A9488;--faint:#5F5A50;--line:rgba(242,237,226,.09);--line-strong:rgba(242,237,226,.18);
 --key:#2A2822;--key-skirt:#0B0A08;--cmd:#050504;--bar:rgba(14,13,10,.8);--tile:#1C1A15;--tile-ink:#6F695E;--glow:rgba(255,212,0,.32);
+--cap:#D9D2C4;--cap-skirt:#8F887B;--cap-off:#A49D90;--cap-ink:#5F5A50;--cap-line:rgba(14,13,10,.5);--cap-dim:.62;
 --lift:0 1px 0 rgba(0,0,0,.4),0 18px 40px -16px rgba(0,0,0,.85);color-scheme:dark}}
 :root[data-theme="dark"]{
 --bg:#0E0D0A;--sheet:#15140F;--fg:#F2EDE2;--muted:#9A9488;--faint:#5F5A50;--line:rgba(242,237,226,.09);--line-strong:rgba(242,237,226,.18);
 --key:#2A2822;--key-skirt:#0B0A08;--cmd:#050504;--bar:rgba(14,13,10,.8);--tile:#1C1A15;--tile-ink:#6F695E;--glow:rgba(255,212,0,.32);
+--cap:#D9D2C4;--cap-skirt:#8F887B;--cap-off:#A49D90;--cap-ink:#5F5A50;--cap-line:rgba(14,13,10,.5);--cap-dim:.62;
 --lift:0 1px 0 rgba(0,0,0,.4),0 18px 40px -16px rgba(0,0,0,.85);color-scheme:dark}
 
 *{box-sizing:border-box}
@@ -130,10 +135,14 @@ h1{font:600 clamp(36px,5.4vw,60px)/1.02 var(--sans);letter-spacing:-.035em;margi
 .res-of{font:800 clamp(30px,3.4vw,42px)/1 var(--display);color:var(--muted)}
 .res-era{font:600 clamp(24px,2.6vw,30px)/1.15 var(--sans);letter-spacing:-.02em;margin:18px 0 8px;text-wrap:balance}
 .res-line{font-size:16px;color:var(--muted);margin:0 0 22px;max-width:44ch}
-.noticed{list-style:none;margin:0 0 26px;padding:0;display:grid;gap:7px;font-size:13px;max-width:52ch}
-.noticed li{display:flex;gap:9px}
+.res-rank{font-size:13px;font-weight:600;margin:-8px 0 26px}
+/* what the agent noticed: three short stats, on your own result only */
+.noticed{margin:0 0 8px;max-width:46ch}
+.noticed-k{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin:0 0 10px}
+.noticed-k span{color:var(--faint);font-weight:500}
+.noticed ul{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:13.5px}
+.noticed li{display:flex;gap:10px}
 .noticed li::before{content:"✦";color:var(--hazard-deep)}
-.share{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
 
 /* your result takes over the top of the page: one yellow sheet from the bar down, the card on it. Inside it the page's
    tokens turn to ink on yellow, in both themes, so everything in it reads without its own rules */
@@ -169,20 +178,36 @@ body[data-mode="mine"] .fan,body[data-mode="pub"] .fan,body[data-mode="chat"] .f
 .ticker .n{color:var(--hazard-deep);font-weight:600;margin-right:6px}
 .ticker .ev{display:block;color:var(--faint)}
 .ticker.fade{opacity:0}
-.card-tools{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 10px;width:340px;max-width:100%}
-.card-tools .key svg{width:16px;height:16px}
-.namefield{flex:1;min-width:150px;display:flex}
+/* under your card: two small steps, make it yours, then share it */
+.yours{display:grid;gap:16px;width:340px;max-width:100%}
+.step{display:grid;gap:8px}
+.step-k{display:flex;align-items:center;gap:8px;margin:0;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.step-k b{width:18px;height:18px;display:grid;place-items:center;border-radius:50%;background:var(--hazard-ink);color:var(--hazard);font-size:10.5px;letter-spacing:0}
+.step-row{display:flex;gap:8px}
+.step-row>.key{flex:none}
+.step-row .key svg{width:15px;height:15px}
+.step-row .key.ink{flex:1}
+.step-row .key.ink+.key{flex:1}
+.yours #photo-rm{justify-self:start;font-size:12px}
+.link{display:flex;align-items:center;gap:6px;margin:2px 0 0;font-size:12.5px;min-width:0}
+.link a{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-decoration-color:var(--line-strong)}
+.copyb{flex:none;width:28px;height:28px;display:grid;place-items:center;border:0;border-radius:7px;background:transparent;color:inherit;cursor:pointer;padding:0}
+.copyb:hover{background:var(--sheet)}
+.copyb:disabled{opacity:.4;cursor:default}
+.copyb svg{width:15px;height:15px}
+.yours .note{min-height:0}
+.namefield{flex:1;min-width:0;display:flex}
 .namefield input,.mail input[type=email]{font:14px var(--sans);color:var(--fg);background:var(--sheet);border:1px solid var(--line-strong);border-radius:8px;padding:9px 12px;min-width:0;width:100%}
 .namefield input::placeholder{color:var(--faint)}
 
 /* the trading card */
 .tcard{--tc:var(--t1);--rx:0deg;--ry:0deg;--px:50%;--py:50%;--ho:0;width:340px;aspect-ratio:63/88;border-radius:18px;background:var(--tc);padding:10px;color:var(--ink);
   box-shadow:0 1px 0 rgba(0,0,0,.1),0 24px 50px -22px rgba(0,0,0,.6);font-family:var(--sans);display:flex;overflow:hidden;isolation:isolate}
-/* card feel, after poke-holo's common/uncommon (as on /stacks, a touch softer): spring tilt, a glare that follows the
+/* card feel, after poke-holo's common/uncommon (as on /stacks, about 30% stronger): spring tilt, a glare that follows the
    pointer, a faint rainbow sheen */
 .tcard .hcard{position:absolute;inset:0;z-index:6;border-radius:inherit;pointer-events:none;opacity:var(--ho);transition:opacity .35s ease}
-.tcard .hcard.glare{mix-blend-mode:overlay;background:radial-gradient(farthest-corner circle at var(--px) var(--py),rgba(255,255,255,.5) 0%,rgba(255,255,255,.11) 30%,rgba(0,0,0,.2) 100%)}
-.tcard .hcard.sheen{mix-blend-mode:soft-light;opacity:calc(var(--ho) * .5);background:linear-gradient(115deg,transparent 0%,hsl(350 85% 70% / .5) calc(var(--px) - 30%),hsl(48 95% 65% / .5) calc(var(--px) - 15%),hsl(150 70% 62% / .5) var(--px),hsl(205 85% 66% / .5) calc(var(--px) + 15%),hsl(280 70% 70% / .5) calc(var(--px) + 30%),transparent 100%)}
+.tcard .hcard.glare{mix-blend-mode:overlay;background:radial-gradient(farthest-corner circle at var(--px) var(--py),rgba(255,255,255,.72) 0%,rgba(255,255,255,.16) 30%,rgba(0,0,0,.29) 100%)}
+.tcard .hcard.sheen{mix-blend-mode:soft-light;opacity:calc(var(--ho) * .72);background:linear-gradient(115deg,transparent 0%,hsl(350 85% 70% / .72) calc(var(--px) - 30%),hsl(48 95% 65% / .72) calc(var(--px) - 15%),hsl(150 70% 62% / .72) var(--px),hsl(205 85% 66% / .72) calc(var(--px) + 15%),hsl(280 70% 70% / .72) calc(var(--px) + 30%),transparent 100%)}
 .tc-in{flex:1;background:var(--paper);border-radius:10px;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 .tc-top{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;padding:11px 12px 9px}
 .tc-lvl{font:900 48px/.8 var(--display);letter-spacing:-.01em;font-variant-numeric:tabular-nums}
@@ -230,16 +255,16 @@ body[data-mode="mine"] .fan,body[data-mode="pub"] .fan,body[data-mode="chat"] .f
 /* keys on the map: every level is a key. Up and pale on the catalogue; on a result the ones you have are lit yellow and
    the rest are sunk into the board, icon greyed, waiting. The three picks breathe */
 .tile{--ts:52px;position:relative;width:var(--ts);height:var(--ts);flex:none;display:grid;place-items:center;border-radius:10px;padding:0;
-  background:var(--key);border:1px solid var(--line-strong);box-shadow:inset 0 -4px 0 var(--key-skirt);font:500 12px var(--mono);color:var(--tile-ink);
+  background:var(--cap);border:1px solid var(--cap-line);box-shadow:inset 0 -4px 0 var(--cap-skirt);font:500 12px var(--mono);color:var(--cap-ink);
   transition:background .25s,box-shadow .25s,transform .08s}
 .tile img{width:62%;height:62%;image-rendering:pixelated;margin-top:-3px;transition:opacity .25s,filter .25s}
 .tile>span{margin-top:-3px}
 .tile.on{background:var(--hazard);border-color:var(--hazard-deep);box-shadow:inset 0 -4px 0 var(--hazard-deep)}
 .tile.on.self{background:color-mix(in srgb,var(--hazard) 55%,#FFFFFF);border-color:color-mix(in srgb,var(--hazard-deep) 60%,#FFFFFF);box-shadow:inset 0 -4px 0 color-mix(in srgb,var(--hazard-deep) 60%,#FFFFFF)}
-.tile.off{background:var(--tile);border-color:transparent;box-shadow:inset 0 2px 3px rgba(14,13,10,.14)}
-.tile.off img{opacity:.45;filter:grayscale(1);margin-top:0}
+.tile.off{background:var(--cap-off);border-color:transparent;box-shadow:inset 0 2px 3px rgba(14,13,10,.14)}
+.tile.off img{opacity:var(--cap-dim);filter:grayscale(1);margin-top:0}
 .tile.off>span{margin-top:0}
-.tile.q{border:1px dashed var(--line-strong)}
+.tile.q{border:1px dashed var(--cap-line)}
 .tile.pick{border:1.5px solid var(--hazard-deep);animation:breathe 2.4s ease-in-out infinite}
 .tile.pick img{opacity:.75;filter:grayscale(.3)}
 @keyframes breathe{50%{box-shadow:inset 0 2px 3px rgba(14,13,10,.14),0 0 0 5px var(--glow)}}
@@ -254,7 +279,7 @@ body[data-mode="mine"] .fan,body[data-mode="pub"] .fan,body[data-mode="chat"] .f
 .b-row{display:flex;gap:8px;align-items:center}
 .board button{cursor:pointer}
 .board .tile:hover{transform:translateY(-1px)}
-.board .tile:active{transform:translateY(2px);box-shadow:inset 0 -1px 0 var(--key-skirt)}
+.board .tile:active{transform:translateY(2px);box-shadow:inset 0 -1px 0 var(--cap-skirt)}
 .board .tile.off:active{transform:none}
 .board .sel{outline:2px solid var(--fg);outline-offset:2px}
 /* each era is led by its caveman; the ring around him fills as you light his row */
@@ -367,6 +392,7 @@ body[data-mode="mine"] .fan,body[data-mode="pub"] .fan,body[data-mode="chat"] .f
 
 /* fossils */
 .fossils{border-top:1px solid var(--line);margin-top:40px;padding-top:36px}
+.fossils h2{font:600 28px/1.1 var(--sans);letter-spacing:-.02em;margin:0 0 6px}
 .fossils>p{margin:0 0 18px}
 .fossil-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
 .fossil{border:1px dashed var(--line-strong);border-radius:10px;padding:14px 16px;display:grid;gap:5px;align-content:start}
@@ -379,7 +405,9 @@ body[data-mode="mine"] .fan,body[data-mode="pub"] .fan,body[data-mode="chat"] .f
 .notify{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:32px;align-items:center;border-top:1px solid var(--line);margin-top:40px;padding-top:32px}
 .notify h2{font:600 24px/1.15 var(--sans);letter-spacing:-.015em;margin:0 0 6px}
 .notify p{margin:0;max-width:52ch}
-.notify .mail{margin:0}
+.mail{display:grid;gap:8px;font-size:14px;margin:0}
+.mail-row{display:flex;gap:8px}
+.mail-row input{flex:1}
 .foot{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:48px;border-top:1px solid var(--line);margin-top:40px;padding-top:32px;font-size:14px;color:var(--muted)}
 .foot p{margin:0 0 10px;max-width:60ch}
 
@@ -388,9 +416,12 @@ body[data-mode="mine"] .fan,body[data-mode="pub"] .fan,body[data-mode="chat"] .f
 
 /* share images, drawn offscreen: the card taped to paper, its level ringed in red pen. Fixed colours, like the card */
 .og-host{position:fixed;left:-10000px;top:0;pointer-events:none}
-.og{--pen:#C4301C;--og-muted:#6E685C;position:relative;overflow:hidden;width:1200px;height:630px;color:#0E0D0A;font-family:var(--sans);
-  background:radial-gradient(130% 100% at 35% 40%,transparent 50%,rgba(110,88,45,.18) 100%),
-    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScyNDAnIGhlaWdodD0nMjQwJz48ZmlsdGVyIGlkPSduJz48ZmVUdXJidWxlbmNlIHR5cGU9J2ZyYWN0YWxOb2lzZScgYmFzZUZyZXF1ZW5jeT0nLjknIG51bU9jdGF2ZXM9JzInIHN0aXRjaFRpbGVzPSdzdGl0Y2gnLz48ZmVDb2xvck1hdHJpeCB2YWx1ZXM9JzAgMCAwIDAgLjM1IDAgMCAwIDAgLjI4IDAgMCAwIDAgLjE2IDAgMCAwIC4yIDAnLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0nMjQwJyBoZWlnaHQ9JzI0MCcgZmlsdGVyPSd1cmwoI24pJy8+PC9zdmc+"),#EFE8DA}
+/* your card on yellow, like your result: the paper behind it is the page's own yellow, grain and vignette kept. The
+   page's own preview (site) stays on paper */
+.og{--pen:#C4301C;--og-muted:rgba(14,13,10,.62);--og-ground:#FFD400;--og-shade:rgba(120,80,0,.24);position:relative;overflow:hidden;width:1200px;height:630px;color:#0E0D0A;font-family:var(--sans);
+  background:radial-gradient(130% 100% at 35% 40%,transparent 50%,var(--og-shade) 100%),
+    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScyNDAnIGhlaWdodD0nMjQwJz48ZmlsdGVyIGlkPSduJz48ZmVUdXJidWxlbmNlIHR5cGU9J2ZyYWN0YWxOb2lzZScgYmFzZUZyZXF1ZW5jeT0nLjknIG51bU9jdGF2ZXM9JzInIHN0aXRjaFRpbGVzPSdzdGl0Y2gnLz48ZmVDb2xvck1hdHJpeCB2YWx1ZXM9JzAgMCAwIDAgLjM1IDAgMCAwIDAgLjI4IDAgMCAwIDAgLjE2IDAgMCAwIC4yIDAnLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0nMjQwJyBoZWlnaHQ9JzI0MCcgZmlsdGVyPSd1cmwoI24pJy8+PC9zdmc+"),var(--og-ground)}
+.og.site{--og-muted:#6E685C;--og-ground:#EFE8DA;--og-shade:rgba(110,88,45,.18)}
 .og.square{height:1200px}
 .og-copy{position:absolute;left:630px;right:70px;top:50%;transform:translateY(-56%);display:grid;gap:22px}
 .og.site .og-copy{left:80px;right:auto;width:540px}
@@ -401,6 +432,7 @@ body[data-mode="mine"] .fan,body[data-mode="pub"] .fan,body[data-mode="chat"] .f
 .og-url{position:absolute;left:630px;bottom:46px;font:500 18px var(--mono);color:var(--og-muted)}
 .og.site .og-url{left:80px}
 .og .tcard{box-shadow:0 2px 3px rgba(60,40,10,.2),0 34px 50px -26px rgba(60,40,10,.6)}
+.og:not(.site) .tcard{box-shadow:0 0 0 2px rgba(14,13,10,.88),0 2px 3px rgba(60,40,10,.2),0 34px 50px -26px rgba(90,60,0,.55)}
 .tape{position:absolute;z-index:9;left:50%;top:-18px;width:128px;height:36px;transform:translateX(-50%) rotate(3deg);
   background:linear-gradient(rgba(255,255,255,.22),rgba(255,255,255,0) 70%),rgba(222,209,163,.84);box-shadow:0 1px 2px rgba(60,40,10,.2);
   clip-path:polygon(0 7%,4% 0,8% 9%,12% 1%,88% 0,92% 8%,96% 0,100% 6%,98% 50%,100% 94%,95% 100%,91% 92%,86% 100%,10% 100%,6% 93%,2% 100%,0 92%,2% 50%)}
@@ -463,7 +495,7 @@ body.og-only .og-host{position:static}
   .b-row{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:4px}
   .tile,.emb{--ts:auto;width:100%;height:auto;min-width:0;min-height:0;aspect-ratio:1;border-radius:7px;overflow:hidden}
   .emb{border-radius:50%;margin-right:0;padding:2px}
-  .tile{box-shadow:inset 0 -2px 0 var(--key-skirt)}
+  .tile{box-shadow:inset 0 -2px 0 var(--cap-skirt)}
   .tile.on{box-shadow:inset 0 -2px 0 var(--hazard-deep)}
   .tile img{width:70%;height:70%;margin-top:-1px}
   .board [data-tip]:hover::before{display:none}

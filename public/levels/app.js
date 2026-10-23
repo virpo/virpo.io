@@ -53,7 +53,7 @@ function decode(h) {
 }
 /* MODE: show (a showcase person, on arrival) · mine (your result, from the link) · pub (a published card)
    · chat (the prompt landed in a chat app that can't look at the computer, which sends people to #chat) */
-let MODE = "show", SUBJ = null, WHO = null, OV = {}, SHARE_URL = null, LAST = store.get("levels-last");
+let MODE = "show", SUBJ = null, WHO = null, OV = {}, LAST = store.get("levels-last");
 /* CARD: the published card this page was opened for · FROM: the last card someone else sent you, kept in this browser so
    it can sit next to your own result · EX: Grug, the example caveman, on day 1 and day 400 */
 let CARD = null, FROM = norm(store.get("levels-from"));
@@ -105,9 +105,9 @@ function resultCard(o, cls, blank) {
     lines: [best && ["Best", `${best.n}. ${best.title}`], nx && ["Next", `${nx}. ${L[nx - 1].title}`], o.r.a.length && ["Uses", o.r.a.join(", ")]].filter(Boolean), foot: o.foot });
 }
 const cardName = () => ($("#card-name").value || "").trim();
-function subjectCard(cls, blank) {
+function subjectCard(cls, blank, as) {   /* as: { name, photo } to draw it as it goes out, not as it is here */
   const lv = level(), sc = selfCount(), add = MODE === "mine" && cls === "front" ? (WHO?.photo ? "change" : "add") : undefined;
-  return resultCard({ st, r: SUBJ, photo: WHO?.photo, add, name: MODE === "mine" ? cardName() : SUBJ.name,
+  return resultCard({ st, r: SUBJ, photo: as ? as.photo : WHO?.photo, add, name: as ? as.name : MODE === "mine" ? cardName() : SUBJ.name,
     foot: MODE === "chat" ? "a chat tab can't check" : sc ? `${lv - sc} found · ${sc} ticked` : "checked locally" }, cls, blank);
 }
 const otherCard = (r, name, foot, cls) => resultCard({ st: stateOf(r), r, name, foot }, cls);
@@ -301,8 +301,8 @@ document.addEventListener("click", async e => {
 function changed(n) {
   const r = $("#level-" + n);
   if (r) { const open = r.hasAttribute("data-open"); r.outerHTML = rowHTML(L[n - 1], r.dataset.kind); if (open) openRow(n); }
-  cardChanged(); renderBoard(); $(`#board .tile[data-n="${n}"]`)?.classList.add("just"); renderInsp(); unlockCounts(); renderCopy();
-  $("#fan").innerHTML = fanHTML(false); keepLast();
+  renderBoard(); $(`#board .tile[data-n="${n}"]`)?.classList.add("just"); renderInsp(); unlockCounts(); renderCopy();
+  $("#fan").innerHTML = fanHTML(false); keepLast(); syncSoon();
 }
 /* "Your level" elsewhere on the page follows the ticks on this result */
 function keepLast() {
@@ -315,7 +315,7 @@ function renderCopy() {
   document.body.dataset.mode = MODE;
   $("#copy-home").hidden = MODE !== "show"; $("#copy-result").hidden = MODE === "show"; $("#live").hidden = MODE !== "mine";
   $("#go").hidden = !canWait(); $("#next").hidden = MODE !== "chat";
-  $("#card-tools").hidden = MODE !== "mine"; $("#ticker").hidden = MODE === "mine" || MODE === "chat";
+  $("#yours").hidden = MODE !== "mine"; $("#ticker").hidden = MODE === "mine" || MODE === "chat";
   $("#mine").hidden = !(canWait() && LAST);
   if (LAST) { $("#mine").href = "#" + LAST.hash; $("#mine").textContent = `Your level: ${LAST.lv}`; }
   const lv = level(), t = tierOf(Math.max(1, lv)), sc = selfCount(), unsure = L.filter(l => st(l.n) === "q").length;
@@ -328,21 +328,21 @@ function renderCopy() {
     $("#res-kicker").textContent = "You're in a chat tab";
     $("#res-era").textContent = "Everyone starts here.";
     $("#res-line").textContent = "A chat can't look at your computer, so it can't run the check. That's the whole difference: an agent works in your folders, runs things, and shows you what it did. It asks before anything you haven't allowed.";
-    $$("#share, #share-note, #noticed").forEach(el => el.hidden = true);
+    $$("#noticed, #res-rank").forEach(el => el.hidden = true);
     return renderPicks();
   }
   /* a second run in this browser: how it moved since the one before */
   const prev = MODE === "mine" && LAST?.prev, moved = prev && levelOf(SUBJ) - prev.lv;
   const since = !prev ? "" : moved > 0 ? ` · up ${moved} since ${day(prev.at)}` : moved < 0 ? ` · down ${-moved} since ${day(prev.at)}` : ` · same as on ${day(prev.at)}`;
   const from = MODE === "mine" && FROM && FROM.s !== SUBJ.s ? ` ${FROM.name ? FROM.name + ", whose card sent you here, is" : "The card that sent you here is"} level ${levelOf(FROM)}.` : "";
-  $("#res-kicker").textContent = MODE === "pub" ? `${SUBJ.name ? SUBJ.name + "'s card" : "A card"} · published by them` : "Your level" + since;
+  $("#res-kicker").textContent = MODE === "pub" ? (SUBJ.name ? `${SUBJ.name}'s card` : "Someone's card") : "Your level" + since;
   $("#res-era").textContent = `${t.era}. ${t.name}.`;
   $("#res-line").textContent = MODE === "pub"
     ? `Their agent found ${lv - sc} on their machine${sc ? `, and they ticked ${sc}` : ""}.`
     : `Your agent found ${lv - sc}${sc ? `, you ticked ${sc}` : ""}.${unsure ? ` It couldn't see ${unsure} from here.` : ""}${from}`;
   $("#noticed").hidden = !(MODE === "mine" && SUBJ.f.length);
-  $("#noticed").innerHTML = MODE === "mine" ? SUBJ.f.map(x => `<li>${esc(x)}</li>`).join("") : "";
-  $$("#share, #share-note").forEach(el => el.hidden = MODE === "pub");
+  $("#noticed-list").innerHTML = MODE === "mine" ? SUBJ.f.map(x => `<li>${esc(x)}</li>`).join("") : "";
+  renderRank();
   $("#live").textContent = `Level ${lv}`;
 }
 function renderPicks() {   /* level 0, in a chat tab: where they'd start once they have an agent */
@@ -350,15 +350,12 @@ function renderPicks() {   /* level 0, in a chat tab: where they'd start once th
     return `<div class="pick" data-n="${n}"><span class="tile">${icon(n)}</span><div><h3><span class="n">${n}</span>${esc(l.title)}</h3>
       <p>${why ? `<span class="why">${esc(why)}</span> ` : ""}${esc(l.line)}</p>${tryHTML(l, true)}</div></div>`; }).join("");
 }
-/* a card link shows the card as it was when made; change the card and the next share makes a new one */
-const NOTE = $("#share-note").textContent;
-const cardChanged = () => { if (SHARE_URL) { SHARE_URL = null; $("#share-note").textContent = NOTE; } };
-$("#card-name").addEventListener("input", () => { store.set("levels-name", $("#card-name").value); cardChanged(); renderFan(); });
-/* your photo on your card: cut to the card's picture here, kept in this browser, and sent only inside a card you share */
+$("#card-name").addEventListener("input", () => { store.set("levels-name", $("#card-name").value); $("#fan").innerHTML = fanHTML(false); syncSoon(); });
+/* your photo on your card: cut to the card's picture here, kept in this browser, and sent only with a card you share */
 let PHOTO = store.get("levels-photo");
 function setPhoto(p) {
   PHOTO = p; try { p ? localStorage.setItem("levels-photo", JSON.stringify(p)) : localStorage.removeItem("levels-photo"); } catch {}
-  WHO = PHOTO ? { photo: PHOTO } : null; cardChanged(); renderAll(false);
+  WHO = PHOTO ? { photo: PHOTO } : null; renderAll(false); syncSoon();
 }
 async function cutPhoto(file) {
   const img = new Image(), url = URL.createObjectURL(file);
@@ -373,11 +370,11 @@ async function cutPhoto(file) {
 }
 $("#stage").addEventListener("click", e => { if (e.target.closest("[data-photo]")) $("#photo-in").click(); });
 /* under your card: your face and your name on it, the two things that make it yours */
-function renderTools() { $("#photo-b").innerHTML = CAMERA + `<span>${PHOTO ? "Change photo" : "Put your face on it"}</span>`; $("#photo-rm").hidden = !PHOTO; }
+function renderTools() { $("#photo-b").innerHTML = CAMERA + `<span>${PHOTO ? "Change photo" : "Add your photo"}</span>`; $("#photo-rm").hidden = !PHOTO; }
 $("#photo-in").addEventListener("change", async e => {
   const f = e.target.files?.[0]; e.target.value = "";
   if (!f) return;
-  try { setPhoto(await cutPhoto(f)); track("photo_added"); toast("On your card. It stays in this browser unless you share the card."); }
+  try { setPhoto(await cutPhoto(f)); track("photo_added"); toast(OWN?.shared ? "On your card, and at its link." : "On your card. It goes online only when you share."); }
   catch { toast("Couldn't read that image. Try a JPEG or PNG."); }
 });
 $("#photo-rm").addEventListener("click", () => { setPhoto(null); toast("Photo removed"); });
@@ -387,12 +384,12 @@ $("#photo-rm").addEventListener("click", () => { setPhoto(null); toast("Photo re
 const TAPE = `<i class="tape"></i>`;
 const RING = `<svg class="ring" viewBox="0 0 200 100" preserveAspectRatio="none" aria-hidden="true"><path d="M122 9C64 1 9 20 11 52s62 44 112 40 74-26 68-52S142 3 84 11" vector-effect="non-scaling-stroke"/></svg>`;
 const ME = `<div class="me"><span>me</span><svg viewBox="0 0 80 60" aria-hidden="true"><path d="M6 8c22 2 44 12 58 38M64 46l-14-3M64 46l2-14"/></svg></div>`;
-function ogHTML(kind) {
+function ogHTML(kind, as) {
   const ask = `<div class="og-copy"><div class="og-brand">levels <span>by @virpo</span></div><h2 class="og-h">What level are you with agents?</h2>
     <p class="og-sub">100 levels. Your own agent checks which you do, on your own machine.</p></div><div class="og-url">${SITE}</div>`;
   if (kind === "site") return `${ask}<div class="og-cards">${fanHTML(false).replace('<div class="tcard front', TAPE + '<div class="tcard front')}</div>`;
   const digits = String(level()).length;
-  const mine = `<div class="og-card" style="--d:${digits}">${TAPE}${subjectCard("solo")}${RING}${ME}</div>`;
+  const mine = `<div class="og-card" style="--d:${digits}">${TAPE}${subjectCard("solo", false, as)}${RING}${ME}</div>`;
   return kind === "square" ? `${mine}<div class="og-foot mono">what level are you with agents? <b>${SITE}</b></div>` : `${mine}${ask}`;
 }
 /* html-to-image can't read the Google Fonts stylesheet across origins, so the faces the card uses (Latin only) are
@@ -411,75 +408,130 @@ const embedFonts = () => fontCSS ??= (async () => {
   }));
   return data.reduce((c, [u, d]) => c.split(u).join(d), latin);
 })().catch(() => (fontCSS = null, ""));
-async function ogImage(kind) {   /* wide: a JPEG data URL for the card link · square: a PNG blob to keep */
-  const el = $("#og"); el.className = "og " + kind; el.innerHTML = ogHTML(kind);
+/* wide: a JPEG data URL for the card link · square: a PNG blob to keep. One at a time: they share the offscreen element */
+let drawing = Promise.resolve();
+const ogImage = (kind, as) => (drawing = drawing.catch(() => {}).then(() => drawOg(kind, as)));
+async function drawOg(kind, as) {
+  const el = $("#og"); el.className = "og " + kind; el.innerHTML = ogHTML(kind, as);
   await Promise.all([...el.querySelectorAll("img")].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
   if (!window.htmlToImage) throw new Error("renderer not loaded");
   await document.fonts.ready;
-  const o = { width: 1200, height: kind === "square" ? 1200 : 630, backgroundColor: "#EFE8DA", fontEmbedCSS: await embedFonts() };
+  const o = { width: 1200, height: kind === "square" ? 1200 : 630, backgroundColor: kind === "site" ? "#EFE8DA" : "#FFD400", fontEmbedCSS: await embedFonts() };
   return kind === "square" ? htmlToImage.toBlob(el, { ...o, pixelRatio: 1.5 }) : htmlToImage.toJpeg(el, { ...o, pixelRatio: 1, quality: .9 });
 }
 
-/* ---------- share */
-const squares = () => `My AI level is ${level()}/100\n\n` + [...Array(10)].map((_, r) => L.slice(r * 10, r * 10 + 10).map(l => done(l.n) ? "🟨" : "⬛").join("")).join("\n") + `\n\nfrom ${SITE}`;
-$("#share-copy").addEventListener("click", async () => { toast(await copy(squares()) ? "Squares copied" : "Couldn't copy here."); track("share_squares"); });
-const lower = s => /^[A-Z][a-z]/.test(s) ? s[0].toLowerCase() + s.slice(1) : s;
-function postText() {
-  const nx = SUBJ.p.find(p => !done(p[0]))?.[0] || L.find(l => !done(l.n))?.n;
-  return `I'm level ${level()} of 100 with agents.${nx ? `\nNext up: ${lower(L[nx - 1].title)}.` : ""}`;
+/* ---------- your card, kept. It's saved anonymously as soon as your result opens: the answers and the agents, which give
+   it a link and count it in the stats. The name and the photo join it the first time you share, and from then on the
+   link follows the card. The key that lets this browser change or delete it is kept here, per result */
+const ckey = () => "levels-card-" + SUBJ.s;
+let OWN = null, making = null, syncing = null, syncTimer = null;   /* OWN: { id, key, url, shared, sent } */
+const answers = () => ({ v: V, s: L.map(l => ({ y: "y", self: "s", q: "?", n: "n" })[st(l.n)]).join(""), a: SUBJ.a, pi: SUBJ.pi ? 1 : 0 });
+const goesOut = () => OWN?.shared ? { name: cardName(), photo: PHOTO } : { name: "", photo: null };
+const sig = () => { const g = goesOut(); return [answers().s, g.name, g.photo ? g.photo.length + g.photo.slice(-32) : ""].join("|"); };
+async function api(method, path, body) {
+  const r = await fetch(D.api + path, { method, headers: { ...(body ? { "content-type": "application/json" } : {}), ...(OWN?.key ? { "x-card-key": OWN.key } : {}) },
+    body: body ? JSON.stringify(body) : undefined });
+  if (!r.ok) throw Object.assign(new Error(r.status), { status: r.status });
+  return r.status === 204 ? null : r.json();
 }
-/* the image goes to the clipboard, ready to paste into a post. The item is handed over inside the click, with the image
-   still drawing, which is what Safari needs; where images can't go on the clipboard, it downloads instead */
+function keepOwn() { store.set(ckey(), OWN); store.set("levels-own", OWN.id); renderLink(); }
+/* the card for the result open here: the one this browser made for it, or a new one */
+function ensureCard() {
+  if (MODE !== "mine") return Promise.reject(new Error("not yours"));
+  if (OWN) return Promise.resolve(OWN);
+  return making ??= api("POST", "/api/card", answers()).then(r => {
+    OWN = { id: r.id, key: r.key, url: r.url, shared: false, sent: answers().s + "||" }; keepOwn(); track("card_saved");
+    return OWN;
+  }).finally(() => { making = null; });
+}
+/* bring the card at the link up to date with the one on screen, image included; one at a time, each sends what's
+   on screen when it starts */
+async function syncCard(retry = true) {
+  await ensureCard();
+  while (syncing) await syncing.catch(() => {});
+  if (OWN.sent === sig() && OWN.img) return OWN;
+  const want = sig(), g = goesOut(), was = OWN;
+  syncing = (async () => {
+    const r = await api("PUT", `/api/card/${was.id}`, { ...answers(), name: g.name, photo: g.photo, image: await ogImage("wide", g) });
+    Object.assign(was, { url: r.url, sent: want, img: true }); if (OWN === was) keepOwn();
+  })();
+  try { await syncing; syncing = null; }
+  catch (e) {
+    syncing = null;
+    if (!retry || ![403, 404].includes(e.status)) throw e;
+    store.set(ckey(), null); OWN = null;   /* gone from the server: a new card, shared if this one was */
+    await ensureCard(); if (was.shared) { OWN.shared = true; keepOwn(); }
+    return syncCard(false);
+  }
+  return OWN;
+}
+function syncSoon() {
+  if (MODE !== "mine") return;
+  clearTimeout(syncTimer); syncTimer = setTimeout(() => syncCard().catch(() => {}), 1800);
+}
+function renderLink() {
+  const a = $("#card-url"), ok = MODE === "mine" && OWN;
+  a.textContent = ok ? OWN.url.replace(/^https?:\/\//, "").replace(/\/$/, "") : "saving your card…"; a.href = ok ? OWN.url : "#";
+  $("#share-link").disabled = !ok;
+  $("#share-note").textContent = !ok ? "" : OWN.shared ? "Anyone with the link sees this card." : "Saved anonymously. Your name and photo go up when you share.";
+}
+/* sharing: the card at the link becomes the one on screen, name and photo included */
+async function shareCard() {
+  await ensureCard();
+  if (!OWN.shared) { OWN.shared = true; keepOwn(); }
+  await syncCard();
+  return OWN.url;
+}
+/* the map as squares, a row per era, the way it posts */
+const squares = () => [...Array(10)].map((_, r) => L.slice(r * 10, r * 10 + 10).map(l => done(l.n) ? "🟨" : "⬛").join("")).join("\n");
+$("#share-x").addEventListener("click", async () => {
+  const w = window.open("", "_blank");   /* opened inside the click, so it isn't blocked; pointed at X once the card is up */
+  let url = `https://${SITE}/`;
+  try { url = await shareCard(); } catch { $("#share-note").textContent = "Couldn't update your card right now, so the post links to the list."; }
+  const x = "https://x.com/intent/post?text=" + encodeURIComponent(`I'm level ${level()} of 100 with agents.\n\n${squares()}\n\n${url}`);
+  track("share_x", { lv: level(), linked: url !== `https://${SITE}/` });
+  if (w) { w.opener = null; w.location.href = x; } else location.href = x;
+});
+$("#share-link").addEventListener("click", async () => {
+  try { const url = await shareCard(); toast(await copy(url) ? "Link copied. It opens this card." : url); track("share_link"); }
+  catch { toast("Couldn't update your card right now. Try again in a minute."); }
+});
+/* copying the link by hand counts as sharing too */
+$("#card-url").addEventListener("copy", () => { shareCard().catch(() => {}); });
+$("#card-url").addEventListener("click", e => { if (!OWN) e.preventDefault(); else shareCard().catch(() => {}); });
+/* the card as an image, for anywhere: handed to the clipboard inside the click, with the image still drawing, which is
+   what Safari needs; where images can't go on the clipboard, it downloads instead */
 $("#share-png").addEventListener("click", async () => {
-  const drawing = ogImage("square");
+  const img = ogImage("square");
   try {
-    await navigator.clipboard.write([new ClipboardItem({ "image/png": drawing })]);
-    toast("Image copied. Paste it into your post."); track("share_png", { how: "clipboard" });
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": img })]);
+    toast("Card copied. Paste it anywhere."); track("share_png", { how: "clipboard" });
   } catch {
-    try { const b = await drawing, a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = `levels-${level()}.png`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); toast("Saved the image"); track("share_png", { how: "download" }); }
-    catch { toast("Couldn't draw the image here"); }
+    try { const b = await img, a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = `levels-${level()}.png`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); toast("Saved the card"); track("share_png", { how: "download" }); }
+    catch { toast("Couldn't draw the card here"); }
   }
 });
-const answers = () => ({ v: V, s: L.map(l => ({ y: "y", self: "s", q: "?", n: "n" })[st(l.n)]).join(""), a: SUBJ.a, pi: SUBJ.pi ? 1 : 0 });
+/* where this level stands among every card saved so far */
+let RANK = null;
+function renderRank() {
+  const el = $("#res-rank"), t = RANK;
+  el.hidden = MODE !== "mine" || !t?.n;
+  if (el.hidden) return;
+  const lv = level(), below = t.levels.slice(0, lv).reduce((a, b) => a + b, 0);
+  el.textContent = t.n < 50 ? `One of the first ${t.n} to check.` : `Higher than ${Math.round(100 * below / t.n)}% of the ${t.n.toLocaleString("en")} who checked.`;
+}
+async function arrive() {
+  OWN = store.get(ckey()); renderLink();
+  try { await ensureCard(); } catch { $("#card-url").textContent = "couldn't save your card right now"; return; }
+  RANK = await fetch(D.api + "/api/stats", { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null);
+  renderRank();
+  setTimeout(() => syncCard().catch(() => {}), calm ? 0 : 3200);   /* the link's preview image, once the card has filled in */
+}
 async function post(path, body) {
   const r = await fetch(path, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
   if (!r.ok) throw new Error(r.status);
   return r.json();
 }
-/* sharing is a public page for the card, made once, on the first press of Post or Copy a link; its preview is the card */
-async function cardLink() {
-  if (SHARE_URL) return SHARE_URL;
-  $("#share-note").textContent = "Making your card page…";
-  const r = await post(D.api + "/api/card", { ...answers(), name: cardName(), image: await ogImage("wide"), ...(PHOTO ? { photo: PHOTO } : {}) });
-  SHARE_URL = r.url; store.set("levels-own", r.id); track("card_published");
-  $("#share-note").innerHTML = `Your card: <a href="${esc(r.url)}">${esc(r.url.replace(/^https?:\/\//, ""))}</a>. Links to it show the card. Only the answers and the name are stored.`;
-  return SHARE_URL;
-}
-$("#share-x").addEventListener("click", async () => {
-  const w = window.open("", "_blank");   /* opened inside the click, so it isn't blocked; pointed at X once the link exists */
-  let url = `https://${SITE}/`;
-  try { url = await cardLink(); } catch { $("#share-note").textContent = "Couldn't make your card page right now, so the post links to the list instead."; }
-  const x = "https://x.com/intent/post?text=" + encodeURIComponent(`${postText()}\n\n${url}`);
-  track("share_x", { lv: level(), linked: url !== `https://${SITE}/` });
-  if (w) { w.opener = null; w.location.href = x; } else location.href = x;
-});
-$("#share-link").addEventListener("click", async () => {
-  try { const url = await cardLink(); toast(await copy(url) ? "Link copied" : url); }
-  catch { $("#share-note").textContent = "Couldn't make the link right now. Nothing was saved."; }
-});
-/* opting in pays back at once: where this level stands among everyone who added theirs */
-function standing(t, lv) {
-  if (!t?.n || t.n < 20) return `You're one of the first ${t?.n || 1}. Come back in a few days to see where you stand.`;
-  const below = t.levels.slice(0, lv).reduce((a, b) => a + b, 0);
-  return `You're above ${Math.round(100 * below / t.n)}% of the ${t.n} people who added theirs.`;
-}
-$("#pub-anon").addEventListener("click", async () => {
-  try {
-    await post(D.api + "/api/count", answers()); $("#pub-anon").disabled = true; track("count_added");
-    const t = await fetch(D.api + "/api/stats", { cache: "no-store" }).then(r => r.ok ? r.json() : null).catch(() => null);
-    $("#pub-note").textContent = `Added: the 100 answers and the date, no name, no link. ${standing(t, levelOf({ s: answers().s }))}`;
-  } catch { $("#pub-note").textContent = "Couldn't add it right now. Nothing was saved."; }
-});
 $("#mail").addEventListener("submit", async e => {
   e.preventDefault();
   const email = $("#mail-email").value.trim();
@@ -490,7 +542,7 @@ $("#mail").addEventListener("submit", async e => {
 
 /* ---------- the one action: copy the line. The yellow key then turns into the wait, with a clock, until the agent is back */
 $$("[data-prompt]").forEach(el => el.textContent = PROMPT);
-const bar = $("#bar"), STAYS = "Nothing leaves your computer unless you save your card.";
+const bar = $("#bar"), STAYS = "The script only reads, and sends nothing.";
 let waitClock = null;
 function waitForAgent(h, p) {
   const box = $("#cta-box"), w = $("#wait");
@@ -509,7 +561,7 @@ function stopWaiting() {
 }
 const waiting = () => $("#cta-box").classList.contains("waiting");
 const pasteIt = ok => waitForAgent(ok ? "Copied. Now paste it into your agent." : "Copy the line below, then paste it into your agent.",
-  `Any session. It explains the script, asks before running it, and opens your card here in a few minutes. ${STAYS}`);
+  `Any session. It runs on its own and opens your card here in a few minutes. ${STAYS}`);
 /* on a phone there is no agent to paste into: send the line to the computer instead (AirDrop, Messages, a note to self) */
 async function sendToComputer() {
   const ok = await copy(PROMPT);
@@ -548,7 +600,7 @@ chan && (chan.onmessage = e => e.data?.hash && arrived(e.data.hash, e.data.lv));
 /* other tabs: a new result or a new level (arrived), or ticks on the result open here (redrawn from what's saved) */
 addEventListener("storage", e => {
   if (e.key === "levels-last" && e.newValue) { try { LAST = JSON.parse(e.newValue); arrived(LAST.hash, LAST.lv); if (canWait()) renderCopy(); } catch {} }
-  if (MODE === "mine" && e.key === okey()) { OV = store.get(okey()) || {}; cardChanged(); renderAll(false); }
+  if (MODE === "mine" && e.key === okey()) { OV = store.get(okey()) || {}; renderAll(false); }
 });
 document.addEventListener("click", e => { if (!e.target.closest("#pop, #bar-cta")) $("#pop").hidden = true; });
 addEventListener("scroll", () => bar.classList.toggle("scrolled", scrollY > 8), { passive: true });
@@ -599,7 +651,7 @@ function renderAll(fan = true) { renderCopy(); renderBoard(); renderInsp(); rend
 const cardId = () => { const u = new URLSearchParams(location.search).get("u"); return /^[a-z2-9]{6}$/.test(u || "") ? u : null; };
 function boot() {
   const h = location.hash, mine = decode(h), pub = CARD && CARD.id === cardId() ? CARD : null;
-  SHARE_URL = null; $("#share-note").textContent = NOTE;
+  clearTimeout(syncTimer); OWN = null; RANK = null;
   if (mine) {
     MODE = "mine"; SUBJ = mine; WHO = PHOTO ? { photo: PHOTO } : null;
     if (mine.was && !store.get(okey())) {   /* ticks made on this result under an earlier list follow their levels */
@@ -626,14 +678,17 @@ function boot() {
     : MODE === "pub" ? [...L].reverse().find(l => st(l.n) === "y")?.n || 1 : 1 };
   renderAll();
   if (OG === "site") { document.body.classList.add("og-only"); $("#og").className = "og site"; $("#og").innerHTML = ogHTML("site"); return; }
-  if (mine) { track("result_open", { lv: level() }); scrollTo(0, 0); chan?.postMessage({ hash: LAST.hash, lv: LAST.lv }); }
+  if (mine) { track("result_open", { lv: level() }); scrollTo(0, 0); chan?.postMessage({ hash: LAST.hash, lv: LAST.lv }); arrive(); }
   if (MODE === "chat") track("chat_landed");
   if (deep >= 1 && deep <= 100) openRow(deep, true);
 }
 window.levelsShareImage = kind => ogImage(kind || "wide");   /* the exact images sharing makes, for checking them */
-$("#forget").addEventListener("click", () => {
-  try { for (const k of ["levels-last", okey(), "levels-name", "levels-from", "levels-own", "levels-photo"]) localStorage.removeItem(k); } catch {}
-  LAST = null; FROM = null; PHOTO = null; history.pushState(null, "", location.pathname); boot(); scrollTo(0, 0); toast("Forgotten. It only ever lived in this browser.");
+/* delete my card: from the server first, then everything this browser kept about it */
+$("#forget").addEventListener("click", async () => {
+  try { if (OWN) await api("DELETE", `/api/card/${OWN.id}`); }
+  catch (e) { if (e.status !== 404) return toast("Couldn't reach the server, so nothing was deleted. Try again in a minute."); }
+  try { for (const k of ["levels-last", okey(), ckey(), "levels-name", "levels-from", "levels-own", "levels-photo"]) localStorage.removeItem(k); } catch {}
+  OWN = null; LAST = null; FROM = null; PHOTO = null; history.pushState(null, "", location.pathname); boot(); scrollTo(0, 0); toast("Deleted, here and on the server.");
 });
 addEventListener("hashchange", boot);
 /* opened from a card's link: fetch the card first, so the page doesn't flash someone else's on the way */
