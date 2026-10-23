@@ -13,7 +13,7 @@ export const imageDimensions: Record<string, { width: number; height: number }> 
   "/assets/blog/pocket-room/first-try.webp": { width: 1200, height: 750 },
   "/assets/blog/pocket-room/five-ways.webp": { width: 2000, height: 1270 },
   "/assets/blog/pocket-room/hero.webp": { width: 1600, height: 1541 },
-  "/assets/blog/pocket-room/manga-scale.webp": { width: 1712, height: 1152 },
+  "/assets/blog/pocket-room/manga-scale.webp": { width: 1704, height: 1144 },
   "/assets/blog/pocket-room/mockup.webp": { width: 1200, height: 800 },
   "/assets/blog/pocket-room/plate.webp": { width: 1536, height: 1024 },
   "/assets/blog/pocket-room/shapes.webp": { width: 1800, height: 907 },

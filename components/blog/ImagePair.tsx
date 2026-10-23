@@ -15,15 +15,17 @@ export function ImagePair({ left, right }: { left: ImageDetails; right: ImageDet
 
         return (
           <span className="articleImagePairItem" key={image.src}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={image.src}
-              alt={image.alt}
-              width={dimensions?.width}
-              height={dimensions?.height}
-              loading="lazy"
-              decoding="async"
-            />
+            <a href={image.src} className="articleImageLink">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={image.src}
+                alt={image.alt}
+                width={dimensions?.width}
+                height={dimensions?.height}
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
             {image.caption ? <span className="articleImageCaption">{image.caption}</span> : null}
           </span>
         );

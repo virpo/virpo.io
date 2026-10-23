@@ -69,7 +69,8 @@ export function WindowApp({ reducedMotion }: { reducedMotion: boolean }) {
         </div>
       )}
       <div className={styles.windowBar}>
-        <p aria-live="polite">{video ? "The real ride, Fuji to Tokyo (YouTube, muted)" : train ? (train.kind === "shinkansen" ? "Nozomi passing · 285 km/h" : "Local train · next stop Odawara") : `Tōkaidō line · ${count} trains so far`}</p>
+        {/* not a live region: passing trains are scenery, not news */}
+        <p>{video ? "The real ride, Fuji to Tokyo (YouTube, muted)" : train ? (train.kind === "shinkansen" ? "Nozomi passing · 285 km/h" : "Local train · next stop Odawara") : `Tōkaidō line · ${count} ${count === 1 ? "train" : "trains"} so far`}</p>
         <button type="button" data-primary onClick={() => setVideo((value) => !value)} aria-pressed={video}>
           {video ? "Back to the painting" : "▶ Real ride"}
         </button>
