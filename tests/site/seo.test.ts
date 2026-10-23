@@ -27,9 +27,10 @@ describe("site-wide SEO", () => {
     expect(OG_VIDEO.url).toMatch(/^https:\/\/virpo\.io\//);
   });
 
-  it("keeps the old URLs working as redirects that stay out of the index", () => {
+  it("keeps the old URLs working as redirects whose canonical is the home page", () => {
     for (const meta of [projectsMetadata, v2Metadata]) {
-      expect(meta.robots).toMatchObject({ index: false });
+      // no noindex next to a canonical: Google reads the pair as contradictory
+      expect(meta.robots).toBeUndefined();
       expect(meta.alternates?.canonical).toBe("/");
     }
   });

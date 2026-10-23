@@ -11,6 +11,7 @@ const requiredFiles = [
   "dist/blog/weird-use-of-ai-3/index.html",
   "dist/blog/weird-use-of-ai-1/index.html",
   "dist/blog/a-different-kind-of-hackathon/index.html",
+  "dist/blog/how-this-room-was-made/index.html",
   "dist/rss.xml",
   "dist/sitemap.xml",
   "dist/robots.txt",
@@ -43,6 +44,7 @@ function assertExcludes(source, marker, file) {
 }
 
 const articleSlugs = [
+  "how-this-room-was-made",
   "weird-use-of-ai-3",
   "weird-use-of-ai-1",
   "a-different-kind-of-hackathon",
@@ -76,7 +78,7 @@ for (const slug of articleSlugs) {
 for (const [file, target] of [["dist/projects/index.html", "/#projects"], ["dist/v2/index.html", "/"]]) {
   const html = await readFile(resolve(file), "utf8");
   assertIncludes(html, `http-equiv="refresh" content="0; url=${target}"`, file);
-  assertIncludes(html, 'name="robots" content="noindex, follow"', file);
+  assertIncludes(html, 'rel="canonical" href="https://virpo.io/"', file);
 }
 
 assertIncludes(homeHtml, 'rel="canonical" href="https://virpo.io/"', homeFile);
@@ -112,3 +114,34 @@ for (const slug of articleSlugs) {
 assertIncludes(sitemap, "https://virpo.io/skills/", "dist/sitemap.xml");
 assertIncludes(sitemap, "https://virpo.io/levels/", "dist/sitemap.xml");
 assertIncludes(robots, "Sitemap: https://virpo.io/sitemap.xml", "dist/robots.txt");
+
+// every preview image and video a page announces, and every video poster, must ship
+{
+  const { readdir } = await import("node:fs/promises");
+  const pages = [];
+  const walk = async (dir) => {
+    for (const entry of await readdir(dir, { withFileTypes: true })) {
+      const path = resolve(dir, entry.name);
+      if (entry.isDirectory()) await walk(path);
+      else if (entry.name.endsWith(".html")) pages.push(path);
+    }
+  };
+  await walk(resolve("dist"));
+  const missing = new Set();
+  for (const page of pages) {
+    const html = await readFile(page, "utf8");
+    const refs = [
+      ...html.matchAll(/(?:property|name)="(?:og:image|og:video|og:video:secure_url|twitter:image)" content="https:\/\/virpo\.io(\/[^"]+)"/g),
+      ...html.matchAll(/<video[^>]*?\s(?:src|poster)="(\/[^"]+)"/g),
+      ...html.matchAll(/<video[^>]*?\sposter="(\/[^"]+)"/g),
+    ].map((match) => match[1].split(/[?#]/)[0]);
+    for (const ref of refs) {
+      try {
+        await access(resolve("dist", "." + decodeURI(ref)));
+      } catch {
+        missing.add(`${ref} (in ${page.replace(resolve("dist"), "dist")})`);
+      }
+    }
+  }
+  if (missing.size) throw new Error(`Preview media missing from dist:\n${[...missing].join("\n")}`);
+}

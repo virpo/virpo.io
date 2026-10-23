@@ -34,24 +34,13 @@ describe("static build-output assertions", () => {
   });
 
   it.each([
-    'rel="canonical" href="https://virpo.io/projects/"',
-    'property="og:url" content="https://virpo.io/projects/"',
-    'property="og:type" content="website"',
-    'name="twitter:card"',
-    'name="twitter:title"',
-    'class="projectCard ',
-    "/assets/projects/youtldr-home.png",
-    "/assets/projects/zltastopa-sk-thumb.png",
-    "/assets/projects/mood-radio.jpg",
-    "/assets/projects/pegboard.jpg",
-    "/assets/projects/ai-build-week.jpg",
-    "/assets/projects/cmux-deck.jpeg",
-  ])("checks exported project HTML for %s", (marker) => {
+    'http-equiv="refresh" content="0; url=${target}"',
+    'property="og:video" content="https://virpo.io/og/room-loop.mp4"',
+    '"@type":"ProfilePage"',
+    '"@type":"BlogPosting"',
+    "dist/llms.txt",
+  ])("checks the redirects, home previews and structured data for %s", (marker) => {
     expect(assertionScript).toContain(marker);
-  });
-
-  it("requires exactly six exported project cards", () => {
-    expect(assertionScript).toContain("projectCardCount !== 6");
   });
 
   it("validates every exported same-origin HTML reference", () => {

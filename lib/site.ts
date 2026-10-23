@@ -6,7 +6,7 @@ export const SITE_NAME = "virpo";
 export const AUTHOR = "Peter Hraska";
 export const SITE_TITLE = "Peter Hraska";
 export const SITE_DESCRIPTION =
-  "Peter Hraska builds AI products, odd little tools, physical objects and events that make people ship. His site is a tiny painted room you can poke at: writing, projects and a shinkansen passing the window.";
+  "Peter Hraska builds AI products, odd little tools, physical objects and events. His site is a tiny painted room you can poke at.";
 
 export const OG_IMAGE = { url: "/og/og-image.png", width: 1200, height: 630, alt: "The Pocket Room: a little grey handheld whose screen shows Peter's painted room" };
 // og:video is not resolved against metadataBase by Next, so it is absolute here
@@ -31,8 +31,8 @@ export function pageMeta({ title, description, path, type = "website" }: { title
     title,
     description,
     alternates: { canonical: path },
-    openGraph: { type, url: path, siteName: SITE_NAME, title: full, description, images: [OG_IMAGE] },
-    twitter: { card: "summary_large_image" as const, site: "@virpo", creator: "@virpo", title: full, description, images: [OG_IMAGE.url] },
+    openGraph: { type, url: path, siteName: SITE_NAME, locale: "en_US", title: full, description, images: [OG_IMAGE] },
+    twitter: { card: "summary_large_image" as const, site: "@virpo", creator: "@virpo", title: full, description, images: [{ url: OG_IMAGE.url, alt: OG_IMAGE.alt }] },
   };
 }
 

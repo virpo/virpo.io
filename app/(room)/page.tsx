@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     type: "profile",
     url: "/",
     siteName: SITE_NAME,
+    locale: "en_US",
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     images: [OG_IMAGE],
@@ -52,6 +53,10 @@ const ADVENT = {
   href: "https://www.adventofnocode.io/",
   blurb: "Build something new every day: 24 days, 10 minutes each, no code. 229 people joined.",
 };
+
+// the cards show three across (about 340 px), two across, or full width on phones
+const CARD_SIZES = "(max-width: 699px) 92vw, (max-width: 1099px) 46vw, 360px";
+const cardSrcSet = (name: string) => `/lab/room/projects/${name}-540.webp 540w, /lab/room/projects/${name}-720.webp 720w, /lab/room/projects/${name}.webp 1080w`;
 
 export default function RoomPage() {
   const posts = getPostSummaries();
@@ -121,9 +126,9 @@ export default function RoomPage() {
                     <a className={styles.projectCard} href={project.href} target="_blank" rel="noreferrer" data-room-target={item?.id}>
                       <span className={styles.projectArt}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img className={styles.projectPencil} src={`/lab/room/projects/${project.slug}-pencil.webp`} alt="" width={1080} height={720} loading="lazy" decoding="async" />
+                        <img className={styles.projectPencil} src={`/lab/room/projects/${project.slug}-pencil-720.webp`} srcSet={cardSrcSet(`${project.slug}-pencil`)} sizes={CARD_SIZES} alt="" width={1080} height={720} loading="lazy" decoding="async" />
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img className={styles.projectColour} src={`/lab/room/projects/${project.slug}.webp`} alt="" width={1080} height={720} loading="lazy" decoding="async" />
+                        <img className={styles.projectColour} src={`/lab/room/projects/${project.slug}-720.webp`} srcSet={cardSrcSet(project.slug)} sizes={CARD_SIZES} alt="" width={1080} height={720} loading="lazy" decoding="async" fetchPriority="low" />
                         <ProjectLogo slug={project.slug} title={project.title} />
                       </span>
                       <span className={styles.projectHead}>

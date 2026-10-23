@@ -45,7 +45,7 @@ export default function RoomWritingPage() {
                 index += 1;
                 const color = NOTEBOOK_COLORS[index] ?? SHELF_COLORS[index % SHELF_COLORS.length];
                 return (
-                  <li key={post.slug}>
+                  <li key={post.slug} id={post.slug}>
                     <Link href={roomPostHref(post.slug)} className={shell.entry} style={{ "--book": color } as CSSProperties}>
                       <i className={shell.book} aria-hidden="true" />
                       <strong>{post.title}</strong>

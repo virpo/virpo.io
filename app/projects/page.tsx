@@ -5,7 +5,6 @@ import { Redirect } from "../../components/site/Redirect";
 export const metadata: Metadata = {
   title: "Projects",
   alternates: { canonical: "/" },
-  robots: { index: false, follow: true },
 };
 
 export default function ProjectsRedirect() {

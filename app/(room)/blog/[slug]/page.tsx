@@ -7,6 +7,7 @@ import { RoomBackKey, roomDate, RoomFooter } from "../../../../components/room/R
 import { roomPostHref } from "../../../../components/room/scene/objects";
 import { getPost, getPostSlugs, getPostSummaries, type PostSource } from "../../../../lib/blog";
 import { absolute, AUTHOR, jsonLd, OG_IMAGE, PERSON, SITE_URL } from "../../../../lib/site";
+import { imageDimensions } from "../../../../components/blog/media-dimensions";
 import shell from "../../room.module.css";
 import styles from "./post.module.css";
 
@@ -30,6 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       openGraph: {
         type: "article",
         siteName: "virpo",
+        locale: "en_US",
         title: post.title,
         description: post.description,
         url: `/blog/${post.slug}/`,
@@ -37,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         modifiedTime: post.updatedAt?.toISOString(),
         authors: [`${SITE_URL}/`],
         tags: post.tags,
-        images: post.socialImage ? [{ url: post.socialImage, alt: post.title }] : [OG_IMAGE],
+        images: post.socialImage ? [{ url: post.socialImage, alt: post.description, ...imageDimensions[post.socialImage] }] : [OG_IMAGE],
       },
       twitter: {
         card: "summary_large_image",

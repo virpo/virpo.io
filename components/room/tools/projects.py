@@ -24,6 +24,7 @@ HERE = Path(__file__).parent
 ART = HERE / "art" / "projects"
 OUT = HERE.parents[2] / "public" / "lab" / "room" / "projects"
 SIZE = (1080, 720)
+WIDTHS = (540, 720)  # extra widths for srcset; the cards show at about 340 CSS px
 
 SLUGS = ["levels", "youtldr", "zlta-stopa", "mood-radio", "pegboard-toy", "ai-build-week", "cmux-deck", "bratislava-slushd", "advent-of-no-code"]
 SOFT = {"pegboard-toy", "ai-build-week", "cmux-deck", "bratislava-slushd"}
@@ -43,7 +44,7 @@ def cover(im: Image.Image, size: tuple) -> Image.Image:
 def pencil(rgb: np.ndarray, soft: bool, seed: int) -> np.ndarray:
     """Graphite on paper: tone from a slightly blurred picture, outlines from its own edges, a
     little hatching in the darks, and paper grain."""
-    lum = rgb @ np.array([0.299, 0.587, 0.114])
+    lum = rgb[..., 0] * 0.299 + rgb[..., 1] * 0.587 + rgb[..., 2] * 0.114
     tone = ndimage.uniform_filter(lum, 4)
     edge = np.clip(np.hypot(ndimage.sobel(lum, 1), ndimage.sobel(lum, 0)) * 0.25, 0, 1)
     fill = (1 - tone) ** (1.7 if soft else 1.35) * (0.5 if soft else 0.66)
@@ -66,6 +67,10 @@ def main() -> None:
         rgb = np.asarray(card, dtype=np.float64) / 255
         grey = Image.fromarray((pencil(rgb, slug in SOFT, index) * 255).astype(np.uint8))
         grey.save(OUT / f"{slug}-pencil.webp", "WEBP", quality=78, method=6)
+        for width in WIDTHS:
+            size = (width, round(width * SIZE[1] / SIZE[0]))
+            card.resize(size, Image.LANCZOS).save(OUT / f"{slug}-{width}.webp", "WEBP", quality=80, method=6)
+            grey.resize(size, Image.LANCZOS).save(OUT / f"{slug}-pencil-{width}.webp", "WEBP", quality=78, method=6)
         sizes = [(OUT / f"{slug}{suffix}.webp").stat().st_size // 1024 for suffix in ("", "-pencil")]
         print(f"{slug:18} colour {sizes[0]} KB, pencil {sizes[1]} KB")
 

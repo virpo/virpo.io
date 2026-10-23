@@ -2,11 +2,12 @@ import { describe, expect, it } from "vitest";
 import { getPost, getPostSlugs, getPostSummaries } from "../../lib/content/posts";
 
 describe("blog posts", () => {
-  it("discovers three published posts in stable reverse authored order", async () => {
+  it("discovers the published posts in stable reverse authored order", async () => {
     const posts = await getPostSummaries();
 
-    expect(posts).toHaveLength(3);
+    expect(posts).toHaveLength(4);
     expect(posts.map((post) => post.slug)).toEqual([
+      "how-this-room-was-made",
       "weird-use-of-ai-3",
       "weird-use-of-ai-1",
       "a-different-kind-of-hackathon",

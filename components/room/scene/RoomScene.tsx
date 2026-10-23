@@ -103,7 +103,7 @@ function Layer({ id, src, box, className, children, style }: { id: string; src?:
     <>
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt="" draggable={false} decoding="async" />
+        <img src={src} alt="" draggable={false} decoding="async" fetchPriority="low" />
       ) : null}
       {children}
     </>
@@ -114,7 +114,7 @@ function Layer({ id, src, box, className, children, style }: { id: string; src?:
       {cut && src ? (
         <div className={styles.ghost} style={boxStyle(box)} aria-hidden="true">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={src} alt="" draggable={false} decoding="async" />
+          <img src={src} alt="" draggable={false} decoding="async" fetchPriority="low" />
         </div>
       ) : null}
       <div className={`${styles.obj} ${className ?? ""}`} data-obj={id} style={{ ...boxStyle(box), ...style }}>
@@ -261,7 +261,7 @@ export function RoomScene({
           className={styles.plate}
           src={`${SRC}/plate.webp`}
           srcSet={`${SRC}/plate-800.webp 800w, ${SRC}/plate.webp 1365w`}
-          sizes={frame ? "300px" : "(max-width: 760px) 92vw, 560px"}
+          sizes={frame ? "300px" : "(max-width: 619px) 78vw, (max-width: 899px) 70vw, 640px"}
           width={PLATE_W}
           height={PLATE_H}
           alt=""
@@ -281,7 +281,7 @@ export function RoomScene({
                 <div className={styles.glass} style={{ ...relBox([GX0, GY0, GX1 - GX0, GY1 - GY0], WINDOW_BOX), maskImage: `url(${SRC}/glass-mask.png)`, WebkitMaskImage: `url(${SRC}/glass-mask.png)` }}>
                   <div className={styles.outside} style={{ width: pct(VIEW.w, GX1 - GX0), height: pct(VIEW.h, GY1 - GY0), top: pct(-VIEW_SRC_Y * VIEW_SCALE, GY1 - GY0), left: pct(-(VIEW.w - (GX1 - GX0)) / 2, GX1 - GX0) }}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={`${SRC}/view.webp`} alt="" draggable={false} decoding="async" />
+                    <img src={`${SRC}/view.webp`} alt="" draggable={false} decoding="async" fetchPriority="low" />
                   </div>
                   {train ? (
                     <div
@@ -302,6 +302,7 @@ export function RoomScene({
                         src={`${SRC}/train-${train.kind}.webp`}
                         alt=""
                         draggable={false}
+                        fetchPriority="low"
                         style={{ width: pct(train.kind === "shinkansen" ? (60 * LAYERS.trains.shinkansen[0]) / LAYERS.trains.shinkansen[1] : (54 * LAYERS.trains.local[0]) / LAYERS.trains.local[1], GX1 - GX0) }}
                       />
                     </div>
@@ -309,7 +310,7 @@ export function RoomScene({
                   <i className={styles.glassShine} />
                 </div>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className={styles.frame} src={`${SRC}/obj-window.webp`} alt="" draggable={false} decoding="async" />
+                <img className={styles.frame} src={`${SRC}/obj-window.webp`} alt="" draggable={false} decoding="async" fetchPriority="low" />
               </Layer>
             );
           }
@@ -341,6 +342,7 @@ export function RoomScene({
                 alt=""
                 draggable={false}
                 decoding="async"
+                fetchPriority="low"
                 loading={name === "typing" || name === "reading" ? undefined : "lazy"}
                 style={relBox(box, peterBox)}
               />
