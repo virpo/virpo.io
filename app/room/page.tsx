@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Device } from "../../components/room/Device";
 import { ProjectIcon } from "../../components/room/icons/ProjectIcon";
-import { V2SocialIcon } from "../../components/v2/V2SocialIcon";
-import { roomDate, RoomFooter } from "../../components/room/RoomChrome";
+import { roomDate, RoomFooter, RoomSocial } from "../../components/room/RoomChrome";
 import { figLabel, objectForProject, roomPostHref } from "../../components/room/scene/objects";
 import { getPostSummaries } from "../../lib/blog";
 import { labAbout, labProjects } from "../../lib/lab/catalog";
@@ -15,13 +14,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   robots: { index: false, follow: true },
 };
-
-// under the name: X (where the tips go) with words, the rest as quiet icons
-const SOCIAL = [
-  { label: "GitHub", icon: "github", href: "https://github.com/virpo" },
-  { label: "Instagram", icon: "instagram", href: "https://www.instagram.com/virpo.san/" },
-  { label: "RSS feed", icon: "rss", href: "/rss.xml" },
-] as const;
 
 export default function RoomPage() {
   const posts = getPostSummaries();
@@ -58,21 +50,7 @@ export default function RoomPage() {
           <div className={styles.textCol}>
             <div className={styles.intro}>
               <h1 className={styles.name}>Peter Hraska</h1>
-              <ul className={styles.social} aria-label="Elsewhere">
-                <li>
-                  <a className={styles.socialX} href="https://x.com/virpo" target="_blank" rel="noreferrer" aria-label="Tips and fun on X">
-                    <V2SocialIcon name="x" />
-                    <span aria-hidden="true">Tips &amp; fun</span>
-                  </a>
-                </li>
-                {SOCIAL.map((link) => (
-                  <li key={link.icon}>
-                    <a href={link.href} aria-label={link.label} title={link.label} {...(link.href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}>
-                      <V2SocialIcon name={link.icon} />
-                    </a>
-                  </li>
-                ))}
-              </ul>
+              <RoomSocial />
             </div>
             <ol className={styles.posts} aria-label="Newest writing">
               {newest.map((post, index) => (
