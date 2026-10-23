@@ -1,0 +1,10 @@
+# levels, by Peter Hraska (@virpo)
+
+> The 100 tricks worth your time with coding agents, from pasting screenshots to writing your own agent, collected from 94 engineers worth watching. Paste one prompt: your agent checks which you use, on your own machine, and suggests what to try next.
+
+Your level is how many of the 100 you do; the order sets your tier. The check runs on the person's own machine, reads names and counts only, and the result stays in the URL fragment unless they choose to publish it.
+
+- [The 100 levels, in Markdown](https://virpo.io/levels/levels.md): every level, how it's checked, and who does it with a source
+- [The agent brief](https://virpo.io/levels/check.md): what a coding agent does when someone pastes the prompt
+- [The probe](https://virpo.io/levels/probe.py): the read-only script the brief asks agents to read, then run
+- [The data](https://virpo.io/levels/levels.json): levels, tiers and fossils as JSON

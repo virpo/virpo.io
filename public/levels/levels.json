@@ -1,0 +1,1670 @@
+{
+ "level0": {
+  "title": "Copy code out of a chat tab",
+  "line": "Everyone starts here. It doesn't count, and nobody's judging."
+ },
+ "tiers": [
+  {
+   "n": 1,
+   "era": "Stone Age",
+   "name": "First contact",
+   "line": "It edits, it runs things, it answers. You stop copy-pasting."
+  },
+  {
+   "n": 2,
+   "era": "Fire",
+   "name": "Context",
+   "line": "It knows what you know, because you told it."
+  },
+  {
+   "n": 3,
+   "era": "Wheel",
+   "name": "Checks",
+   "line": "It proves the thing works before it says done, and you stop babysitting it."
+  },
+  {
+   "n": 4,
+   "era": "Bronze Age",
+   "name": "Tools",
+   "line": "It reaches past the repo: your CLIs, your computer, your inbox."
+  },
+  {
+   "n": 5,
+   "era": "Iron Age",
+   "name": "Your setup",
+   "line": "Rules, skills, hooks and memory that you wrote yourself."
+  },
+  {
+   "n": 6,
+   "era": "Steam",
+   "name": "Second opinions",
+   "line": "Another agent reads it before you do."
+  },
+  {
+   "n": 7,
+   "era": "Electric",
+   "name": "Off the desk",
+   "line": "It works while you sleep, sit on the couch, or close the laptop."
+  },
+  {
+   "n": 8,
+   "era": "Silicon",
+   "name": "Orchestra",
+   "line": "Many agents, one plan, and a setup that gets sharper with every run."
+  },
+  {
+   "n": 9,
+   "era": "Orbit",
+   "name": "Beyond the screen",
+   "line": "Your agents reach the team, the release, the pager, and your oldest code."
+  },
+  {
+   "n": 10,
+   "era": "Stone, again",
+   "name": "Full circle",
+   "line": "Fewer, sharper tools, and you understand them all the way down, to the metal."
+  }
+ ],
+ "levels": [
+  {
+   "n": 1,
+   "id": "install-an-agent",
+   "title": "Install a coding agent",
+   "line": "An agent reads your files and runs commands. A chat tab only sees what you paste into it.",
+   "check": "Any agent config folder exists: ~/.claude, ~/.codex, ~/.cursor, ~/.config/opencode, ~/.gemini, ~/.factory, ~/.pi. You're reading this from inside one, so: yes.",
+   "how": "file",
+   "from": {
+    "h": "mitchellh",
+    "name": "Mitchell Hashimoto",
+    "q": "To find value, you must use an agent.",
+    "url": "https://mitchellh.com/writing/my-ai-adoption-journey",
+    "x": "mitchellh"
+   }
+  },
+  {
+   "n": 2,
+   "id": "let-it-edit",
+   "title": "Let it edit your files",
+   "line": "No more copy-pasting between chat and editor. It writes the change, you read the diff.",
+   "check": "Its file-edit tool shows up in session logs (Edit, Write, apply_patch).",
+   "how": "history"
+  },
+  {
+   "n": 3,
+   "id": "just-talk",
+   "title": "Just talk to it",
+   "line": "No magic words, no templates. Say what you want and why, the way you'd brief a smart colleague.",
+   "check": "10+ prompts that give the reason, not just the task (\"because\", \"so that\", \"the goal is\"), or 20+ prompts over 40 words.",
+   "how": "history",
+   "learn": "Interview me for two minutes about something I'm stuck on this week, the way a colleague would over coffee. Then put the one-liner I'd normally type next to what I just told you, and show me what the longer version gets me that the short one wouldn't.",
+   "from": {
+    "h": "steipete",
+    "name": "Peter Steinberger",
+    "q": "Just talk to it. Play with it. Develop intuition.",
+    "url": "https://steipete.me/posts/just-talk-to-it",
+    "x": "steipete"
+   }
+  },
+  {
+   "n": 4,
+   "id": "ask-before-change",
+   "title": "Ask it how the code works",
+   "line": "\"How does auth work here?\" The fastest way into any codebase, including yours from last year.",
+   "check": "5+ prompts that are questions about the code (how, why, where, what does).",
+   "how": "history",
+   "from": {
+    "h": null,
+    "name": "Anthropic, Claude Code best practices",
+    "q": "Ask it the questions you'd ask a senior engineer about the codebase.",
+    "url": "https://code.claude.com/docs/en/best-practices",
+    "paraphrase": true
+   }
+  },
+  {
+   "n": 5,
+   "id": "screenshot",
+   "title": "Send it a screenshot",
+   "line": "A picture of the broken layout beats a paragraph. \"Fix this\" plus an image is a whole prompt.",
+   "check": "3+ prompts with an image attached ([Image #…]).",
+   "how": "history",
+   "learn": "Ask me to grab a screenshot of anything on my screen that annoys me (on a Mac, ⌘⇧⌃4 copies it) and paste it here. Tell me what you see and what you'd fix, and fix it if it's something you can reach from here.",
+   "try": [
+    {
+     "name": "⌘⇧⌃4 on a Mac",
+     "url": "https://support.apple.com/en-us/102646",
+     "note": "copies it, then paste"
+    }
+   ],
+   "from": {
+    "h": "steipete",
+    "name": "Peter Steinberger",
+    "q": "I’d say at least 50% of my prompts contain a screenshot.",
+    "url": "https://steipete.me/posts/just-talk-to-it",
+    "x": "steipete"
+   }
+  },
+  {
+   "n": 6,
+   "id": "paste-the-error",
+   "title": "Paste the whole error",
+   "line": "The full stack trace or log, not your summary of it. It fixes what actually broke.",
+   "check": "5+ prompts with pasted blocks or raw logs ([Pasted text …], stack traces).",
+   "how": "history"
+  },
+  {
+   "n": 7,
+   "id": "voice",
+   "title": "Talk instead of type",
+   "line": "Dictate with OpenWhispr, Wispr Flow or Claude Code's /voice. You'll say three times what you'd ever bother typing.",
+   "check": "A dictation app is installed (Wispr Flow, superwhisper, MacWhisper, VoiceInk, OpenWhispr, Aqua, Spokenly, Handy), /voice is on in Claude Code, or prompts read like speech (um, uh, long run-ons).",
+   "how": "file",
+   "learn": "Check which dictation tools I already have. If none, help me set one up in five minutes (OpenWhispr is free; Wispr Flow and superwhisper are paid; Claude Code has /voice built in). Then I'll dictate my next request to you as the test, and you tell me how many more words I said than my typed prompts usually have.",
+   "try": [
+    {
+     "name": "OpenWhispr",
+     "url": "https://openwhispr.com",
+     "note": "free, open source"
+    },
+    {
+     "name": "Wispr Flow",
+     "url": "https://wisprflow.ai"
+    },
+    {
+     "name": "superwhisper",
+     "url": "https://superwhisper.com"
+    },
+    {
+     "name": "/voice",
+     "url": "https://code.claude.com/docs/en/voice-dictation",
+     "note": "built into Claude Code"
+    }
+   ],
+   "from": {
+    "h": "karpathy",
+    "name": "Andrej Karpathy",
+    "q": "Also I just talk to Composer with SuperWhisper so I barely even touch the keyboard.",
+    "url": "https://x.com/karpathy/status/1886192184808149383",
+    "x": "karpathy"
+   }
+  },
+  {
+   "n": 8,
+   "id": "interrupt",
+   "title": "Interrupt it early",
+   "line": "Press Esc the moment it heads the wrong way. Redirecting beats waiting for the wrong answer.",
+   "check": "5+ interrupted turns in session logs (\"[Request interrupted by user]\").",
+   "how": "history",
+   "from": {
+    "h": "steipete",
+    "name": "Peter Steinberger",
+    "q": "Don't be afraid of stopping models mid-way.",
+    "url": "https://steipete.me/posts/just-talk-to-it",
+    "x": "steipete"
+   }
+  },
+  {
+   "n": 9,
+   "id": "fresh-session",
+   "title": "Start fresh when it's stuck",
+   "line": "/clear and ask again. A polluted context doesn't recover by arguing with it.",
+   "check": "/clear, /new or a fresh session after a failed attempt, 3+ times.",
+   "how": "history",
+   "from": {
+    "h": null,
+    "name": "Anthropic, Claude Code best practices",
+    "q": "After two failed corrections, /clear and write a better first prompt.",
+    "url": "https://code.claude.com/docs/en/best-practices",
+    "paraphrase": true
+   }
+  },
+  {
+   "n": 10,
+   "id": "not-code",
+   "title": "Use it for chores, not just code",
+   "line": "Rename 400 photos, sort the receipts for taxes, find the odd charges in a bank export. It's a computer that does what you ask.",
+   "check": "1+ session in a folder that isn't a git repo (Downloads, Documents, home).",
+   "how": "history",
+   "learn": "Look at my Downloads folder (names, sizes and dates only) and tell me the three most satisfying cleanups you could do there, with how many files each would touch. Don't move or delete anything until I pick one.",
+   "from": {
+    "h": "simonw",
+    "name": "Simon Willison",
+    "q": "I’ve been saying for a while now that Claude Code is a “general agent” disguised as a developer tool.",
+    "url": "https://simonwillison.net/2026/Jan/12/claude-cowork/",
+    "x": "simonw"
+   }
+  },
+  {
+   "n": 11,
+   "id": "rules-file",
+   "title": "Write an AGENTS.md",
+   "line": "Or CLAUDE.md: how to build, test and run this repo, read at the start of every session. It stops asking, and stops guessing.",
+   "check": "An AGENTS.md, CLAUDE.md, GEMINI.md or .cursor/rules in any repo you work in.",
+   "how": "file",
+   "from": {
+    "h": "leerob",
+    "name": "Lee Robinson",
+    "q": "I started with zero custom rules. I only added a rules file later after the model got a few things wrong",
+    "url": "https://leerob.com/pixo",
+    "x": "leerob"
+   }
+  },
+  {
+   "n": 12,
+   "id": "global-rules",
+   "title": "Tell it who you are",
+   "line": "One global file, read in every project: what you do, your tools, your taste, your pet peeves.",
+   "check": "~/.claude/CLAUDE.md or ~/.codex/AGENTS.md exists and isn't empty.",
+   "how": "file",
+   "learn": "Interview me for five minutes: what I do, the tools I like, the answers that drive me nuts. Then write it as my global rules file (~/.claude/CLAUDE.md or ~/.codex/AGENTS.md, whichever I use), under 30 lines, and show it to me before you save it."
+  },
+  {
+   "n": 13,
+   "id": "point-at-files",
+   "title": "Point at the right file",
+   "line": "@-mention it, or say \"do it like UserCard.tsx\". It stops guessing where things live and how you like them.",
+   "check": "10+ prompts with @file mentions or file paths, or prompts that name a file to copy (\"like X\", \"same as Y\").",
+   "how": "history"
+  },
+  {
+   "n": 14,
+   "id": "hand-it-docs",
+   "title": "Hand it the docs",
+   "line": "Paste the link to the API reference, the issue, the RFC. It reads instead of guessing from memory.",
+   "check": "10+ prompts with URLs, or web fetches in session logs.",
+   "how": "history"
+  },
+  {
+   "n": 15,
+   "id": "plan-first",
+   "title": "Ask for a plan first",
+   "line": "Plan mode, or \"don't write code yet\". Fixing a plan is ten times cheaper than fixing the diff.",
+   "check": "Plan mode used, or 5+ prompts asking for a plan before code.",
+   "how": "history",
+   "from": {
+    "h": "leerob",
+    "name": "Lee Robinson",
+    "q": "Plan mode in Cursor is one of the most underrated features.",
+    "url": "https://leerob.com/pixo",
+    "x": "leerob"
+   },
+   "vs": {
+    "h": "steipete",
+    "name": "Peter Steinberger",
+    "q": "I can just write “let’s discuss” or “give me options” and it will diligently wait until I approve it. No harness charade needed. Just talk to it.",
+    "url": "https://steipete.me/posts/just-talk-to-it",
+    "x": "steipete"
+   }
+  },
+  {
+   "n": 16,
+   "id": "three-versions",
+   "title": "Ask for three versions",
+   "line": "Of the UI, the name, the approach. Variants cost almost nothing now, so pick the best one.",
+   "check": "5+ prompts asking for variants, options or versions.",
+   "how": "history"
+  },
+  {
+   "n": 17,
+   "id": "interview-me",
+   "title": "Let it interview you",
+   "line": "\"Ask me questions until you understand.\" It builds what you meant, not what you said.",
+   "check": "Its ask-the-user tool used, a grill-me style skill installed, or prompts like \"ask me\" / \"interview me\".",
+   "how": "history",
+   "from": {
+    "h": "mattpocock",
+    "name": "Matt Pocock",
+    "q": "grill-me",
+    "url": "https://github.com/mattpocock/skills/blob/7a030a8b0dcaa601bb0dda9aaf174affb3d61145/README.md#L103",
+    "skill": true,
+    "x": "mattpocockuk"
+   }
+  },
+  {
+   "n": 18,
+   "id": "help-me-decide",
+   "title": "Ask it to help you decide",
+   "line": "Lay out the options and what you care about, then ask what it would pick and what you're missing. Ask it to push back, or it will just agree.",
+   "check": "5+ prompts asking for a decision or a critique (\"should I\", \"help me decide\", \"what am I missing\", \"push back\", \"poke holes\", \"devil's advocate\").",
+   "how": "history",
+   "learn": "Ask me which decision I'm sitting on right now. Lay out the options, then argue for the one I'm leaning against as well as you can. Finish with what you'd pick, and what would change your mind.",
+   "from": {
+    "h": null,
+    "name": "Ethan Mollick",
+    "q": "AI can provide good strategic or entrepreneurial advice if you are capable of executing on it.",
+    "url": "https://www.oneusefulthing.org/p/getting-started-with-ai-good-enough",
+    "x": "emollick"
+   }
+  },
+  {
+   "n": 19,
+   "id": "spec-first",
+   "title": "Write the spec first",
+   "line": "Two paragraphs in, a SPEC.md out, and a fresh session builds from the spec.",
+   "check": "A SPEC.md, PLAN.md or plans/ folder in a repo you work in.",
+   "how": "file",
+   "from": {
+    "h": "indragiek",
+    "name": "Indragie Karunaratne",
+    "q": "if you want more than a prototype, you need a real spec.",
+    "url": "https://www.indragie.com/blog/i-shipped-a-macos-app-built-entirely-by-claude-code",
+    "x": "indragie"
+   }
+  },
+  {
+   "n": 20,
+   "id": "rule-after-mistake",
+   "title": "Update AGENTS.md after every mistake",
+   "line": "When it does something dumb, add one line to the rules file. It won't make that mistake twice.",
+   "check": "A rules file changed 3+ times, agent memory notes saved, or prompts like \"add this to AGENTS.md\".",
+   "how": "history",
+   "from": {
+    "h": "bcherny",
+    "name": "Boris Cherny",
+    "q": "Anytime we see Claude do something incorrectly we add it to the CLAUDE.md",
+    "url": "https://x.com/bcherny/status/2007179840848597422",
+    "x": "bcherny"
+   }
+  },
+  {
+   "n": 21,
+   "id": "done-looks-like",
+   "title": "Say what done looks like",
+   "line": "What's wrong, where, and how you'll know it's fixed. Then it knows when to stop.",
+   "check": "Prompts that state a finish line (\"done when\", \"until\", \"should show\").",
+   "how": "history",
+   "from": {
+    "h": null,
+    "name": "OpenAI, Codex best practices",
+    "q": "Goal, Context, Constraints, Done when: their prompt template.",
+    "url": "https://learn.chatgpt.com/guides/best-practices",
+    "paraphrase": true
+   }
+  },
+  {
+   "n": 22,
+   "id": "way-to-verify",
+   "title": "Give it a way to check its work",
+   "line": "Tests, a build, a screenshot to compare against, fast enough to run after every edit. It catches its own mistakes before you do.",
+   "check": "10+ prompts that ask it to verify, test, or make sure it works.",
+   "how": "history",
+   "from": {
+    "h": "bcherny",
+    "name": "Boris Cherny",
+    "q": "give Claude a way to verify its work… 2-3x the quality",
+    "url": "https://x.com/bcherny/status/2044847858634064115",
+    "x": "bcherny"
+   }
+  },
+  {
+   "n": 23,
+   "id": "proof",
+   "title": "Ask for proof, not \"done!\"",
+   "line": "The command it ran and the real output. A screenshot. A recording of it working.",
+   "check": "5+ prompts asking for proof, screenshots or recordings of the result.",
+   "how": "history",
+   "from": {
+    "h": "mrnugget",
+    "name": "Thorsten Ball",
+    "q": "give me irrefutable proof that this works. Dazzle me. Give me a video as proof, or something.",
+    "url": "https://registerspill.thorstenball.com/p/joy-and-curiosity-99",
+    "x": "thorstenball"
+   }
+  },
+  {
+   "n": 24,
+   "id": "browser",
+   "title": "Let it use a browser",
+   "line": "Playwright, agent-browser or Chrome. It clicks through what it built instead of assuming it works.",
+   "check": "A browser MCP or skill installed, or 10+ browser-automation calls.",
+   "how": "file",
+   "try": [
+    {
+     "name": "agent-browser",
+     "url": "https://github.com/vercel-labs/agent-browser"
+    },
+    {
+     "name": "Playwright MCP",
+     "url": "https://github.com/microsoft/playwright-mcp"
+    },
+    {
+     "name": "Claude in Chrome",
+     "url": "https://claude.com/chrome"
+    }
+   ]
+  },
+  {
+   "n": 25,
+   "id": "failing-test-first",
+   "title": "Write the failing test first",
+   "line": "Reproduce the bug in a test, watch it fail, then fix it. Proof that the fix is real.",
+   "check": "Prompts about failing tests, TDD or red/green, or a TDD skill installed.",
+   "how": "history",
+   "from": {
+    "h": "kepano",
+    "name": "Steph Ango",
+    "q": "Verify the same fixture fails before the fix and passes afterward; do not change expectations to match buggy behavior.",
+    "url": "https://github.com/kepano/defuddle/blob/49d14ecc4089696565c2479b2f57db72be199adc/AGENTS.md#L17",
+    "x": "kepano"
+   },
+   "vs": {
+    "h": "birgitta410",
+    "name": "Birgitta Böckeler",
+    "q": "I personally have stopped telling my coding agents to write tests first, let alone do TDD (which I never did, to be honest), until I see evals or other strong arguments that convince me otherwise.",
+    "url": "https://martinfowler.com/articles/exploring-gen-ai/tdd-in-the-agent-loop.html",
+    "x": "birgitta410"
+   }
+  },
+  {
+   "n": 26,
+   "id": "commit-often",
+   "title": "Commit small and often",
+   "line": "A clean git tree is your undo button. Commit before you let it loose.",
+   "check": "It ran git commit 5+ times in your sessions, or you use checkpoints.",
+   "how": "history"
+  },
+  {
+   "n": 27,
+   "id": "rewind",
+   "title": "Rewind instead of re-explaining",
+   "line": "/rewind or a checkpoint takes you back to before it went wrong. Try risky things freely.",
+   "check": "/rewind or a checkpoint restore used by you at least once (typed, not just mentioned).",
+   "how": "history"
+  },
+  {
+   "n": 28,
+   "id": "allowlist",
+   "title": "Pre-approve the safe commands",
+   "line": "An allowlist for tests, lint and git status. Fewer prompts, so you stop clicking yes to everything.",
+   "check": "Permission allow rules, Codex rules, or auto mode configured.",
+   "how": "file"
+  },
+  {
+   "n": 29,
+   "id": "secrets",
+   "title": "Keep secrets out of its reach",
+   "line": "Deny it .env and ~/.ssh, keep prod keys out of its shell. It can't leak what it never saw.",
+   "check": "Deny rules that cover .env, keys or credential files, or a secrets manager (1Password CLI, Doppler, Infisical) that agents call instead of reading raw keys.",
+   "how": "file",
+   "learn": "Check where secrets could reach you on this machine (.env files in my projects, keys in my shell profile, SSH keys), names only, never printing a value. Propose deny rules for my agent settings and show me the diff. Once I approve, prove they work: try to read a .env file and get blocked.",
+   "try": [
+    {
+     "name": "1Password CLI",
+     "url": "https://developer.1password.com/docs/cli/",
+     "note": "op run"
+    },
+    {
+     "name": "Doppler",
+     "url": "https://www.doppler.com"
+    }
+   ],
+   "from": {
+    "h": "ry",
+    "name": "Ryan Dahl",
+    "q": "A compromised agent process can’t leak keys it never held in the first place.",
+    "url": "https://deno.com/blog/clawpatrol",
+    "x": "rough__sea"
+   }
+  },
+  {
+   "n": 30,
+   "id": "side-question",
+   "title": "Keep typing while it works",
+   "line": "Queue the follow-up, ask a side question with /btw. Nobody waits on anybody.",
+   "check": "20+ queued prompts in your agent's stats or logs, or /btw used.",
+   "how": "history"
+  },
+  {
+   "n": 31,
+   "id": "your-clis",
+   "title": "Let it use your CLIs",
+   "line": "gh, aws, stripe, supabase. \"Run foo --help\" and it learns the rest on its own.",
+   "check": "It ran 3+ different third-party CLIs (gh, aws, gcloud, vercel, netlify, stripe, supabase, wrangler, fly…).",
+   "how": "history"
+  },
+  {
+   "n": 32,
+   "id": "fix-your-computer",
+   "title": "Let it fix your computer",
+   "line": "Disk full, Python broken, the printer gone again. It finds the cause and explains each fix before it runs it.",
+   "check": "Sessions about the machine itself: disk space, installs, PATH, a slow Mac (du, df, brew doctor, prompts like \"why is my mac slow\"), 3+.",
+   "how": "history",
+   "learn": "Give my computer a checkup: what's eating the disk, anything obviously broken (brew doctor, a stale Python, a cluttered PATH). One line per finding, with what fixing it would do. Don't change anything until I say which.",
+   "from": {
+    "h": null,
+    "name": "Lenny Rachitsky",
+    "q": "How can I clear some storage on my computer?",
+    "url": "https://www.lennysnewsletter.com/p/everyone-should-be-using-claude-code",
+    "x": "lennysan"
+   }
+  },
+  {
+   "n": 33,
+   "id": "tiny-tool",
+   "title": "Build a tiny tool just for you",
+   "line": "A one-page app that converts, counts or tracks the one thing you care about. Software for an audience of one.",
+   "check": "Small single-purpose tools started in agent sessions: a single HTML file, a one-off script, a repo with a handful of commits.",
+   "how": "history",
+   "learn": "Ask me what small annoyance I'd fix if software were free: a converter, a tracker, a calculator for one odd thing. Build it as a single HTML file I can open by double-clicking, then open it for me.",
+   "try": [
+    {
+     "name": "Simon's 150+ tools",
+     "url": "https://tools.simonwillison.net",
+     "note": "for ideas"
+    }
+   ],
+   "from": {
+    "h": "simonw",
+    "name": "Simon Willison",
+    "q": "I have built over 150 of these in the past two years, almost all of them written by LLMs.",
+    "url": "https://simonwillison.net/2025/Dec/10/html-tools/",
+    "x": "simonw"
+   }
+  },
+  {
+   "n": 34,
+   "id": "install-skill",
+   "title": "Install a skill",
+   "line": "Someone else's packaged know-how, loaded only when the task needs it.",
+   "check": "1+ skill folder in ~/.claude/skills, ~/.codex/skills, ~/.agents/skills or a repo's .claude/skills.",
+   "how": "file",
+   "try": [
+    {
+     "name": "anthropics/skills",
+     "url": "https://github.com/anthropics/skills"
+    },
+    {
+     "name": "mattpocock/skills",
+     "url": "https://github.com/mattpocock/skills"
+    }
+   ]
+  },
+  {
+   "n": 35,
+   "id": "mcp",
+   "title": "Connect a tool server (MCP)",
+   "line": "For the things without a good CLI: Figma, Linear, your database.",
+   "check": "1+ MCP server configured.",
+   "how": "file",
+   "vs": {
+    "h": "steipete",
+    "name": "Peter Steinberger",
+    "q": "Prefers CLIs: the GitHub MCP alone ate 23k tokens of context.",
+    "url": "https://steipete.me/posts/just-talk-to-it",
+    "paraphrase": true,
+    "x": "steipete"
+   }
+  },
+  {
+   "n": 36,
+   "id": "opens-the-pr",
+   "title": "Let it open the pull request",
+   "line": "Branch, commit, push, description. You review instead of typing.",
+   "check": "It ran gh pr create (or similar) 3+ times.",
+   "how": "history"
+  },
+  {
+   "n": 37,
+   "id": "deploys",
+   "title": "Let it deploy",
+   "line": "Vercel, Netlify, Fly, TestFlight. You decide who presses the last button.",
+   "check": "It ran a deploy CLI 3+ times.",
+   "how": "history"
+  },
+  {
+   "n": 38,
+   "id": "effort-dial",
+   "title": "Pick the model and effort per task",
+   "line": "Low effort for chores, high for the gnarly bug. Fast and cheap where it doesn't matter.",
+   "check": "/effort or /model switched 3+ times, or reasoning effort set in config.",
+   "how": "history"
+  },
+  {
+   "n": 39,
+   "id": "know-the-burn",
+   "title": "Watch the context and the bill",
+   "line": "A status line with context, model and cost, plus /usage. No surprise compactions, no surprise invoice.",
+   "check": "A statusLine configured, a usage tracker installed (ccusage, CodexBar), or /context, /usage, /stats or /cost used 3+ times.",
+   "how": "file",
+   "try": [
+    {
+     "name": "ccusage",
+     "url": "https://github.com/ryoppippi/ccusage"
+    },
+    {
+     "name": "CodexBar",
+     "url": "https://github.com/steipete/CodexBar"
+    }
+   ]
+  },
+  {
+   "n": 40,
+   "id": "your-inbox",
+   "title": "Let it work through your inbox",
+   "line": "Gmail, Slack, calendar. It drafts the replies, you edit and send. Or ask: \"What did I promise people this week?\"",
+   "check": "A mail, chat or calendar connector or MCP configured (names only).",
+   "how": "file",
+   "learn": "If you can reach my email, find the five threads that have waited on me longest and draft replies in my tone, as drafts I edit and send. If you can't reach it yet, show me the quickest way to connect it first.",
+   "from": {
+    "h": "harperreed",
+    "name": "Harper Reed",
+    "q": "I go to my email client, and check the drafts. Edit and send most of them cuz they are great.",
+    "url": "https://harper.blog/2025/12/03/claude-code-email-productivity-mcp-agents/",
+    "x": "harper"
+   }
+  },
+  {
+   "n": 41,
+   "id": "write-a-skill",
+   "title": "Write your own skill",
+   "line": "The prompt you type every week, or the thing you keep explaining, written once as a SKILL.md. Call it as /ship, or let it load when it's needed.",
+   "check": "A skill or custom command you wrote yourself (no upstream source or lockfile entry, or it lives in your own repo); .claude/commands counts.",
+   "how": "file"
+  },
+  {
+   "n": 42,
+   "id": "subagents",
+   "title": "Use subagents",
+   "line": "Helpers search and read in parallel, so your main session stays focused and fast.",
+   "check": "10+ subagent runs in session logs.",
+   "how": "history",
+   "from": {
+    "h": "embirico",
+    "name": "Alexander Embiricos",
+    "q": "Then, when I need anything new, I say \"using a subagent in parallel, do X\"",
+    "url": "https://x.com/embirico/status/2046033614106931414",
+    "x": "embirico"
+   }
+  },
+  {
+   "n": 43,
+   "id": "format-hook",
+   "title": "Add a hook that formats every edit",
+   "line": "A formatter or linter after each write. Guaranteed, unlike \"please run prettier\" in a rules file.",
+   "check": "A post-edit hook that runs a formatter or linter.",
+   "how": "file",
+   "from": {
+    "h": "bcherny",
+    "name": "Boris Cherny",
+    "q": "We use a PostToolUse hook to format Claude's code.",
+    "url": "https://x.com/bcherny/status/2007179852047335529",
+    "x": "bcherny"
+   }
+  },
+  {
+   "n": 44,
+   "id": "guard-hook",
+   "title": "Add a hook that blocks risky commands",
+   "line": "rm -rf, force pushes, pip when you use uv. Rules are advice; hooks are enforced.",
+   "check": "A pre-tool hook that blocks or guards commands.",
+   "how": "file",
+   "from": {
+    "h": "mitsuhiko",
+    "name": "Armin Ronacher",
+    "q": "Replaces the bash tool with a `uv`-aware version that injects Python command shims and blocks common non-`uv` workflows.",
+    "url": "https://github.com/mitsuhiko/agent-stuff/blob/0865c849befd2021490679f96a8dee58c84ac857/README.md#L63",
+    "x": "mitsuhiko"
+   }
+  },
+  {
+   "n": 45,
+   "id": "memory",
+   "title": "Let it keep notes and hand off",
+   "line": "notes.md, memory, a PROGRESS.md written before the context fills. The next session picks up in one read.",
+   "check": "5+ memory notes, Codex memories on, notes, PROGRESS or HANDOFF files in your repos, or a handoff skill.",
+   "how": "file",
+   "from": {
+    "h": "simonw",
+    "name": "Simon Willison",
+    "q": "Create a notes.md file in that folder and append notes to it as you work, tracking what you tried and anything you learned along the way.",
+    "url": "https://github.com/simonw/research/blob/ba0cb97b42da153c13c465fb617f5c45f1f03b04/AGENTS.md#L3",
+    "x": "simonw"
+   }
+  },
+  {
+   "n": 46,
+   "id": "one-rules-file",
+   "title": "Symlink CLAUDE.md to AGENTS.md",
+   "line": "One set of rules, whichever agent you open.",
+   "check": "A CLAUDE.md that is a symlink to, or imports, an AGENTS.md (or the other way round).",
+   "how": "file",
+   "from": {
+    "h": "steipete",
+    "name": "Peter Steinberger",
+    "q": "~/.codex/AGENTS.md -> ~/Projects/agent-scripts/AGENTS.MD\n~/.claude/CLAUDE.md -> ~/Projects/agent-scripts/AGENTS.MD",
+    "url": "https://github.com/steipete/agent-scripts/blob/79150cfac4a6ba4df13cf30176bf2db85170ae6c/README.md#L65-L67",
+    "x": "steipete"
+   }
+  },
+  {
+   "n": 47,
+   "id": "small-rules",
+   "title": "Keep AGENTS.md short",
+   "line": "A map to your docs, not an encyclopedia. Every line costs context in every session.",
+   "check": "The rules file of the repo you work in most is under 150 lines and points to other docs for the rest.",
+   "how": "file",
+   "from": {
+    "h": "kentcdodds",
+    "name": "Kent C. Dodds",
+    "q": "This file is included in full context for every agent conversation. Keep it tiny and stable.",
+    "url": "https://github.com/kentcdodds/kentcdodds.com/blob/b61c7ff4200c4aa0e35326d1a7baeb8a51d86673/AGENTS.md#L3-L4",
+    "x": "kentcdodds"
+   }
+  },
+  {
+   "n": 48,
+   "id": "ping-when-done",
+   "title": "Get pinged when it's done",
+   "line": "A hook, a sound, a push to your phone. Then go do something else.",
+   "check": "A hook or script that notifies you when it's done (sound, push, notification), or a rule telling it to.",
+   "how": "file",
+   "learn": "Set up a notification for when you finish: a sound on this computer, or a push to my phone with ntfy if I want that. Then do a ten-second task so I hear it work.",
+   "try": [
+    {
+     "name": "ntfy",
+     "url": "https://ntfy.sh",
+     "note": "push to your phone, open source"
+    }
+   ],
+   "from": {
+    "h": "chrismccord",
+    "name": "Chris McCord",
+    "q": "when it's done work it runs a `notify msg` bash function I have",
+    "url": "https://x.com/chris_mccord/status/2016576023400181773",
+    "x": "chris_mccord"
+   },
+   "vs": {
+    "h": "mitchellh",
+    "name": "Mitchell Hashimoto",
+    "q": "Turns agent notifications off, so he decides when to switch context.",
+    "url": "https://mitchellh.com/writing/my-ai-adoption-journey",
+    "paraphrase": true,
+    "x": "mitchellh"
+   }
+  },
+  {
+   "n": 49,
+   "id": "two-at-once",
+   "title": "Run two agents at once",
+   "line": "One on the bug, one on the feature. Twice the work while you review.",
+   "check": "Two sessions active in the same 10 minutes, on 5+ occasions (from prompt timestamps).",
+   "how": "history",
+   "try": [
+    {
+     "name": "Conductor",
+     "url": "https://conductor.build",
+     "note": "parallel agents, each in its own worktree"
+    }
+   ]
+  },
+  {
+   "n": 50,
+   "id": "worktrees",
+   "title": "One worktree per agent",
+   "line": "Parallel agents in one checkout trip over each other. Worktrees keep them apart.",
+   "check": "git worktree list shows 2+ in any repo.",
+   "how": "file",
+   "from": {
+    "h": "bcherny",
+    "name": "Boris Cherny",
+    "q": "Worktrees are essential… dozens of Claudes",
+    "url": "https://x.com/bcherny/status/2038454353787519164",
+    "x": "bcherny"
+   },
+   "vs": {
+    "h": "steipete",
+    "name": "Peter Steinberger (2025, he uses them now)",
+    "q": "Why not worktrees? I run one dev server, as I evolve my project I click through it and test multiple changes at once.",
+    "url": "https://steipete.me/posts/just-talk-to-it",
+    "x": "steipete"
+   }
+  },
+  {
+   "n": 51,
+   "id": "agent-reviews",
+   "title": "Have a fresh agent review the diff",
+   "line": "/code-review, Codex /review, a new session or a subagent: not the one that wrote it. Before you read it, not instead of you.",
+   "check": "A review command, review skill or review subagent used 3+ times, in a context that didn't write the code.",
+   "how": "history",
+   "from": {
+    "h": "filosottile",
+    "name": "Filippo Valsorda",
+    "q": "making a human review a change before an LLM is disrespectful.",
+    "url": "https://bsky.app/profile/filippo.abyssdomain.expert/post/3moq6sdq6xk2l"
+   }
+  },
+  {
+   "n": 52,
+   "id": "cross-model",
+   "title": "Review with a different model",
+   "line": "Claude writes, GPT reviews, or the other way round. Different models miss different things.",
+   "check": "One vendor's agent asked to review another's work (codex exec / claude -p review, or prompts that hand a diff across).",
+   "how": "history",
+   "from": {
+    "h": "dhh",
+    "name": "DHH",
+    "q": "Review this with claude",
+    "url": "https://x.com/dhh/status/2107882896195199116",
+    "x": "dhh"
+   }
+  },
+  {
+   "n": 53,
+   "id": "quiz-me",
+   "title": "Make it quiz you on the change",
+   "line": "It explains the diff, then asks you five questions. Merge only when you pass.",
+   "check": "An explain-diff or quiz skill, or prompts asking it to explain or quiz you on a change.",
+   "how": "history",
+   "from": {
+    "h": "thariqs",
+    "name": "Thariq Shihipar",
+    "q": "I only merge after I pass the quiz perfectly.",
+    "url": "https://x.com/trq212/status/2073100352921215386",
+    "x": "trq212"
+   }
+  },
+  {
+   "n": 54,
+   "id": "diagram",
+   "title": "Ask for a diagram",
+   "line": "Architecture, data flow, the state machine. Pictures review faster than prose.",
+   "check": "3+ prompts asking for a diagram, chart or visual explanation.",
+   "how": "history",
+   "from": {
+    "h": "dexhorthy",
+    "name": "Dex Horthy",
+    "q": "/show-me prompts the agent to use concise visuals to explain what's happening, instead of walls of prose.",
+    "url": "https://www.humanlayer.dev/blog/show-me-skill",
+    "x": "dexhorthy"
+   }
+  },
+  {
+   "n": 55,
+   "id": "babysit-pr",
+   "title": "Let it babysit the PR",
+   "line": "It watches CI and the review bots, fixes, pushes, and repeats until it's green.",
+   "check": "It checked CI or PR status (gh pr checks, gh run) 5+ times.",
+   "how": "history",
+   "from": {
+    "h": "kentcdodds",
+    "name": "Kent C. Dodds",
+    "q": "Babysit a PR. Iterate with AI reviewers and CI. Get it ready and maybe merge. Send summary message.",
+    "url": "https://github.com/kentcdodds/kcd-skills/blob/ab6303e3b22fbbeec665f9a62ee654f379c8c600/skills/ship-pr/SKILL.md#L3-L5",
+    "x": "kentcdodds"
+   }
+  },
+  {
+   "n": 56,
+   "id": "headless",
+   "title": "Run agents from scripts",
+   "line": "claude -p, codex exec: from your scripts, your Makefile, or from inside another agent. Logs in, JSON out.",
+   "check": "3+ headless runs in shell history or session logs (codex exec, claude -p, gemini -p), including one agent launching another.",
+   "how": "history"
+  },
+  {
+   "n": 57,
+   "id": "background-review",
+   "title": "Review every commit in the background",
+   "line": "A second model reads each commit as it lands, not once per PR when nobody wants to hear it.",
+   "check": "roborev, or a git post-commit hook that runs a reviewing agent (codex exec, claude -p).",
+   "how": "file",
+   "try": [
+    {
+     "name": "roborev",
+     "url": "https://github.com/kenn-io/roborev"
+    }
+   ],
+   "from": {
+    "h": "wesm",
+    "name": "Wes McKinney",
+    "q": "I do not code with agents without a continuous reviewer running in the background.",
+    "url": "https://wesmckinney.com/transcripts/2026-02-10-rill-data-podcast",
+    "x": "wesmckinn"
+   }
+  },
+  {
+   "n": 58,
+   "id": "adversarial",
+   "title": "Make two reviewers compete",
+   "line": "Two refuters per change, and points for every real bug. They try much harder than one polite reviewer.",
+   "check": "Reviews run by 2+ competing or adversarial agents, or rounds of review and fix between two agents.",
+   "how": "history",
+   "from": {
+    "h": "obra",
+    "name": "Jesse Vincent",
+    "q": "Assign two subagents to review your work adversarially. Tell them that whoever finds the largest number of legitimate significant issues gets 5 points.",
+    "url": "https://github.com/obra/dotfiles/blob/6ebb5ba848526b2bfd5b5ab3cb30741ff32c4447/.claude/commands/par.md#L1"
+   }
+  },
+  {
+   "n": 59,
+   "id": "ensemble",
+   "title": "Three bug hunters, one report",
+   "line": "Several reviewers in parallel, then one agent rules out the false positives.",
+   "check": "Findings from 2+ review tools merged into one triaged list.",
+   "how": "history",
+   "try": [
+    {
+     "name": "Cursor Bugbot",
+     "url": "https://cursor.com/bugbot"
+    },
+    {
+     "name": "CodeRabbit",
+     "url": "https://www.coderabbit.ai"
+    }
+   ],
+   "from": {
+    "h": "nolanlawson",
+    "name": "Nolan Lawson",
+    "q": "Run a Claude sub-agent, Codex, and Cursor Bugbot to find bugs in this PR ranked by critical/high/medium/low.",
+    "url": "https://nolanlawson.com/2026/05/25/using-ai-to-write-better-code-more-slowly/"
+   }
+  },
+  {
+   "n": 60,
+   "id": "review-by-risk",
+   "title": "Review by risk, not by habit",
+   "line": "A copy fix gets a glance. Auth, money and migrations get every line.",
+   "check": "Your rules or review setup name the paths that always get a human read.",
+   "how": "file",
+   "from": {
+    "h": "bcherny",
+    "name": "Boris Cherny",
+    "q": "I read diffs when it's touching critical code, or code that's important to get right. I don't write the code.",
+    "url": "https://x.com/bcherny/status/2098210496109572123",
+    "x": "bcherny"
+   },
+   "vs": {
+    "h": "mitchellh",
+    "name": "Mitchell Hashimoto",
+    "q": "First, I reviewed the entire diff (yes, all ~3,000 lines of it). Then I reviewed it again. I re-read the entire diff by hand three or four times.",
+    "url": "https://mitchellh.com/writing/simdutf-no-libcxx",
+    "x": "mitchellh"
+   }
+  },
+  {
+   "n": 61,
+   "id": "yolo-in-a-box",
+   "title": "Go YOLO, but only in a box",
+   "line": "Full autonomy in a container or a fresh VM with no prod keys. All the speed, none of the risk.",
+   "check": "Permission prompts off AND a sandbox (devcontainer, Docker, VM, /sandbox). Prompts off without a box doesn't count.",
+   "how": "file",
+   "try": [
+    {
+     "name": "Dev Containers",
+     "url": "https://containers.dev"
+    },
+    {
+     "name": "/sandbox",
+     "url": "https://code.claude.com/docs/en/sandboxing",
+     "note": "built into Claude Code"
+    }
+   ],
+   "from": {
+    "h": "crawshaw",
+    "name": "David Crawshaw",
+    "q": "You have to turn off the sandbox, which means you have to provide your own sandbox. I have tried just about everything and I highly recommend: use a fresh VM.",
+    "url": "https://crawshaw.io/blog/eight-more-months-of-agents",
+    "x": "davidcrawshaw"
+   }
+  },
+  {
+   "n": 62,
+   "id": "lethal-trifecta",
+   "title": "Break the lethal trifecta",
+   "line": "Private data, untrusted input, a way to send things out: never all three in one run. Cut the network first.",
+   "check": "Agent network access restricted (a sandbox domain allowlist, or network off in Codex) on a machine where it can read private data or mail.",
+   "how": "file",
+   "try": [
+    {
+     "name": "/sandbox",
+     "url": "https://code.claude.com/docs/en/sandboxing",
+     "note": "limits its network to domains you allow"
+    }
+   ],
+   "from": {
+    "h": "simonw",
+    "name": "Simon Willison",
+    "q": "The only way to stay safe there is to avoid that lethal trifecta combination entirely.",
+    "url": "https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/",
+    "x": "simonw"
+   }
+  },
+  {
+   "n": 63,
+   "id": "schedule",
+   "title": "Schedule a prompt",
+   "line": "For later, or every morning: /loop, /schedule, cron. Work starts without you.",
+   "check": "A scheduled or recurring agent run (loop/cron tools, a launchd or cron entry that calls an agent).",
+   "how": "file",
+   "from": {
+    "h": "tibo-openai",
+    "name": "Thibault Sottiaux",
+    "q": "One automation I have runs multiple times a day. It picks a random file and finds and fixes a subtle bug.",
+    "url": "https://every.to/podcast/transcript-how-openai-s-codex-team-uses-their-coding-agent",
+    "x": "thsottiaux"
+   }
+  },
+  {
+   "n": 64,
+   "id": "overnight",
+   "title": "Let it work while you sleep",
+   "line": "Start a few tasks before bed, review them with coffee.",
+   "check": "Agent activity between 1am and 6am while you typed nothing.",
+   "how": "history",
+   "learn": "Before I go to bed, help me pick three tasks you can do without me tonight, each with a finish line you can check yourself. Write them up so I can start them now and review them over coffee.",
+   "from": {
+    "h": "calvinfo",
+    "name": "Calvin French-Owen",
+    "q": "This is over-hyped on Twitter, but I do really try and kick off 3-4 tasks in Codex before going to bed, so they'll be ready for review in the morning.",
+    "url": "https://calv.info/agents-feb-2026",
+    "x": "calvinfo"
+   }
+  },
+  {
+   "n": 65,
+   "id": "from-your-phone",
+   "title": "Drive it from your phone",
+   "line": "Remote Control, the Codex app, ssh and tmux. Unblock it from the couch.",
+   "check": "Remote control set up, a mobile session, or mosh/Tailscale used to reach your agent box.",
+   "how": "self",
+   "try": [
+    {
+     "name": "Remote Control",
+     "url": "https://code.claude.com/docs/en/remote-control",
+     "note": "Claude Code"
+    },
+    {
+     "name": "Termius",
+     "url": "https://termius.com"
+    },
+    {
+     "name": "Tailscale",
+     "url": "https://tailscale.com"
+    }
+   ],
+   "from": {
+    "h": "harperreed",
+    "name": "Harper Reed",
+    "q": "Claude Code is better on your phone",
+    "url": "https://harper.blog/2026/01/05/claude-code-is-better-on-your-phone/",
+    "title": true,
+    "x": "harper"
+   }
+  },
+  {
+   "n": 66,
+   "id": "cloud-chores",
+   "title": "Hand chores to a cloud agent",
+   "line": "Codex cloud, Claude on the web, Cursor background agents. The boring stuff, no laptop needed.",
+   "check": "Cloud or remote agent tasks in your history.",
+   "how": "self",
+   "from": {
+    "h": "adamwathan",
+    "name": "Adam Wathan",
+    "q": "I feed this thing every little random tedious OSS task that I'd otherwise neglect on my TODO list",
+    "url": "https://x.com/adamwathan/status/2017616165455949851",
+    "x": "adamwathan"
+   }
+  },
+  {
+   "n": 67,
+   "id": "cant-fake-done",
+   "title": "Give it a finish line it can't fake",
+   "line": "\"Don't stop until the test passes and the screenshot matches.\" Then let it run.",
+   "check": "3+ prompts like \"don't stop until\" / \"keep going until\", or a goal set with /goal.",
+   "how": "history"
+  },
+  {
+   "n": 68,
+   "id": "ralph",
+   "title": "Run it in a Ralph loop",
+   "line": "The same prompt, fresh context, again and again until the spec is done.",
+   "check": "A shell loop or script that re-runs an agent, or /loop until a condition.",
+   "how": "history",
+   "from": {
+    "h": "ghuntley",
+    "name": "Geoffrey Huntley",
+    "q": "while :; do cat PROMPT.md | claude-code ; done",
+    "url": "https://ghuntley.com/ralph/",
+    "x": "GeoffreyHuntley"
+   }
+  },
+  {
+   "n": 69,
+   "id": "agent-in-ci",
+   "title": "Put an agent in CI",
+   "line": "@claude on issues, a review on every PR. A teammate with a GitHub login.",
+   "check": "claude-code-action, codex action or similar in a .github/workflows file.",
+   "how": "file"
+  },
+  {
+   "n": 70,
+   "id": "always-on",
+   "title": "Keep a machine that never sleeps",
+   "line": "A Mac mini, a VPS, a shed. Agents keep running when your laptop closes.",
+   "check": "Agents running on another machine you reach over ssh.",
+   "how": "self",
+   "from": {
+    "h": "dhh",
+    "name": "DHH",
+    "q": "all my agent and compile work now happens on an AI shed.",
+    "url": "https://x.com/dhh/status/2107463006552793231",
+    "x": "dhh"
+   }
+  },
+  {
+   "n": 71,
+   "id": "best-of-four",
+   "title": "Run it four times, keep the best",
+   "line": "The same task in parallel, thirty seconds each to judge. Throwing work away is cheap now.",
+   "check": "The same task run in 2+ parallel sessions or worktrees.",
+   "how": "history",
+   "from": {
+    "h": "embirico",
+    "name": "Alexander Embiricos",
+    "q": "So I might kind of throw throw codex at it but I might just do it four times in parallel instead.",
+    "url": "https://www.youtube.com/watch?v=xeZDHGjG5zM&t=1375",
+    "x": "embirico"
+   }
+  },
+  {
+   "n": 72,
+   "id": "five-at-once",
+   "title": "Run five at once",
+   "line": "Five agents on five problems, and you still know what each one is doing.",
+   "check": "5+ sessions or background agents running at the same time.",
+   "how": "history",
+   "from": {
+    "h": "t3dotgg",
+    "name": "Theo Browne",
+    "q": "I regularly have 40+ threads running concurrently.",
+    "url": "https://x.com/theo/status/2102704338582032575",
+    "x": "theo"
+   }
+  },
+  {
+   "n": 73,
+   "id": "coordinator",
+   "title": "Let your agents talk to each other",
+   "line": "One hands out the work and checks on the rest, or two pass findings directly. No more \"Codex says: [paste]\".",
+   "check": "One agent messaging or steering others (agent teams, SendMessage, an orchestrator session), or agents reading each other's output without you relaying it.",
+   "how": "history",
+   "from": {
+    "h": "awesomekling",
+    "name": "Andreas Kling",
+    "q": "Tell coordinator to parallelize the work over 4 separate computers via SSH",
+    "url": "https://x.com/awesomekling/status/2102089363631059199",
+    "x": "awesomekling"
+   }
+  },
+  {
+   "n": 74,
+   "id": "model-roles",
+   "title": "Strong model plans, fast model builds",
+   "line": "Pay for thinking where it matters, and for speed everywhere else.",
+   "check": "Per-agent model settings, or 3+ prompts assigning models to roles.",
+   "how": "history",
+   "from": {
+    "h": "steveyegge",
+    "name": "Steve Yegge",
+    "q": "Every implementation bead goes through this lifecycle: Fable design, Opus implementation, Fable review.",
+    "url": "https://yegge.ai/essays/the-shape-of-things-to-come/",
+    "x": "Steve_Yegge"
+   }
+  },
+  {
+   "n": 75,
+   "id": "named-agents",
+   "title": "Write your own subagents",
+   "line": "A reviewer, a tester, a researcher: each one a file with its own instructions, tools and model.",
+   "check": "2+ custom agent definitions (.claude/agents/*.md or equivalent).",
+   "how": "file"
+  },
+  {
+   "n": 76,
+   "id": "workflows",
+   "title": "Turn your routine into a workflow",
+   "line": "A rerunnable script of agent steps, instead of one heroic session.",
+   "check": "A workflow tool used, or a script that chains several agent runs.",
+   "how": "history",
+   "from": {
+    "h": "lethain",
+    "name": "Will Larson",
+    "q": "An agent skill /linear-project-loop which reads in a Linear project and starts by auditing that project’s goal definition on these dimensions",
+    "url": "https://lethain.com/software-factory-experiment/",
+    "x": "lethain"
+   }
+  },
+  {
+   "n": 77,
+   "id": "compound",
+   "title": "Make every task teach the next",
+   "line": "The last step of every job: it writes what it learned into a skill or rule, without being asked.",
+   "check": "Rules, skills or memory edited by agent sessions 5+ times.",
+   "how": "history",
+   "from": {
+    "h": "kieranklaassen",
+    "name": "Kieran Klaassen",
+    "q": "Compound is still the most important step, because the whole point is that every feature should make the next feature easier.",
+    "url": "https://every.to/p/compound-engineering-gets-an-upgrade",
+    "x": "kieranklaassen"
+   }
+  },
+  {
+   "n": 78,
+   "id": "rules-to-checks",
+   "title": "Turn AGENTS.md rules into lint rules",
+   "line": "Wrote \"never do X\" in AGENTS.md twice? Make it a lint rule or a type. It can skim prose; it can't skim a red build.",
+   "check": "Custom lint rules, ast-grep rules or check scripts in a repo.",
+   "how": "file",
+   "from": {
+    "h": "josevalim",
+    "name": "José Valim",
+    "q": "encode as many rules as possible into deterministic checks (first) and adversarial reviews (second), instead of relying exclusively on a bunch of AGENTS.md files to do the job.",
+    "url": "https://x.com/josevalim/status/2075221914549686774",
+    "x": "josevalim"
+   }
+  },
+  {
+   "n": 79,
+   "id": "migration",
+   "title": "Hand it the migration nobody wants",
+   "line": "200 files, one mechanical change: the framework upgrade, the rename, the new API. Done by lunch, checked by the tests.",
+   "check": "3+ prompts asking for a codebase-wide change (\"migrate\", \"convert all\", \"upgrade every\", \"across the codebase\").",
+   "how": "history",
+   "from": {
+    "h": "kentonv",
+    "name": "Kenton Varda",
+    "q": "Claude, buddy. You're gonna do the whole conversion in an hour, then we'll see if it works.",
+    "url": "https://x.com/KentonVarda/status/2084293600142135365",
+    "x": "KentonVarda"
+   }
+  },
+  {
+   "n": 80,
+   "id": "tool-for-agent",
+   "title": "Build a tool for your agent",
+   "line": "A small CLI made for it to call: --json output, good --help, no prompts.",
+   "check": "Your own scripts or CLIs that agents call regularly.",
+   "how": "history",
+   "from": {
+    "h": "birgitta410",
+    "name": "Birgitta Böckeler",
+    "q": "The CLI can offer both situational awareness for the human in supervised sessions, and a token-efficient and guidance-enriched summary to the agent.",
+    "url": "https://martinfowler.com/articles/sensors-for-coding-agents.html",
+    "x": "birgitta410"
+   }
+  },
+  {
+   "n": 81,
+   "id": "skill-evals",
+   "title": "Test your skills",
+   "line": "Does it trigger when it should, and does it actually help? An eval tells you.",
+   "check": "Eval files for a skill or plugin, or a plugin eval run.",
+   "how": "file"
+  },
+  {
+   "n": 82,
+   "id": "share-skills",
+   "title": "Publish your skills",
+   "line": "A public repo of your skills, so your team, or strangers, can use them.",
+   "check": "Your skills live in a git repo with a remote.",
+   "how": "file",
+   "from": {
+    "h": "steipete",
+    "name": "Peter Steinberger",
+    "q": "agent-scripts",
+    "url": "https://github.com/steipete/agent-scripts",
+    "repo": true,
+    "x": "steipete"
+   }
+  },
+  {
+   "n": 83,
+   "id": "team-chat",
+   "title": "Put an agent in the team chat",
+   "line": "Tag it in Slack and it opens the PR. Teammates use it without installing anything.",
+   "check": "A chat-integrated agent set up (Slack app, Claude Tag, Devin, a bot).",
+   "how": "self",
+   "from": {
+    "h": null,
+    "name": "Cat Wu and Thariq Shihipar, via Simon Willison",
+    "q": "Claude Tag lands 65% of the Claude Code team's product PRs.",
+    "url": "https://simonwillison.net/2026/Jul/21/cat-and-thariq/",
+    "paraphrase": true
+   }
+  },
+  {
+   "n": 84,
+   "id": "motion-video",
+   "title": "Have it make a video",
+   "line": "A 30-second explainer of what you shipped, for the colleague who won't read the PR.",
+   "check": "Remotion, Hyperframes or ffmpeg renders from a session, or a video skill installed.",
+   "how": "history",
+   "try": [
+    {
+     "name": "Remotion",
+     "url": "https://www.remotion.dev"
+    }
+   ]
+  },
+  {
+   "n": 85,
+   "id": "about-you",
+   "title": "Give your agents a wiki about you",
+   "line": "How you think, what you've decided, what you can't stand. Loaded only when it's relevant.",
+   "check": "A personal context repo or folder that your agents load when relevant, through a rule or a skill.",
+   "how": "file"
+  },
+  {
+   "n": 86,
+   "id": "computer-use",
+   "title": "Let it click through your apps",
+   "line": "Desktop apps, the simulator, your logged-in browser. It works the screen, not just files and a terminal.",
+   "check": "Computer-use or desktop-control tools used: computer use, Peekaboo, Claude in Chrome, simulator control.",
+   "how": "history",
+   "try": [
+    {
+     "name": "Claude in Chrome",
+     "url": "https://claude.com/chrome"
+    },
+    {
+     "name": "Peekaboo",
+     "url": "https://github.com/steipete/Peekaboo"
+    }
+   ]
+  },
+  {
+   "n": 87,
+   "id": "release-qa",
+   "title": "Give it a release checklist",
+   "line": "Every release, the same long QA script, run start to finish by the agent.",
+   "check": "A QA or release checklist file, or a release skill.",
+   "how": "file",
+   "from": {
+    "h": "antirez",
+    "name": "Salvatore Sanfilippo",
+    "q": "QA_BEFORE_RELEASES.md",
+    "url": "https://antirez.com/news/168",
+    "file": true,
+    "x": "antirez"
+   }
+  },
+  {
+   "n": 88,
+   "id": "on-call",
+   "title": "Put it on call",
+   "line": "It watches errors and alerts, and has a fix open before you've read the page.",
+   "check": "An error-tracking or alerting connector (Sentry, Datadog, PagerDuty, Grafana) or alerts sent into an agent session.",
+   "how": "file",
+   "try": [
+    {
+     "name": "Sentry MCP",
+     "url": "https://docs.sentry.io/product/sentry-mcp/"
+    }
+   ]
+  },
+  {
+   "n": 89,
+   "id": "revive",
+   "title": "Bring an old project back to life",
+   "line": "The repo that stopped building in 2019. It upgrades everything, fixes what broke, and gets it running again.",
+   "check": "A repo you're committing to again after a year or more without a commit.",
+   "how": "file",
+   "learn": "Find my oldest repo on this machine that nobody has touched for a year or more (names only), tell me what it was and what it would take to get it running again. If I say go, bring it back.",
+   "from": {
+    "h": "bcantrill",
+    "name": "Bryan Cantrill",
+    "q": "It is no exaggeration to say that this was brought to us by Claude.",
+    "url": "https://bcantrill.dtrace.org/2026/05/25/a-portentous-reunion/"
+   }
+  },
+  {
+   "n": 90,
+   "id": "sdk",
+   "title": "Build on an agent SDK",
+   "line": "Your own agent product, with the same loop the big ones use under the hood.",
+   "check": "An agent SDK in a project's dependencies (Claude Agent SDK, Codex SDK, OpenAI Agents).",
+   "how": "file",
+   "try": [
+    {
+     "name": "Claude Agent SDK",
+     "url": "https://code.claude.com/docs/en/agent-sdk/overview"
+    },
+    {
+     "name": "OpenAI Agents SDK",
+     "url": "https://openai.github.io/openai-agents-python/"
+    }
+   ]
+  },
+  {
+   "n": 91,
+   "id": "delete-config",
+   "title": "Delete more config than you add",
+   "line": "Prune the rules, skills and servers that don't earn their tokens anymore.",
+   "check": "A rules file that got shorter at least once in its git history.",
+   "how": "file",
+   "from": {
+    "h": "thdxr",
+    "name": "Dax Raad",
+    "q": "when i see people with custom workflows and setups they're all addressing problems that don't exist anymore",
+    "url": "https://x.com/thdxr/status/2107260844400931156",
+    "x": "thdxr"
+   }
+  },
+  {
+   "n": 92,
+   "id": "read-before-install",
+   "title": "Install only what you trust",
+   "line": "Skills, plugins and MCP servers run with your keys. Stick to sources you trust, or read the code first.",
+   "check": "You install skills, plugins and MCP servers only from sources you trust, or read the code before you do.",
+   "how": "self",
+   "from": {
+    "h": "rasbt",
+    "name": "Sebastian Raschka",
+    "q": "Do an audit of the (open-source) agent code base first.",
+    "url": "https://magazine.sebastianraschka.com/p/using-local-coding-agents",
+    "x": "rasbt"
+   }
+  },
+  {
+   "n": 93,
+   "id": "stop-and-ask",
+   "title": "Make it stop and ask when stuck",
+   "line": "Two failed fixes, then it reports back instead of trying a ninth. You set that up.",
+   "check": "A rule or hook that makes it stop and report when stuck or out of scope.",
+   "how": "file",
+   "from": {
+    "h": "jph00",
+    "name": "Jeremy Howard",
+    "q": "after 8 tool-call rounds with no text response of 100+ chars, it injects a reminder to surface and reassess",
+    "url": "https://github.com/AnswerDotAI/aai-coding/blob/bb010bf14189878ed1b2bb8db7158305c61696a3/SETUP.md#L140",
+    "x": "jeremyphoward"
+   }
+  },
+  {
+   "n": 94,
+   "id": "own-identity",
+   "title": "Give it its own identity",
+   "line": "Its own GitHub account and scoped keys, so you can always see, and revoke, what it did.",
+   "check": "Commits or PRs in your repos by a bot account you run, or a separate login the agent uses.",
+   "how": "file",
+   "from": {
+    "h": "antfu",
+    "name": "Anthony Fu",
+    "q": "Agents on behave of @antfu",
+    "url": "https://github.com/antfubot",
+    "x": "antfu7"
+   }
+  },
+  {
+   "n": 95,
+   "id": "reset-per-model",
+   "title": "Start from zero with each new model",
+   "line": "A new model gets a clean config. You add back only what it still gets wrong, and most of it never comes back.",
+   "check": "When a new model ships, you start it with a clean config and add rules back only when it needs them.",
+   "how": "self",
+   "from": {
+    "h": "catherinewu",
+    "name": "Cat Wu",
+    "q": "I generally reset my configs for each new model",
+    "url": "https://x.com/_catwu/status/2102556970473709717",
+    "x": "_catwu"
+   }
+  },
+  {
+   "n": 96,
+   "id": "hardware",
+   "title": "Put hardware in the loop",
+   "line": "It designs the bracket, flashes the board, reads the serial port, and checks its own work.",
+   "check": "Device or CAD tools driven by an agent (serial, adb, simctl, esptool, arduino-cli, OpenSCAD, CadQuery, build123d), or .stl, .3mf or .scad files it produced.",
+   "how": "history",
+   "from": {
+    "h": "torvalds",
+    "name": "Linus Torvalds",
+    "q": "I started the day with \"I want to connect two pedals together and have them validate each other\", and ended the day with three pedals, a signal generator, and a USB MIDI dongle all connected together as a validation bench with automated checks.",
+    "url": "https://github.com/torvalds/GuitarPedal/commit/d1b95dc5e71e0a2d42912001c5fa4469bbc88766"
+   }
+  },
+  {
+   "n": 97,
+   "id": "local-model",
+   "title": "Run it on a local model",
+   "line": "Open weights on your own machine: private, offline, and nobody can take it away.",
+   "check": "Ollama, LM Studio, llama.cpp or MLX installed, and an agent pointed at a local model.",
+   "how": "file",
+   "try": [
+    {
+     "name": "Ollama",
+     "url": "https://ollama.com"
+    },
+    {
+     "name": "LM Studio",
+     "url": "https://lmstudio.ai"
+    }
+   ]
+  },
+  {
+   "n": 98,
+   "id": "own-harness",
+   "title": "Run your own harness",
+   "line": "Pi, OpenClaw, Hermes, or one you built. You choose the tools, the prompts and the loop.",
+   "check": "Pi, OpenClaw, Hermes or a harness you wrote, installed and in use.",
+   "how": "file",
+   "try": [
+    {
+     "name": "Pi",
+     "url": "https://github.com/badlogic/pi-mono"
+    },
+    {
+     "name": "OpenClaw",
+     "url": "https://openclaw.ai"
+    }
+   ],
+   "from": {
+    "h": "steipete",
+    "name": "Peter Steinberger",
+    "q": "I use OpenClaw (which uses Codex) and web sessions.",
+    "url": "https://x.com/steipete/status/2102641364681048328",
+    "x": "steipete"
+   }
+  },
+  {
+   "n": 99,
+   "id": "improves-itself",
+   "title": "Let it improve your setup",
+   "line": "A scheduled agent reads your recent sessions, finds the friction, and fixes your rules and skills.",
+   "check": "A recurring agent run that reviews past sessions and edits rules or skills, or /insights used to change your setup.",
+   "how": "history",
+   "from": {
+    "h": null,
+    "name": "OpenAI, Codex best practices",
+    "q": "Schedule a review of recent chats to find friction, then fix prompts and setup.",
+    "url": "https://learn.chatgpt.com/guides/best-practices",
+    "paraphrase": true
+   }
+  },
+  {
+   "n": 100,
+   "id": "own-agent",
+   "title": "Write your own agent",
+   "line": "A model, a loop and a few tools, in a few hundred lines. After that, nothing on this list is magic.",
+   "check": "A project of yours that calls a model API with tools in a loop you wrote, not only an SDK or someone else's harness.",
+   "how": "file",
+   "learn": "Let's build a tiny agent together in one file, in a language I like: a model API call, a loop, and two tools (read a file, run a command). Under 150 lines. Then let it fix one small thing in this project while I watch.",
+   "try": [
+    {
+     "name": "How to build an agent",
+     "url": "https://ampcode.com/how-to-build-an-agent",
+     "note": "Thorsten Ball's walkthrough"
+    }
+   ],
+   "from": {
+    "h": "mrnugget",
+    "name": "Thorsten Ball",
+    "q": "It’s an LLM, a loop, and enough tokens.",
+    "url": "https://ampcode.com/notes/how-to-build-an-agent",
+    "x": "thorstenball"
+   }
+  }
+ ],
+ "pi": {
+  "n": 3.14,
+  "id": "say-please",
+  "title": "Say please",
+  "line": "Doesn't help. Doesn't hurt. Doesn't count. You get a π on your card anyway.",
+  "check": "\"please\" in at least one prompt."
+ },
+ "fossils": [
+  {
+   "title": "\"You are a senior engineer with 20 years of experience.\"",
+   "status": "extinct",
+   "era": "2023",
+   "line": "Role-play preambles. Today's models don't need the pep talk; they need the context."
+  },
+  {
+   "title": "\"I'll tip you $200 for a perfect answer.\"",
+   "status": "extinct",
+   "era": "2023",
+   "line": "It sort of worked once. Nobody ever paid."
+  },
+  {
+   "title": "\"Take a deep breath and work on this step by step.\"",
+   "status": "extinct",
+   "era": "2023",
+   "line": "Reasoning models think before answering anyway."
+  },
+  {
+   "title": "\"Write the full code. No placeholders.\"",
+   "status": "extinct",
+   "era": "2023–24",
+   "line": "From the era of lazy models and \"// rest of the code stays the same\"."
+  },
+  {
+   "title": ".cursorrules",
+   "status": "extinct",
+   "era": "2024",
+   "line": "One file in the repo root. Replaced by rule folders and AGENTS.md, which every agent reads."
+  },
+  {
+   "title": "Codex custom prompts",
+   "status": "extinct",
+   "era": "2025",
+   "line": "Deprecated in favour of skills."
+  },
+  {
+   "title": "\"ultrathink\"",
+   "status": "endangered",
+   "era": "2025–",
+   "line": "Thinking keywords. Effort is a setting now, and reports disagree on whether the word still does anything."
+  },
+  {
+   "title": "\"How many r's are in strawberry?\"",
+   "status": "extinct",
+   "era": "2024",
+   "line": "Retired as a benchmark. Still a good party trick."
+  }
+ ],
+ "version": "1.3",
+ "updated": "2026-10-23"
+}

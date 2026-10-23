@@ -125,4 +125,5 @@ for (const slug of articleSlugs) {
 }
 
 assertIncludes(sitemap, "https://virpo.io/skills/", "dist/sitemap.xml");
+assertIncludes(sitemap, "https://virpo.io/levels/", "dist/sitemap.xml");
 assertIncludes(robots, "Sitemap: https://virpo.io/sitemap.xml", "dist/robots.txt");

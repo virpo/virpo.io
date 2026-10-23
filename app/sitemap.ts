@@ -35,6 +35,11 @@ export function buildSitemap(posts: PostSummary[]): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.6,
     },
+    {
+      url: `${SITE_URL}/levels/`,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
     ...posts.map((post) => ({
       url: `${SITE_URL}/blog/${post.slug}/`,
       lastModified: post.updatedAt ?? post.publishedAt,
