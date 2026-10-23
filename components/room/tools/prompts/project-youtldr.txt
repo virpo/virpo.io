@@ -1,5 +1,10 @@
 Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <art dir>/projects/youtldr.png and print its path.
 
-Attached: style.png (the style to match) and youtldr.png (the subject). Make a hand-drawn version of this web page screenshot: a dark green-black page, headline 'Anti-clickbait for YouTube.', a YouTube thumbnail of a man with the title 'Am I retiring?' and an arrow to a card that answers simply 'No.'. Keep the layout and the before -> after idea crystal clear, legible big text.
-Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm light. Not 3D, not vinyl, not a photo, not pixel art.
-Landscape 1536x1024. No border, no frame, no extra text beyond what is in the subject.
+Attached: style.png (the style), refs/youtldr-previous.jpg (the previous painting of this idea, keep its look and the man), refs/youtldr-mark.png (the YouTLDR brand mark: a bright green square with a staircase of three steps cut out of its bottom-right).
+Paint the before -> after of YouTLDR:
+LEFT, unmistakably a YouTube video card exactly as on youtube.com: a 16:9 thumbnail of a bearded man with the big thumbnail text 'Am I retiring?', a dark duration badge '17:34' in its bottom-right corner and a thin red watch-progress bar along its bottom; under the thumbnail a round channel avatar, the bold video title 'Am I retiring from YouTube?', and the grey line 'Veritasium · 4.8M views · 2 days ago'.
+A hand-drawn arrow curving to the right.
+RIGHT, a dark green verdict card with the bright green staircase mark from refs/youtldr-mark.png small in its top-left corner, and one huge bright green word 'No.' in the middle.
+Centred, filling about 75% of the frame, on a plain empty warm off-white watercolor paper background (#F1EADF) with a soft natural shadow. Nothing else: no page navigation, no extra logos.
+Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture. Full colour. Not 3D, not vinyl, not a photo, not pixel art.
+Landscape 1536x1024. No border, no frame.

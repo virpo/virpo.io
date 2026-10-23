@@ -1,6 +1,6 @@
 Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <art dir>/projects/bratislava-slushd.png and print its path.
 
-Attached: style.png (the style to match) and refs/bratislava-slushd-team.png, a 4 by 4 grid of sixteen real portraits: the organising team of Bratislava Slush'D.
-Make a hand-drawn version of this exact grid: the same sixteen people in the same tiles, each one recognisable with the same face, hair, glasses, clothes, pose and background colours. Do not add, remove, merge or swap anyone. Thin dark gutters between the tiles. No text anywhere (a logo will be placed on top later).
-Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm light. Not 3D, not vinyl, not a photo, not pixel art.
+Attached: style.png (the style to match) and refs/bratislava-slushd-team.jpg.
+Paint this real team photo of the Bratislava Slush'D organisers: fifteen people standing and kneeling around a glowing 'SLUSH'D' light box with an 'ODDVENTURE' sign on top, a wooden stick sculpture behind them. Keep every real person where they are, with the same faces, hair, clothes and poses; do not add, remove or invent anyone. Keep the glowing light box and its lettering.
+Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture. Full colour. Not 3D, not vinyl, not a photo, not pixel art.
 Landscape 1536x1024. No border, no frame.

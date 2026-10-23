@@ -1,5 +1,6 @@
 Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <art dir>/projects/pegboard-toy.png and print its path.
 
-Attached: style.png (the style to match) and pegboard.jpg (the subject). Make a hand-drawn version of this photo pair: on the left a rough pen sketch of a pegboard toy on paper, on the right a little boy playing on the floor with the real colorful 3D-printed wooden pegboard toy. Keep the composition, warm and tender.
-Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm light. Not 3D, not vinyl, not a photo, not pixel art.
-Landscape 1536x1024. No border, no frame, no extra text beyond what is in the subject.
+Attached: style.png (the style to match) and refs/pegboard-photo.jpg.
+Paint this real photo: a little boy on a wooden floor playing with a colourful 3D-printed wooden pegboard toy. Keep the boy exactly the same real child (same face, hair, clothes, pose) and the same toy pieces. Tighten the framing onto the boy's hands and the toy; let the floor fade softly into plain paper at the edges.
+Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture. Full colour. Not 3D, not vinyl, not a photo, not pixel art.
+Landscape 1536x1024. No border, no frame.

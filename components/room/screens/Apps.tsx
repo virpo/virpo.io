@@ -16,7 +16,7 @@ import { ProjectIcon } from "../icons/ProjectIcon";
 import { CARD_ART } from "./cards";
 import styles from "./apps.module.css";
 
-export type AppProject = { slug: string; title: string; type: string; href: string; blurb: string; image?: { src: string; alt: string; width: number; height: number; fit: string; position?: string } };
+export type AppProject = { slug: string; title: string; type: string; href: string; blurb: string; tags?: readonly string[]; image?: { src: string; alt: string; width: number; height: number; fit: string; position?: string } };
 export type AppAbout = { name: string; eyebrow: string; headline: string; body: string; links: readonly { label: string; href: string }[] };
 
 const external = (href: string) => (href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {});

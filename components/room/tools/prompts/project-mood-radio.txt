@@ -1,5 +1,6 @@
 Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <art dir>/projects/mood-radio.png and print its path.
 
-Attached: style.png (the style to match) and mood-radio.jpg (the subject). Make a hand-drawn version of this app screenshot: a music picker on a wooden floor background, a video panel on the left, a grid of red/orange/yellow mood buttons (Slow Normal Fast Insane, Dark Neutral Cheerful, Calm Neutral Intense, Instrumental Electro Vocal) on the right. Keep the layout.
-Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm light. Not 3D, not vinyl, not a photo, not pixel art.
-Landscape 1536x1024. No border, no frame, no extra text beyond what is in the subject.
+Attached: style.png (the style to match) and refs/mood-radio-app.jpg.
+From the attached app, paint just its mood picker panel: the line 'Set speed, mood, intensity and sounds:' and the grid of red, orange and yellow buttons with round checkmarks (Slow, Normal, Fast, Insane / Dark, Neutral, Cheerful / Calm, Neutral, Intense / Instrumental, Electro, Vocal) and the red 'Apply n play' button. Show ONLY this one thing, centred, filling about 70% of the frame, on a plain empty warm off-white watercolor paper background (#F1EADF) with a soft natural shadow under it. Nothing else from the page: no navigation, no other text, no buttons, no logos, no background UI.
+Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture. Full colour. Not 3D, not vinyl, not a photo, not pixel art.
+Landscape 1536x1024. No border, no frame.

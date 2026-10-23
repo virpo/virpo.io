@@ -236,6 +236,16 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
     [posts],
   );
 
+  // a project's name alone says little ("Žltá stopa"), so its label adds its two tags
+  const noteFor = useCallback(
+    (item: RoomObject) => {
+      if (item.kind !== "project") return undefined;
+      const project = projects.find((entry) => entry.slug === item.projectSlug);
+      return project && item.goes === project.title ? project.tags?.join(", ") : undefined;
+    },
+    [projects],
+  );
+
   const appFor = (item: RoomObject): RoomAppId | null => {
     if (item.kind === "toy" && item.toy) return item.toy;
     if (item.kind === "project" && item.projectSlug) return `project:${item.projectSlug}`;
@@ -529,6 +539,7 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
       reducedMotion={reduced}
       hrefFor={hrefFor}
       titleFor={titleFor}
+      noteFor={noteFor}
       onHover={(id) => {
         setHover(id);
         if (id) {

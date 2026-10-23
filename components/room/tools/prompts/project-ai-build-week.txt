@@ -1,7 +1,6 @@
 Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <art dir>/projects/ai-build-week.png and print its path.
 
-Attached: style.png (the style to match) and refs/ai-build-week-photo.png, a real group photo from our AI Build Day event in Bratislava: about sixty participants in front of a screen, many waving, one holding a black flag that reads "AI Build Day", chairs in front.
-Make a hand-drawn version of this exact photo. Keep every real person where they are, with the same faces, hair, clothes and poses; do not add, remove or invent anyone. Keep the black "AI Build Day" flag, the screen and the room.
-In the empty dark ceiling area at the top-left, add one hand-lettered headline in two lines: "From nothing to your own AI-native project." with the words "From nothing" drawn as outlined letters, and below it "In a week." in warm yellow and orange. No other text, no buttons, no UI.
-Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm light. Not 3D, not vinyl, not a photo, not pixel art.
+Attached: style.png (the style to match) and refs/ai-build-week-photo.jpg.
+Paint this real group photo from our AI Build Day event: about sixty participants in front of a screen, many waving, one holding a black flag that reads 'AI Build Day'. Keep every real person where they are, with the same faces, hair, clothes and poses; do not add, remove or invent anyone. Keep the flag. No added text, no headline.
+Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture. Full colour. Not 3D, not vinyl, not a photo, not pixel art.
 Landscape 1536x1024. No border, no frame.

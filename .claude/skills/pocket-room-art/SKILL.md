@@ -148,18 +148,23 @@ the user before touching files outside the art pipeline.
 
 ## Project cards (the Projects section under the room)
 
-Each project in the two-column Projects section is its real screenshot or photo, repainted in the
-room's style at "medium" strength (the strength picked on 2026-10-23: hand-drawn, layout and text
-kept, people kept recognisable; not the barely-traced or the full-manga versions).
+Each project card is ONE clean thing, painted from the project's real screenshot or photo, with
+everything around it left out: Levels = its fanned cards, YouTLDR = a YouTube card -> "No." with the
+green staircase mark, Žltá stopa = one flagged contract, Mood Radio = its mood buttons, CMUX Deck =
+the Stream Deck alone, the two events = their real group photos. At rest the card shows a pencil
+version; on hover the colour eases in (CSS cross-fade, no shader). The project's own logo sits in the
+bottom-left corner as HTML (`components/room/ProjectLogo.tsx`, files in
+`public/lab/room/projects/logos/`), never painted in. Under the card: title, two tags and the years
+(`components/room/projects.ts`).
 
-- Prompts: `prompts/project-<slug>.txt`. Sources: `art/projects/<slug>.png`. Real reference
-  photos: `art/projects/refs/` (the AI Build Day group photo from aibuildweek.com, the 16 Slush'D
-  team portraits from bratislavaslushd.com tiled 4x4).
-- Photos of real people: say "keep every real person where they are, same faces, clothes and
-  poses; do not add, remove or invent anyone". Never let the painter invent a crowd.
-- AI Build Week: the real group photo with only the English headline "From nothing to your own
-  AI-native project. In a week." hand-lettered on the ceiling; no other UI.
-- Bratislava Slush'D: the real logo is laid on top by `projects.py`, never painted
-  (`art/projects/slushd-logo.png`, cut from the site's co-branded svg, left of the "x").
+- Prompts: `prompts/project-<slug>.txt`. Paintings: `art/projects/<slug>.png`. Real references:
+  `art/projects/refs/`. Paint at "medium" strength, isolated on plain #F1EADF paper:
+  "Show ONLY this one thing, centred, filling about 70% of the frame ... no navigation, no other
+  text, no buttons, no logos".
+- Photos of real people: "keep every real person where they are, same faces, clothes and poses; do
+  not add, remove or invent anyone". Never let the painter invent a crowd.
 - Ship: `python3 components/room/tools/projects.py` writes `public/lab/room/projects/<slug>.webp`
-  (1080x720). A new project: paint `art/projects/<slug>.png`, add the slug to `SLUGS`, run it.
+  (colour) and `<slug>-pencil.webp` (pencil, computed in numpy; photos and dark objects are in
+  `SOFT` for a lighter pencil without outlines, or faces turn eerie).
+- A new project: paint `art/projects/<slug>.png`, add the slug to `SLUGS` (and `SOFT` if it is a
+  photo), add its tags and years to `PROJECT_META`, its logo to `ProjectLogo`, then run the script.

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Device } from "../../components/room/Device";
+import { ProjectLogo } from "../../components/room/ProjectLogo";
+import { PROJECT_META, projectLine } from "../../components/room/projects";
 import { roomDate, RoomFooter, RoomSocial } from "../../components/room/RoomChrome";
-import { figLabel, objectForProject, roomPostHref } from "../../components/room/scene/objects";
+import { objectForProject, roomPostHref } from "../../components/room/scene/objects";
 import { getPostSummaries } from "../../lib/blog";
 import { labAbout, labProjects } from "../../lib/lab/catalog";
 import styles from "./room.module.css";
@@ -38,6 +40,7 @@ export default function RoomPage() {
     type: project.type,
     href: project.href,
     blurb: project.blurb,
+    tags: PROJECT_META[project.slug]?.tags,
   }));
 
   return (
@@ -80,7 +83,7 @@ export default function RoomPage() {
         <div className={styles.below}>
           <section className={`${styles.section} ${styles.projectsSection}`} id="projects" aria-labelledby="projects-title">
             <h2 id="projects-title">Projects</h2>
-            {/* each project painted in the room's ink and watercolour, from its real screenshot or photo */}
+            {/* one clean thing per project, painted from its real screenshot or photo: pencil at rest, colour on hover */}
             <ul className={styles.projectGrid}>
               {shown.map((project) => {
                 const item = objectForProject(project.slug);
@@ -89,13 +92,15 @@ export default function RoomPage() {
                     <a className={styles.projectCard} href={project.href} target="_blank" rel="noreferrer" data-room-target={item?.id}>
                       <span className={styles.projectArt}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={`/lab/room/projects/${project.slug}.webp`} alt="" width={1080} height={720} loading="lazy" decoding="async" />
+                        <img className={styles.projectPencil} src={`/lab/room/projects/${project.slug}-pencil.webp`} alt="" width={1080} height={720} loading="lazy" decoding="async" />
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img className={styles.projectColour} src={`/lab/room/projects/${project.slug}.webp`} alt="" width={1080} height={720} loading="lazy" decoding="async" />
+                        <ProjectLogo slug={project.slug} title={project.title} />
                       </span>
                       <span className={styles.projectHead}>
                         <span className={styles.rowTitle}>{project.title}</span>
-                        <span className={styles.projectKind}>{item ? `${figLabel(item.fig)} · ${project.type}` : project.type}</span>
+                        <span className={styles.projectKind}>{projectLine(project.slug) || project.type}</span>
                       </span>
-                      <span className={styles.rowMeta}>{project.blurb}</span>
                     </a>
                   </li>
                 );

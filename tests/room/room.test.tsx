@@ -67,9 +67,12 @@ describe("Pocket Room landing", () => {
 
   it("shows every project as a painted card, Bratislava Slush’D included", () => {
     const cards = markup.match(/\/lab\/room\/projects\/[a-z-]+\.webp/g) ?? [];
-    expect(cards.length).toBeGreaterThanOrEqual(8);
+    // each card: the pencil picture at rest and the colour one it fades into
+    expect(cards.filter((src) => src.endsWith("-pencil.webp")).length).toBeGreaterThanOrEqual(8);
+    expect(cards.filter((src) => !src.endsWith("-pencil.webp")).length).toBeGreaterThanOrEqual(8);
     for (const src of cards) expect(existsSync(resolve(process.cwd(), "public", src.slice(1))), src).toBe(true);
     expect(markup).toContain("Bratislava Slush’D");
+    expect(markup).toContain("Event · Startups · 2025");
     expect(markup).toContain('href="https://bratislavaslushd.com/"');
   });
 

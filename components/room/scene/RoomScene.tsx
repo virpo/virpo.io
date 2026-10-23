@@ -82,6 +82,8 @@ export type SceneProps = {
   /** ms between trains is shorter in the window toy etc. */
   hrefFor?: (item: RoomObject) => string;
   titleFor?: (item: RoomObject) => string;
+  /** a few quiet words after the title, for names that don't explain themselves */
+  noteFor?: (item: RoomObject) => string | undefined;
   onHover?: (id: string | null) => void;
   onFocusObject?: (id: string) => void;
   /** viaLink: the event came from the object's own link (so the browser can follow it) */
@@ -149,6 +151,7 @@ export function RoomScene({
   reducedMotion = false,
   hrefFor,
   titleFor,
+  noteFor,
   onHover,
   onFocusObject,
   onActivate,
@@ -415,12 +418,12 @@ export function RoomScene({
         ) : null}
       </div>
 
-      {labelItem && !decorative ? <Label item={labelItem} frame={frame} open={labelOpen} title={titleFor?.(labelItem) ?? labelItem.goes} onOpen={() => onOpenLabel?.(labelItem.id)} /> : null}
+      {labelItem && !decorative ? <Label item={labelItem} frame={frame} open={labelOpen} title={titleFor?.(labelItem) ?? labelItem.goes} note={noteFor?.(labelItem)} onOpen={() => onOpenLabel?.(labelItem.id)} /> : null}
     </div>
   );
 }
 
-function Label({ item, open, title, onOpen, frame }: { item: RoomObject; open: boolean; title: string; onOpen: () => void; frame?: readonly [number, number, number, number] }) {
+function Label({ item, open, title, note, onOpen, frame }: { item: RoomObject; open: boolean; title: string; note?: string; onOpen: () => void; frame?: readonly [number, number, number, number] }) {
   const [x, y, w, h] = item.hit ?? item.box;
   const fx = frame ? frame[0] : 0;
   const fy = frame ? frame[1] : 0;
@@ -442,6 +445,7 @@ function Label({ item, open, title, onOpen, frame }: { item: RoomObject; open: b
       <span className={styles.labelFig}>{figLabel(item.fig)}</span>
       <span className={styles.labelText}>
         {title}
+        {note ? <span className={styles.labelNote}>{note}</span> : null}
       </span>
       {open ? (
         <button type="button" className={styles.labelOpen} onClick={onOpen}>

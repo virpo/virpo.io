@@ -1,5 +1,11 @@
 Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <art dir>/projects/zlta-stopa.png and print its path.
 
-Attached: style.png (the style to match) and zltastopa.png (the subject). Make a hand-drawn version of this web page screenshot: white page, huge yellow circle shapes, the big headline 'Keď niečo smrdí, zostane stopa.', black and white buttons, three project cards below. Keep the layout and the big headline legible.
-Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm light. Not 3D, not vinyl, not a photo, not pixel art.
-Landscape 1536x1024. No border, no frame, no extra text beyond what is in the subject.
+Attached: style.png (the style), refs/zlta-stopa-site.jpg (the site's visual language: white cards, bold black type, yellow).
+Paint the moment a journalist finds something rotten in a public contract. One white contract card, all text in English and legible:
+title 'Contract 46581'; 'Signed: 1 280 000 EUR'; 'After 9 amendments: 4 910 000 EUR', that last amount circled twice in red marker with a red '+283 %' scrawled next to it.
+Pinned to the card's edge a small yellow sticky note in handwriting: 'Supplier founded 11 days before the tender'.
+A trail of small yellow footprints walks from the sticky note off the card's corner.
+A red rubber-stamp mark at an angle across the card's bottom: 'FLAGGED'.
+Centred, filling about 75% of the frame, on a plain empty warm off-white watercolor paper background (#F1EADF) with a soft natural shadow. Nothing else: no page navigation, no extra logos.
+Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture. Full colour. Not 3D, not vinyl, not a photo, not pixel art.
+Landscape 1536x1024. No border, no frame.

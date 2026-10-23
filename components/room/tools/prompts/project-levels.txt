@@ -1,5 +1,6 @@
 Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <art dir>/projects/levels.png and print its path.
 
-Attached: style.png (the style to match) and levels.png (the subject). Make a hand-drawn version of this web page screenshot: keep its layout, the big headline 'What level are you with agents?', the yellow 'See your level' button and the fanned collectible cards on the right (score 87/100 card with a man shouting, a caveman card at 11/100). Redraw it as if the whole web page were inked and watercolored by hand, UI shapes kept clean and legible.
-Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm light. Not 3D, not vinyl, not a photo, not pixel art.
-Landscape 1536x1024. No border, no frame, no extra text beyond what is in the subject.
+Attached: style.png (the style to match) and refs/levels-site.jpg.
+From the attached web page, paint just its three fanned collectible cards: the big yellow-framed 87/100 'Orbit' card in front (a man shouting on its photo, a grid of small squares, 'PETER HRASKA' label), a caveman card '11/100' behind on the left and a 'Stone, again' card behind on the right. Show ONLY this one thing, centred, filling about 70% of the frame, on a plain empty warm off-white watercolor paper background (#F1EADF) with a soft natural shadow under it. Nothing else from the page: no navigation, no other text, no buttons, no logos, no background UI.
+Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture. Full colour. Not 3D, not vinyl, not a photo, not pixel art.
+Landscape 1536x1024. No border, no frame.

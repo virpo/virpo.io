@@ -540,6 +540,12 @@
   text-overflow: ellipsis;
 }
 
+.labelNote {
+  margin-left: 0.8cqw;
+  color: #9a9086;
+  font-weight: 500;
+}
+
 .labelText b {
   color: var(--orange);
   font-weight: 700;

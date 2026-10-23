@@ -1,5 +1,6 @@
 Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <art dir>/projects/cmux-deck.png and print its path.
 
-Attached: style.png (the style to match) and cmux-deck.jpeg (the subject). Make a hand-drawn version of this photo: a small black Stream Deck with six glowing keys on a wooden desk, each key showing a little coloured icon and a status label. Keep the composition.
-Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm light. Not 3D, not vinyl, not a photo, not pixel art.
-Landscape 1536x1024. No border, no frame, no extra text beyond what is in the subject.
+Attached: style.png (the style to match) and refs/cmux-deck-photo.jpg.
+From the attached photo, paint just the small black Stream Deck with its six glowing keys (each key a little coloured icon and a status: 'pracovna DONE', 'Random idle', 'Pegboard idle', 'Japan idle', 'Nox idle', 'Three RUN'), standing on its own. Remove the desk and keyboard. Show ONLY this one thing, centred, filling about 70% of the frame, on a plain empty warm off-white watercolor paper background (#F1EADF) with a soft natural shadow under it. Nothing else from the page: no navigation, no other text, no buttons, no logos, no background UI.
+Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture. Full colour. Not 3D, not vinyl, not a photo, not pixel art.
+Landscape 1536x1024. No border, no frame.
