@@ -17,6 +17,11 @@ export function tokyoHour(date = new Date()) {
   return Number(new Intl.DateTimeFormat("en-GB", { hour: "2-digit", hourCycle: "h23", timeZone: "Asia/Tokyo" }).format(date));
 }
 
+/** "20:41" in Tokyo, for the clock printed on the bezel. */
+export function tokyoClock(date = new Date()) {
+  return new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: "Asia/Tokyo" }).format(date);
+}
+
 export type Train = { kind: "shinkansen" | "local"; dir: 1 | -1; id: number; ms: number };
 
 /**

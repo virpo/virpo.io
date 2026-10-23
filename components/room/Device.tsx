@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent, type ReactNode } from "react";
 import { playClick } from "./clicks";
 import { RoomScene } from "./scene/RoomScene";
-import { readingPose, TIME_CHOICES, TIME_KEY, timeForHour, tokyoHour, type TimeChoice, type TimeOfDay } from "./scene/life";
+import { readingPose, TIME_CHOICES, TIME_KEY, timeForHour, tokyoClock, tokyoHour, type TimeChoice, type TimeOfDay } from "./scene/life";
 import { cycle, figLabel, neighbour, objectById, objectForProject, PLATE_H, PLATE_W, ROOM_OBJECTS, roomPostHref, type RoomAppId, type RoomObject, type RoomToyId } from "./scene/objects";
 import { AboutApp, BloomApp, KanaApp, MirrorApp, ProjectApp, RadioApp, WindowApp, type AppAbout, type AppProject } from "./screens/Apps";
 import styles from "./device.module.css";
@@ -35,6 +35,10 @@ const SLABS = [-6, -4, -2, 0, 2, 4];
 const KNOB_RINGS = Array.from({ length: 16 }, (_, r) => r);
 const SD_LAYERS = [0, 1, 2];
 const GRILLE = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+const VENTS = [0, 1, 2, 3, 4, 5];
+// the soft loop: out of the slider, down round the hand and back up into it
+const STRAP = "M18 178 C 13 220, 12 270, 13 310 C 14 350, 17 392, 28 401 C 40 409, 44 378, 41 330 C 38 280, 32 220, 26 178";
+const STRAP_CLASSES = ["cord", "cordBody", "cordTwist", "cordShade", "cordShine"] as const;
 
 function Walls({ n = 4 }: { n?: number }) {
   return (
@@ -82,6 +86,7 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
   const [announce, setAnnounce] = useState("");
   const [progress, setProgress] = useState(0);
   const [turning, setTurning] = useState(false);
+  const [clock, setClock] = useState<string | null>(null);
 
   const lit = hover ?? external ?? selected;
 
@@ -103,10 +108,12 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
   }, []);
 
   useEffect(() => {
-    const resolve = () => setTime(timeChoice === "auto" ? timeForHour(tokyoHour()) : timeChoice);
+    const resolve = () => {
+      setTime(timeChoice === "auto" ? timeForHour(tokyoHour()) : timeChoice);
+      setClock(tokyoClock());
+    };
     resolve();
-    if (timeChoice !== "auto") return;
-    const id = window.setInterval(resolve, 60_000);
+    const id = window.setInterval(resolve, 15_000);
     return () => window.clearInterval(id);
   }, [timeChoice]);
 
@@ -360,11 +367,23 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
     setAnnounce(`Light: ${TIME_LABEL[next]}`);
   };
 
-  const onKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
-    if (!hero || event.altKey || event.metaKey || event.ctrlKey) return;
+  // with a figure open, ← → step to the previous or next figure that opens on the screen
+  // (the notebooks and the bookshelf are links to other pages, so they are skipped)
+  const stepApp = (step: 1 | -1) => {
+    let item = cycle(appFrom, step);
+    for (let guard = 0; guard < ROOM_OBJECTS.length && !appFor(item); guard += 1) item = cycle(item.id, step);
+    const next = appFor(item);
+    if (next) openApp(next, item.id, true);
+  };
+
+  /*
+   * Keys. ← → browse the figures in number order (and step between open figures), ↑ ↓ move
+   * the cursor round the room, Enter opens, Escape goes back. ← → Enter and Escape work from
+   * anywhere on the page while the device is on screen, so you don't have to click into it first;
+   * ↑ ↓ only inside the device, so the page still scrolls.
+   */
+  const handleKey = (event: KeyboardEvent | ReactKeyboardEvent, inside: boolean) => {
     const target = event.target as HTMLElement;
-    if (["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) return;
-    const arrows: Record<string, "up" | "down" | "left" | "right"> = { ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right" };
     if (event.key === "Escape") {
       if (app || selected) {
         event.preventDefault();
@@ -373,13 +392,56 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
       }
       return;
     }
-    if (arrows[event.key] && (!app || !target.closest("[data-app-body]"))) {
+    // inside an open app's own controls, the keys belong to the app
+    if (app && target.closest?.("[data-app-body]")) return;
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
       event.preventDefault();
+      const step = event.key === "ArrowRight" ? 1 : -1;
       // the d-pad key moves under your finger even when you use the arrow keys
-      press(arrows[event.key]);
-      move(arrows[event.key]);
+      press(step === 1 ? "right" : "left");
+      if (app) stepApp(step);
+      else select(cycle(lit, step).id, inside);
+      return;
+    }
+    if (!inside) {
+      if (event.key === "Enter" && !app && selected && target === document.body) {
+        event.preventDefault();
+        press("round");
+        primary();
+      }
+      return;
+    }
+    if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+      event.preventDefault();
+      const direction = event.key === "ArrowUp" ? "up" : "down";
+      press(direction);
+      move(direction);
     }
   };
+
+  const onKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (!hero || event.altKey || event.metaKey || event.ctrlKey) return;
+    const target = event.target as HTMLElement;
+    if (["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) return;
+    handleKey(event, true);
+  };
+
+  const keyRef = useRef(handleKey);
+  keyRef.current = handleKey;
+  const pausedRef = useRef(paused);
+  pausedRef.current = paused;
+  useEffect(() => {
+    if (!hero) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || event.altKey || event.metaKey || event.ctrlKey || event.shiftKey || pausedRef.current) return;
+      const target = event.target as HTMLElement | null;
+      if (!target || rootRef.current?.contains(target)) return;
+      if (target.closest("input, textarea, select, [contenteditable], [role=slider], [role=tablist]")) return;
+      keyRef.current(event, false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [hero]);
 
   // knob: wheel and drag turn it, a click turns one notch
   const knobRef = useRef<HTMLButtonElement>(null);
@@ -504,14 +566,25 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
           <i key={z} className={styles.slab} style={{ "--z": `${z}cqw` } as CSSProperties} aria-hidden="true" />
         ))}
         <div className={styles.stand} aria-hidden="true" />
+        {/* a wrist strap: a thin, strong cord through the lug, a smooth plastic slider, then the
+            soft braided loop that goes round your hand */}
         <svg className={styles.lanyard} viewBox="0 0 70 410" aria-hidden="true">
-          {/* a braided cord: a dark edge, the orange body, then two rows of twist marks */}
-          <path className={styles.cord} d="M37 34 C 22 52, 15 120, 15 240 C 15 330, 17 392, 29 401 C 41 409, 45 378, 43 326 C 41 250, 36 130, 41 66" />
-          <path className={styles.cordBody} d="M37 34 C 22 52, 15 120, 15 240 C 15 330, 17 392, 29 401 C 41 409, 45 378, 43 326 C 41 250, 36 130, 41 66" />
-          <path className={styles.cordTwist} d="M37 34 C 22 52, 15 120, 15 240 C 15 330, 17 392, 29 401 C 41 409, 45 378, 43 326 C 41 250, 36 130, 41 66" />
-          <path className={styles.cordShade} d="M37 34 C 22 52, 15 120, 15 240 C 15 330, 17 392, 29 401 C 41 409, 45 378, 43 326 C 41 250, 36 130, 41 66" />
-          <path className={styles.cordShine} d="M37 34 C 22 52, 15 120, 15 240 C 15 330, 17 392, 29 401 C 41 409, 45 378, 43 326 C 41 250, 36 130, 41 66" />
-          <circle className={styles.lug} cx="38" cy="36" r="5" />
+          <g className={styles.thin}>
+            <path d="M30 124 C 27 134, 23 142, 20 152" />
+            <path d="M30 124 C 29 135, 27 143, 25 152" />
+          </g>
+          <g className={styles.thinShine}>
+            <path d="M30 124 C 27 134, 23 142, 20 152" />
+            <path d="M30 124 C 29 135, 27 143, 25 152" />
+          </g>
+          {STRAP_CLASSES.map((name) => (
+            <path key={name} className={styles[name]} d={STRAP} />
+          ))}
+          <rect className={styles.slider} x="13.5" y="148" width="17" height="34" rx="8.5" />
+          <rect className={styles.sliderShine} x="16.5" y="152" width="3.8" height="25" rx="1.9" />
+          <path className={styles.sliderSeam} d="M15 165 H 29" />
+          <rect className={styles.lug} x="25" y="117" width="9" height="11" rx="3.5" />
+          <circle className={styles.lugHole} cx="29.5" cy="122.5" r="1.7" />
         </svg>
         {/* a microSD card half in its slot */}
         <div className={styles.sd} aria-hidden="true">
@@ -521,7 +594,11 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
         </div>
         {/* the left side of the case, with the light button on it */}
         <div className={styles.side}>
-          <i className={styles.sideSlots} aria-hidden="true" />
+          <i className={styles.sideSlots} aria-hidden="true">
+            {VENTS.map((vent) => (
+              <i key={vent} />
+            ))}
+          </i>
           <i className={styles.sdSlot} aria-hidden="true" />
           <button type="button" className={styles.sideButton} onClick={hero ? () => (press("side"), cycleTime()) : undefined} aria-label={`Light in the room: ${TIME_LABEL[timeChoice]}. Change`} title={`Light: ${TIME_LABEL[timeChoice]}`} {...btn("side")}>
             <Walls n={8} />
@@ -541,7 +618,7 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
                 </a>
               )}
               {app ? (
-                <section className={styles.app} data-app={app} style={{ transformOrigin: appOrigin }} aria-label={appTitle ?? "App"}>
+                <section key={app} className={styles.app} data-app={app} style={{ transformOrigin: appOrigin }} aria-label={appTitle ?? "App"}>
                   <header className={styles.appBar}>
                     <button type="button" className={styles.appBack} onClick={closeApp}>
                       <span aria-hidden="true">←</span> Room
@@ -564,6 +641,12 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
               <span className={styles.modelTall}> mini</span>
               <span className={styles.modelWide}> wide</span>
             </span>
+            {/* the light in the room follows Tokyo, so the bezel says what time it is there */}
+            {clock ? (
+              <span className={styles.clock} title="Time in Tokyo, where the room is">
+                Tokyo {clock}
+              </span>
+            ) : null}
           </div>
 
           <div className={styles.progress} aria-hidden={hero ? true : undefined} role={hero ? undefined : "progressbar"} aria-label={hero ? undefined : "Reading progress"} aria-valuenow={hero ? undefined : Math.round(progress * 100)} aria-valuemin={hero ? undefined : 0} aria-valuemax={hero ? undefined : 100}>

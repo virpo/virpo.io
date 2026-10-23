@@ -59,10 +59,9 @@ export default async function RoomPostPage({ params }: Props) {
   return (
     <div className={shell.page}>
       <div className={styles.layout}>
-        <aside className={styles.margin} aria-label="Mini Peter in the Pocket Room, reading this post with you">
+        <aside className={styles.margin} aria-label="Pocket Room">
           <div className={styles.sticky}>
             <Device variant="dock" posts={devicePosts} progressTarget="room-article" />
-            <p className={styles.caption}>Mini Peter is reading along. He turns a page as you scroll.</p>
           </div>
         </aside>
 

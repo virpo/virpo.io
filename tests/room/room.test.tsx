@@ -15,7 +15,7 @@ import RoomPostPage, { generateMetadata, generateStaticParams } from "../../app/
 import RoomPage, { metadata as landingMetadata } from "../../app/room/page";
 import RoomWritingPage, { metadata as writingMetadata } from "../../app/room/writing/page";
 import { LAYERS } from "../../components/room/scene/layers";
-import { nextTrain, readingPose, timeForHour } from "../../components/room/scene/life";
+import { nextTrain, readingPose, timeForHour, tokyoClock } from "../../components/room/scene/life";
 import { cycle, hullClip, neighbour, objectById, pickAt, ROOM_OBJECTS, TOY_OBJECTS } from "../../components/room/scene/objects";
 import { cardArt } from "../../components/room/screens/Apps";
 import { CARD_ART } from "../../components/room/screens/cards";
@@ -159,6 +159,8 @@ describe("Pocket Room life", () => {
     expect(timeForHour(12)).toBe("day");
     expect(timeForHour(17)).toBe("evening");
     expect(timeForHour(23)).toBe("night");
+    // the bezel prints Tokyo time
+    expect(tokyoClock(new Date("2026-10-23T12:05:00Z"))).toBe("21:05");
   });
 
   it("has mini-Peter read, turn pages, and wave at the end", () => {

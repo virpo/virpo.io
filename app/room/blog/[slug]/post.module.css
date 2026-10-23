@@ -27,12 +27,6 @@
   padding-top: 4.6rem;
 }
 
-.caption {
-  margin: 0.4rem 0 0 6%;
-  color: #a39b91;
-  font: 500 11.5px/1.5 var(--font-room-mono), ui-monospace, monospace;
-}
-
 .crumbs {
   display: flex;
   align-items: center;
@@ -250,10 +244,6 @@
     position: static;
     width: 100%;
     padding-top: 0;
-  }
-
-  .caption {
-    display: none;
   }
 
   .crumbs {
