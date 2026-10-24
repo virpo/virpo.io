@@ -200,7 +200,7 @@ describe("Pocket Room post page", () => {
     expect(meta.twitter).toMatchObject({ card: "summary_large_image" });
   });
 
-  it("renders one readable column with date, reading time, tags, body, neighbours and the docked device", async () => {
+  it("renders one readable column with date, reading time, tags, body, neighbours, the way home and the hydrangea", async () => {
     const posts = getPostSummaries();
     const post = posts[1];
     const markup = html(await RoomPostPage({ params: Promise.resolve({ slug: post.slug }) }));
@@ -211,10 +211,11 @@ describe("Pocket Room post page", () => {
     expect(markup).toContain('id="room-article"');
     expect(markup).toMatch(href(`/blog/${posts[0].slug}/`));
     expect(markup).toMatch(href(`/blog/${posts[2].slug}/`));
-    expect(markup).toContain('data-variant="dock"');
-    expect(markup).toContain('role="progressbar"');
+    expect(markup).toContain('aria-label="Peter Hraska, home"');
     expect(markup).toContain("/lab/room/peter-reading.webp");
-    // the docked room is decorative: no extra tab stops in the margin
+    expect(markup).toContain('data-toy="hydrangea"');
+    expect(markup).toContain("/lab/room/margin/hydrangea.webp");
+    // the margin is decorative: no extra tab stops in it
     expect(markup).not.toContain("data-hit=");
   });
 });

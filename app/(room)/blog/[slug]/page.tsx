@@ -5,6 +5,7 @@ import { ArticleLightbox } from "../../../../components/blog/ArticleLightbox";
 import { compilePostMdx } from "../../../../components/blog/mdx-components";
 import { Device } from "../../../../components/room/Device";
 import { MarginToy } from "../../../../components/room/margin/MarginToy";
+import { SiteMark } from "../../../../components/room/SiteMark";
 import { RoomBackKey, roomDate, RoomFooter } from "../../../../components/room/RoomChrome";
 import { roomPostHref } from "../../../../components/room/scene/objects";
 import { getPost, getPostSlugs, getPostSummaries, type PostSource } from "../../../../lib/blog";
@@ -123,11 +124,13 @@ export default async function RoomPostPage({ params }: Props) {
         </aside>
 
         <article className={styles.article} id="room-article">
-          <nav className={styles.crumbs} aria-label="Breadcrumb">
-            <RoomBackKey label="Peter Hraska" />
-            <span aria-hidden="true">/</span>
-            <Link href="/blog/">Writing</Link>
-          </nav>
+          <SiteMark>
+            <nav className={styles.crumbs} aria-label="Breadcrumb">
+              <RoomBackKey label="Peter Hraska" />
+              <span aria-hidden="true">/</span>
+              <Link href="/blog/">Writing</Link>
+            </nav>
+          </SiteMark>
 
           <header className={styles.header}>
             <h1>{post.title}</h1>

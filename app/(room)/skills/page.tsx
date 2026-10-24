@@ -3,6 +3,7 @@ import { RoomBackKey, RoomFooter } from "../../../components/room/RoomChrome";
 import { CopyCommand } from "../../../components/skills/CopyCommand";
 import { installCommand, skills, sourceUrl } from "../../../lib/skills";
 import { pageMeta } from "../../../lib/site";
+import { SiteMark } from "../../../components/room/SiteMark";
 import shell from "../room.module.css";
 
 const description = "Agent skills Peter Hraska made for real chores. Free to use and adapt.";
@@ -13,7 +14,9 @@ export default function SkillsPage() {
   return (
     <div className={shell.page}>
       <main className={shell.writing}>
-        <RoomBackKey />
+        <SiteMark>
+          <RoomBackKey />
+        </SiteMark>
         <header className={shell.writingHead}>
           <h1>Skills</h1>
           <p>Agent skills I made for real chores. Free to use and adapt.</p>

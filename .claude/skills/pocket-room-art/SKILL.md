@@ -61,6 +61,7 @@ re-explore a rejected direction unless he asks.
 | App-screen object cards | `card-<id>.webp` | `art/cards/<id>.png` (on magenta) | `prompts/card-<id>.txt` | plate crop (`cards.py refs`), `plate-b.png` | `cards.py` |
 | Project cards | `projects/<slug>.webp` and `projects/<slug>-pencil.webp` | `art/projects/<slug>.png` (on paper) | `prompts/project-<slug>.txt` | the real screenshot or photo in `art/projects/refs/` (+ `art/plate-b.png` as the style) | `projects.py` |
 | Favicon and X avatar | `brand/icon-{16,32,48,64}.png`, `brand/apple-touch-icon.png`, `output/lab/brand/x-avatar-400.jpg` | `art/brand/favicon-art.png` | `prompts/favicon.txt` | `art/brand/x-avatar.jpg` (the real X avatar), the `peter-wave` sprite | `brand.py` |
+| Margin toys beside a post (hydrangea is the one shown; shiba asleep/awake, walking shiba, strap charm, crane, lucky cat are previews via `?margin=`) | `public/lab/room/margin/*.webp`, positions in `components/room/margin/art.json` | `art/margin/<name>.png` (on magenta; `hydrangea-heads-2.png` supplies one even violet head because head 6 of the first was split blue/violet) | `prompts/margin-<name>.txt` | `art/plate-b.png` + the concept sketch in `art/margin/concepts/` | `margin.py` (bud positions and the cat's coin slot are placed by eye in it) |
 
 Not generated: the project logos in `public/lab/room/projects/logos/` are the real marks from each
 project's site, recoloured to ink (`#2a2118`); their originals are in `art/projects/logos/` and

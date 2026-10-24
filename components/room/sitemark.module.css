@@ -1,0 +1,192 @@
+/* Candidates for the top of a post. Same materials as the handheld: warm grey aluminium, white keys
+   with travel, the orange of the knob, mono labels like the ones printed on the device. */
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 48px;
+}
+
+.home {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--ink) !important;
+  text-decoration: none !important;
+}
+
+.name {
+  font-size: 1.3rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  transition: color 120ms ease;
+}
+
+.home:hover .name {
+  color: var(--orange);
+}
+
+.home:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 4px;
+  border-radius: 10px;
+}
+
+.writing {
+  color: var(--ink-2) !important;
+  font: 600 12px/1 var(--font-room-mono), ui-monospace, monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none !important;
+}
+
+.writing[aria-current] {
+  color: var(--orange) !important;
+}
+
+.writing:hover {
+  color: var(--orange) !important;
+}
+
+/* ---- icon: the site's icon beside the name, like a logo ---- */
+.icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  box-shadow: 0 0 0 1px rgba(40, 30, 20, 0.12), 0 4px 10px -4px rgba(60, 40, 20, 0.45);
+  transition: transform 160ms cubic-bezier(0.3, 0.8, 0.3, 1.4);
+}
+
+.home:hover .icon {
+  transform: rotate(-6deg) scale(1.06);
+}
+
+/* ---- key: the name printed on a wide white key that presses down ---- */
+.bar[data-mark="key"] .home {
+  padding: 0 1.05rem;
+  height: 44px;
+  border-radius: 14px;
+  background:
+    radial-gradient(90% 120% at 30% 10%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 55%),
+    linear-gradient(180deg, #e4e0d9, #c3bdb4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.1),
+    0 4px 0 #9b9387,
+    0 7px 10px rgba(50, 40, 30, 0.3);
+  transition: transform 70ms ease-out, box-shadow 70ms ease-out;
+}
+
+.bar[data-mark="key"] .name {
+  font-size: 1.05rem;
+  letter-spacing: -0.015em;
+}
+
+.bar[data-mark="key"] .home:active {
+  transform: translateY(3px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 2px 3px rgba(0, 0, 0, 0.08),
+    0 1px 0 #9b9387,
+    0 2px 3px rgba(50, 40, 30, 0.25);
+}
+
+/* ---- peter: mini Peter in a round window, reading; he turns round to wave when you point at him ---- */
+.porthole {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 30%, #fff8ec, #efe4d2);
+  box-shadow:
+    inset 0 2px 4px rgba(60, 40, 20, 0.25),
+    0 0 0 3px #cfc7bc,
+    0 0 0 4px #a99f93,
+    0 4px 10px -2px rgba(60, 40, 20, 0.4);
+}
+
+.porthole img {
+  position: absolute;
+  left: -19px;
+  top: 3px;
+  width: 87px;
+  max-width: none;
+  height: auto;
+  transition: opacity 140ms ease;
+}
+
+.waving {
+  opacity: 0;
+}
+
+.home:hover .waving,
+.home:focus-visible .waving {
+  opacity: 1;
+}
+
+.home:hover .reading,
+.home:focus-visible .reading {
+  opacity: 0;
+}
+
+/* ---- plate: an aluminium nameplate with the name engraved in mono ---- */
+.bar[data-mark="plate"] .home {
+  gap: 0.6rem;
+  padding: 0 0.95rem 0 0.7rem;
+  height: 40px;
+  border-radius: 10px;
+  background:
+    radial-gradient(120% 70% at 30% -10%, rgba(255, 255, 255, 0.55), transparent 55%),
+    linear-gradient(176deg, #dcd5cb 0%, #c6bdb2 55%, #aca296 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.14),
+    0 4px 0 #a1978b,
+    0 5px 0 #857b70,
+    0 10px 16px -8px rgba(60, 40, 20, 0.45);
+}
+
+.bar[data-mark="plate"] .name {
+  color: #5d554c;
+  font: 700 12.5px/1 var(--font-room-mono), ui-monospace, monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75), 0 -1px 0 rgba(0, 0, 0, 0.18);
+}
+
+.bar[data-mark="plate"] .home:hover .name {
+  color: #b8480f;
+}
+
+.plateKnob {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 36% 30%, rgba(255, 255, 255, 0.6), transparent 45%),
+    radial-gradient(circle, #f0722b 55%, transparent 56%),
+    repeating-conic-gradient(#c4501a 0 15deg, #f0722b 15deg 30deg);
+  box-shadow: 0 2px 0 #a43f15;
+  transition: transform 300ms cubic-bezier(0.3, 0.8, 0.3, 1.3);
+}
+
+.home:hover .plateKnob {
+  transform: rotate(120deg);
+}
+
+@media (max-width: 619px) {
+  .bar {
+    margin-top: 0.9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon,
+  .plateKnob {
+    transition: none;
+  }
+}

@@ -15,16 +15,16 @@ const TOYS = ["pup", "strap", "crane", "neko", "hydrangea", "player", "punch", "
 type Toy = (typeof TOYS)[number];
 
 /**
- * The toy beside a post. While we choose, ?margin=<toy> swaps the docked room for one of the
- * candidates below; without it the room stays.
+ * The toy beside a post: the room's hydrangea, tiny, standing on the bottom of the screen. While
+ * Peter chooses, ?margin=<toy> previews the other candidates, and ?margin=room the docked handheld.
  */
 export function MarginToy({ target, children }: { target: string; children: ReactNode }) {
-  const [toy, setToy] = useState<Toy | null>(null);
+  const [toy, setToy] = useState<Toy | "room">("hydrangea");
   useEffect(() => {
     const value = new URLSearchParams(location.search).get("margin");
-    if (TOYS.includes(value as Toy)) setToy(value as Toy);
+    if (value === "room" || TOYS.includes(value as Toy)) setToy(value as Toy);
   }, []);
-  if (!toy) return <>{children}</>;
+  if (toy === "room") return <>{children}</>;
   return (
     <div className={styles.toy} data-toy={toy}>
       {toy === "pup" ? (

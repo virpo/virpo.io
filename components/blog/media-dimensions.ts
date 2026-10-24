@@ -33,6 +33,7 @@ export const imageDimensions: Record<string, { width: number; height: number }> 
   "/assets/blog/pocket-room/story/loop-tilt.webp": { width: 1200, height: 450 },
   "/assets/blog/pocket-room/story/loop-wave.webp": { width: 832, height: 724 },
   "/assets/blog/pocket-room/story/manga-5.webp": { width: 2192, height: 520 },
+  "/assets/blog/pocket-room/story/gacha-3.webp": { width: 1440, height: 960 },
   "/assets/blog/pocket-room/story/night.webp": { width: 1400, height: 875 },
   "/assets/blog/pocket-room/story/old-site.webp": { width: 1600, height: 1000 },
   "/assets/blog/pocket-room/story/pink-peter.webp": { width: 1400, height: 933 },

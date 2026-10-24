@@ -1,8 +1,8 @@
 ---
-title: "AI technique: Machine gun"
-description: How I made this website with Claude Code and ChatGPT's image generation. If unsure, shoot a machine gun to see your options, then pick with your own eyes.
+title: "Gacha prompting: ask for ten, keep one"
+description: How I made this website with Claude Code calling ChatGPT's image generation. Ask for ten options, pick one with your own eyes, repeat. Prompts and horrific first builds included.
 publishedAt: 2026-10-23
-updatedAt: 2026-10-24
+updatedAt: 2026-10-25
 tags:
   - Weird use of AI
   - Design
@@ -12,23 +12,23 @@ draft: false
 
 <ArticleImage src="/assets/blog/pocket-room/story/day.webp" alt="virpo.io today: a little grey handheld with a painted room on its screen, next to Peter's name and his newest posts" />
 
-This website is a little grey handheld with my room inside it. I made it mostly by asking for ten of everything.
+This website is a little grey handheld with my room inside it. I made it mostly by asking for ten of everything. I call it gacha prompting, after gachapon, the Japanese capsule-toy machines.
 
 I wanted to make a new website. The old one was fun, my head following your cursor, little toys to learn Japanese and play sounds from Japan's streets I love. But in the process of showing you how fun I am, it got distractingly busy. :)
 
 <ArticleImage src="/assets/blog/pocket-room/story/old-site.webp" alt="The old virpo.io: a big photo of Peter shouting, colourful toy buttons, a Tokyo clock and a grid of projects" title="The old one. Fun, and a lot." />
 
-I'd rather give you one proper toy, but keep it a readable blog that doesn't undermine the interesting things I have to share.
+This time I'd rather give you one proper toy, but keep it a readable blog that doesn't get in the way of the interesting things I have to share.
 
 My setup these days is Claude Code with Opus 5.5, paired with a ChatGPT subscription for adversarial reviews, but also images. I don't even paste prompts anywhere, Claude just calls Codex. But more on that later.
 
-## The machine gun
+## Ten directions, then ten more
 
 Making something beautiful on the first try is luck. Let's cheat luck.
 
-Shoot a machine gun with 10 options when unsure. What also works is not describing the answer and how to get there, just what the answer should pass. Like what qualities, what is important for you in how it should look.
+When unsure, shoot 10 options like a machine gun. What also works is not describing the answer and how to get there, just what the answer should pass. Like what qualities, what is important for you in how it should look.
 
-For a website with an interesting design, one toy and all my quirkiness, but still usable as a blog, I shot for 10 different directions. With a simple prompt, only saying what the outcome should pass.
+For a website with an interesting design, one toy and all my quirkiness, but still usable as a blog, I asked for 10 different directions:
 
 ```prompt
 My website is interesting, but busy. I like the Japanese toys, but there's no calm, no 3D, nothing extra. Research what top designers do that most people haven't seen, and give me 10 concepts to pick from.
@@ -42,20 +42,18 @@ It has to work as:
 I'll share posts on Hacker News, so it needs credibility, but keep it playful. On surprise it should be 10 out of 10. Check whether ChatGPT can render the visual assets.
 ```
 
-<ArticleImage src="/assets/blog/pocket-room/story/concepts-1-3x3.webp" alt="Nine of the ten concept paintings, with 06 (an isometric house) and 08 (a little handheld device) circled in red pencil" title="Round one. I chose 06 and 08." />
+<ArticleImage src="/assets/blog/pocket-room/story/concepts-1-3x3.webp" alt="Nine of the ten concept paintings, with 06 (an isometric house) and 08 (a little handheld device) circled in red pencil" title="Round one." />
 
 I saw these 10 and used my own intuition about what could make a good website and what caught my interest at first sight. I love isometry and isometric designs (06), and 08 is inspired by Teenage Engineering.
 
-> **Technique: the machine gun**
-> When you're unsure, ask for ten options at once and only say what the result has to pass. Then pick with your own eyes.
-
-I thought it must be possible to merge them somehow. Didn't have to work hard to see what it could look like in action, though.
-
-You might realise that fitting a whole house into a pocket machine would make for too much detail, but the agent will know it too. I didn't specify much, just that I want the two merged in a way that would visually work and still fulfil my goals from the first prompt. I very often let it go wild, and even ask it specifically to surprise me with concepts that might work.
+I thought it must be possible to merge them somehow. You might realise that fitting a whole house into a pocket machine would make for too much detail, but the agent will know it too. I didn't specify much, just that I want the two merged in a way that would visually work and still fulfil my goals from the first prompt. I very often let it go wild, and even ask it specifically to surprise me with concepts that might work. So, ten more:
 
 <ArticleImage src="/assets/blog/pocket-room/story/concepts-2-3x3.webp" alt="Nine of the next ten concepts, with 03 (a grey handheld with a painted room on its screen) circled and 01 lightly marked" title="Round two. 01 was nice, 03 was the one." />
 
-## The first build was horrific
+> **Technique: gacha prompting**
+> When you're unsure, ask for ten options at once and only say what the result has to pass. Then pick with your own eyes.
+
+## Claude can't draw, so it calls ChatGPT
 
 I let it build 03, frontend only, to see what it is even capable of. The results were absolutely horrific.
 
@@ -63,7 +61,7 @@ I let it build 03, frontend only, to see what it is even capable of. The results
 
 <ArticleImage src="/assets/blog/pocket-room/story/first-builds-rest.webp" alt="Six more early builds: the same diorama at night and dusk, and three versions of a device next to a column of text" title="And six more, none of them the picture I picked." />
 
-I realised it wanted to rebuild the house, but as you can notice, it can't draw. So I pointed it at creating any manga-style visuals with ChatGPT's image generation, so that it would call `codex -i …` by itself. I didn't really overspecify what needs to happen and how.
+I realised it wanted to rebuild the house, but as you can notice, it can't draw. So I pointed it at ChatGPT's image generation for any manga-style visuals, so that it would call `codex exec -i …` by itself. I didn't really overspecify what needs to happen and how.
 
 ```prompt
 Build out 03 for real, and make it look like no other website. You can't draw, but ChatGPT can: call its image generation through codex exec, with the mockup attached as the reference, so every picture shares one style. Look at every image before you keep it, and paint it again when it's off.
@@ -82,7 +80,7 @@ Make the character look like me, make the trains move, and make it obvious on ho
 
 <ArticleImage src="/assets/blog/pocket-room/story/three-tries.webp" alt="Three new attempts at the handheld, each with a painted room on its screen, the third circled in red pencil" />
 
-This one worked best for me, the room with enough space. Some details were off, for sure, but that's something we can work with. Here comes the point where I start pinpointing what needs to get fixed, while still letting it rebuild big parts of what it did so far. Because I wouldn't want to overcommit to one way of making it 3D if there's a better one.
+The third one worked best for me, the room had enough space. Some details were off, for sure, but that's something we can work with. Here comes the point where I start pinpointing what needs to get fixed, while still letting it rebuild big parts of what it did so far. Because I wouldn't want to overcommit to one way of making it 3D if there's a better one.
 
 ## 3D, but not plastic
 
@@ -109,11 +107,13 @@ Then let's look into the tiny world. It's actually clickable, moves a little, an
 />
 
 > **Technique: paint on #FF00FF, then cut**
-> Nothing in a cosy painting is that pink, so turning magenta into transparency gives you clean sprites. Every object you can hover is cut out of the one painting, so everything lines up.
+> Nothing in a cosy painting is that pink, so turning magenta into transparency gives you clean sprites. The objects you can hover are cut out of the room painting itself, so everything lines up, and the props and poses are painted on pink to match it.
 
-There were tiny problems, such as when you clicked an item, the preview showed its cut-out, but it was blurry and ugly. So I let it take the cut-out as the prompt input and regenerate it without the background.
+There were tiny problems. When you clicked an item, the preview showed its cut-out, but it was blurry and ugly. So I let it take the cut-out as the prompt input and regenerate it without the background.
 
 <ArticleImage src="/assets/blog/pocket-room/story/cards.webp" alt="The arcade and the tiny TV, each as a blurry cut-out from the room next to the same object painted again on its own" title="The arcade and the TV, cut out and then generated again." />
+
+## The recipe lives in the repo
 
 Knowing I will most likely go with this website, I also asked it to note how it's creating these and what the prompts are, so the details get stored in the repo. If I decide to put a new thing on my table but lose the context of this conversation, it will know where to pick up, and make the new things match this world.
 
@@ -126,7 +126,7 @@ Store how you made every image here: the prompts, the reference photos, the scri
 
 ## Hands
 
-Hands. AI and hands. It took us like six tries, and each time I thought "now I explained it so properly, it will just know what to do". Not even using its own eyes helped, but we got there. With cut-outs of exactly what needs to disappear and what should stay.
+Hands. AI and hands. It took us like six tries, and each time I thought "now I explained it so properly, it will just know what to do". Not even using its own eyes helped. We got there with cut-outs of exactly what needs to disappear and what should stay.
 
 <ArticleImage src="/assets/blog/pocket-room/story/hands.webp" alt="Four versions of mini Peter waving, red pencil marking the extra hand, the missing arm and the wrong arm, a tick on the last" title="Three hands, one missing, one on the wrong side, and finally two." />
 
@@ -145,7 +145,7 @@ Lastly, I wanted to show my projects at the bottom. At first it just made a list
 
 <ArticleImage src="/assets/blog/pocket-room/story/project-list.webp" alt="A plain list of projects: titles, one line each, and the room object each one belongs to"  />
 
-I knew that's not right. I wanted it visual, but not taking too much attention away from the main act at the top. Finally, we got to a colourless grid with a thumbnail for each project. But it took me 10 different ideas, 2 iterations and hand-picking what does or doesn't work until we got there. Including the reveal animation, which I first thought should look like someone dropping a drop of ink onto paper. But it was just too distracting.
+I knew that's not right. I wanted it visual, but not taking too much attention away from the main act at the top. Finally, we got to a colourless grid with a thumbnail for each project. But it took me 10 different ideas, 2 iterations and hand-picking what does or doesn't work until we got there. Including the reveal animation, which I first thought should look like someone dropping ink onto paper. But it was just too distracting.
 
 <ArticleImage src="/assets/blog/pocket-room/story/youtldr-9.webp" alt="Nine versions of the YouTLDR thumbnail, from a screenshot of the site to a pencil and colour painting of a YouTube card turning into No." title="Versions of one thumbnail, from the real site to the one that stuck." />
 
@@ -157,9 +157,9 @@ There were many more ideas I had, and I didn't know the right answer, like how m
 
 But you see the theme here. If I imagine something, I don't have to be too sure. I can ask for everything and pick.
 
-Let's get some excitement in! It's like standing in front of a gachapon, the Japanese capsule-toy machine. You don't know what you will get, but you might get excited. You have many coins (tokens), so why not get 10 things and see if you don't just love one? :) Call it gacha prompting.
+Let's get some excitement in! It's like standing in front of a gachapon. You don't know what you will get, but you might get excited. You have many coins (tokens), so why not get 10 things and see if you don't just love one? :)
 
-<ArticleLoop src="/assets/blog/pocket-room/story/loop-gacha.mp4" poster="/assets/blog/pocket-room/story/loop-gacha.webp" size="narrow" label="Mini Peter crouches in front of a gachapon machine, turns its crank, and holds up the one capsule he loves" title="Gacha prompting. Pull ten, keep the one you love." />
+<ArticleImage src="/assets/blog/pocket-room/story/gacha-3.webp" alt="Three panels: mini Peter crouches in front of a red gachapon machine, turns its crank with both hands, then sits on the floor holding up one yellow capsule with the other nine scattered around him" />
 
 Just don't forget to kill some ideas, else you will never ship. :)
 

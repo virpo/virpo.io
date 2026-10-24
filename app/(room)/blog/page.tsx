@@ -5,6 +5,7 @@ import { RoomBackKey, roomDate, RoomFooter } from "../../../components/room/Room
 import { roomPostHref } from "../../../components/room/scene/objects";
 import { getPostSummaries } from "../../../lib/blog";
 import { pageMeta } from "../../../lib/site";
+import { SiteMark } from "../../../components/room/SiteMark";
 import shell from "../room.module.css";
 
 export const metadata: Metadata = pageMeta({
@@ -29,7 +30,9 @@ export default function RoomWritingPage() {
   return (
     <div className={shell.page}>
       <main className={shell.writing}>
-        <RoomBackKey />
+        <SiteMark current="writing">
+          <RoomBackKey />
+        </SiteMark>
         <header className={shell.writingHead}>
           <h1>Writing</h1>
           <p>
