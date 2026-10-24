@@ -128,18 +128,19 @@ export default async function RoomPostPage({ params }: Props) {
 
           <header className={styles.header}>
             <h1>{post.title}</h1>
-            <p className={styles.standfirst}>{post.description}</p>
+            {/* the description stays in the page's metadata; on the page the first paragraph does that job */}
+            <div className={styles.metaRow}>
             <p className={styles.meta}>
               <time dateTime={post.publishedAt.toISOString()}>{roomDate.format(post.publishedAt)}</time>
-              <span aria-hidden="true">·</span>
-              <span>{post.readingTime.label}</span>
+              <span>
+                <span aria-hidden="true">· </span>
+                {post.readingTime.label}
+              </span>
               {post.updatedAt ? (
-                <>
-                  <span aria-hidden="true">·</span>
-                  <span>
-                    Updated <time dateTime={post.updatedAt.toISOString()}>{roomDate.format(post.updatedAt)}</time>
-                  </span>
-                </>
+                <span className={styles.updated}>
+                  <span aria-hidden="true">· </span>
+                  Updated <time dateTime={post.updatedAt.toISOString()}>{roomDate.format(post.updatedAt)}</time>
+                </span>
               ) : null}
             </p>
             <ul className={styles.tags} aria-label="Tags">
@@ -147,6 +148,7 @@ export default async function RoomPostPage({ params }: Props) {
                 <li key={tag}>{tag}</li>
               ))}
             </ul>
+            </div>
           </header>
 
           <div className={styles.body}>{content}</div>

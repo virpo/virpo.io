@@ -22,7 +22,7 @@ export const imageDimensions: Record<string, { width: number; height: number }> 
   "/assets/blog/pocket-room/story/cards.webp": { width: 1758, height: 556 },
   "/assets/blog/pocket-room/story/concepts-1-3x3.webp": { width: 1624, height: 1105 },
   "/assets/blog/pocket-room/story/concepts-2-3x3.webp": { width: 1624, height: 1105 },
-  "/assets/blog/pocket-room/story/day.webp": { width: 1400, height: 875 },
+  "/assets/blog/pocket-room/story/day.webp": { width: 1600, height: 1000 },
   "/assets/blog/pocket-room/story/depth-right-controls-a.webp": { width: 1200, height: 484 },
   "/assets/blog/pocket-room/story/depth-right-controls-b.webp": { width: 1200, height: 484 },
   "/assets/blog/pocket-room/story/first-build.webp": { width: 1400, height: 875 },

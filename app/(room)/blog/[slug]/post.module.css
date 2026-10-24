@@ -53,19 +53,20 @@
   text-wrap: balance;
 }
 
-.standfirst {
-  margin: 1.1rem 0 0;
-  color: var(--ink-2);
-  font-size: 1.3rem;
-  line-height: 1.45;
-  text-wrap: pretty;
+/* date, reading time and tags on one line under the title */
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  margin: 1.2rem 0 0;
 }
 
 .meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.2rem 0.6rem;
-  margin: 1.4rem 0 0;
+  gap: 0.2rem 0.45rem;
+  margin: 0;
   color: var(--grey);
   font-size: 1rem;
 }
@@ -74,7 +75,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
-  margin: 0.9rem 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
@@ -315,6 +316,10 @@
 
   .header {
     margin: 1.4rem 0 1.8rem;
+  }
+
+  .meta {
+    font-size: 0.92rem;
   }
 
   .body {
@@ -574,5 +579,12 @@
 @media (prefers-reduced-motion: reduce) {
   .layout :global(.lightbox[open]) {
     animation: none;
+  }
+}
+
+/* on a phone the line has room for the date and reading time only */
+@media (max-width: 619px) {
+  .updated {
+    display: none;
   }
 }
