@@ -1,0 +1,471 @@
+/*
+ * Toys for the margin of a post. Same materials as the handheld (components/room/device.module.css):
+ * bead-blasted aluminium in warm greys, white keys with travel, the orange knob colour, drilled holes.
+ */
+
+.toy {
+  --shell-hi: #dcd5cb;
+  --shell: #c6bdb2;
+  --shell-lo: #aca296;
+  --side: #a1978b;
+  --key-wall: #9b9387;
+  --orange: #f0722b;
+  --orange-hi: #ff9a55;
+  --orange-lo: #c4501a;
+  --ink: #2a2118;
+  --paper: #e8d9bd;
+  --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  width: 100%;
+  max-width: 300px;
+}
+
+.toyNote {
+  margin: 0.9rem 0 0;
+  color: #736b62;
+  font: 500 12px/1.5 var(--font-room-mono), ui-monospace, monospace;
+  text-align: center;
+}
+
+/* a slab of aluminium: a face with a chamfer, and the case's thickness below it */
+.metal {
+  background:
+    radial-gradient(120% 60% at 30% -10%, rgba(255, 255, 255, 0.55), transparent 55%),
+    var(--noise),
+    linear-gradient(176deg, var(--shell-hi) 0%, var(--shell) 50%, var(--shell-lo) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 1px 0 1px rgba(255, 255, 255, 0.4),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.14),
+    0 6px 0 var(--side),
+    0 7px 0 #857b70,
+    0 18px 30px -12px rgba(60, 40, 20, 0.45);
+}
+
+/* ---- the pocket radio ---- */
+.player {
+  position: relative;
+  padding-top: 34px;
+}
+
+.antenna {
+  position: absolute;
+  right: 34px;
+  top: 0;
+  width: 4px;
+  height: 52px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #8f877c, #e9e4dc 40%, #8f877c);
+  transform: rotate(14deg);
+  transform-origin: 50% 100%;
+}
+
+.antenna::after {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: -6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--orange-hi), var(--orange) 60%, var(--orange-lo));
+}
+
+.playerFace {
+  composes: metal;
+  position: relative;
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  gap: 14px;
+  padding: 16px;
+  border-radius: 18px;
+}
+
+.playerGrille {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  align-content: center;
+  justify-items: center;
+}
+
+.playerGrille i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: radial-gradient(120% 100% at 50% 85%, #6b6156 0%, #3d352d 45%, #241e18 100%);
+  box-shadow:
+    inset 0 2px 1px rgba(20, 14, 8, 0.85),
+    0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.playerRight {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* the screen: the same black glass as the handheld's bezel, an amber LCD inside */
+.lcd {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 8px 9px 7px;
+  border-radius: 8px;
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.1), transparent 30%),
+    linear-gradient(180deg, #1d1c1a, #10100f);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.6);
+  color: #ffb25e;
+  font: 600 10.5px/1.25 var(--font-room-mono), ui-monospace, monospace;
+  text-shadow: 0 0 6px rgba(255, 150, 60, 0.55);
+}
+
+.lcdTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  opacity: 0.8;
+}
+
+.lcdTitle {
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.lcdTitle span {
+  display: inline-block;
+}
+
+.player[data-playing] .lcdTitle span {
+  animation: marquee 7s linear infinite;
+}
+
+@keyframes marquee {
+  0%, 15% { transform: translateX(0); }
+  85%, 100% { transform: translateX(min(0px, calc(-100% + 120px))); }
+}
+
+.meter {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.meter i {
+  flex: 1;
+  height: 2px;
+  border-radius: 1px;
+  background: #ffb25e;
+  opacity: 0.55;
+}
+
+.player[data-playing] .meter i {
+  animation: level 520ms ease-in-out infinite alternate;
+}
+
+@keyframes level {
+  from { height: 2px; }
+  to { height: 12px; opacity: 0.9; }
+}
+
+.playerKeys {
+  display: flex;
+  gap: 8px;
+}
+
+/* keys with travel, like the handheld's: a cap on a wall that sinks when pressed */
+.pkey {
+  flex: 1;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background:
+    radial-gradient(90% 90% at 35% 25%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 55%),
+    linear-gradient(180deg, #dcd8d1, #bdb7ae);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.12),
+    0 4px 0 var(--key-wall),
+    0 6px 8px rgba(50, 40, 30, 0.35);
+  color: #3a332c;
+  font: 700 12px/1 var(--font-room-sans), system-ui, sans-serif;
+  cursor: pointer;
+  transition: transform 70ms ease-out, box-shadow 70ms ease-out;
+}
+
+.pkey:active,
+.pkey[data-pressed] {
+  transform: translateY(3px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 2px 3px rgba(0, 0, 0, 0.1),
+    0 1px 0 var(--key-wall),
+    0 2px 3px rgba(50, 40, 30, 0.3);
+}
+
+.pkeyPlay {
+  flex: 1.4;
+  background: radial-gradient(80% 80% at 35% 28%, #ffb07a, var(--orange) 55%, #d9561d 100%);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.45),
+    inset 0 -2px 3px rgba(120, 40, 0, 0.35),
+    0 4px 0 #a43f15,
+    0 6px 8px rgba(80, 30, 5, 0.35);
+  color: #fff;
+}
+
+.pkeyPlay:active,
+.pkeyPlay[data-pressed] {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    inset 0 2px 3px rgba(120, 40, 0, 0.3),
+    0 1px 0 #a43f15;
+}
+
+.pkey:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 3px;
+}
+
+/* ---- the ticket punch ---- */
+.punch {
+  display: grid;
+  justify-items: center;
+}
+
+.punchBody {
+  composes: metal;
+  position: relative;
+  z-index: 2;
+  width: 150px;
+  height: 92px;
+  border-radius: 16px 16px 12px 12px;
+}
+
+/* the orange lever on top; it dips each time a hole is punched */
+.punchLever {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  top: -16px;
+  height: 22px;
+  border-radius: 11px;
+  background: radial-gradient(80% 120% at 35% 25%, #ffb07a, var(--orange) 55%, #d9561d 100%);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.45), 0 4px 0 #a43f15, 0 6px 8px rgba(80, 30, 5, 0.35);
+}
+
+.punchLever[data-hit] {
+  animation: punchDown 260ms cubic-bezier(0.3, 0.8, 0.3, 1.2);
+}
+
+@keyframes punchDown {
+  40% {
+    transform: translateY(5px);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), 0 1px 0 #a43f15;
+  }
+}
+
+.punchSlot {
+  position: absolute;
+  left: 28px;
+  right: 28px;
+  bottom: 16px;
+  height: 8px;
+  border-radius: 4px;
+  background: #241e18;
+  box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.punchLabel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 30px;
+  color: rgba(80, 72, 62, 0.6);
+  font: 600 9px/1 var(--font-room-mono), ui-monospace, monospace;
+  letter-spacing: 0.16em;
+  text-align: center;
+}
+
+/* the paper: the edge of a ticket coming out of the slot, holes punched down its side */
+.strip {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  width: 64px;
+  margin-top: -10px;
+  padding: 26px 0 22px;
+  background:
+    var(--noise),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.05), transparent 12%, transparent 88%, rgba(0, 0, 0, 0.06)),
+    var(--paper);
+  box-shadow: 0 10px 18px -10px rgba(60, 40, 20, 0.45), inset 0 0 0 1px rgba(120, 100, 70, 0.12);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 88% 98%, 76% 100%, 64% 98%, 52% 100%, 40% 98%, 28% 100%, 16% 98%, 0 100%);
+}
+
+.strip::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 50%;
+  width: 0;
+  border-left: 1.5px dashed rgba(184, 72, 15, 0.25);
+}
+
+.hole {
+  position: relative;
+  z-index: 1;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px dashed rgba(120, 90, 50, 0.35);
+}
+
+/* a punched hole shows the page behind, with the paper's torn rim */
+.hole[data-punched] {
+  border: 0;
+  background: #faf7f2;
+  box-shadow:
+    inset 0 2px 3px rgba(80, 60, 30, 0.45),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.8),
+    0 0 0 1.5px rgba(150, 120, 80, 0.45),
+    0 1px 0 1.5px rgba(255, 250, 240, 0.5);
+}
+
+.hole[data-fresh] {
+  animation: holeIn 300ms ease-out;
+}
+
+@keyframes holeIn {
+  from {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+}
+
+.stamp {
+  position: absolute;
+  left: 50%;
+  bottom: 36px;
+  padding: 2px 8px;
+  border: 2px solid rgba(208, 64, 32, 0.8);
+  border-radius: 4px;
+  color: rgba(208, 64, 32, 0.85);
+  font: 800 14px/1.2 var(--font-room-mono), ui-monospace, monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: translateX(-50%) rotate(-12deg);
+  animation: stampIn 260ms cubic-bezier(0.2, 0.9, 0.3, 1.4);
+}
+
+@keyframes stampIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) rotate(-12deg) scale(1.6);
+  }
+}
+
+/* ---- the sleeping shiba ---- */
+.shiba {
+  display: grid;
+  justify-items: center;
+}
+
+.shibaArt {
+  position: relative;
+  width: 260px;
+  aspect-ratio: 1;
+}
+
+.shibaArt img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: opacity 420ms ease;
+}
+
+.shibaSleep {
+  transform-origin: 50% 80%;
+  animation: breathe 3.4s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  50% {
+    transform: scale(1.018, 1.03);
+  }
+}
+
+.shibaAwake {
+  opacity: 0;
+}
+
+.shiba[data-awake] .shibaSleep {
+  opacity: 0;
+}
+
+.shiba[data-awake] .shibaAwake {
+  opacity: 1;
+}
+
+.zzz {
+  position: absolute;
+  right: 22%;
+  top: 14%;
+  color: #8a7f72;
+  font: 700 16px/1 var(--font-room-sans), system-ui, sans-serif;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+
+.zzz i {
+  position: absolute;
+  font-style: normal;
+  opacity: 0;
+  animation: zzz 3.4s ease-out infinite;
+}
+
+.zzz i:nth-child(2) {
+  animation-delay: 1.1s;
+  font-size: 13px;
+}
+
+.zzz i:nth-child(3) {
+  animation-delay: 2.2s;
+  font-size: 19px;
+}
+
+@keyframes zzz {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  25% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(18px, -34px);
+  }
+}
+
+.shiba[data-awake] .zzz {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shibaSleep,
+  .zzz i,
+  .meter i,
+  .lcdTitle span,
+  .punchLever[data-hit],
+  .hole[data-fresh],
+  .stamp {
+    animation: none !important;
+  }
+}

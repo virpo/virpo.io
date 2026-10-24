@@ -1,0 +1,9 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out>
+
+Attached: plate-b.png is the illustration style to match (cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm light from the upper left).
+Paint the SAME shiba inu TWICE, side by side, on a perfectly flat solid magenta background (#FF00FF), no cast shadow on the background, with lots of magenta between the two:
+- LEFT: a red-and-cream shiba inu curled up asleep in a round donut on a small round cushion, nose tucked into its curly tail, eyes shut as two little arcs, ears relaxed. Seen from slightly above at three-quarters, like the room.
+- RIGHT: exactly the same shiba on exactly the same cushion, same size, same position and same body pose, but awake: head lifted a little, eyes open and happy, ears up, tongue just showing.
+The cushion: a round grey felt cushion with an orange piped edge, the same warm grey and orange as a Teenage Engineering device.
+Both halves must line up: same scale, same cushion position, so one can fade into the other.
+Landscape 1536x1024. No text.

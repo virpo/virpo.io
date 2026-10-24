@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArticleLightbox } from "../../../../components/blog/ArticleLightbox";
 import { compilePostMdx } from "../../../../components/blog/mdx-components";
 import { Device } from "../../../../components/room/Device";
+import { MarginToy } from "../../../../components/room/margin/MarginToy";
 import { RoomBackKey, roomDate, RoomFooter } from "../../../../components/room/RoomChrome";
 import { roomPostHref } from "../../../../components/room/scene/objects";
 import { getPost, getPostSlugs, getPostSummaries, type PostSource } from "../../../../lib/blog";
@@ -103,7 +104,9 @@ export default async function RoomPostPage({ params }: Props) {
         <aside className={styles.margin} aria-label="Pocket Room">
           <div className={styles.sticky}>
             <div className={styles.dock}>
-              <Device variant="dock" posts={devicePosts} progressTarget="room-article" />
+              <MarginToy target="room-article">
+                <Device variant="dock" posts={devicePosts} progressTarget="room-article" />
+              </MarginToy>
             </div>
             {/* on a phone the room doesn't fit the margin: a few of its toys, one tap away */}
             <nav className={styles.toyKeys} aria-label="Toys in the room">
