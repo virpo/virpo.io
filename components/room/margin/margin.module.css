@@ -469,3 +469,430 @@
     animation: none !important;
   }
 }
+
+/* ---- the tiny walking shiba ---- */
+.pup {
+  position: relative;
+  height: min(66vh, 600px);
+}
+
+/* the little dotted path she has walked */
+.pupTrail {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 3px;
+  height: calc(var(--at) * (100% - 84px) + 30px);
+  margin-left: -1.5px;
+  background: repeating-linear-gradient(to bottom, rgba(150, 118, 84, 0.32) 0 3px, transparent 3px 13px);
+  border-radius: 2px;
+  transition: height 140ms linear;
+}
+
+.pupDog {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--at) * (100% - 84px));
+  width: 84px;
+  height: 84px;
+  margin-left: -42px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transition: top 140ms linear;
+}
+
+.pupDog img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.pupDog img[data-show] {
+  opacity: 1;
+}
+
+.pupDog[data-back] img {
+  transform: scaleX(-1);
+}
+
+.pupDog[data-pose="trot-b"] img[data-show] {
+  translate: 0 -2px;
+}
+
+.pupDog[data-pose="scratch"] img[data-show] {
+  transform-origin: 50% 90%;
+  animation: scratch 0.22s ease-in-out 6 alternate;
+}
+
+@keyframes scratch {
+  to {
+    rotate: 3deg;
+  }
+}
+
+.pupDog:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
+.pupDog .zzz {
+  right: 6%;
+  top: 10%;
+}
+
+.woof {
+  position: absolute;
+  right: -30px;
+  top: -18px;
+  padding: 3px 8px;
+  border: 1.5px solid var(--ink);
+  border-radius: 10px 10px 10px 2px;
+  background: #fffdf8;
+  color: var(--ink);
+  font: 700 12px/1.2 var(--font-room-sans), system-ui, sans-serif;
+  pointer-events: none;
+  animation: woof 900ms ease-out forwards;
+}
+
+@keyframes woof {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.6);
+  }
+  15%,
+  70% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+/* ---- the shiba charm on the handheld's strap ---- */
+.strap {
+  position: relative;
+  height: 400px;
+}
+
+/* the bottom-left corner of the handheld, as if the rest of it is out of the frame */
+.strapDevice {
+  composes: metal;
+  position: absolute;
+  left: 92px;
+  right: 0;
+  top: -36px;
+  height: 150px;
+  border-radius: 0 0 24px 30px;
+}
+
+/* the page's paper fading over the top of it */
+.strap::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  right: -20px;
+  top: -40px;
+  height: 120px;
+  background: linear-gradient(to bottom, #faf7f2 12%, rgba(250, 247, 242, 0.85) 35%, rgba(250, 247, 242, 0.4) 65%, rgba(250, 247, 242, 0));
+  pointer-events: none;
+}
+
+.strapScreen {
+  position: absolute;
+  left: 26px;
+  right: 84px;
+  top: 0;
+  height: 62px;
+  border-radius: 0 0 10px 10px;
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.1), transparent 35%), #121211;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.strapGrille {
+  position: absolute;
+  left: 34%;
+  bottom: 20px;
+  display: grid;
+  grid-template-columns: repeat(5, 6px);
+  gap: 5px;
+}
+
+.strapGrille i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2b241d;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.strapKnob {
+  position: absolute;
+  right: 18px;
+  top: 34px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 36% 30%, rgba(255, 255, 255, 0.55), transparent 42%),
+    radial-gradient(circle, var(--orange) 58%, transparent 59%),
+    repeating-conic-gradient(var(--orange-lo) 0 6deg, var(--orange) 6deg 12deg);
+  box-shadow: 0 4px 0 #a43f15, 0 7px 10px rgba(80, 30, 5, 0.35);
+}
+
+/* the lug the strap is threaded through */
+.strapLug {
+  position: absolute;
+  left: 11px;
+  bottom: 13px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #241e18;
+  box-shadow: inset 0 2px 2px rgba(0, 0, 0, 0.85), 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* everything that swings, pivoting on the lug */
+.strapSwing {
+  position: absolute;
+  z-index: 3;
+  left: 110px;
+  top: 94px;
+  width: 116px;
+  margin-left: -58px;
+  transform-origin: 50% 0;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.strapCord {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 11px;
+  height: 66px;
+  margin-left: -5.5px;
+  border: 3px solid var(--orange);
+  border-bottom: 0;
+  border-radius: 6px 6px 0 0;
+  box-shadow: inset 0 0 0 1px rgba(164, 63, 21, 0.35), 0 0 0 1px rgba(164, 63, 21, 0.35);
+}
+
+.strapCrimp {
+  position: absolute;
+  left: 50%;
+  top: 60px;
+  width: 13px;
+  height: 14px;
+  margin-left: -6.5px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #8c6a2a, #f0d690 45%, #9c7a34);
+}
+
+.charm {
+  position: absolute;
+  left: 0;
+  top: 70px;
+  width: 116px;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ---- the paper crane ---- */
+.crane {
+  display: grid;
+  justify-items: center;
+}
+
+.craneArt {
+  position: relative;
+  width: 230px;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: default;
+}
+
+.craneArt img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.craneArt img[data-show] {
+  opacity: 1;
+}
+
+/* each new fold lands with a little paper squash */
+.craneArt img[data-fold] {
+  animation: fold 460ms cubic-bezier(0.3, 0.7, 0.3, 1.3);
+}
+
+@keyframes fold {
+  0% {
+    transform: scale(1.08, 0.55) rotate(-8deg);
+  }
+  55% {
+    transform: scale(0.96, 1.05);
+  }
+}
+
+.craneArt:has(img:last-child[data-show]) {
+  cursor: pointer;
+}
+
+/* at the end: up, a loop over the margin, and back down to land */
+.craneArt[data-flying] img[data-show] {
+  animation: fly 3.6s cubic-bezier(0.45, 0, 0.35, 1);
+}
+
+@keyframes fly {
+  12% {
+    transform: translate(6px, -24px) rotate(-10deg);
+  }
+  38% {
+    transform: translate(50px, -230px) scale(0.55) rotate(-16deg);
+  }
+  55% {
+    transform: translate(-20px, -320px) scale(0.4) scaleX(-1);
+  }
+  78% {
+    transform: translate(-60px, -150px) scale(0.6) scaleX(-1) rotate(8deg);
+  }
+  92% {
+    transform: translate(0, -14px) rotate(4deg);
+  }
+}
+
+.craneArt:focus-visible,
+.nekoArt:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+  border-radius: 16px;
+}
+
+/* ---- the lucky cat ---- */
+.neko {
+  display: grid;
+  justify-items: center;
+}
+
+.nekoArt {
+  position: relative;
+  width: 230px;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.nekoArt img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.nekoArt img[data-show] {
+  opacity: 1;
+}
+
+/* a 5-yen coin, brass with the hole in the middle, turning edge-on into the slot */
+.coin {
+  position: absolute;
+  left: var(--slot-x);
+  top: var(--slot-y);
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, transparent 0 3.5px, #7c5a12 3.5px 4.5px, #f2cf68 4.5px 8px, #d2a23a 8px 10.5px, #7c5a12 10.5px 12px);
+  animation: coin 520ms cubic-bezier(0.55, 0, 0.9, 0.5) forwards;
+  pointer-events: none;
+}
+
+@keyframes coin {
+  0% {
+    transform: translateY(-170px) rotate(0);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(-4px) rotate(300deg) scaleX(0.35);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(6px) rotate(360deg) scaleX(0.15);
+  }
+}
+
+/* ---- the hydrangea ---- */
+.hydrangea {
+  display: grid;
+  justify-items: center;
+}
+
+.plant {
+  position: relative;
+  width: 250px;
+  aspect-ratio: 1;
+  transform-origin: 50% 92%;
+}
+
+.plant:hover {
+  animation: rustle 700ms ease-in-out;
+}
+
+@keyframes rustle {
+  25% {
+    transform: rotate(1.4deg);
+  }
+  60% {
+    transform: rotate(-1deg);
+  }
+}
+
+.plantBase {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.bloom {
+  position: absolute;
+  height: auto;
+  aspect-ratio: 1;
+  opacity: 0;
+  transform: scale(0.15) rotate(calc(var(--tilt) - 50deg));
+  transition:
+    transform 900ms cubic-bezier(0.2, 0.9, 0.3, 1.25),
+    opacity 300ms ease;
+}
+
+.bloom[data-open] {
+  opacity: 1;
+  transform: rotate(var(--tilt));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pupDog img,
+  .craneArt img,
+  .plant,
+  .coin,
+  .woof {
+    animation: none !important;
+  }
+}

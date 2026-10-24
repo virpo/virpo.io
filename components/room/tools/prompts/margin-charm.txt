@@ -1,0 +1,7 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out>
+
+Attached: plate-b.png is the illustration style to match (cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm light from the upper left). The other attached picture is the concept sketch to follow for the design.
+Background: perfectly flat solid magenta (#FF00FF) everywhere around the subjects, no cast shadows on the background, no ground, no paper texture on the magenta. Lots of magenta between subjects so each can be cut out. No text, no arrows, no notes.
+
+Paint ONE shiba inu keychain charm, hanging straight down, front view, centred: a chubby, happy shiba (closed happy eyes, open smile, little pink cheeks, paws held up, curly tail) made like a soft enamel and resin phone-strap charm, hanging from a small silver split ring at the top centre, with a little gold bell on the same ring to the right. Nothing above the ring: no strap, no device. The charm fills about half the height of the image.
+Square 1024x1024.

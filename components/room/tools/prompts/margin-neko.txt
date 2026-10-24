@@ -1,0 +1,11 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out>
+
+Attached: plate-b.png is the illustration style to match (cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm light from the upper left). The other attached picture is the concept sketch to follow for the design.
+Background: perfectly flat solid magenta (#FF00FF) everywhere around the subjects, no cast shadows on the background, no ground, no paper texture on the magenta. Lots of magenta between subjects so each can be cut out. No text, no arrows, no notes.
+
+Paint the SAME maneki-neko (Japanese beckoning lucky cat) TWICE, side by side, with lots of magenta between:
+Materials: made of the warm grey bead-blasted aluminium of a Teenage Engineering device, with panel seams and two tiny screws, orange inner ears, the raised beckoning arm and paw in orange, an orange collar with a gold bell, a small dark coin slot on its belly, happy closed eyes and a small smile. Seated, three-quarter front view.
+- LEFT: the orange paw raised high, beckoning up.
+- RIGHT: exactly the same cat, same size, same position and same body, but the orange paw bent forward and down, mid-beckon.
+Both halves must line up: same scale, same body position, so one can switch to the other and only the arm moves.
+Landscape 1536x1024.

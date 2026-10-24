@@ -52,3 +52,10 @@ export function playClick(kind: "down" | "up" | "knob" = "down") {
     tone.stop(now + 0.02);
   }
 }
+
+/** The shared context, for the margin toys' little bells and coins. Null until it exists. */
+export function roomAudio() {
+  const audio = ensure();
+  if (audio?.state === "suspended") void audio.resume().catch(() => undefined);
+  return audio?.state === "running" ? { audio, noise } : null;
+}

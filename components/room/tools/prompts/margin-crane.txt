@@ -1,0 +1,13 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out>
+
+Attached: plate-b.png is the illustration style to match (cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm light from the upper left). The other attached picture is the concept sketch to follow for the design.
+Background: perfectly flat solid magenta (#FF00FF) everywhere around the subjects, no cast shadows on the background, no ground, no paper texture on the magenta. Lots of magenta between subjects so each can be cut out. No text, no arrows, no notes.
+
+Paint SIX stages of folding the SAME origami crane from the SAME sheet of paper (cream washi on one side, orange on the back), in a 3x2 grid of equal cells, each centred in its cell at a similar size, seen from the same three-quarter angle above:
+1 top left: a flat square sheet, cream side up, one corner lifting to show the orange back.
+2 top middle: folded in half diagonally into a triangle.
+3 top right: the square base, a smaller folded square standing a little.
+4 bottom left: the bird base, a long diamond with two thin flaps.
+5 bottom middle: nearly a crane, neck and tail folded up, wings still flat together.
+6 bottom right: the finished crane, wings spread up and out, ready to fly.
+Landscape 1536x1024.

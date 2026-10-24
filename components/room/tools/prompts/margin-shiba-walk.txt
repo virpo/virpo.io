@@ -1,0 +1,11 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out>
+
+Attached: plate-b.png is the illustration style to match (cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm light from the upper left). The other attached picture is the concept sketch to follow for the design.
+Background: perfectly flat solid magenta (#FF00FF) everywhere around the subjects, no cast shadows on the background, no ground, no paper texture on the magenta. Lots of magenta between subjects so each can be cut out. No text, no arrows, no notes.
+
+Paint the SAME tiny red-and-cream shiba inu FOUR times, in a 2x2 grid of equal square cells, same size and same scale in every cell, each centred in its cell with its feet on the same baseline:
+- top left: trotting towards the lower left at three-quarter view, happy open mouth, curly tail up, left front paw forward.
+- top right: exactly the same trot, the other legs forward (the second frame of the walk cycle).
+- bottom left: sitting, scratching behind its ear with a hind leg, eyes squeezed shut happily.
+- bottom right: curled up asleep in a round donut, nose tucked into its tail.
+Square 1024x1024.

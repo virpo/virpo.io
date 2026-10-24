@@ -1,0 +1,7 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out>
+
+Attached: plate-b.png is the illustration style to match (cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm light from the upper left). The other attached picture is the concept sketch to follow for the design.
+Background: perfectly flat solid magenta (#FF00FF) everywhere around the subjects, no cast shadows on the background, no ground, no paper texture on the magenta. Lots of magenta between subjects so each can be cut out. No text, no arrows, no notes.
+
+Paint ONE small potted hydrangea, centred, three-quarter view from slightly above: a grey ceramic pot on a matching saucer, dark green leaves, and SIX clearly separate small round clusters of tight pale green flower buds at the tips of the stems, spread across the top of the plant with space between them. No open flowers at all.
+Square 1024x1024.

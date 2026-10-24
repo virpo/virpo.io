@@ -1,0 +1,7 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out>
+
+Attached: plate-b.png is the illustration style to match (cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm light from the upper left). The other attached picture is the concept sketch to follow for the design.
+Background: perfectly flat solid magenta (#FF00FF) everywhere around the subjects, no cast shadows on the background, no ground, no paper texture on the magenta. Lots of magenta between subjects so each can be cut out. No text, no arrows, no notes.
+
+Paint SIX separate round hydrangea flower heads (just the flower balls, no stems, no leaves), in a 3x2 grid of equal cells, each centred in its cell, about the same size: two soft blue, two blue-violet, one lilac pink, one blue fading to violet. Each a dome of small four-petal florets with ink outlines and watercolour shading, lit from the upper left.
+Landscape 1536x1024.
