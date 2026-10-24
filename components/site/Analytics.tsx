@@ -1,5 +1,5 @@
-// PostHog for every page of the site, in its own project (/levels/ is a static page with its own
-// setup and levels_ events, and never renders this). Through the levels-virpo relay, so tracker
+// PostHog for every page of the site, in virpo.io's project. /levels/ is a static page that never
+// renders this: it reports to the same project with its own setup and levels_ events. Through the levels-virpo relay, so tracker
 // blockers don't hide visits; it becomes https://virpo.io/ingest once hosting moves. No cookies
 // (persistence in memory, so no banner), no autocapture or recordings, page views only, and URLs
 // stripped of their query and #fragment. Events are sent with track(); posts send "prompt_copied".
