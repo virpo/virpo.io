@@ -10,21 +10,23 @@ socialImage: /assets/blog/pocket-room/social.jpg
 draft: false
 ---
 
-This website is a little grey handheld with my room inside it. Here's how I made it, mostly by asking for ten of everything.
+This website is a little grey handheld with my room inside it. I made it mostly by asking for ten of everything.
 
-The old one was fun: my head followed your cursor, there were little toys to learn Japanese, and sounds from the Japanese streets I love. But while showing you how fun I am, it got distractingly busy. :)
+I wanted to make a new website. The old one was fun, my head following your cursor, little toys to learn Japanese and play sounds from Japan's streets I love. But in the process of showing you how fun I am, it got distractingly busy. :)
 
 <ArticleImage src="/assets/blog/pocket-room/story/old-site.webp" alt="The old virpo.io: a big photo of Peter shouting, colourful toy buttons, a Tokyo clock and a grid of projects" title="The old one. Fun, and a lot." />
 
-This time I wanted one proper toy, and a blog that stays readable, so it doesn't get in the way of the things I actually want to share.
+I'd rather give you one proper toy, but keep it a readable blog that doesn't undermine the interesting things I have to share.
 
-My setup these days is Claude Code with Opus 5.5, paired with a ChatGPT subscription for adversarial reviews, but also images. I don't paste prompts anywhere: Claude calls Codex itself. More on that later.
+My setup these days is Claude Code with Opus 5.5, paired with a ChatGPT subscription for adversarial reviews, but also images. I don't even paste prompts anywhere, Claude just calls Codex. But more on that later.
 
 ## The machine gun
 
 Making something beautiful on the first try is luck. Let's cheat luck.
 
-When unsure, shoot a machine gun with 10 options. What also works is not describing the answer or how to get there, just what the answer should pass: what qualities it needs, what's important to me in how it looks.
+Shoot a machine gun with 10 options when unsure. What also works is not describing the answer and how to get there, just what the answer should pass. Like what qualities, what is important for you in how it should look.
+
+For a website with an interesting design, one toy and all my quirkiness, but still usable as a blog, I shot for 10 different directions. With a simple prompt, only saying what the outcome should pass.
 
 ```prompt
 My website is interesting, but busy. I like the Japanese toys, but there's no calm, no 3D, nothing extra. Research what top designers do that most people haven't seen, and give me 10 concepts to pick from.
@@ -40,12 +42,14 @@ I'll share posts on Hacker News, so it needs credibility, but keep it playful. O
 
 <ArticleImage src="/assets/blog/pocket-room/story/concepts-1-3x3.webp" alt="Nine of the ten concept paintings, with 06 (an isometric house) and 08 (a little handheld device) circled in red pencil" title="Round one. I chose 06 and 08." />
 
-I picked on instinct: what could make a good website, and what caught my eye first. I love isometric drawings (06), and 08 is inspired by Teenage Engineering.
+I saw these 10 and used my own intuition about what could make a good website and what caught my interest at first sight. I love isometry and isometric designs (06), and 08 is inspired by Teenage Engineering.
 
 > **Technique: the machine gun**
-> When unsure, ask for ten. Describe what the answer has to pass, not the answer. Recognising the good one is much easier than imagining it.
+> When you're unsure, ask for ten options at once and only say what the result has to pass. Then pick with your own eyes.
 
-I thought the two could be merged. Fitting a whole house into a pocket machine would be far too much detail, but the agent knows that too. I only asked for them to be merged in a way that works visually and still passes the first prompt. I often let it go wild, and even ask it to surprise me.
+I thought it must be possible to merge them somehow. Didn't have to work hard to see what it could look like in action, though.
+
+You might realise that fitting a whole house into a pocket machine would make for too much detail, but the agent will know it too. I didn't specify much, just that I want the two merged in a way that would visually work and still fulfil my goals from the first prompt. I very often let it go wild, and even ask it specifically to surprise me with concepts that might work.
 
 <ArticleImage src="/assets/blog/pocket-room/story/concepts-2-3x3.webp" alt="Nine of the next ten concepts, with 03 (a grey handheld with a painted room on its screen) circled and 01 lightly marked" title="Round two. 01 was nice, 03 was the one." />
 
@@ -57,10 +61,10 @@ I let it build 03, frontend only, to see what it is even capable of. The results
 
 <ArticleImage src="/assets/blog/pocket-room/story/first-builds-rest.webp" alt="Six more early builds: the same diorama at night and dusk, and three versions of a device next to a column of text" title="And six more, none of them the picture I picked." />
 
-It wanted to rebuild the house in code, but as you can notice, it can't draw. So I pointed it at ChatGPT's image generation for every manga-style picture, and let it call Codex by itself. I didn't overspecify much: what I wanted to see, plus one trick for cutting things out.
+I realised it wanted to rebuild the house, but as you can notice, it can't draw. So I pointed it at creating any manga-style visuals with ChatGPT's image generation, so that it would call `codex -i …` by itself. I didn't really overspecify what needs to happen and how.
 
 ```prompt
-Build out 03 for real, and make it look like no other website. You can't draw, but ChatGPT can: call its image generation through codex exec, with the mockup attached as the reference, so every picture shares one style. Paint anything that moves or opens on flat #FF00FF, so you can cut it out. Look at every image before you keep it, and paint it again when it's off.
+Build out 03 for real, and make it look like no other website. You can't draw, but ChatGPT can: call its image generation through codex exec, with the mockup attached as the reference, so every picture shares one style. Look at every image before you keep it, and paint it again when it's off.
 
 Make the character look like me, make the trains move, and make it obvious on hover what can be clicked. It has to work on phones too. Multiple agents, multiple tries, pick the best one.
 ```
@@ -76,11 +80,13 @@ Make the character look like me, make the trains move, and make it obvious on ho
 
 <ArticleImage src="/assets/blog/pocket-room/story/three-tries.webp" alt="Three new attempts at the handheld, each with a painted room on its screen, the third circled in red pencil" />
 
-The third one worked for me: a room with enough space in it. Some details were off, sure, but that's something to work with. From here I started pointing at what to fix, while still letting it rebuild big parts. I didn't want to commit to one way of doing the 3D if there was a better one.
+This one worked best for me, the room with enough space. Some details were off, for sure, but that's something we can work with. Here comes the point where I start pinpointing what needs to get fixed, while still letting it rebuild big parts of what it did so far. Because I wouldn't want to overcommit to one way of making it 3D if there's a better one.
 
 ## 3D, but not plastic
 
-The buttons weren't really 3D. I asked for real depth, but stressed that it must not end up like the plastic 3D house from before: it had to keep the visual, material and tactile quality of the concept we picked. Then I pointed at every detail that put me off.
+I didn't like that the buttons weren't really 3D. But I emphasised, heavily, that if they're made 3D, they need to avoid looking like the 3D houses from before. That they need to keep the visual, material and tactile quality of the concept we picked.
+
+Then I pointed at all the details that were off-putting for me.
 
 <ImagePair
   left={{ src: "/assets/blog/pocket-room/story/depth-right-controls-b.webp", alt: "The device's controls painted flat", caption: "Painted on." }}
@@ -91,7 +97,7 @@ The buttons weren't really 3D. I asked for real depth, but stressed that it must
 
 ## A tiny world on pink paper
 
-The world inside is clickable, moves a little, and you can play with it. The trick is that everything is painted on a flat pink background, so a script can cut it out.
+Then let's look into the tiny world. It's actually clickable, moves a little, and you can interact with it. The trick is that the things are generated on a pink background, so that they can be cut out.
 
 <ArticleImage src="/assets/blog/pocket-room/story/pink-plate.webp" alt="The painted room with its windows painted flat magenta" title="The whole room is one painting. The pink is where the window view goes." />
 
@@ -103,11 +109,11 @@ The world inside is clickable, moves a little, and you can play with it. The tri
 > **Technique: paint on #FF00FF, then cut**
 > Nothing in a cosy painting is that pink, so turning magenta into transparency gives you clean sprites. Every object you can hover is cut out of the one painting, so everything lines up.
 
-There were small problems. Clicking an item showed a blurry, ugly cut-out of it. So it took the cut-out as the reference and painted it again, bigger and without the background.
+There were tiny problems, such as when you clicked an item, the preview showed its cut-out, but it was blurry and ugly. So I let it take the cut-out as the prompt input and regenerate it without the background.
 
-<ArticleImage src="/assets/blog/pocket-room/story/cards.webp" alt="The arcade and the tiny TV, each as a blurry cut-out from the room next to the same object painted again on its own" title="Cut out, then painted again: the arcade and the TV." />
+<ArticleImage src="/assets/blog/pocket-room/story/cards.webp" alt="The arcade and the tiny TV, each as a blurry cut-out from the room next to the same object painted again on its own" title="The arcade and the TV, cut out and then generated again." />
 
-Knowing I'd most likely stick with this website, I also asked it to write down how it makes these pictures, prompts included, into the repo. If I put something new on my desk long after this conversation is gone, it will know where to pick up, and the new thing will match this world.
+Knowing I will most likely go with this website, I also asked it to note how it's creating these and what the prompts are, so the details get stored in the repo. If I decide to put a new thing on my table but lose the context of this conversation, it will know where to pick up, and make the new things match this world.
 
 ```prompt
 Store how you made every image here: the prompts, the reference photos, the scripts and the steps. Assume the next agent has none of this conversation. If I say "the cat on the bed should become a new project", it should be able to paint it, cut it out and wire it up so it matches the rest of the room. Also write down which looks I picked and which I turned down, so nobody tries them again.
@@ -118,13 +124,13 @@ Store how you made every image here: the prompts, the reference photos, the scri
 
 ## Hands
 
-AI and hands. It took us about six tries. Every time I thought "now I've explained it properly, it will just know". Not even looking with its own eyes helped. We got there with cut-outs of exactly what had to disappear and what had to stay.
+Hands. AI and hands. It took us like six tries, and each time I thought "now I explained it so properly, it will just know what to do". Not even using its own eyes helped, but we got there. With cut-outs of exactly what needs to disappear and what should stay.
 
 <ArticleImage src="/assets/blog/pocket-room/story/hands.webp" alt="Four versions of mini Peter waving, red pencil marking the extra hand, the missing arm and the wrong arm, a tick on the last" title="Three hands, one missing, one on the wrong side, and finally two." />
 
 <ArticleLoop src="/assets/blog/pocket-room/story/loop-wave.mp4" poster="/assets/blog/pocket-room/story/loop-wave.webp" label="Mini Peter turning round in his chair to wave when the pointer reaches him" title="Point at me and I turn round." />
 
-By now the top of the page was pretty much done. It also did fun things, like the light in the room following day ☀️ and night 🌙 in Japan. But at night it looked too dim, and nobody would get why. So now it's always day, and the device just prints the time in Tokyo.
+By now, the hero section was pretty much done. It also did fun stuff, such as the light in the room adjusting to whether it's day ☀️ or night 🌙 in Japan. But I thought it looked too dim at night, and people wouldn't get why that happens. So now it's always day, and the device only prints the time in Tokyo.
 
 <ImagePair
   left={{ src: "/assets/blog/pocket-room/story/night.webp", alt: "The painted room at night, dim and blue", caption: "Night in Tokyo." }}
@@ -135,24 +141,28 @@ By now the top of the page was pretty much done. It also did fun things, like th
 
 Lastly, I wanted to show my projects at the bottom. At first it just made a list:
 
-<ArticleImage src="/assets/blog/pocket-room/story/project-list.webp" alt="A plain list of projects: titles, one line each, and the room object each one belongs to" title="Correct, and nobody would look at it." />
+<ArticleImage src="/assets/blog/pocket-room/story/project-list.webp" alt="A plain list of projects: titles, one line each, and the room object each one belongs to"  />
 
-I wanted it visual, but without stealing attention from the main act at the top. We ended at a colourless grid with a thumbnail per project. It took ten ideas, two iterations and hand-picking what did and didn't work. Including the reveal, which I first wanted to look like a drop of ink landing on paper. It was just too distracting.
+I knew that's not right. I wanted it visual, but not taking too much attention away from the main act at the top. Finally, we got to a colourless grid with a thumbnail for each project. But it took me 10 different ideas, 2 iterations and hand-picking what does or doesn't work until we got there. Including the reveal animation, which I first thought should look like someone dropping a drop of ink onto paper. But it was just too distracting.
 
 <ArticleImage src="/assets/blog/pocket-room/story/youtldr-9.webp" alt="Nine versions of the YouTLDR thumbnail, from a screenshot of the site to a pencil and colour painting of a YouTube card turning into No." title="Versions of one thumbnail, from the real site to the one that stuck." />
 
 <ArticleLoop src="/assets/blog/pocket-room/story/loop-reveal.mp4" poster="/assets/blog/pocket-room/story/loop-reveal.webp" label="A project card in pencil fading into colour when the pointer reaches it" title="Pencil at rest, colour when you point at it. A plain fade won." />
 
-I didn't know the right answer to a lot of things, like how much manga the pictures should have. So I asked for five intensities and picked one.
+There were many more ideas I had, and I didn't know the right answer, like how much manga style these pictures should have. So I asked it to generate 5 different intensities of manga and picked the one I liked the most.
 
 <ArticleImage src="/assets/blog/pocket-room/story/manga-5.webp" alt="A photo of a Stream Deck at five strengths, from the original photo to full manga, with a slider underneath from weak in green to strong in red, stopped at the fourth" title="From weak to strong. I stopped at medium." />
 
-You see the theme. When I imagine something, I don't have to be sure. I can ask for everything and pick.
+But you see the theme here. If I imagine something, I don't have to be too sure. I can ask for everything and pick.
 
-Just don't forget to kill some ideas, or you'll never ship. :)
+Just don't forget to kill some ideas, else you will never ship. :)
 
 ## The result
 
+This is the final result.
+
 <ArticleLoop src="/assets/blog/pocket-room/story/loop-room.mp4" poster="/assets/blog/pocket-room/story/loop-room.webp" label="The finished room: a shinkansen passes the window while the pointer lifts the window, the arcade and the kana poster" />
 
-I hope it lasts me AT LEAST a week. At the very least. If you want to make your own, everything is in [the repo](https://github.com/virpo/virpo.io), prompts included.
+And I hope it will last me AT LEAST a week. At the very least.
+
+If you want to make your own, everything is in [the repo](https://github.com/virpo/virpo.io), prompts included.
