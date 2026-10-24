@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
  * A short silent loop that behaves like a GIF: no player chrome, it plays inline on repeat and a tap
  * pauses it. With reduced motion it shows its still frame until you press play.
  */
-export function ArticleLoop({ src, poster, title, label }: { src: string; poster?: string; title?: string; label: string }) {
+export function ArticleLoop({ src, poster, title, label, size }: { src: string; poster?: string; title?: string; label: string; size?: string }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   useEffect(() => {
@@ -23,7 +23,7 @@ export function ArticleLoop({ src, poster, title, label }: { src: string; poster
     else video.pause();
   };
   return (
-    <figure className="articleMedia articleLoop">
+    <figure className={`articleMedia articleLoop${size === "narrow" ? " articleLoopNarrow" : ""}`}>
       <button type="button" className="articleLoopToggle" onClick={toggle} aria-label={`${playing ? "Pause" : "Play"}: ${label}`} aria-pressed={playing}>
         <video ref={ref} src={src} poster={poster} muted loop playsInline preload="metadata" aria-hidden="true" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} />
         {playing ? null : (

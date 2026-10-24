@@ -588,3 +588,9 @@
     display: none;
   }
 }
+
+/* a portrait loop, kept to a comfortable size in the column */
+.body :global(.articleLoopNarrow) {
+  max-width: 440px;
+  margin-inline: auto;
+}

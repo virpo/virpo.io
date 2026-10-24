@@ -69,7 +69,7 @@ function validateArticleImage(node: MdxNode) {
 }
 
 function validateArticleVideo(node: MdxNode, name = "ArticleVideo") {
-  const allowed = new Set(["src", "poster", "title", "label"]);
+  const allowed = new Set(name === "ArticleLoop" ? ["src", "poster", "title", "label", "size"] : ["src", "poster", "title", "label"]);
   const values = new Map<string, string>();
   for (const attribute of node.attributes ?? []) {
     if (
