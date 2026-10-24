@@ -1,0 +1,10 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out>
+
+Attached: wave-crop.png is a painted sprite of a young man seen from behind on a wooden chair, turned round towards the viewer, upscaled 3x.
+EDIT this exact image. The problem: both of his arms come out of the same shoulder. On the RIGHT side of the image (his left shoulder) there is the raised waving arm AND a second sleeve running down to a hand resting on his lap. On the LEFT side of the image (his right shoulder) there is no arm at all.
+Fix the anatomy:
+- KEEP the arm on the right side of the image that rests on his lap, exactly as it is (sleeve, cuff, hand on the thigh).
+- REMOVE the raised waving arm and hand on the right side of the image completely. Where it was, paint the flat magenta background (#FF00FF), and close his left shoulder with the same sage-green hoodie.
+- ADD his RIGHT arm, waving: it comes out of his right shoulder on the LEFT side of the image, the elbow bent, the forearm and open hand raised up beside his head on the left, palm towards the viewer, fingers spread, the same friendly wave as before. Same sage-green hoodie sleeve with the ribbed cuff, same skin, same ink line.
+Keep EVERYTHING ELSE pixel-identical: same size, position and framing, the same face, grin, hair and ears, the chair, the jeans, the sneakers, the flat magenta background. Same ink line and watercolor style. Do not zoom, crop, recentre or redraw the rest.
+Portrait 1024x1536, the same as the input.

@@ -17,6 +17,6 @@ export const imageDimensions: Record<string, { width: number; height: number }> 
   "/assets/blog/pocket-room/mockup.webp": { width: 1200, height: 800 },
   "/assets/blog/pocket-room/plate.webp": { width: 1536, height: 1024 },
   "/assets/blog/pocket-room/shapes.webp": { width: 1800, height: 907 },
-  "/assets/blog/pocket-room/wave-after.webp": { width: 834, height: 870 },
-  "/assets/blog/pocket-room/wave-before.webp": { width: 834, height: 870 },
+  "/assets/blog/pocket-room/wave-after.webp": { width: 596, height: 904 },
+  "/assets/blog/pocket-room/wave-before.webp": { width: 596, height: 904 },
 };

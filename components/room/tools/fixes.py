@@ -17,10 +17,13 @@ HERE = Path(os.environ.get("ROOM_ART", Path(__file__).parent / "art"))
 # sheet: [(fix name, crop box in the sheet, polygon in crop pixels, feather px)]
 FIXES = {
     "peter-sheet": [
-        # The wave pose had three hands: a second right sleeve and hand resting on his lap under
-        # the waving arm. peter-wave-fix.png is that cell (1100,500)-(1440,1010), upscaled 3x to
-        # 1024x1536 and repainted without the extra arm (prompts/peter-wave-fix.txt).
-        ("peter-wave-fix", (1100, 500, 1440, 1010), [(136, 158), (196, 146), (222, 186), (252, 246), (258, 322), (148, 324), (128, 250)], 3),
+        # The wave pose had both arms on his left shoulder (the waving one and one resting on his
+        # lap) and none on his right. peter-wave-fix-2.png is that cell (1100,500)-(1440,1010),
+        # upscaled 3x to 1024x1536 and repainted so he waves with his right arm and keeps the left
+        # one on his lap (prompts/peter-wave-fix-2.txt). The repaint lines up with the original to
+        # the pixel and only the arms changed, so the band across both shoulders is taken whole.
+        # (peter-wave-fix.png, which removed the lap arm instead, was the wrong fix.)
+        ("peter-wave-fix-2", (1100, 500, 1440, 1010), [(0, 40), (340, 40), (340, 240), (0, 240)], 6),
     ],
 }
 
