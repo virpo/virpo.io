@@ -1,6 +1,6 @@
 ---
-title: Shoot ten, keep one
-description: How I made this website with Claude Code and ChatGPT's image generation, by asking for ten of everything and picking with my own eyes.
+title: "AI technique: Machine gun"
+description: How I made this website with Claude Code and ChatGPT's image generation. If unsure, shoot a machine gun to see your options, then pick with your own eyes.
 publishedAt: 2026-10-23
 updatedAt: 2026-10-24
 tags:
@@ -10,7 +10,9 @@ socialImage: /assets/blog/pocket-room/social.jpg
 draft: false
 ---
 
-I wanted a new website. The old one was fun: my head followed your cursor, there were little toys to learn Japanese, and sounds from the Japanese streets I love. But while showing you how fun I am, it got distractingly busy. :)
+This website is a little grey handheld with my room inside it. Here's how I made it, mostly by asking for ten of everything.
+
+The old one was fun: my head followed your cursor, there were little toys to learn Japanese, and sounds from the Japanese streets I love. But while showing you how fun I am, it got distractingly busy. :)
 
 <ArticleImage src="/assets/blog/pocket-room/story/old-site.webp" alt="The old virpo.io: a big photo of Peter shouting, colourful toy buttons, a Tokyo clock and a grid of projects" title="The old one. Fun, and a lot." />
 
@@ -18,28 +20,32 @@ This time I wanted one proper toy, and a blog that stays readable, so it doesn't
 
 My setup these days is Claude Code with Opus 5.5, paired with a ChatGPT subscription for images. I don't paste prompts anywhere: Claude calls Codex itself. More on that later.
 
-## Shoot ten, keep one
+## The machine gun
 
-Making something beautiful on the first try is luck. To cheat luck, when I'm after something interesting but have no exact picture of it in my head, I shoot a machine gun: ten directions at once. The prompt only says what the result has to pass.
+Making something beautiful on the first try is luck. To cheat luck: if unsure, shoot a machine gun to see your options. Ten directions at once. The prompt doesn't describe the answer, only what the answer has to pass.
 
 ```prompt
-Make ten concepts for my new website. Interesting and original, inspired by my Japanese toys, but still a great blog, so readers don't get distracted.
+My website is interesting, but busy. I like the Japanese toys, but there's no calm, no 3D, nothing extra. Research what top designers do that most people haven't seen, and give me 10 concepts to pick from.
+
+It has to work as:
+- a blog: a shared post reads top to bottom, the fun stays in a sidebar
+- a landing page with my 3 newest posts and a way to see more
+- a list of my projects
+- a home for my Japanese toys, a click away
+
+I'll share posts on Hacker News, so it needs credibility, but keep it playful. On surprise it should be 10 out of 10. Check whether ChatGPT can render the visual assets.
 ```
 
-<ArticleImage src="/assets/blog/pocket-room/story/concepts-1-5x2.webp" alt="Ten concept paintings for the website, with 06 (an isometric house) and 08 (a little handheld device) circled in red pencil" title="Round one. I circled 06 and 08." />
+<ArticleImage src="/assets/blog/pocket-room/story/concepts-1-3x3.webp" alt="Nine of the ten concept paintings, with 06 (an isometric house) and 08 (a little handheld device) circled in red pencil" title="Round one. I circled 06 and 08." />
 
 I picked on instinct: what could make a good website, and what caught my eye first. I love isometric drawings (06), and 08 is inspired by Teenage Engineering.
 
-> **Technique: ask for ten, pick with your eyes**
-> Don't describe the answer, describe the test it has to pass. Then you only have to recognise the good one, which is much easier than imagining it.
+> **Technique: the machine gun**
+> Don't describe the answer, describe the test it has to pass, and ask for ten. Then you only have to recognise the good one, which is much easier than imagining it.
 
 I thought the two could be merged. Fitting a whole house into a pocket machine would be far too much detail, but the agent knows that too. I only asked for them to be merged in a way that works visually and still passes the first prompt. I often let it go wild, and even ask it to surprise me.
 
-```prompt
-Merge 06 and 08 into ten new concepts. It has to work visually and still pass the first brief. Surprise me.
-```
-
-<ArticleImage src="/assets/blog/pocket-room/story/concepts-2-5x2.webp" alt="Ten more concepts, with 03 (a grey handheld with a painted room on its screen) circled and 01 lightly marked" title="Round two. 01 was nice, 03 was the one." />
+<ArticleImage src="/assets/blog/pocket-room/story/concepts-2-3x3.webp" alt="Nine of the next ten concepts, with 03 (a grey handheld with a painted room on its screen) circled and 01 lightly marked" title="Round two. 01 was nice, 03 was the one." />
 
 ## The first build was horrific
 
@@ -47,7 +53,13 @@ I let it build 03, frontend only, to see what it is even capable of. The results
 
 <ArticleImage src="/assets/blog/pocket-room/story/first-builds.webp" alt="Seven early builds: a 3D vinyl diorama of a house by day and night, and three versions of a device next to a column of text" title="Seven builds, none of them the picture I picked." />
 
-It wanted to rebuild the house in code, and it can't draw. So I pointed it at ChatGPT's image generation for every manga-style picture, and let it call Codex by itself. I didn't say what to generate or how.
+It wanted to rebuild the house in code, and it can't draw. So I pointed it at ChatGPT's image generation for every manga-style picture, and let it call Codex by itself. I didn't overspecify much: what I wanted to see, plus one trick for cutting things out.
+
+```prompt
+Build out 03 for real, and make it look like no other website. You can't draw, but ChatGPT can: call its image generation through codex exec, with the mockup attached as the reference, so every picture shares one style. Paint anything that moves or opens on flat #FF00FF, so you can cut it out. Look at every image before you keep it, and paint it again when it's off.
+
+Make the character look like me, make the trains move, and make it obvious on hover what can be clicked. It has to work on phones too. Multiple agents, multiple tries, pick the best one.
+```
 
 > **Technique: Claude calls ChatGPT for images**
 > The Codex CLI puts ChatGPT's image tool in your terminal, so Claude Code can run it like any other command, with reference images attached:
@@ -89,6 +101,10 @@ There were small problems. Clicking an item showed a blurry, ugly cut-out of it.
 
 Knowing I'd most likely stick with this website, I also asked it to write down how it makes these pictures, prompts included, into the repo. If I put something new on my desk long after this conversation is gone, it will know where to pick up, and the new thing will match this world.
 
+```prompt
+Store how you made every image here: the prompts, the reference photos, the scripts and the steps. Assume the next agent has none of this conversation. If I say "the cat on the bed should become a new project", it should be able to paint it, cut it out and wire it up so it matches the rest of the room. Also write down which looks I picked and which I turned down, so nobody tries them again.
+```
+
 > **Technique: make the agent write its own recipe**
 > Every prompt lives in a text file next to the picture it made and the photo it started from, and an `AGENTS.md` points the next agent at it, along with the looks I already turned down.
 
@@ -115,13 +131,13 @@ Last, my projects at the bottom. At first it made a list:
 
 I wanted it visual, but without stealing attention from the main act at the top. We ended at a colourless grid with a thumbnail per project. It took ten ideas, two iterations and hand-picking what did and didn't work. Including the reveal, which I first wanted to look like a drop of ink landing on paper. It was just too distracting.
 
-<ArticleImage src="/assets/blog/pocket-room/story/youtldr-10.webp" alt="Ten versions of the YouTLDR thumbnail, from a screenshot of the site to a pencil and colour painting of a YouTube card turning into No." title="Ten versions of one thumbnail." />
+<ArticleImage src="/assets/blog/pocket-room/story/youtldr-9.webp" alt="Nine versions of the YouTLDR thumbnail, from a screenshot of the site to a pencil and colour painting of a YouTube card turning into No." title="Versions of one thumbnail, from the real site to the one that stuck." />
 
 <ArticleLoop src="/assets/blog/pocket-room/story/loop-reveal.mp4" poster="/assets/blog/pocket-room/story/loop-reveal.webp" label="A project card in pencil fading into colour when the pointer reaches it" title="Pencil at rest, colour when you point at it. A plain fade won." />
 
 I didn't know the right answer to a lot of things, like how much manga the pictures should have. So I asked for five intensities and picked one.
 
-<ArticleLoop src="/assets/blog/pocket-room/story/loop-manga.mp4" poster="/assets/blog/pocket-room/story/loop-manga.webp" label="One picture fading through five strengths, from the original screenshot to full manga" title="The original, then four strengths. The middle one stuck." />
+<ArticleImage src="/assets/blog/pocket-room/story/manga-5.webp" alt="One picture at five strengths, from the original screenshot to full manga, with a slider underneath from weak in green to strong in red, stopped at the fourth" title="From weak to strong. I stopped at medium." />
 
 You see the theme. When I imagine something, I don't have to be sure. I can ask for everything and pick.
 
@@ -131,6 +147,6 @@ Just don't forget to kill some ideas, or you'll never ship. :)
 
 <ArticleLoop src="/assets/blog/pocket-room/story/loop-room.mp4" poster="/assets/blog/pocket-room/story/loop-room.webp" label="The finished room: a shinkansen passes the window while the pointer lifts the window, the arcade and the kana poster" title="This is it." />
 
-I hope it lasts me AT LEAST a week. At the very least.
+I hope it lasts me AT LEAST a week. At the very least. If you want to make your own, everything is in [the repo](https://github.com/virpo/virpo.io), prompts included.
 
 Want to read more things like this? [Follow me on X](https://x.com/virpo).

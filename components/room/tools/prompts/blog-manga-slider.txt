@@ -1,0 +1,7 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out>
+
+Attached: style.png is the illustration style to match (cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture).
+Paint a hand-drawn SLIDER, like a volume slider, on a perfectly flat solid magenta background (#FF00FF, no shadow on the background):
+- In the top half: one long, thin, horizontal rounded track spanning almost the full width, inked with a black outline and filled with a watercolor gradient from fresh green at the left end, through yellow in the middle, to red at the right end. Under its left end the hand-lettered word "weak", under its right end the hand-lettered word "strong", small, in black ink.
+- In the bottom half, separately, with lots of magenta around it: ONE round slider knob on its own, a chunky cream-white disc with a black ink outline, a soft watercolor shading and a small grip line in the middle, about three times as tall as the track.
+Nothing else. Same style as style.png. Landscape 1536x1024.
