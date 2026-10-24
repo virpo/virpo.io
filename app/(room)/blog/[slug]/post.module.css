@@ -119,11 +119,87 @@
   padding-left: 1.3em;
 }
 
+/* the agent techniques worth stealing: a callout that stands out from the story */
 .body blockquote {
-  margin: 1.6em 0;
-  padding-left: 1.2em;
-  border-left: 3px solid var(--orange);
-  color: var(--ink-2);
+  margin: 1.8em 0;
+  padding: 1rem 1.2rem 1rem 1.1rem;
+  border-left: 4px solid var(--orange);
+  border-radius: 0 12px 12px 0;
+  background: #fff3e8;
+  color: var(--ink);
+}
+
+.body blockquote p {
+  margin: 0.4em 0;
+}
+
+.body blockquote strong:first-child {
+  display: block;
+  margin-bottom: 0.2em;
+  color: var(--orange-ink);
+  font: 600 0.78rem/1.3 var(--font-room-mono), ui-monospace, monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* prompts I gave the agent, as a note on paper */
+.body pre:has(> code:global(.language-prompt)) {
+  position: relative;
+  padding: 2.1rem 1.2rem 1.1rem;
+  border: 1px solid #e6dccd;
+  background: #fffdf8;
+  box-shadow: 0 1px 0 #e6dccd;
+  white-space: pre-wrap;
+}
+
+.body pre:has(> code:global(.language-prompt))::before {
+  content: "Prompt";
+  position: absolute;
+  left: 1.2rem;
+  top: 0.8rem;
+  color: var(--grey);
+  font: 600 0.72rem/1 var(--font-room-mono), ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.body pre > code:global(.language-prompt) {
+  font: 400 0.98rem/1.55 var(--font-room-sans), system-ui, sans-serif;
+  color: var(--ink);
+}
+
+/* a loop that behaves like a GIF: the whole picture is the pause button */
+.body :global(.articleLoopToggle) {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.body :global(.articleLoopToggle) video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  background: #efe9df;
+}
+
+.body :global(.articleLoopPlay) {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(42, 33, 24, 0.75);
+  color: #fff;
+  font-size: 1.2rem;
+  transform: translate(-50%, -50%);
 }
 
 .body :global(.articleMedia) {

@@ -1,7 +1,8 @@
 ---
-title: A room I did not draw
-description: Claude built my website, ChatGPT painted it, and my job was to put two pictures side by side and point at one.
+title: Shoot ten, keep one
+description: How I made this website with Claude Code and ChatGPT's image generation, by asking for ten of everything and picking with my own eyes.
 publishedAt: 2026-10-23
+updatedAt: 2026-10-24
 tags:
   - Weird use of AI
   - Design
@@ -9,91 +10,127 @@ socialImage: /assets/blog/pocket-room/social.jpg
 draft: false
 ---
 
-This website is a little grey handheld with my room inside it. A shinkansen passes the window every twenty seconds or so, and every numbered thing in the room opens something: the arcade, the bookshelf, me. I did not draw any of it, and I wrote very little of the code. Mostly I pointed at things.
+I wanted a new website. The old one was fun: my head followed your cursor, there were little toys to learn Japanese, and sounds from the Japanese streets I love. But while showing you how fun I am, it got distractingly busy. :)
 
-<ArticleImage src="/assets/blog/pocket-room/hero.webp" alt="The Pocket Room: a grey handheld with a painted room on its screen, an orange knob and a wrist strap" />
+<ArticleImage src="/assets/blog/pocket-room/story/old-site.webp" alt="The old virpo.io: a big photo of Peter shouting, colourful toy buttons, a Tokyo clock and a grid of projects" title="The old one. Fun, and a lot." />
 
-## The mockup is the spec
+This time I wanted one proper toy, and a blog that stays readable, so it doesn't get in the way of the things I actually want to share.
 
-I asked Claude for ten concepts, then ten more, and picked one: a Teenage Engineering-style device with my room on its screen. Several agents and several tries later, I got a 3D vinyl diorama. It was nice. It looked nothing like what I had picked.
+My setup these days is Claude Code with Opus 5.5, paired with a ChatGPT subscription for images. I don't paste prompts anywhere: Claude calls Codex itself. More on that later.
 
-<ImagePair
-  left={{ src: "/assets/blog/pocket-room/first-try.webp", alt: "The first attempt: a 3D vinyl diorama of a house next to a list of posts", caption: "What I got." }}
-  right={{ src: "/assets/blog/pocket-room/mockup.webp", alt: "The picked mockup: a grey handheld with a hand-drawn room on its screen", caption: "What I had picked." }}
-/>
+## Shoot ten, keep one
 
-So now there is a rule, saved in Claude's memory word for word: "picked mockup = visual spec; compare side by side before reporting".
+Making something beautiful on the first try is luck. To cheat luck, when I'm after something interesting but have no exact picture of it in my head, I shoot a machine gun: ten directions at once. The prompt only says what the result has to pass.
 
-## Claude calls ChatGPT
-
-Claude Code cannot paint, but ChatGPT can, and the Codex CLI puts its image tool in a terminal. So Claude runs it, attaching references with `-i` and piping the prompt in:
-
-```sh
-codex exec --skip-git-repo-check --dangerously-bypass-approvals-and-sandbox \
-  -i art/plate-b.png -i crop-arcade.png - < prompts/card-arcade.txt
+```prompt
+Make ten concepts for my new website. Interesting and original, inspired by my Japanese toys, but still a great blog, so readers don't get distracted.
 ```
 
-`-i` takes several files, so every reference goes before the lone `-`, or the `-` is read as another image. The bypass flag lets Codex save the PNG outside its sandbox, to the exact path a script is waiting on. Each image takes about fifty seconds, so Claude runs six at once and looks at every one before keeping it. The wrapper is [paint.sh](https://github.com/virpo/virpo.io/blob/main/components/room/tools/paint.sh).
+<ArticleImage src="/assets/blog/pocket-room/story/concepts-1-5x2.webp" alt="Ten concept paintings for the website, with 06 (an isometric house) and 08 (a little handheld device) circled in red pencil" title="Round one. I circled 06 and 08." />
 
-Every prompt then lives in a text file, 23 of them so far, next to the painting it made and the photo it started from:
+I picked on instinct: what could make a good website, and what caught my eye first. I love isometric drawings (06), and 08 is inspired by Teenage Engineering.
 
-```text
-components/room/tools/
-  prompts/card-arcade.txt   what was asked
-  art/cards/arcade.png      what came back
-  cards.py                  how it gets onto the site
+> **Technique: ask for ten, pick with your eyes**
+> Don't describe the answer, describe the test it has to pass. Then you only have to recognise the good one, which is much easier than imagining it.
+
+I thought the two could be merged. Fitting a whole house into a pocket machine would be far too much detail, but the agent knows that too. I only asked for them to be merged in a way that works visually and still passes the first prompt. I often let it go wild, and even ask it to surprise me.
+
+```prompt
+Merge 06 and 08 into ten new concepts. It has to work visually and still pass the first brief. Surprise me.
 ```
 
-An `AGENTS.md` tells the next agent where all of it lives and which looks I already turned down.
+<ArticleImage src="/assets/blog/pocket-room/story/concepts-2-5x2.webp" alt="Ten more concepts, with 03 (a grey handheld with a painted room on its screen) circled and 01 lightly marked" title="Round two. 01 was nice, 03 was the one." />
 
-## One painting, cut into pieces
+## The first build was horrific
 
-The whole room is one 1536 × 1024 painting. The windows are painted flat magenta, and a script turns magenta into glass, so the train can run behind it. Every object you can hover is cut out of the same painting: inside the object's box, whatever you can reach from the edge without crossing an ink line is background, and the rest is the object. The hole it leaves is painted over. That is why everything lines up exactly.
+I let it build 03, frontend only, to see what it is even capable of. The results were absolutely horrific.
 
-<ArticleImage src="/assets/blog/pocket-room/plate.webp" alt="The single painting of the room, with its windows painted flat magenta" title="The whole room. The magenta is where the window view goes." />
+<ArticleImage src="/assets/blog/pocket-room/story/first-builds.webp" alt="Seven early builds: a 3D vinyl diorama of a house by day and night, and three versions of a device next to a column of text" title="Seven builds, none of them the picture I picked." />
 
-Cut-outs are small, though, and they drag bits of the room along. Opening the arcade used to show a 326-pixel crop with a plant stuck to it. So every object that opens was repainted on its own, with its cut-out as the reference.
+It wanted to rebuild the house in code, and it can't draw. So I pointed it at ChatGPT's image generation for every manga-style picture, and let it call Codex by itself. I didn't say what to generate or how.
 
-<ImagePair
-  left={{ src: "/assets/blog/pocket-room/arcade-before.webp", alt: "The arcade cut from the room, blurry with leaves and desk around it", caption: "Cut from the room." }}
-  right={{ src: "/assets/blog/pocket-room/arcade-after.webp", alt: "The arcade repainted on its own, crisp, with nothing around it", caption: "Repainted on its own." }}
-/>
+> **Technique: Claude calls ChatGPT for images**
+> The Codex CLI puts ChatGPT's image tool in your terminal, so Claude Code can run it like any other command, with reference images attached:
+> `codex exec -i room.png -i crop.png - < prompt.txt`
+> Ask for each picture to be saved to an exact path, and have it look at every result before it keeps one.
 
-## Picking by looking
+<ArticleImage src="/assets/blog/pocket-room/story/three-tries.webp" alt="Three new attempts at the handheld, the third, with a painted room on its screen, circled in red pencil" title="Three tries at the picked concept. The third." />
 
-I cannot describe what I want, but I recognise it. So Claude stopped asking and built comparison pages: five ways to show the projects, then each picture from barely traced to full manga.
+The third one worked for me: a room with enough space in it. Some details were off, sure, but that's something to work with. From here I started pointing at what to fix, while still letting it rebuild big parts. I didn't want to commit to one way of doing the 3D if there was a better one.
 
-<ArticleImage src="/assets/blog/pocket-room/five-ways.webp" alt="One project card shown five ways: a riso print, painted, a live illustration, on a mini device, and taped into a notebook" title="Riso print, painted, live drawing, mini device and notebook. Painted, top middle, won." />
+## 3D, but not plastic
 
-<ArticleImage src="/assets/blog/pocket-room/manga-scale.webp" alt="The Levels page four ways: the original screenshot, a light trace, a medium painting and full manga" title="The original, light, medium and full manga. Medium stuck." />
-
-The project cards stay in pencil until you point at one. We also tried an ink drop rippling out from the cursor. Fun once, distracting the eighth time. A plain fade won.
+The buttons weren't really 3D. I asked for real depth, but stressed that it must not end up like the plastic 3D house from before: it had to keep the visual, material and tactile quality of the concept we picked. Then I pointed at every detail that put me off.
 
 <ImagePair
-  left={{ src: "/assets/blog/pocket-room/card-pencil.webp", alt: "A painted contract card in pencil and paper tones", caption: "At rest." }}
-  right={{ src: "/assets/blog/pocket-room/card-colour.webp", alt: "The same contract card in colour, with a red FLAGGED stamp", caption: "When you point at it." }}
+  left={{ src: "/assets/blog/pocket-room/story/depth-right-controls-b.webp", alt: "The device's controls painted flat", caption: "Painted on." }}
+  right={{ src: "/assets/blog/pocket-room/story/depth-right-controls-a.webp", alt: "The same controls standing off the face, the knob showing its knurled side", caption: "Standing up." }}
 />
 
-## Two arms on one shoulder
+<ArticleLoop src="/assets/blog/pocket-room/story/loop-tilt.mp4" poster="/assets/blog/pocket-room/story/loop-tilt.webp" label="The device tilting, its knob and keys showing their sides" title="Plain CSS, no 3D engine. The knob is sixteen stacked rings." />
 
-Mini me had a second hand on my lap, growing out of the waving shoulder. The first fix removed the lap hand. The second moved the wave to the other arm. The third kept both and attached them properly: I sit twisted towards you, so both hands really are on the right. The fourth flattened a bump on my back that still looked like an elbow.
+## A tiny world on pink paper
+
+The world inside is clickable, moves a little, and you can play with it. The trick: everything is painted on a flat pink background, so a script can cut it out.
+
+<ArticleImage src="/assets/blog/pocket-room/story/pink-plate.webp" alt="The painted room with its windows painted flat magenta" title="The whole room is one painting. The pink is where the window view goes." />
 
 <ImagePair
-  left={{ src: "/assets/blog/pocket-room/wave-before.webp", alt: "Mini Peter waving, with a second hand on his lap growing out of the same shoulder", caption: "Two arms, one shoulder." }}
-  right={{ src: "/assets/blog/pocket-room/wave-after.webp", alt: "Mini Peter waving beside his face, his other hand resting on his lap", caption: "Fourth try." }}
+  left={{ src: "/assets/blog/pocket-room/story/pink-props.webp", alt: "Notebooks, a mug and a cat painted on magenta", caption: "Props on pink." }}
+  right={{ src: "/assets/blog/pocket-room/story/pink-peter.webp", alt: "Six poses of mini Peter painted on magenta", caption: "Six of me on pink." }}
 />
 
-The room is flat layers, but the device around it is 3D in plain CSS, no three.js. The knob is sixteen stacked rings, each key is a cap on a few walls, and the device leans when you move the mouse.
+> **Technique: paint on #FF00FF, then cut**
+> Nothing in a cosy painting is that pink, so turning magenta into transparency gives you clean sprites. Every object you can hover is cut out of the one painting, so everything lines up.
+
+There were small problems. Clicking an item showed a blurry, ugly cut-out of it. So it took the cut-out as the reference and painted it again, bigger and without the background.
+
+<ArticleImage src="/assets/blog/pocket-room/story/cards.webp" alt="The arcade and the tiny TV, each as a blurry cut-out from the room next to the same object painted again on its own" title="Cut out, then painted again: the arcade and the TV." />
+
+Knowing I'd most likely stick with this website, I also asked it to write down how it makes these pictures, prompts included, into the repo. If I put something new on my desk long after this conversation is gone, it will know where to pick up, and the new thing will match this world.
+
+> **Technique: make the agent write its own recipe**
+> Every prompt lives in a text file next to the picture it made and the photo it started from, and an `AGENTS.md` points the next agent at it, along with the looks I already turned down.
+
+## Hands
+
+AI and hands. It took us about six tries. Every time I thought "now I've explained it properly, it will just know". Not even looking with its own eyes helped. We got there with cut-outs of exactly what had to disappear and what had to stay.
+
+<ArticleImage src="/assets/blog/pocket-room/story/hands.webp" alt="Four versions of mini Peter waving, red pencil marking the extra hand, the missing arm and the wrong arm, a tick on the last" title="Three hands, one missing, one on the wrong side, and finally two." />
+
+<ArticleLoop src="/assets/blog/pocket-room/story/loop-wave.mp4" poster="/assets/blog/pocket-room/story/loop-wave.webp" label="Mini Peter turning round in his chair to wave when the pointer reaches him" title="Point at me and I turn round." />
+
+By now the top of the page was pretty much done. It also did fun things, like the light in the room following day ☀️ and night 🌙 in Japan. But at night it looked too dim, and nobody would get why. So now it's always day, and the device just prints the time in Tokyo.
 
 <ImagePair
-  left={{ src: "/assets/blog/pocket-room/controls-before.webp", alt: "The knob painted flat onto the device", caption: "Painted on." }}
-  right={{ src: "/assets/blog/pocket-room/controls-after.webp", alt: "The knob standing off the device, its knurled side showing", caption: "Sixteen rings." }}
+  left={{ src: "/assets/blog/pocket-room/story/night.webp", alt: "The painted room at night, dim and blue", caption: "Night in Tokyo." }}
+  right={{ src: "/assets/blog/pocket-room/story/day.webp", alt: "The room in daylight on the device, the Tokyo time printed on the bezel", caption: "Always day now." }}
 />
 
-That broke the mouse. The screen sat in exactly the same plane as the face, so the browser sometimes hit the face instead of the room, and half the objects stopped answering. `translateZ(0.02cqw)` on the screen, a hair off the face, fixed it.
+## Projects, ten ways
 
-<ArticleImage src="/assets/blog/pocket-room/shapes.webp" alt="The device as a tall handheld on a phone and a wide one on a phone held sideways" title="On a phone it becomes a tall PR-03 mini; turn the phone and it gets wide." />
+Last, my projects at the bottom. At first it made a list:
 
-<ArticleVideo src="/assets/blog/pocket-room/room-loop.mp4" poster="/assets/blog/pocket-room/room-loop.jpg" label="A calm loop of the room: a train passes the window while mini Peter types" title="The home page has an og:video too, so where link previews play video, the train passes right in the preview." />
+<ArticleImage src="/assets/blog/pocket-room/story/project-list.webp" alt="A plain list of projects with small monochrome icons" title="Correct, and nobody would look at it." />
 
-The agents made things; choosing is the part I am still learning. Everything is in [the repo](https://github.com/virpo/virpo.io), prompts included, if you want to make your own.
+I wanted it visual, but without stealing attention from the main act at the top. We ended at a colourless grid with a thumbnail per project. It took ten ideas, two iterations and hand-picking what did and didn't work. Including the reveal, which I first wanted to look like a drop of ink landing on paper. It was just too distracting.
+
+<ArticleImage src="/assets/blog/pocket-room/story/youtldr-10.webp" alt="Ten versions of the YouTLDR thumbnail, from a screenshot of the site to a pencil and colour painting of a YouTube card turning into No." title="Ten versions of one thumbnail." />
+
+<ArticleLoop src="/assets/blog/pocket-room/story/loop-reveal.mp4" poster="/assets/blog/pocket-room/story/loop-reveal.webp" label="A project card in pencil fading into colour when the pointer reaches it" title="Pencil at rest, colour when you point at it. A plain fade won." />
+
+I didn't know the right answer to a lot of things, like how much manga the pictures should have. So I asked for five intensities and picked one.
+
+<ArticleLoop src="/assets/blog/pocket-room/story/loop-manga.mp4" poster="/assets/blog/pocket-room/story/loop-manga.webp" label="One picture fading through five strengths, from the original screenshot to full manga" title="The original, then four strengths. The middle one stuck." />
+
+You see the theme. When I imagine something, I don't have to be sure. I can ask for everything and pick.
+
+Just don't forget to kill some ideas, or you'll never ship. :)
+
+## The result
+
+<ArticleLoop src="/assets/blog/pocket-room/story/loop-room.mp4" poster="/assets/blog/pocket-room/story/loop-room.webp" label="The finished room: a shinkansen passes the window while the pointer lifts the window, the arcade and the kana poster" title="This is it." />
+
+I hope it lasts me AT LEAST a week. At the very least.
+
+Want to read more things like this? [Follow me on X](https://x.com/virpo).

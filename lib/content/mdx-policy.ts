@@ -68,7 +68,7 @@ function validateArticleImage(node: MdxNode) {
   if (node.children?.length) reject("children inside ArticleImage");
 }
 
-function validateArticleVideo(node: MdxNode) {
+function validateArticleVideo(node: MdxNode, name = "ArticleVideo") {
   const allowed = new Set(["src", "poster", "title", "label"]);
   const values = new Map<string, string>();
   for (const attribute of node.attributes ?? []) {
@@ -79,15 +79,15 @@ function validateArticleVideo(node: MdxNode) {
       typeof attribute.value !== "string" ||
       values.has(attribute.name)
     ) {
-      reject("ArticleVideo attributes other than literal src, poster, title, and label");
+      reject(`${name} attributes other than literal src, poster, title, and label`);
     }
     values.set(attribute.name, attribute.value);
   }
-  requireBlogAsset(values.get("src"), "ArticleVideo");
-  if (!values.get("src")?.endsWith(".mp4")) reject("ArticleVideo sources that are not .mp4");
-  if (values.has("poster")) requireBlogAsset(values.get("poster"), "ArticleVideo poster");
-  if (!values.get("label")?.trim()) reject("ArticleVideo without a literal label");
-  if (node.children?.length) reject("children inside ArticleVideo");
+  requireBlogAsset(values.get("src"), name);
+  if (!values.get("src")?.endsWith(".mp4")) reject(`${name} sources that are not .mp4`);
+  if (values.has("poster")) requireBlogAsset(values.get("poster"), `${name} poster`);
+  if (!values.get("label")?.trim()) reject(`${name} without a literal label`);
+  if (node.children?.length) reject(`children inside ${name}`);
 }
 
 function literalDescriptor(attribute: MdxAttribute, side: string) {
@@ -169,6 +169,7 @@ function validateNode(node: MdxNode) {
     if (node.name === "ArticleImage") validateArticleImage(node);
     else if (node.name === "ImagePair") validateImagePair(node);
     else if (node.name === "ArticleVideo") validateArticleVideo(node);
+    else if (node.name === "ArticleLoop") validateArticleVideo(node, "ArticleLoop");
     else reject(`component <${node.name ?? "unknown"}>`);
   }
 
@@ -177,7 +178,7 @@ function validateNode(node: MdxNode) {
 
 /**
  * Repository posts are trusted author input, not arbitrary remote MDX. This
- * allowlist still blocks executable MDX and limits JSX to three media components.
+ * allowlist still blocks executable MDX and limits JSX to four media components.
  */
 export function enforceTrustedMdxPolicy() {
   return (tree: MdxNode) => validateNode(tree);
