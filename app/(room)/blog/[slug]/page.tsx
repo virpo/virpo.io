@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArticleLightbox } from "../../../../components/blog/ArticleLightbox";
 import { compilePostMdx } from "../../../../components/blog/mdx-components";
 import { Device } from "../../../../components/room/Device";
 import { RoomBackKey, roomDate, RoomFooter } from "../../../../components/room/RoomChrome";
@@ -74,6 +75,12 @@ export function articleJsonLd(post: Pick<PostSource, "slug" | "title" | "descrip
   });
 }
 
+const TOY_KEYS = [
+  { href: "/#toy-window", icon: "🚄", label: "Shinkansen" },
+  { href: "/#toy-sounds", icon: "♪", label: "Sounds" },
+  { href: "/#toy-kana", icon: "あ", label: "Kana" },
+];
+
 export default async function RoomPostPage({ params }: Props) {
   const { slug } = await params;
   let post;
@@ -95,7 +102,20 @@ export default async function RoomPostPage({ params }: Props) {
       <main className={styles.layout}>
         <aside className={styles.margin} aria-label="Pocket Room">
           <div className={styles.sticky}>
-            <Device variant="dock" posts={devicePosts} progressTarget="room-article" />
+            <div className={styles.dock}>
+              <Device variant="dock" posts={devicePosts} progressTarget="room-article" />
+            </div>
+            {/* on a phone the room doesn't fit the margin: a few of its toys, one tap away */}
+            <nav className={styles.toyKeys} aria-label="Toys in the room">
+              {TOY_KEYS.map((toy) => (
+                <a key={toy.href} href={toy.href} className={styles.toyKey}>
+                  <span className={styles.toyKeyCap} aria-hidden="true">
+                    {toy.icon}
+                  </span>
+                  {toy.label}
+                </a>
+              ))}
+            </nav>
           </div>
         </aside>
 
@@ -130,10 +150,11 @@ export default async function RoomPostPage({ params }: Props) {
           </header>
 
           <div className={styles.body}>{content}</div>
+          <ArticleLightbox root="room-article" />
 
           <footer className={styles.end}>
             <p className={styles.signoff}>
-              Thanks for reading. Replies are welcome at <a href="mailto:peter@hraska.sk">peter@hraska.sk</a>, and new posts arrive by <a href="/rss.xml">RSS</a>.
+              Thanks for reading. Replies are welcome at <a href="mailto:peter@hraska.sk">peter@hraska.sk</a>. Want more like this? <a href="https://x.com/virpo">Follow me on X</a>.
             </p>
             <nav className={styles.pager} aria-label="More posts">
               {older ? (

@@ -142,32 +142,6 @@
   text-transform: uppercase;
 }
 
-/* prompts I gave the agent, as a note on paper */
-.body pre:has(> code:global(.language-prompt)) {
-  position: relative;
-  padding: 2.1rem 1.2rem 1.1rem;
-  border: 1px solid #e6dccd;
-  background: #fffdf8;
-  box-shadow: 0 1px 0 #e6dccd;
-  white-space: pre-wrap;
-}
-
-.body pre:has(> code:global(.language-prompt))::before {
-  content: "Prompt";
-  position: absolute;
-  left: 1.2rem;
-  top: 0.8rem;
-  color: var(--grey);
-  font: 600 0.72rem/1 var(--font-room-mono), ui-monospace, monospace;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.body pre > code:global(.language-prompt) {
-  font: 400 0.98rem/1.55 var(--font-room-sans), system-ui, sans-serif;
-  color: var(--ink);
-}
-
 /* a loop that behaves like a GIF: the whole picture is the pause button */
 .body :global(.articleLoopToggle) {
   position: relative;
@@ -357,8 +331,248 @@
 }
 
 @media (pointer: coarse) {
-  .crumbs a {
+  .crumbs > a:last-child {
     display: inline-block;
     padding: 0.7rem 0.2rem;
+  }
+}
+
+/* toys in the room, as keys: only on phones, where the docked room is hidden */
+.toyKeys {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .dock {
+    display: none;
+  }
+
+  .toyKeys {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
+
+.toyKey {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  padding: 0 0.8rem 0 0.35rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #e2ddd5, #c9c2b8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 3px 0 #9b9387, 0 6px 12px -6px rgba(50, 40, 30, 0.45);
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 70ms ease-out, box-shadow 70ms ease-out;
+}
+
+.toyKey:active {
+  transform: translateY(2px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 1px 0 #9b9387;
+}
+
+.toyKeyCap {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff, #e8e2da);
+  box-shadow: 0 1px 0 #a49b8f;
+  font-size: 0.95rem;
+}
+
+/* code blocks and prompt cards, with a bar on top holding the Copy button */
+.body :global(.articleCode) {
+  margin: 1.6em 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #2a2118;
+  color: #f4ede3;
+}
+
+.body :global(.articleCodeBar) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.6rem 0.2rem 1rem;
+  color: #b9ae9f;
+  font: 600 0.72rem/1 var(--font-room-mono), ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.body :global(.articleCodeBar) button {
+  min-height: 32px;
+  padding: 0 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+.body :global(.articleCodeBar) button:hover,
+.body :global(.articleCodeBar) button[data-copied] {
+  border-color: var(--orange);
+  color: #ffb07a;
+}
+
+.body :global(.articleCode) pre {
+  margin: 0;
+  padding: 0.4rem 1rem 1rem;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+}
+
+.body :global(.articlePrompt) {
+  border: 1px solid #e6dccd;
+  background: #fffdf8;
+  color: var(--ink);
+  box-shadow: 0 1px 0 #e6dccd;
+}
+
+.body :global(.articlePrompt .articleCodeBar) {
+  color: var(--grey);
+}
+
+.body :global(.articlePrompt .articleCodeBar) button {
+  border-color: #ddd5ca;
+}
+
+.body :global(.articlePrompt) pre {
+  white-space: pre-wrap;
+  font-size: 0.84em;
+  line-height: 1.6;
+}
+
+/* inside a technique callout the command sits on its own dark line */
+.body blockquote :global(.articleCode) {
+  margin: 0.8em 0 0.4em;
+}
+
+/* the picture viewer: dims the page, the picture as large as fits, a round key to close */
+.layout :global(.lightbox) {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 3.5rem 1.2rem 2rem;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  overflow: hidden;
+}
+
+.layout :global(.lightbox[open]) {
+  display: grid;
+  place-items: center;
+  animation: lightboxIn 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.layout :global(.lightbox)::backdrop {
+  background: rgba(28, 22, 16, 0.86);
+  backdrop-filter: blur(6px);
+}
+
+.layout :global(.lightbox) figure {
+  display: grid;
+  justify-items: center;
+  gap: 0.8rem;
+  margin: 0;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.layout :global(.lightbox) img {
+  max-width: min(100%, 1600px);
+  max-height: calc(100dvh - 9rem);
+  border-radius: 12px;
+  background: #faf7f2;
+  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.7);
+  object-fit: contain;
+}
+
+.layout :global(.lightbox) figcaption {
+  color: #d8cfc3;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* the close key: the arcade's round orange button, with travel when pressed */
+.layout :global(.lightboxClose) {
+  position: absolute;
+  top: max(14px, env(safe-area-inset-top));
+  right: max(14px, env(safe-area-inset-right));
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(80% 80% at 35% 28%, #ffb07a, #f0722b 55%, #d9561d 100%);
+  box-shadow: inset 0 2px 1px rgba(255, 255, 255, 0.45), 0 4px 0 #a43f15, 0 10px 20px -8px rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 70ms ease-out, box-shadow 70ms ease-out;
+}
+
+.layout :global(.lightboxClose):active {
+  transform: translateY(3px);
+  box-shadow: inset 0 2px 1px rgba(255, 255, 255, 0.35), 0 1px 0 #a43f15;
+}
+
+.layout :global(.lightboxStep) {
+  position: absolute;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.layout :global(.lightboxStep[data-dir="prev"]) {
+  left: max(10px, env(safe-area-inset-left));
+}
+
+.layout :global(.lightboxStep[data-dir="next"]) {
+  right: max(10px, env(safe-area-inset-right));
+}
+
+.layout :global(.lightbox) :focus-visible {
+  outline: 2px solid #ffb07a;
+  outline-offset: 3px;
+}
+
+@keyframes lightboxIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .layout :global(.lightbox[open]) {
+    animation: none;
   }
 }

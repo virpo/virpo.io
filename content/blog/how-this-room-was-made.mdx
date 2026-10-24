@@ -18,11 +18,13 @@ The old one was fun: my head followed your cursor, there were little toys to lea
 
 This time I wanted one proper toy, and a blog that stays readable, so it doesn't get in the way of the things I actually want to share.
 
-My setup these days is Claude Code with Opus 5.5, paired with a ChatGPT subscription for images. I don't paste prompts anywhere: Claude calls Codex itself. More on that later.
+My setup these days is Claude Code with Opus 5.5, paired with a ChatGPT subscription for adversarial reviews, but also images. I don't paste prompts anywhere: Claude calls Codex itself. More on that later.
 
 ## The machine gun
 
-Making something beautiful on the first try is luck. To cheat luck: if unsure, shoot a machine gun to see your options. Ten directions at once. The prompt doesn't describe the answer, only what the answer has to pass.
+Making something beautiful on the first try is luck. Let's cheat luck.
+
+When unsure, shoot a machine gun with 10 options. What also works is not describing the answer or how to get there, just what the answer should pass: what qualities it needs, what's important to me in how it looks.
 
 ```prompt
 My website is interesting, but busy. I like the Japanese toys, but there's no calm, no 3D, nothing extra. Research what top designers do that most people haven't seen, and give me 10 concepts to pick from.
@@ -36,12 +38,12 @@ It has to work as:
 I'll share posts on Hacker News, so it needs credibility, but keep it playful. On surprise it should be 10 out of 10. Check whether ChatGPT can render the visual assets.
 ```
 
-<ArticleImage src="/assets/blog/pocket-room/story/concepts-1-3x3.webp" alt="Nine of the ten concept paintings, with 06 (an isometric house) and 08 (a little handheld device) circled in red pencil" title="Round one. I circled 06 and 08." />
+<ArticleImage src="/assets/blog/pocket-room/story/concepts-1-3x3.webp" alt="Nine of the ten concept paintings, with 06 (an isometric house) and 08 (a little handheld device) circled in red pencil" title="Round one. I chose 06 and 08." />
 
 I picked on instinct: what could make a good website, and what caught my eye first. I love isometric drawings (06), and 08 is inspired by Teenage Engineering.
 
 > **Technique: the machine gun**
-> Don't describe the answer, describe the test it has to pass, and ask for ten. Then you only have to recognise the good one, which is much easier than imagining it.
+> When unsure, ask for ten. Describe what the answer has to pass, not the answer. Recognising the good one is much easier than imagining it.
 
 I thought the two could be merged. Fitting a whole house into a pocket machine would be far too much detail, but the agent knows that too. I only asked for them to be merged in a way that works visually and still passes the first prompt. I often let it go wild, and even ask it to surprise me.
 
@@ -51,9 +53,11 @@ I thought the two could be merged. Fitting a whole house into a pocket machine w
 
 I let it build 03, frontend only, to see what it is even capable of. The results were absolutely horrific.
 
-<ArticleImage src="/assets/blog/pocket-room/story/first-builds.webp" alt="Seven early builds: a 3D vinyl diorama of a house by day and night, and three versions of a device next to a column of text" title="Seven builds, none of them the picture I picked." />
+<ArticleImage src="/assets/blog/pocket-room/story/first-build.webp" alt="The first build: a 3D vinyl diorama of a house with numbered dots, next to a list of posts" />
 
-It wanted to rebuild the house in code, and it can't draw. So I pointed it at ChatGPT's image generation for every manga-style picture, and let it call Codex by itself. I didn't overspecify much: what I wanted to see, plus one trick for cutting things out.
+<ArticleImage src="/assets/blog/pocket-room/story/first-builds-rest.webp" alt="Six more early builds: the same diorama at night and dusk, and three versions of a device next to a column of text" title="And six more, none of them the picture I picked." />
+
+It wanted to rebuild the house in code, but as you can notice, it can't draw. So I pointed it at ChatGPT's image generation for every manga-style picture, and let it call Codex by itself. I didn't overspecify much: what I wanted to see, plus one trick for cutting things out.
 
 ```prompt
 Build out 03 for real, and make it look like no other website. You can't draw, but ChatGPT can: call its image generation through codex exec, with the mockup attached as the reference, so every picture shares one style. Paint anything that moves or opens on flat #FF00FF, so you can cut it out. Look at every image before you keep it, and paint it again when it's off.
@@ -63,10 +67,14 @@ Make the character look like me, make the trains move, and make it obvious on ho
 
 > **Technique: Claude calls ChatGPT for images**
 > The Codex CLI puts ChatGPT's image tool in your terminal, so Claude Code can run it like any other command, with reference images attached:
-> `codex exec -i room.png -i crop.png - < prompt.txt`
+>
+> ```sh
+> codex exec -i room.png -i crop.png - < prompt.txt
+> ```
+>
 > Ask for each picture to be saved to an exact path, and have it look at every result before it keeps one.
 
-<ArticleImage src="/assets/blog/pocket-room/story/three-tries.webp" alt="Three new attempts at the handheld, the third, with a painted room on its screen, circled in red pencil" title="Three tries at the picked concept. The third." />
+<ArticleImage src="/assets/blog/pocket-room/story/three-tries.webp" alt="Three new attempts at the handheld, each with a painted room on its screen, the third circled in red pencil" />
 
 The third one worked for me: a room with enough space in it. Some details were off, sure, but that's something to work with. From here I started pointing at what to fix, while still letting it rebuild big parts. I didn't want to commit to one way of doing the 3D if there was a better one.
 
@@ -83,13 +91,13 @@ The buttons weren't really 3D. I asked for real depth, but stressed that it must
 
 ## A tiny world on pink paper
 
-The world inside is clickable, moves a little, and you can play with it. The trick: everything is painted on a flat pink background, so a script can cut it out.
+The world inside is clickable, moves a little, and you can play with it. The trick is that everything is painted on a flat pink background, so a script can cut it out.
 
 <ArticleImage src="/assets/blog/pocket-room/story/pink-plate.webp" alt="The painted room with its windows painted flat magenta" title="The whole room is one painting. The pink is where the window view goes." />
 
 <ImagePair
-  left={{ src: "/assets/blog/pocket-room/story/pink-props.webp", alt: "Notebooks, a mug and a cat painted on magenta", caption: "Props on pink." }}
-  right={{ src: "/assets/blog/pocket-room/story/pink-peter.webp", alt: "Six poses of mini Peter painted on magenta", caption: "Six of me on pink." }}
+  left={{ src: "/assets/blog/pocket-room/story/pink-props.webp", alt: "Notebooks, a mug and a cat painted on magenta" }}
+  right={{ src: "/assets/blog/pocket-room/story/pink-peter.webp", alt: "Six poses of mini Peter painted on magenta" }}
 />
 
 > **Technique: paint on #FF00FF, then cut**
@@ -125,9 +133,9 @@ By now the top of the page was pretty much done. It also did fun things, like th
 
 ## Projects, ten ways
 
-Last, my projects at the bottom. At first it made a list:
+Lastly, I wanted to show my projects at the bottom. At first it just made a list:
 
-<ArticleImage src="/assets/blog/pocket-room/story/project-list.webp" alt="A plain list of projects with small monochrome icons" title="Correct, and nobody would look at it." />
+<ArticleImage src="/assets/blog/pocket-room/story/project-list.webp" alt="A plain list of projects: titles, one line each, and the room object each one belongs to" title="Correct, and nobody would look at it." />
 
 I wanted it visual, but without stealing attention from the main act at the top. We ended at a colourless grid with a thumbnail per project. It took ten ideas, two iterations and hand-picking what did and didn't work. Including the reveal, which I first wanted to look like a drop of ink landing on paper. It was just too distracting.
 
@@ -137,7 +145,7 @@ I wanted it visual, but without stealing attention from the main act at the top.
 
 I didn't know the right answer to a lot of things, like how much manga the pictures should have. So I asked for five intensities and picked one.
 
-<ArticleImage src="/assets/blog/pocket-room/story/manga-5.webp" alt="One picture at five strengths, from the original screenshot to full manga, with a slider underneath from weak in green to strong in red, stopped at the fourth" title="From weak to strong. I stopped at medium." />
+<ArticleImage src="/assets/blog/pocket-room/story/manga-5.webp" alt="A photo of a Stream Deck at five strengths, from the original photo to full manga, with a slider underneath from weak in green to strong in red, stopped at the fourth" title="From weak to strong. I stopped at medium." />
 
 You see the theme. When I imagine something, I don't have to be sure. I can ask for everything and pick.
 
@@ -145,8 +153,6 @@ Just don't forget to kill some ideas, or you'll never ship. :)
 
 ## The result
 
-<ArticleLoop src="/assets/blog/pocket-room/story/loop-room.mp4" poster="/assets/blog/pocket-room/story/loop-room.webp" label="The finished room: a shinkansen passes the window while the pointer lifts the window, the arcade and the kana poster" title="This is it." />
+<ArticleLoop src="/assets/blog/pocket-room/story/loop-room.mp4" poster="/assets/blog/pocket-room/story/loop-room.webp" label="The finished room: a shinkansen passes the window while the pointer lifts the window, the arcade and the kana poster" />
 
 I hope it lasts me AT LEAST a week. At the very least. If you want to make your own, everything is in [the repo](https://github.com/virpo/virpo.io), prompts included.
-
-Want to read more things like this? [Follow me on X](https://x.com/virpo).

@@ -2,6 +2,7 @@ import { compileMDX } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { enforceTrustedMdxPolicy } from "../../lib/content/mdx-policy";
 import { ArticleLoop } from "./ArticleLoop";
+import { ArticlePre } from "./ArticlePre";
 import { ArticleVideo } from "./ArticleVideo";
 import { ImagePair } from "./ImagePair";
 import { ArticleImage } from "./MdxImage";
@@ -11,6 +12,7 @@ export const mdxComponents = {
   ArticleLoop,
   ArticleVideo,
   ImagePair,
+  pre: ArticlePre,
 };
 
 export function compilePostMdx(source: string) {

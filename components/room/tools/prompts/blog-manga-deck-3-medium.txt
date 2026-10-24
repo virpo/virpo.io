@@ -1,0 +1,6 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out>
+
+Attached: plate-b.png is the STYLE to match (a cozy Japanese manga room in ink and watercolour). original.png is a real photo of a small black Stream Deck with six glowing keys standing on a wooden desk, a keyboard behind it.
+This is NOT a photo edit. Paint a NEW illustration from scratch on a fresh canvas, using original.png only as a reference for what the Stream Deck looks like (six keys, the same labels, the same three-quarter view on a desk with a keyboard behind). Nothing photographic may remain.
+MEDIUM strength: a hand-drawn illustration in the style of plate-b.png. Confident black ink outlines, warm watercolour washes with paper texture, the black body painted as soft warm charcoal with watercolour highlights, the desk as warm painted wood, simplified details.
+Landscape 1536x1024. No border. Not 3D, not a photo.

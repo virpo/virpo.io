@@ -15,3 +15,9 @@ favicon), read `.claude/skills/pocket-room-art/SKILL.md`. It has:
 All prompts are in `components/room/tools/prompts/`, all source paintings and real reference photos
 in `components/room/tools/art/`. Shipped files in `public/lab/room/` are outputs: change the source
 and re-run the script, don't edit them by hand.
+
+## Words on the page
+
+Think twice before adding a caption, label or heading that only says what the picture or element
+already shows ("Props on pink" under props on pink). Either say something the reader can't see, or
+leave it out.
