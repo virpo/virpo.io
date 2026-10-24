@@ -24,7 +24,10 @@ FIXES = {
         # properly attached (peter-wave-fix-2.png, which also wrongly moved the wave to the other
         # arm), with the original waving arm (via peter-wave-fix.png) put back. All three line up
         # with the original to the pixel, so only the band across the shoulders is taken.
-        ("peter-wave-fix-3", (1100, 500, 1440, 1010), [(0, 40), (340, 40), (340, 240), (0, 240)], 6),
+        # peter-wave-fix-4.png then smooths the left of his back, where the hoodie bulged out like a
+        # third arm above the chair (a repaint of fix-3, peter-wave-back-edit.png, blended in only on
+        # that patch; prompts/peter-wave-fix-4.txt).
+        ("peter-wave-fix-4", (1100, 500, 1440, 1010), [(0, 40), (340, 40), (340, 240), (0, 240)], 6),
     ],
 }
 

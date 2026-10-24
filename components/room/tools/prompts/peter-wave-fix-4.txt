@@ -1,0 +1,7 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out>
+
+Attached: wave.png is a painted sprite of a young man seen from behind on a wooden chair, twisted round towards the viewer, waving with his raised hand on the right of his face, his other hand on his lap. Upscaled 3x.
+EDIT this exact image. One problem: on the LEFT side of his back, just above the top of the chair back, the green hoodie bulges out sideways in a rounded shape like a bent elbow or a third arm. There must be no arm there.
+Make the left side of his back one smooth, calm outline: from his left shoulder under the hood straight down to the top of the chair back, the hoodie hanging naturally, slightly narrower. Where the bulge was, paint the flat magenta background (#FF00FF). Keep the same black ink outline along the new edge and the same watercolor hoodie texture.
+Keep EVERYTHING ELSE pixel-identical: same size and framing, the face, hair, both hands, the waving arm, the lap hand, the chair, jeans, sneakers, the flat magenta background. Do not zoom, crop, recentre or redraw the rest.
+Portrait 1024x1536, the same as the input.

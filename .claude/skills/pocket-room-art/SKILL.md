@@ -41,8 +41,9 @@ re-explore a rejected direction unless he asks.
   avatar (a shouting selfie at the torii).
 - Anatomy: check that each arm comes from its own shoulder, and ask Peter how the pose should read.
   The wave pose took three tries: the lap hand grew out of the waving shoulder, the first fix
-  removed the lap hand, the second moved the wave to the wrong arm. He sits twisted towards the
-  camera, so both hands are right of his head.
+  removed the lap hand, the second moved the wave to the wrong arm, and a bump on the back still
+  read as an elbow. He sits twisted towards the camera, so both hands are right of his head and
+  nothing sticks out on the left.
 - Rejected along the way: a riso/halftone two-ink print look, "live trick" HTML illustrations,
   screenshots on mini devices, scrapbook field notes, full-page manga repaints, and the room going
   dark at night.
@@ -55,7 +56,7 @@ re-explore a rejected direction unless he asks.
 | View through the window | `view.webp` | `art/view.png` | `prompts/view.txt` | `mock-screen.png`, `plate-a.png` | `build.py` |
 | Trains | `train-shinkansen.webp`, `train-local.webp` | `art/trains.png` (on magenta) | `prompts/trains.txt` | `mock-screen.png` | `build.py` |
 | Peter's six poses | `peter-*.webp` | `art/peter-sheet.png` (on magenta) | `prompts/peter.txt` | `mock-screen.png`, `art/peter-character-ink.jpg`, `art/peter-photo.png` | `build.py` |
-| Peter's wave, arms fixed (twisted towards the camera, both hands right of his head: waving beside his face, the other on his lap; combined from `peter-wave-fix.png` and `peter-wave-fix-2.png`, see `fixes.py`) | `peter-wave.webp` | `art/fixes/peter-wave-fix-3.png` | `prompts/peter-wave-fix.txt`, `prompts/peter-wave-fix-2.txt` | `art/fixes/peter-wave-crop.png` | `fixes.py` (inside `build.py`) |
+| Peter's wave, arms fixed (twisted towards the camera, both hands right of his head: waving beside his face, the other on his lap; combined from `peter-wave-fix.png` and `peter-wave-fix-2.png`, see `fixes.py`) | `peter-wave.webp` | `art/fixes/peter-wave-fix-4.png` | `prompts/peter-wave-fix.txt`, `-fix-2.txt`, `-fix-4.txt` | `art/fixes/peter-wave-crop.png` | `fixes.py` (inside `build.py`) |
 | Notebooks, cat, mug, printed part | `notebook-*.webp`, `cat.webp`, `part.webp` | `art/props.png` (on magenta) | `prompts/props.txt` | `art/plate-b.png` | `build.py` |
 | App-screen object cards | `card-<id>.webp` | `art/cards/<id>.png` (on magenta) | `prompts/card-<id>.txt` | plate crop (`cards.py refs`), `plate-b.png` | `cards.py` |
 | Project cards | `projects/<slug>.webp` and `projects/<slug>-pencil.webp` | `art/projects/<slug>.png` (on paper) | `prompts/project-<slug>.txt` | the real screenshot or photo in `art/projects/refs/` (+ `art/plate-b.png` as the style) | `projects.py` |
