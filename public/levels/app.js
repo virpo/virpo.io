@@ -638,12 +638,16 @@ function applyTheme(t) {
   if (t === "system") document.documentElement.removeAttribute("data-theme"); else document.documentElement.dataset.theme = t;
   $("#theme").setAttribute("aria-label", "Theme: " + t);
 }
-$("#theme").addEventListener("click", () => { const t = THEMES[(THEMES.indexOf(store.get("prq-theme") || "system") + 1) % 3]; store.set("prq-theme", t); applyTheme(t); });
-applyTheme(store.get("prq-theme") || "system");
+$("#theme").addEventListener("click", () => { const t = THEMES[(THEMES.indexOf(store.get("levels-theme") || "system") + 1) % 3]; store.set("levels-theme", t); applyTheme(t); });
+applyTheme(store.get("levels-theme") || "system");
 $("#fossil-grid").innerHTML = D.fossils.map(f => `<div class="fossil ${f.status}"><span class="tag">${f.status} · ${esc(f.era)}</span><b>${esc(f.title)}</b><p>${esc(f.line)}</p></div>`).join("");
 $("[data-l0-title]").textContent = D.level0.title + ".";
 $("[data-l0-line]").textContent = D.level0.line;
-if (D.repo) { $("#gh").hidden = false; $("#gh").href = D.repo; }
+if (D.repo) {
+  $("#gh").hidden = false; $("#gh").href = D.repo;
+  $("#suggest-a").href = D.repo + "/issues/new?template=suggest-a-level.yml"; $("#suggest").hidden = false;
+  $("#issues-a").href = D.repo + "/issues"; $("#tell-gh").hidden = false; $("#tell-x").hidden = true;
+}
 try { window.posthog?.register?.({ site: location.host }); } catch {}
 $("[data-home]").addEventListener("click", e => { e.preventDefault(); history.pushState(null, "", location.pathname); boot(); scrollTo(0, 0); });
 
