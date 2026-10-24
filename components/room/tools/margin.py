@@ -131,7 +131,10 @@ def hydrangea():
     ox, oy = (side - (x1 - x0)) // 2, side - 12 - (y1 - y0)
     canvas[oy : oy + y1 - y0, ox : ox + x1 - x0] = plant[y0:y1, x0:x1]
     save(canvas, "hydrangea", (640, 640))
-    flowers = align([largest(c) for c in cells(keyed("hydrangea-heads.png"), 3, 2)], anchor="centre", pad=4)
+    # head 6 of the first painting is split half blue, half violet: use the even violet one (2) from
+    # the second painting instead
+    heads = cells(keyed("hydrangea-heads.png"), 3, 2)[:5] + cells(keyed("hydrangea-heads-2.png"), 3, 2)[1:2]
+    flowers = align([largest(c) for c in heads], anchor="centre", pad=4)
     for i, flower in enumerate(flowers):
         save(flower, f"bloom-{i + 1}", (256, 256))
     heads = []

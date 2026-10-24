@@ -840,16 +840,45 @@
 }
 
 /* ---- the hydrangea ---- */
+/* it stands on a little aluminium shelf at the bottom of the screen: the margin is sticky, so the
+   box runs from the top of the margin to the bottom of the viewport */
 .hydrangea {
-  display: grid;
-  justify-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  height: calc(100dvh - 6.6rem - 1.6rem);
+  min-height: 220px;
 }
 
 .plant {
   position: relative;
-  width: 250px;
+  z-index: 1;
+  width: 124px;
   aspect-ratio: 1;
+  margin-bottom: -5px;
   transform-origin: 50% 92%;
+}
+
+.shelf {
+  composes: metal;
+  position: relative;
+  width: 176px;
+  height: 11px;
+  border-radius: 4px;
+}
+
+/* where the pot's saucer touches the shelf */
+.shelf::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 1px;
+  width: 64px;
+  height: 7px;
+  margin-left: -32px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(60, 40, 20, 0.32), transparent);
 }
 
 .plant:hover {
