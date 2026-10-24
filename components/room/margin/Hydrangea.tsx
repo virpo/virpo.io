@@ -5,7 +5,7 @@ import styles from "./margin.module.css";
 import { useReadingProgress } from "./useReadingProgress";
 
 /**
- * The hydrangea from the room, tiny, in its grey pot on a shelf at the bottom of the screen. One
+ * The hydrangea from the room, tiny, in its grey pot, standing on the bottom of the screen. One
  * flower head opens for each stretch of the post you read; the last one at the end.
  * (Art: prompts/margin-hydrangea*.txt.)
  */
@@ -30,7 +30,6 @@ export function Hydrangea({ target }: { target: string }) {
           />
         ))}
       </div>
-      <i className={styles.shelf} aria-hidden="true" />
     </div>
   );
 }
