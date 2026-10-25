@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArticleLightbox } from "../../../../components/blog/ArticleLightbox";
-import { FramePreview } from "../../../../components/blog/FramePreview";
 import { compilePostMdx } from "../../../../components/blog/mdx-components";
 import { Device } from "../../../../components/room/Device";
 import { MarginToy } from "../../../../components/room/margin/MarginToy";
@@ -143,7 +142,6 @@ export default async function RoomPostPage({ params }: Props) {
 
           <div className={styles.body}>{content}</div>
           <ArticleLightbox root="room-article" />
-          <FramePreview target="room-article" />
 
           <footer className={styles.end}>
             <p className={styles.signoff}>

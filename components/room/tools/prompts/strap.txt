@@ -1,0 +1,10 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out>
+
+Attached: a close-up of a warm grey, bead-blasted aluminium handheld device (Teenage Engineering style) with its current wrist strap drawn in plain vector shapes. Repaint ONLY the strap, as a photorealistic product photo that belongs with that device: same soft studio light from the upper left, same warm neutral palette.
+
+Paint, hanging straight down, centred, on a perfectly flat solid magenta background (#FF00FF), no shadow on the background, nothing else (no device):
+- at the very top, a short, thin, dark grey braided cord (two strands) that would go through the device's lug;
+- below it a small cord lock: a short rounded cylinder of matte bead-blasted aluminium in the same warm grey as the device, with a fine machined groove round its middle; matte, not glossy, no white plastic;
+- below the cord lock, the wrist loop: a soft round braided paracord in the same orange as the device's knob (#e8692a), its fine diagonal braid clearly visible, matte cotton/nylon fibres with a little fuzz, soft cylindrical shading, no glossy highlight. The two sides of the loop hang close together and parallel, slightly apart, and meet in a soft U at the bottom.
+The strap is tall and narrow: about one sixth as wide as it is tall, filling the height of the image.
+Portrait 1024x1536. No text.

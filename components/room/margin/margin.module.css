@@ -840,14 +840,14 @@
 }
 
 /* ---- the hydrangea ---- */
-/* it stands on the bottom edge of the screen: the margin is sticky, so the box runs from the top
-   of the margin to the bottom of the viewport */
+/* it stands on the bottom edge of the screen: the margin is sticky (2.2rem from the top, 4.6rem of
+   padding), so the box runs from there to the bottom of the viewport */
 .hydrangea {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  height: calc(100dvh - 6.6rem);
+  height: calc(100dvh - 2.2rem - 4.6rem);
   min-height: 220px;
 }
 

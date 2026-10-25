@@ -20,9 +20,11 @@
   min-width: 0;
 }
 
+/* sticks exactly where it starts (the layout's top padding), so nothing in it moves when you begin
+   to scroll */
 .sticky {
   position: sticky;
-  top: 2rem;
+  top: 2.2rem;
   width: min(100%, 320px);
   padding-top: 4.6rem;
 }
@@ -212,49 +214,16 @@
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), 0 10px 30px -14px rgba(60, 40, 20, 0.35);
 }
 
-/* candidates for the frame around pictures and loops (?frame=1…5), instead of the old site's black
-   border */
-.article[data-frame] .body :global(.articleMedia) img,
-.article[data-frame] .body :global(.articleLoopToggle) video {
+/* every picture and loop is mounted on white paper, like a print in a passe-partout (and not the
+   old site's black border) */
+.body :global(.articleMedia) img,
+.body :global(.articleLoopToggle) video {
   box-sizing: border-box;
-  border: 0;
-  border-radius: 12px;
-}
-
-/* 1: a soft, warm drop shadow with a hairline edge */
-.article[data-frame="1"] .body :global(.articleMedia) img,
-.article[data-frame="1"] .body :global(.articleLoopToggle) video {
-  box-shadow: 0 0 0 1px rgba(60, 40, 20, 0.08), 0 2px 4px rgba(60, 40, 20, 0.06), 0 22px 44px -22px rgba(60, 40, 20, 0.5);
-}
-
-/* 2: an orange glow, the knob's colour under each picture */
-.article[data-frame="2"] .body :global(.articleMedia) img,
-.article[data-frame="2"] .body :global(.articleLoopToggle) video {
-  box-shadow: 0 0 0 1px rgba(232, 98, 28, 0.2), 0 24px 46px -22px rgba(232, 98, 28, 0.62);
-}
-
-/* 3: mounted on white paper, like a print in a passe-partout */
-.article[data-frame="3"] .body :global(.articleMedia) img,
-.article[data-frame="3"] .body :global(.articleLoopToggle) video {
   padding: 10px;
+  border: 0;
   border-radius: 14px;
   background: #fffdf8;
   box-shadow: 0 0 0 1px rgba(60, 40, 20, 0.07), 0 16px 32px -18px rgba(60, 40, 20, 0.42);
-}
-
-/* 4: a bezel of the handheld's aluminium, each picture a little screen */
-.article[data-frame="4"] .body :global(.articleMedia) img,
-.article[data-frame="4"] .body :global(.articleLoopToggle) video {
-  padding: 7px;
-  border-radius: 16px;
-  background: linear-gradient(176deg, #dcd5cb 0%, #c6bdb2 55%, #aca296 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -2px 3px rgba(0, 0, 0, 0.12), 0 4px 0 #a1978b, 0 16px 28px -16px rgba(60, 40, 20, 0.5);
-}
-
-/* 5: printed, with an offset peach block behind, like a riso print slightly off register */
-.article[data-frame="5"] .body :global(.articleMedia) img,
-.article[data-frame="5"] .body :global(.articleLoopToggle) video {
-  box-shadow: 0 0 0 1px rgba(60, 40, 20, 0.1), 8px 8px 0 0 #f6cfae;
 }
 
 .body :global(.articleMedia) figcaption,

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent, type MouseEvent, type ReactNode } from "react";
 import { playClick } from "./clicks";
+import { Lanyard } from "./Lanyard";
 import { RoomScene } from "./scene/RoomScene";
 import { readingPose, TIME_CHOICES, TIME_KEY, timeForHour, tokyoClock, tokyoHour, type TimeChoice, type TimeOfDay } from "./scene/life";
 import { cycle, figLabel, neighbour, objectById, objectForProject, PLATE_H, PLATE_W, ROOM_OBJECTS, roomPostHref, type RoomAppId, type RoomObject, type RoomToyId } from "./scene/objects";
@@ -37,8 +38,6 @@ const SD_LAYERS = [0, 1, 2];
 const GRILLE = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 const VENTS = [0, 1, 2, 3, 4, 5];
 // the soft loop: out of the slider, down round the hand and back up into it
-const STRAP = "M18 178 C 13 220, 12 270, 13 310 C 14 350, 17 392, 28 401 C 40 409, 44 378, 41 330 C 38 280, 32 220, 26 178";
-const STRAP_CLASSES = ["cord", "cordBody", "cordTwist", "cordShade", "cordShine"] as const;
 
 function Walls({ n = 4 }: { n?: number }) {
   return (
@@ -608,26 +607,7 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
           <i key={z} className={styles.slab} style={{ "--z": `${z}cqw` } as CSSProperties} aria-hidden="true" />
         ))}
         <div className={styles.stand} aria-hidden="true" />
-        {/* a wrist strap: a thin, strong cord through the lug, a smooth plastic slider, then the
-            soft braided loop that goes round your hand */}
-        <svg className={styles.lanyard} viewBox="0 0 70 410" aria-hidden="true">
-          <g className={styles.thin}>
-            <path d="M30 124 C 27 134, 23 142, 20 152" />
-            <path d="M30 124 C 29 135, 27 143, 25 152" />
-          </g>
-          <g className={styles.thinShine}>
-            <path d="M30 124 C 27 134, 23 142, 20 152" />
-            <path d="M30 124 C 29 135, 27 143, 25 152" />
-          </g>
-          {STRAP_CLASSES.map((name) => (
-            <path key={name} className={styles[name]} d={STRAP} />
-          ))}
-          <rect className={styles.slider} x="13.5" y="148" width="17" height="34" rx="8.5" />
-          <rect className={styles.sliderShine} x="16.5" y="152" width="3.8" height="25" rx="1.9" />
-          <path className={styles.sliderSeam} d="M15 165 H 29" />
-          <rect className={styles.lug} x="25" y="117" width="9" height="11" rx="3.5" />
-          <circle className={styles.lugHole} cx="29.5" cy="122.5" r="1.7" />
-        </svg>
+        <Lanyard className={styles.lanyard} />
         {/* a microSD card half in its slot */}
         <div className={styles.sd} aria-hidden="true">
           {SD_LAYERS.map((l) => (
