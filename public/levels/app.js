@@ -9,6 +9,13 @@ const tierOf = n => T[Math.min(9, Math.max(0, Math.ceil(n / 10) - 1))];
 const store = { get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
                 set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
 const track = (e, p) => { try { window.posthog?.capture("levels_" + e, p); } catch {} };
+/* links out (sources, GitHub, X): which site and which part of the page, never the address itself, which can carry
+   a name. Autocapture stays off because it would record the text of what's clicked, and that includes what an agent noticed */
+document.addEventListener("click", e => {
+  const a = e.target.closest("a[href]"); if (!a || a.id === "card-url") return;
+  let u; try { u = new URL(a.href, location.href); } catch { return; }
+  if (u.host !== location.host) track("link_out", { to: u.host, from: a.closest("[id]")?.id || "" });
+});
 const SITE = D.site, PROMPT = D.prompt;
 const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const OG = new URLSearchParams(location.search).get("og");
@@ -633,13 +640,16 @@ fanEl.addEventListener("pointerout", e => {
 });
 
 /* ---------- theme, static bits */
-const THEMES = ["system", "light", "dark"];
-function applyTheme(t) {
-  if (t === "system") document.documentElement.removeAttribute("data-theme"); else document.documentElement.dataset.theme = t;
-  $("#theme").setAttribute("aria-label", "Theme: " + t);
-}
-$("#theme").addEventListener("click", () => { const t = THEMES[(THEMES.indexOf(store.get("levels-theme") || "system") + 1) % 3]; store.set("levels-theme", t); applyTheme(t); });
-applyTheme(store.get("levels-theme") || "system");
+/* the system's theme until the button is pressed; then the opposite of what's showing, kept as the choice
+   (the head applies a kept choice before the page paints) */
+const darkNow = () => (document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")) === "dark";
+const labelTheme = () => $("#theme").setAttribute("aria-label", darkNow() ? "Switch to light" : "Switch to dark");
+$("#theme").addEventListener("click", () => {
+  const t = darkNow() ? "light" : "dark";
+  document.documentElement.dataset.theme = t; store.set("levels-theme", t); labelTheme(); track("theme", { t });
+});
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", labelTheme);
+labelTheme();
 $("#fossil-grid").innerHTML = D.fossils.map(f => `<div class="fossil ${f.status}"><span class="tag">${f.status} · ${esc(f.era)}</span><b>${esc(f.title)}</b><p>${esc(f.line)}</p></div>`).join("");
 $("[data-l0-title]").textContent = D.level0.title + ".";
 $("[data-l0-line]").textContent = D.level0.line;

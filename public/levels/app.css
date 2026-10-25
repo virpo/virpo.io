@@ -93,6 +93,10 @@ h1{font:600 clamp(36px,5.4vw,60px)/1.02 var(--sans);letter-spacing:-.035em;margi
 /* where it works: quiet badges, nothing to press */
 .agents{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;margin:0;font-size:12px;color:var(--muted)}
 .agents-k{color:var(--faint)}
+.fn{color:inherit;text-decoration:none;font-weight:600;padding:0 1px}
+a.fn:hover{color:var(--fg)}
+#pros:target{box-shadow:-8px 0 0 var(--hazard);transition:box-shadow .3s}
+.agents-more{color:var(--faint);margin-left:-6px;letter-spacing:.08em}
 .agent{display:inline-flex;align-items:center;gap:6px}
 .agent i{width:14px;height:14px;display:grid;place-items:center}
 .agent i svg{width:14px;height:14px}
@@ -257,7 +261,7 @@ body[data-mode="mine"] .fan,body[data-mode="pub"] .fan,body[data-mode="chat"] .f
 .tile{--ts:52px;position:relative;width:var(--ts);height:var(--ts);flex:none;display:grid;place-items:center;border-radius:10px;padding:0;
   background:var(--cap);border:1px solid var(--cap-line);box-shadow:inset 0 -4px 0 var(--cap-skirt);font:500 12px var(--mono);color:var(--cap-ink);
   transition:background .25s,box-shadow .25s,transform .08s}
-.tile img{width:62%;height:62%;image-rendering:pixelated;margin-top:-3px;transition:opacity .25s,filter .25s}
+.tile img{width:62%;height:62%;margin-top:-3px;transition:opacity .25s,filter .25s}
 .tile>span{margin-top:-3px}
 .tile.on{background:var(--hazard);border-color:var(--hazard-deep);box-shadow:inset 0 -4px 0 var(--hazard-deep)}
 .tile.on.self{background:color-mix(in srgb,var(--hazard) 55%,#FFFFFF);border-color:color-mix(in srgb,var(--hazard-deep) 60%,#FFFFFF);box-shadow:inset 0 -4px 0 color-mix(in srgb,var(--hazard-deep) 60%,#FFFFFF)}
