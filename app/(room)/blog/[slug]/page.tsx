@@ -77,12 +77,6 @@ export function articleJsonLd(post: Pick<PostSource, "slug" | "title" | "descrip
   });
 }
 
-const TOY_KEYS = [
-  { href: "/#toy-window", icon: "🚄", label: "Shinkansen" },
-  { href: "/#toy-sounds", icon: "♪", label: "Sounds" },
-  { href: "/#toy-kana", icon: "あ", label: "Kana" },
-];
-
 export default async function RoomPostPage({ params }: Props) {
   const { slug } = await params;
   let post;
@@ -109,17 +103,6 @@ export default async function RoomPostPage({ params }: Props) {
                 <Device variant="dock" posts={devicePosts} progressTarget="room-article" />
               </MarginToy>
             </div>
-            {/* on a phone the room doesn't fit the margin: a few of its toys, one tap away */}
-            <nav className={styles.toyKeys} aria-label="Toys in the room">
-              {TOY_KEYS.map((toy) => (
-                <a key={toy.href} href={toy.href} className={styles.toyKey}>
-                  <span className={styles.toyKeyCap} aria-hidden="true">
-                    {toy.icon}
-                  </span>
-                  {toy.label}
-                </a>
-              ))}
-            </nav>
           </div>
         </aside>
 

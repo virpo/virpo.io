@@ -342,54 +342,11 @@
   }
 }
 
-/* toys in the room, as keys: only on phones, where the docked room is hidden */
-.toyKeys {
-  display: none;
-}
-
+/* below this width the margin has no room beside the text: it goes, and the post is all there is */
 @media (max-width: 899px) {
-  .dock {
+  .margin {
     display: none;
   }
-
-  .toyKeys {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-}
-
-.toyKey {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  min-height: 44px;
-  padding: 0 0.8rem 0 0.35rem;
-  border-radius: 999px;
-  background: linear-gradient(180deg, #e2ddd5, #c9c2b8);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 3px 0 #9b9387, 0 6px 12px -6px rgba(50, 40, 30, 0.45);
-  color: var(--ink);
-  font-size: 0.86rem;
-  font-weight: 500;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: transform 70ms ease-out, box-shadow 70ms ease-out;
-}
-
-.toyKey:active {
-  transform: translateY(2px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 1px 0 #9b9387;
-}
-
-.toyKeyCap {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff, #e8e2da);
-  box-shadow: 0 1px 0 #a49b8f;
-  font-size: 0.95rem;
 }
 
 /* code blocks and prompt cards, with a bar on top holding the Copy button */

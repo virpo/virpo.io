@@ -178,9 +178,14 @@
   transform: rotate(120deg);
 }
 
-@media (max-width: 619px) {
-  .bar {
-    margin-top: 0.9rem;
+/* without a pointer he'd never turn round, so on touch screens he faces you */
+@media (hover: none) {
+  .reading {
+    opacity: 0;
+  }
+
+  .waving {
+    opacity: 1;
   }
 }
 
