@@ -1,0 +1,113 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Screen recording</title>
+<!--
+  Video #1, the screen recording: the takes from demo.mjs inside a quiet browser window on warm
+  paper. The camera leans into whatever the pointer is doing (the device screen when something opens,
+  mini Peter, the lightbox, the hydrangea) and lets go again. Filmed by director.mjs.
+-->
+<style>
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #e9e1d4; }
+  #stage { position: absolute; inset: 0; overflow: hidden;
+    background:
+      radial-gradient(70% 80% at 50% 38%, #f6f0e6 0%, #efe7da 55%, #e2d7c6 100%); }
+  #stage::after { content: ""; position: absolute; inset: 0; opacity: .5; mix-blend-mode: multiply; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .38 0 0 0 0 .3 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  #win { position: absolute; left: 210px; top: 62px; width: 1500px; border-radius: 16px; overflow: hidden; background: #faf7f2;
+    box-shadow: 0 0 0 1px rgba(60, 40, 20, .10), 0 2px 6px rgba(60, 40, 20, .08), 0 40px 90px -30px rgba(60, 40, 20, .45);
+    transform-origin: 0 0; will-change: transform; }
+  .bar { position: relative; height: 40px; background: #f3eee6; border-bottom: 1px solid rgba(60, 40, 20, .08); display: flex; align-items: center; }
+  .dots { position: absolute; left: 18px; display: flex; gap: 8px; }
+  .dots i { width: 12px; height: 12px; border-radius: 50%; background: #d9d1c5; box-shadow: inset 0 0 0 .5px rgba(0,0,0,.08); }
+  .url { margin: 0 auto; min-width: 380px; height: 24px; padding: 0 14px; border-radius: 7px; background: #e8e1d6; color: #5b5248;
+    display: flex; align-items: center; justify-content: center; gap: 7px; font: 500 13px/1 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; letter-spacing: .01em; }
+  .url svg { width: 11px; height: 11px; opacity: .55; }
+  .view { position: relative; width: 1500px; height: 937.5px; overflow: hidden; }
+  .view img { display: block; width: 1500px; height: 937.5px; }
+</style>
+<div id="stage">
+  <div id="win">
+    <div class="bar">
+      <span class="dots"><i></i><i></i><i></i></span>
+      <span class="url"><svg viewBox="0 0 12 12"><path d="M3.2 5.2V3.8a2.8 2.8 0 1 1 5.6 0v1.4h.6c.4 0 .7.3.7.7v4.2c0 .4-.3.7-.7.7H2.6a.7.7 0 0 1-.7-.7V5.9c0-.4.3-.7.7-.7h.6Zm1.3 0h3V3.8a1.5 1.5 0 0 0-3 0v1.4Z" fill="#3a332c"/></svg><b id="url" style="font-weight:500">virpo.io</b></span>
+    </div>
+    <div class="view"><img id="page" alt="" /></div>
+  </div>
+</div>
+<script>
+  const FPS = 60;
+  const PAGE_SCALE = 1500 / 1440; // CSS px of the recorded page → px in the window
+  const WIN = { x: 210, y: 62, bar: 40 };
+  const takes = DATA.takes; // [{ name, dir, n, url, boxes, cursor }]
+  let offset = 0;
+  for (const t of takes) { t.start = offset; offset += t.n; }
+
+  const inOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const clamp01 = (t) => Math.max(0, Math.min(1, t));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const centre = (b) => (b ? [b.x + b.width / 2, b.y + b.height / 2] : [720, 450]);
+
+  // Where the camera leans, per take, in seconds of that take: [time, zoom, focus]. focus is a point
+  // on the recorded page (CSS px) or "cursor". Between keys it eases; holds keep it still.
+  const shots = {
+    home: (b) => [
+      [0, 1, [720, 450]], [1.7, 1, [720, 450]],
+      [2.5, 1.42, centre(b.screen)], [4.25, 1.42, centre(b.screen)],
+      [4.9, 1.3, centre(b.peter)], [6.1, 1.3, centre(b.peter)],
+      [6.75, 1.42, centre(b.screen)], [7.8, 1.42, centre(b.screen)],
+      [8.4, 1.12, centre(b.list)], [8.8, 1.12, centre(b.list)],
+    ],
+    post: (b) => [
+      [0, 1.12, [720, 300]], [0.7, 1.28, centre(b.mark)], [1.2, 1.28, centre(b.mark)],
+      [1.9, 1, [720, 450]], [6.3, 1, [720, 450]],
+      [6.9, 1.38, centre(b.plant)], [7.4, 1.38, centre(b.plant)],
+    ],
+    projects: () => [
+      [0, 1.16, [700, 420]], [1.8, 1.16, [700, 420]], [3.0, 1, [720, 450]], [4.4, 1, [720, 450]],
+    ],
+  };
+  for (const t of takes) t.keys = shots[t.name](t.boxes);
+
+  function camera(take, s) {
+    const k = take.keys;
+    if (s <= k[0][0]) return { z: k[0][1], f: k[0][2] };
+    for (let i = 0; i < k.length - 1; i++) {
+      const [t0, z0, f0] = k[i];
+      const [t1, z1, f1] = k[i + 1];
+      if (s <= t1) {
+        const u = inOut(clamp01((s - t0) / (t1 - t0)));
+        return { z: lerp(z0, z1, u), f: [lerp(f0[0], f1[0], u), lerp(f0[1], f1[1], u)] };
+      }
+    }
+    const last = k[k.length - 1];
+    return { z: last[1], f: last[2] };
+  }
+
+  const img = document.getElementById("page");
+  const win = document.getElementById("win");
+  const url = document.getElementById("url");
+
+  window.render = async (frame) => {
+    let take = takes[takes.length - 1];
+    for (const t of takes) if (frame < t.start + t.n) { take = t; break; }
+    const i = Math.min(take.n - 1, frame - take.start);
+    const src = `${take.dir}/f${String(i).padStart(4, "0")}.jpg`;
+    if (!img.src.endsWith(src)) {
+      img.src = src;
+      await img.decode();
+    }
+    url.textContent = take.url;
+    const { z, f } = camera(take, i / FPS);
+    // the focus point, where it sits in the frame at zoom 1 …
+    const fx = WIN.x + f[0] * PAGE_SCALE;
+    const fy = WIN.y + WIN.bar + f[1] * PAGE_SCALE;
+    // … stays put as the camera zooms, drifting a little towards the middle of the frame
+    const pull = clamp01((z - 1) / 0.45) * 0.38;
+    const tx = (960 - fx) * pull;
+    const ty = (540 - fy) * pull;
+    // scale about (fx, fy), then nudge: translate(fx, fy) scale(z) translate(-fx, -fy), in #win's own space
+    const ox = fx - WIN.x;
+    const oy = fy - WIN.y;
+    win.style.transform = `translate(${tx}px, ${ty}px) translate(${ox}px, ${oy}px) scale(${z}) translate(${-ox}px, ${-oy}px)`;
+  };
+</script>

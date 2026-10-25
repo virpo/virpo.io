@@ -1,0 +1,181 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Product video</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;600&family=JetBrains+Mono:wght@600&display=swap" />
+<!--
+  Video #2, the product video (15 s): the device full frame for a beat, a pull back to a bento of
+  live tiles (bento.mjs clips), angled close-ups on the knob, mini Peter, the window and the strap,
+  the tiny shiba trotting across the bottom row, then the end card. Filmed by director.mjs.
+-->
+<style>
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #faf7f2; }
+  #stage { position: absolute; inset: 0; overflow: hidden; perspective: 2600px; perspective-origin: 50% 50%; background: #faf7f2; }
+  #world { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; transform-style: preserve-3d; will-change: transform; }
+  .tile { position: absolute; border-radius: 30px; overflow: hidden; background: #faf7f2; transform-style: preserve-3d; }
+  .tile .ring { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; }
+  .tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .tile[data-fit="contain"] img { object-fit: contain; }
+  .tile img + img { opacity: 0; }
+  .pup { position: absolute; left: 0; top: 0; width: 140px; height: 140px; pointer-events: none; }
+  .pup img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; filter: drop-shadow(0 10px 10px rgba(60, 40, 20, .25)); }
+  #endPup { z-index: 2; }
+  #end { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; pointer-events: none; }
+  #end .mark { display: grid; justify-items: center; gap: 16px; transform: translateY(10px); }
+  #end h1 { margin: 0; color: #1d1a17; font: 600 118px/1 Figtree, system-ui, sans-serif; letter-spacing: -0.045em; }
+  #end p { margin: 0; color: #6f6860; font: 600 22px/1 "JetBrains Mono", ui-monospace, monospace; letter-spacing: .14em; text-transform: uppercase; }
+  #end p b { color: #e8621c; font-weight: 600; }
+</style>
+<div id="stage">
+  <div id="world"></div>
+  <div id="end"><div class="mark"><h1>virpo.io</h1><p>Peter Hraska <b>·</b> a room in your pocket</p></div></div>
+</div>
+<script>
+  const FPS = 60;
+  const SRC_FPS = 30;
+  const clips = DATA.clips; // { name: { dir, n, w, h } }
+  const pupDir = DATA.pup; // folder with pup-trot-a.webp, pup-trot-b.webp, pup-scratch.webp, pup-sleep.webp
+
+  const inOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const outQuint = (t) => 1 - Math.pow(1 - t, 5);
+  const clamp01 = (t) => Math.max(0, Math.min(1, t));
+  const lerp = (a, b, t) => a + (b - a) * t;
+
+  // ---- the bento: 4 columns, 3 rows, the device takes the first two of each of the first two rows
+  const PAD = 48, GAP = 20, COLS = 4, ROWS = 3;
+  const CW = (1920 - PAD * 2 - GAP * (COLS - 1)) / COLS;
+  const RH = (1080 - PAD * 2 - GAP * (ROWS - 1)) / ROWS;
+  const cell = (c, r, cs = 1, rs = 1) => ({ x: PAD + c * (CW + GAP), y: PAD + r * (RH + GAP), w: CW * cs + GAP * (cs - 1), h: RH * rs + GAP * (rs - 1) });
+  const TILES = [
+    { name: "device", ...cell(0, 0, 2, 2), fit: "contain", delay: 0, offset: 0 },
+    { name: "knob", ...cell(2, 0), delay: 0.06, offset: 0.4 },
+    { name: "peter", ...cell(3, 0), delay: 0.12, offset: 0 },
+    { name: "window", ...cell(2, 1), delay: 0.18, offset: 0.6 },
+    { name: "strap", ...cell(3, 1), delay: 0.24, offset: 1.4 },
+    { name: "kana", ...cell(0, 2), delay: 0.3, offset: 0.2 },
+    { name: "card", ...cell(1, 2), delay: 0.36, offset: 0.9 },
+    { name: "hydrangea", ...cell(2, 2), delay: 0.42, offset: 0 },
+    { name: "keys", ...cell(3, 2), delay: 0.48, offset: 1.1 },
+  ];
+  const world = document.getElementById("world");
+  for (const t of TILES) {
+    const el = document.createElement("div");
+    el.className = "tile";
+    if (t.fit) el.dataset.fit = t.fit;
+    Object.assign(el.style, { left: `${t.x}px`, top: `${t.y}px`, width: `${t.w}px`, height: `${t.h}px` });
+    el.innerHTML = '<img alt=""><img alt=""><i class="ring"></i>';
+    world.appendChild(el);
+    t.el = el;
+    t.a = el.children[0];
+    t.b = el.children[1];
+    t.ring = el.children[2];
+  }
+  const centreOf = (name) => { const t = TILES.find((x) => x.name === name); return [t.x + t.w / 2, t.y + t.h / 2]; };
+  const fill = (name, k = 1) => { const t = TILES.find((x) => x.name === name); return Math.min(1920 / t.w, 1080 / t.h) * k; };
+
+  // ---- the camera: [time, focus (world px), zoom, rotateX, rotateY]
+  const KEYS = [
+    [0.0, centreOf("device"), fill("device", 1.02), 0, 0],
+    [1.55, centreOf("device"), fill("device", 1.02), 0, 0],
+    [3.0, [960, 540], 0.94, 7, -7],
+    [4.0, [960, 540], 0.95, 6, 5],
+    [5.5, centreOf("knob"), 2.35, 10, 18],
+    [6.1, centreOf("knob"), 2.4, 9, 15],
+    [7.4, centreOf("peter"), 2.3, 6, -16],
+    [8.0, centreOf("peter"), 2.35, 5, -13],
+    [9.2, centreOf("window"), 2.25, -7, 14],
+    [9.7, centreOf("window"), 2.3, -6, 11],
+    [10.8, [960, 880], 1.5, 18, 0],
+    [11.8, [1100, 880], 1.5, 17, -4],
+    [12.6, centreOf("strap"), 2.3, 4, -18],
+    [13.1, centreOf("strap"), 2.35, 4, -15],
+    [14.0, [960, 540], 0.9, 0, 0],
+    [15.0, [960, 540], 0.86, 0, 0],
+  ];
+  function camera(s) {
+    if (s <= KEYS[0][0]) return KEYS[0];
+    for (let i = 0; i < KEYS.length - 1; i++) {
+      const a = KEYS[i], b = KEYS[i + 1];
+      if (s <= b[0]) {
+        const u = inOut(clamp01((s - a[0]) / (b[0] - a[0])));
+        return [s, [lerp(a[1][0], b[1][0], u), lerp(a[1][1], b[1][1], u)], lerp(a[2], b[2], u), lerp(a[3], b[3], u), lerp(a[4], b[4], u)];
+      }
+    }
+    return KEYS[KEYS.length - 1];
+  }
+
+  // ---- a tile's clip: plays at 30 fps from its offset, and loops with a crossfade into its start
+  const XF = 12;
+  async function show(t, s) {
+    const c = clips[t.name];
+    if (!c) return;
+    const period = c.n - XF;
+    const g = Math.max(0, Math.floor((s + t.offset) * SRC_FPS));
+    const f = g % period;
+    const src = (i) => `${c.dir}/f${String(i).padStart(4, "0")}.jpg`;
+    const jobs = [];
+    const set = (img, url) => { if (!img.src.endsWith(url)) { img.src = url; jobs.push(img.decode().catch(() => {})); } };
+    if (g >= period && f < XF) {
+      set(t.a, src(f + period));
+      set(t.b, src(f));
+      t.b.style.opacity = String(f / XF);
+    } else {
+      set(t.a, src(f));
+      t.b.style.opacity = "0";
+    }
+    await Promise.all(jobs);
+  }
+
+  // ---- the tiny shiba: one trots along the top of the bottom row, inside the grid (so it tilts
+  // with it); another trots onto the end card and sits by the name
+  const POSES = ["trot-a", "trot-b", "scratch", "sleep"];
+  const makePup = (parent, id) => {
+    const el = document.createElement("div");
+    el.id = id;
+    el.className = "pup";
+    el.innerHTML = POSES.map((p) => `<img alt="" data-pose="${p}" src="${pupDir}/pup-${p}.webp">`).join("");
+    parent.appendChild(el);
+    return { el, poses: Object.fromEntries([...el.children].map((img) => [img.dataset.pose, img])) };
+  };
+  const rowPup = makePup(world, "rowPup");
+  const endPup = makePup(document.getElementById("stage"), "endPup");
+  const pose = (pup, name) => { for (const [k, img] of Object.entries(pup.poses)) img.style.opacity = k === name ? "1" : "0"; };
+  function placePups(s) {
+    const trot = Math.floor(s * 7) % 2 ? "trot-b" : "trot-a";
+    if (s >= 10.4 && s < 12.3) {
+      const u = clamp01((s - 10.5) / 1.7);
+      const x = lerp(PAD - 140, 1920 - PAD + 20, u);
+      const y = PAD + 2 * (RH + GAP) - 118;
+      pose(rowPup, trot);
+      rowPup.el.style.transform = `translate3d(${x}px, ${y}px, 30px) scaleX(-1)`;
+    } else pose(rowPup, null);
+    if (s >= 13.9) {
+      const u = clamp01((s - 13.9) / 0.6);
+      const x = lerp(2000, 1420, outQuint(u));
+      pose(endPup, u < 1 ? trot : s < 14.7 ? "scratch" : "sleep");
+      endPup.el.style.transform = `translate(${x}px, 468px) ${u < 1 ? "scaleX(-1)" : ""}`;
+    } else pose(endPup, null);
+  }
+
+  window.render = async (frame) => {
+    const s = frame / FPS;
+    const cam = camera(s);
+    const [, f, z, rx, ry] = cam;
+    world.style.transform = `translate(960px, 540px) rotateX(${rx}deg) rotateY(${ry}deg) scale(${z}) translate(${-f[0]}px, ${-f[1]}px)`;
+    // the other tiles appear as the camera pulls back; shadows come in with them
+    const reveal = clamp01((s - 1.55) / 1.1);
+    for (const t of TILES) {
+      const k = t.name === "device" ? 1 : outQuint(clamp01((s - 1.7 - t.delay) / 0.7));
+      t.el.style.opacity = String(k);
+      t.el.style.transform = `translateY(${(1 - k) * 40}px) scale(${0.94 + 0.06 * k})`;
+      const sh = t.name === "device" ? reveal : k;
+      t.el.style.boxShadow = `0 0 0 1px rgba(60,40,20,${0.07 * sh}), 0 2px 6px rgba(60,40,20,${0.06 * sh}), 0 30px 60px -30px rgba(60,40,20,${0.4 * sh})`;
+    }
+    // the end: the grid steps back and dims, the name comes up
+    const end = clamp01((s - 13.6) / 0.8);
+    world.style.opacity = String(1 - 0.88 * inOut(end));
+    world.style.filter = end > 0 ? `blur(${6 * inOut(end)}px)` : "none";
+    document.getElementById("end").style.opacity = String(inOut(end));
+    placePups(s);
+    await Promise.all(TILES.map((t) => show(t, s)));
+  };
+</script>
