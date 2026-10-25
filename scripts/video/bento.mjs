@@ -1,4 +1,5 @@
 // Video #2, the product video: the clips for its bento tiles, each about 6 s at 30 fps, captured
+// at the pixel density the scene's closest zoom needs at 4K (so the close-ups are as sharp as the rest),
 // on the fake clock (lib/stage.mjs). bento-scene.html lays them out and director.mjs films it.
 // Each lands in <work>/<name>/fNNNN.jpg with meta.json.
 //
@@ -39,7 +40,7 @@ const clip = async (name, fn) => {
 
 // the whole device: the pointer glides across the room, labels lift, the device leans after it
 await clip("device", async () => {
-  const st = await openStage({ browser, viewport: DESKTOP, dsf: 1.6, seed: 41 });
+  const st = await openStage({ browser, viewport: DESKTOP, dsf: 3.2, seed: 41 });
   const w = await st.box("[data-variant=hero]");
   const ids = ["arcade", "window", "kana", "peter", "tv"];
   const pts = [[w.x + w.width * 0.92, w.y + w.height * 0.9]];
@@ -59,7 +60,7 @@ await clip("device", async () => {
 
 // the knob, very close, turning a notch at a time while the device sways
 await clip("knob", async () => {
-  const st = await openStage({ browser, viewport: DESKTOP, dsf: 3.2 });
+  const st = await openStage({ browser, viewport: DESKTOP, dsf: 6 });
   const { page } = st;
   await page.addStyleTag({ content: '[class*="device-module__"][class$="__knobMark"] { transition: none !important; }' });
   const knob = await st.box(sel.knob);
@@ -103,7 +104,7 @@ await clip("keys", async () => {
 
 // mini Peter turns round to wave when the pointer comes to him, twice
 await clip("peter", async () => {
-  const st = await openStage({ browser, viewport: DESKTOP, dsf: 3, seed: 12 });
+  const st = await openStage({ browser, viewport: DESKTOP, dsf: 6, seed: 12 });
   const p = await st.box(sel.hit("peter"));
   const [cx, cy] = centre(p);
   const away = [cx + 210, cy + 120];
@@ -131,7 +132,7 @@ await clip("peter", async () => {
 
 // the window, close, with a shinkansen passing
 await clip("window", async () => {
-  const st = await openStage({ browser, viewport: DESKTOP, dsf: 3, seed: 21 });
+  const st = await openStage({ browser, viewport: DESKTOP, dsf: 6.5, seed: 21 });
   await st.seek(() => !document.querySelector("[data-kind]"), { every: 50 });
   await st.seek(() => !!document.querySelector('[data-kind="shinkansen"]'), { every: DT });
   for (let i = 0; i < 4; i++) await st.step(DT);
@@ -149,7 +150,7 @@ await clip("window", async () => {
 
 // kana cards: tap to reveal, then the next one
 await clip("kana", async () => {
-  const st = await openStage({ browser, viewport: DESKTOP, dsf: 2, seed: 5 });
+  const st = await openStage({ browser, viewport: DESKTOP, dsf: 3, seed: 5 });
   const { page } = st;
   const screen = await st.box(sel.screen);
   await page.evaluate((s) => document.querySelector(s).click(), sel.hit("kana"));
@@ -171,7 +172,7 @@ await clip("kana", async () => {
 
 // project cards, pencil turning to colour under the pointer, one after another
 await clip("card", async () => {
-  const st = await openStage({ browser, viewport: DESKTOP, dsf: 1.8 });
+  const st = await openStage({ browser, viewport: DESKTOP, dsf: 3.2 });
   const { page } = st;
   const top = await page.evaluate(() => document.querySelector('[class*="projectCard"]').getBoundingClientRect().top + scrollY - 60);
   await page.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), top);
@@ -193,7 +194,7 @@ await clip("card", async () => {
 
 // the hydrangea at the end of a post, opening its flowers as the reader gets there
 await clip("hydrangea", async () => {
-  const st = await openStage({ browser, viewport: DESKTOP, dsf: 3, path: "/blog/weird-use-of-ai-1/" });
+  const st = await openStage({ browser, viewport: DESKTOP, dsf: 6, path: "/blog/weird-use-of-ai-1/" });
   const { page } = st;
   const max = await page.evaluate(() => document.documentElement.scrollHeight - innerHeight);
   await page.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), max - 620);
@@ -213,7 +214,7 @@ await clip("hydrangea", async () => {
 
 // the strap and the side of the case, close, the device turning to show them
 await clip("strap", async () => {
-  const st = await openStage({ browser, viewport: DESKTOP, dsf: 2.6 });
+  const st = await openStage({ browser, viewport: DESKTOP, dsf: 6 });
   const lan = await st.box('svg[class*="lanyard"]');
   await record(st, join(work, "strap"), N, {
     dt: DT,

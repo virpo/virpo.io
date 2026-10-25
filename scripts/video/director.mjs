@@ -1,4 +1,6 @@
 // Films a scene page frame by frame straight into ffmpeg, so finished frames never touch the disk.
+// The page is laid out at width x height and rendered at 2x (SS), so the file is 4K and every zoom in
+// the scene is drawn sharp, not enlarged. CRF (default 10) sets the quality of this master.
 // The scene defines window.render(frame) (async, resolves when that frame is painted) and reads
 // window.DATA, which comes from a JSON file. Used by the screen recording (demo-scene.html) and the
 // product video (bento-scene.html).
@@ -17,7 +19,8 @@ const height = Number(hArg);
 const data = JSON.parse(await readFile(dataFile, "utf8"));
 
 const browser = await chromium.launch({ args: ["--allow-file-access-from-files", "--font-render-hinting=none", "--disable-lcd-text", "--force-color-profile=srgb"] });
-const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1 });
+const SS = Number(process.env.SS ?? 2);
+const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: SS });
 page.on("pageerror", (e) => console.error("scene:", e.message));
 await page.addInitScript((d) => (window.DATA = d), data);
 await page.goto(pathToFileURL(resolve(scene)).href);
@@ -25,7 +28,7 @@ await page.evaluate(() => document.fonts.ready);
 if (await page.evaluate(() => typeof window.ready === "function")) await page.evaluate(() => window.ready());
 
 const ff = spawn("/opt/homebrew/bin/ffmpeg", ["-loglevel", "error", "-y", "-f", "image2pipe", "-framerate", "60", "-c:v", "png", "-i", "-",
-  "-c:v", "libx264", "-preset", "slow", "-crf", "14", "-pix_fmt", "yuv420p", "-movflags", "+faststart",
+  "-c:v", "libx264", "-preset", "slow", "-crf", process.env.CRF ?? "10", "-profile:v", "high", "-pix_fmt", "yuv420p", "-movflags", "+faststart",
   "-vf", "scale=in_color_matrix=bt709:out_color_matrix=bt709,format=yuv420p", "-x264-params", "colorprim=bt709:transfer=bt709:colormatrix=bt709", out], { stdio: ["pipe", "inherit", "inherit"] });
 const done = new Promise((ok, fail) => ff.on("close", (code) => (code === 0 ? ok() : fail(new Error("ffmpeg " + code)))));
 

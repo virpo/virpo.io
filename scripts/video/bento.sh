@@ -1,5 +1,5 @@
 #!/bin/sh
-# Video #2, the product video (15 s, 1920x1080, 60 fps) into output/lab/video/virpo-bento.mp4.
+# Video #2, the product video (15 s, 60 fps) into output/lab/video/virpo-bento{,-4k}.mp4.
 # Needs the static site served:  npm run build && python3 -m http.server 4450 -d dist
 #
 #   sh scripts/video/bento.sh [skip-capture]
@@ -24,4 +24,5 @@ const pup = "file://" + path.resolve("public/lab/room/margin");
 fs.writeFileSync(path.join(work, "data.json"), JSON.stringify({ clips, pup }));
 console.log(Object.entries(clips).map(([k, v]) => k + " " + v.n).join(", "));
 ' "$WORK"
-node scripts/video/director.mjs scripts/video/bento-scene.html "$WORK/data.json" 900 "$OUT/virpo-bento.mp4"
+node scripts/video/director.mjs scripts/video/bento-scene.html "$WORK/data.json" 900 "$WORK/master.mp4"
+sh scripts/video/share.sh "$OUT/virpo-bento" "$WORK/master.mp4"

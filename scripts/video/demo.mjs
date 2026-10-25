@@ -11,7 +11,8 @@ import { clamp01, ease, FPS, launch, lerp, openStage, record } from "./lib/stage
 const work = process.argv[2] ?? "output/lab/video/.demo";
 const only = process.argv[3];
 const VIEW = { width: 1440, height: 900 };
-const DSF = 1.6;
+// sharp at 2x output with the camera leaning in 1.42x
+const DSF = 3;
 const CURSOR_SCALE = 1.55;
 
 const HAND_SVG = `<svg viewBox="0 0 26 26" width="26" height="26" xmlns="http://www.w3.org/2000/svg"><path d="M9.2 3.4c0-1 .8-1.7 1.7-1.7s1.7.8 1.7 1.7v6.1l.4-.1c.9-.2 1.8.3 2 1.2l.1.3.4-.1c.9-.2 1.8.3 2 1.2l.1.4.3-.1c.9-.1 1.7.5 1.8 1.4.3 2.4.2 4.4-.5 6.3-.9 2.3-2.9 3.7-5.4 3.7h-1.3c-1.8 0-3.4-.9-4.4-2.4l-3.4-5.2c-.5-.8-.3-1.8.5-2.3.8-.5 1.8-.3 2.3.4l1.7 2.4V3.4z" fill="#fff" stroke="#1f1a15" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
