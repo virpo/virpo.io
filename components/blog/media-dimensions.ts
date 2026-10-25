@@ -39,7 +39,7 @@ export const imageDimensions: Record<string, { width: number; height: number }> 
   "/assets/blog/pocket-room/story/pink-peter.webp": { width: 1400, height: 933 },
   "/assets/blog/pocket-room/story/pink-plate.webp": { width: 1400, height: 933 },
   "/assets/blog/pocket-room/story/pink-props.webp": { width: 1400, height: 933 },
-  "/assets/blog/pocket-room/story/project-list.webp": { width: 1048, height: 1118 },
+  "/assets/blog/pocket-room/story/project-list.webp": { width: 1176, height: 1246 },
   "/assets/blog/pocket-room/story/three-tries.webp": { width: 2000, height: 677 },
   "/assets/blog/pocket-room/story/youtldr-9.webp": { width: 1624, height: 1105 },
 };

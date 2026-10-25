@@ -181,6 +181,16 @@
   margin: 2.2em 0;
 }
 
+/* code in a sentence: mono, a touch smaller, on a beige-grey chip */
+.body :not(pre) > code {
+  padding: 0.12em 0.38em;
+  border-radius: 5px;
+  background: #ece5da;
+  color: #3a322a;
+  font: 500 0.84em/1 var(--font-room-mono), ui-monospace, monospace;
+  white-space: nowrap;
+}
+
 /* code scrolls inside its own box instead of widening the page */
 .body pre {
   max-width: 100%;
@@ -200,6 +210,51 @@
   border-radius: 10px;
   background: #efe9df;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04), 0 10px 30px -14px rgba(60, 40, 20, 0.35);
+}
+
+/* candidates for the frame around pictures and loops (?frame=1…5), instead of the old site's black
+   border */
+.article[data-frame] .body :global(.articleMedia) img,
+.article[data-frame] .body :global(.articleLoopToggle) video {
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 12px;
+}
+
+/* 1: a soft, warm drop shadow with a hairline edge */
+.article[data-frame="1"] .body :global(.articleMedia) img,
+.article[data-frame="1"] .body :global(.articleLoopToggle) video {
+  box-shadow: 0 0 0 1px rgba(60, 40, 20, 0.08), 0 2px 4px rgba(60, 40, 20, 0.06), 0 22px 44px -22px rgba(60, 40, 20, 0.5);
+}
+
+/* 2: an orange glow, the knob's colour under each picture */
+.article[data-frame="2"] .body :global(.articleMedia) img,
+.article[data-frame="2"] .body :global(.articleLoopToggle) video {
+  box-shadow: 0 0 0 1px rgba(232, 98, 28, 0.2), 0 24px 46px -22px rgba(232, 98, 28, 0.62);
+}
+
+/* 3: mounted on white paper, like a print in a passe-partout */
+.article[data-frame="3"] .body :global(.articleMedia) img,
+.article[data-frame="3"] .body :global(.articleLoopToggle) video {
+  padding: 10px;
+  border-radius: 14px;
+  background: #fffdf8;
+  box-shadow: 0 0 0 1px rgba(60, 40, 20, 0.07), 0 16px 32px -18px rgba(60, 40, 20, 0.42);
+}
+
+/* 4: a bezel of the handheld's aluminium, each picture a little screen */
+.article[data-frame="4"] .body :global(.articleMedia) img,
+.article[data-frame="4"] .body :global(.articleLoopToggle) video {
+  padding: 7px;
+  border-radius: 16px;
+  background: linear-gradient(176deg, #dcd5cb 0%, #c6bdb2 55%, #aca296 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -2px 3px rgba(0, 0, 0, 0.12), 0 4px 0 #a1978b, 0 16px 28px -16px rgba(60, 40, 20, 0.5);
+}
+
+/* 5: printed, with an offset peach block behind, like a riso print slightly off register */
+.article[data-frame="5"] .body :global(.articleMedia) img,
+.article[data-frame="5"] .body :global(.articleLoopToggle) video {
+  box-shadow: 0 0 0 1px rgba(60, 40, 20, 0.1), 8px 8px 0 0 #f6cfae;
 }
 
 .body :global(.articleMedia) figcaption,
@@ -425,12 +480,13 @@
 .layout :global(.lightbox) {
   position: fixed;
   inset: 0;
-  width: 100vw;
+  width: auto;
   max-width: none;
   height: 100dvh;
   max-height: none;
   margin: 0;
-  padding: 3.5rem 1.2rem 2rem;
+  --gutter: clamp(1rem, 6vw, 5.5rem);
+  padding: 4.2rem var(--gutter) 2rem;
   border: 0;
   background: transparent;
   color: #fff;
@@ -475,8 +531,8 @@
 /* the close key: the arcade's round orange button, with travel when pressed */
 .layout :global(.lightboxClose) {
   position: absolute;
-  top: max(14px, env(safe-area-inset-top));
-  right: max(14px, env(safe-area-inset-right));
+  top: max(16px, env(safe-area-inset-top));
+  right: max(16px, env(safe-area-inset-right));
   display: grid;
   place-items: center;
   width: 46px;
@@ -497,6 +553,9 @@
   box-shadow: inset 0 2px 1px rgba(255, 255, 255, 0.35), 0 1px 0 #a43f15;
 }
 
+/* the arrows: white keys like the handheld's, with a dark arrow, so they read over the dark
+   backdrop and over a light picture alike. They sit in the side margins when there is room, and over
+   the picture's edge on a phone. */
 .layout :global(.lightboxStep) {
   position: absolute;
   top: 50%;
@@ -506,19 +565,33 @@
   height: 44px;
   border: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.14);
-  color: #fff;
-  font-size: 1.1rem;
+  background: radial-gradient(90% 90% at 35% 25%, #fff, rgba(255, 255, 255, 0) 60%), linear-gradient(180deg, #f4f1ec, #d9d3ca);
+  box-shadow: inset 0 1px 0 #fff, 0 3px 0 #a39a8e, 0 8px 18px -6px rgba(0, 0, 0, 0.55);
+  color: #2a2118;
+  font-size: 1.05rem;
+  font-weight: 700;
+  opacity: 0.82;
   cursor: pointer;
   transform: translateY(-50%);
+  transition: opacity 120ms ease, transform 70ms ease-out, box-shadow 70ms ease-out;
+}
+
+.layout :global(.lightboxStep):hover,
+.layout :global(.lightboxStep):focus-visible {
+  opacity: 1;
+}
+
+.layout :global(.lightboxStep):active {
+  transform: translateY(calc(-50% + 2px));
+  box-shadow: inset 0 1px 0 #fff, 0 1px 0 #a39a8e, 0 4px 10px -4px rgba(0, 0, 0, 0.5);
 }
 
 .layout :global(.lightboxStep[data-dir="prev"]) {
-  left: max(10px, env(safe-area-inset-left));
+  left: max(10px, (var(--gutter) - 44px) / 2, env(safe-area-inset-left));
 }
 
 .layout :global(.lightboxStep[data-dir="next"]) {
-  right: max(10px, env(safe-area-inset-right));
+  right: max(10px, (var(--gutter) - 44px) / 2, env(safe-area-inset-right));
 }
 
 .layout :global(.lightbox) :focus-visible {

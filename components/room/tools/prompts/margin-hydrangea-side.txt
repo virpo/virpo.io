@@ -1,0 +1,7 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out>
+
+Attached: plate-b.png is the illustration style to match (cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture, warm light from the upper left). The other attached picture is the same potted hydrangea seen from above: paint THIS plant and pot again.
+Background: perfectly flat solid magenta (#FF00FF) everywhere around the subject, no cast shadow on the background, no ground, no table, no paper texture on the magenta.
+
+Paint ONE small potted hydrangea seen exactly from the side, at eye level, as if it stands on the very bottom edge of a screen and we look at it straight on: the camera is level with the saucer, so the bottom of the saucer is one straight horizontal line, and we cannot see the top of the soil or the inside of the pot. The same grey ceramic pot on its matching saucer, seen as a clean side profile (a slightly tapered pot, the saucer a thin straight band). Dark green leaves, and SIX clearly separate small round clusters of tight pale green flower buds at the tips of the stems, spread across the top and sides of the plant with space between them, as in the attached picture. No open flowers at all.
+Centred, the saucer's bottom near the bottom of the image. Square 1024x1024.

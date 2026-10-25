@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArticleLightbox } from "../../../../components/blog/ArticleLightbox";
+import { FramePreview } from "../../../../components/blog/FramePreview";
 import { compilePostMdx } from "../../../../components/blog/mdx-components";
 import { Device } from "../../../../components/room/Device";
 import { MarginToy } from "../../../../components/room/margin/MarginToy";
@@ -142,10 +143,13 @@ export default async function RoomPostPage({ params }: Props) {
 
           <div className={styles.body}>{content}</div>
           <ArticleLightbox root="room-article" />
+          <FramePreview target="room-article" />
 
           <footer className={styles.end}>
             <p className={styles.signoff}>
-              Thanks for reading. Replies are welcome at <a href="mailto:peter@hraska.sk">peter@hraska.sk</a>. Want more like this? <a href="https://x.com/virpo">Follow me on X</a>.
+              Thanks for reading. Replies are welcome at <a href="mailto:peter@hraska.sk">peter@hraska.sk</a>.
+              <br />
+              Want more like this? <a href="https://x.com/virpo">Follow me on X</a>.
             </p>
             <nav className={styles.pager} aria-label="More posts">
               {older ? (

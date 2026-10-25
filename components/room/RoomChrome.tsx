@@ -47,7 +47,7 @@ export function RoomFooter() {
   return (
     <footer className={styles.footer}>
       <p>
-        Made with love by <Link href="/">Virpo</Link>
+        Made with love<sup>™</sup> by <Link href="/">Virpo</Link>
       </p>
       <RoomSocial rss className={styles.footerSocial} />
     </footer>

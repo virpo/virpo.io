@@ -119,12 +119,13 @@ def neko():
 
 # Centre x, y and width of each bud cluster on hydrangea.webp, in %, placed by eye, listed in the
 # order they open, with the flower head that opens there and a tilt so they don't look stamped.
-BUDS = [(56.5, 35.5, 14, 2, -6), (29, 36, 13, 1, 8), (76, 46, 13, 5, -4), (23.5, 15.5, 13, 3, 10), (79, 22.5, 13, 6, -10), (50, 6, 13, 4, 4)]
+BUDS = [(57, 39, 13, 2, -6), (30, 37, 13, 1, 8), (73.5, 50, 13, 5, -4), (23.5, 17.5, 13, 3, 10), (76.5, 22.5, 14, 6, -10), (49, 6, 14, 4, 4)]
 
 
 def hydrangea():
-    """The plant in bud, and six flower heads that open over its six bud clusters."""
-    plant = keyed("hydrangea.png")
+    """The plant in bud, seen from the side so it stands on the screen's bottom edge (hydrangea.png
+    was the first try, seen from above), and six flower heads that open over its bud clusters."""
+    plant = keyed("hydrangea-side.png")
     x0, y0, x1, y1 = bbox(plant)
     side = max(x1 - x0, y1 - y0) + 24
     canvas = np.zeros((side, side, 4), np.uint8)
