@@ -1,5 +1,5 @@
-"""The painted wrist strap (option C for the handheld's strap, Lanyard.tsx): art/strap/strap.png on
-magenta, prompt prompts/strap.txt, reference art/strap/strap-now-ref.png (the vector strap it
+"""The handheld's wrist strap (Lanyard.tsx), painted as one picture: art/strap/strap.png on magenta
+(try 2 of 2), prompt prompts/strap.txt, reference art/strap/strap-now-ref.png (the vector strap it
 replaces). Keys the magenta, keeps the strap, crops it tight and writes public/lab/room/strap.webp.
 
     python3 components/room/tools/strap.py

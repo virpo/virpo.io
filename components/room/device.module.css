@@ -656,6 +656,7 @@
 .legend [data-for="knob"] { left: 69.9cqw; }
 
 /* ---- lanyard, stand, shadow ---- */
+/* the strap hangs behind the deepest slab, so the case covers it wherever they overlap */
 .lanyard {
   position: absolute;
   left: -6.2cqw;
@@ -664,6 +665,7 @@
   height: 82cqw;
   overflow: visible;
   pointer-events: none;
+  transform: translateZ(-6.6cqw);
   filter: drop-shadow(0.4cqw 0.8cqw 0.6cqw rgba(60, 30, 10, 0.3));
 }
 
