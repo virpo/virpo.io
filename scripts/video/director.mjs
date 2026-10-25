@@ -1,6 +1,6 @@
 // Films a scene page frame by frame straight into ffmpeg, so finished frames never touch the disk.
 // The page is laid out at width x height and rendered at 2x (SS), so the file is 4K and every zoom in
-// the scene is drawn sharp, not enlarged. CRF (default 10) sets the quality of this master.
+// the scene is drawn sharp, not enlarged. CRF (default 10) sets the quality of this master; FPS (default 60) its frame rate.
 // The scene defines window.render(frame) (async, resolves when that frame is painted) and reads
 // window.DATA, which comes from a JSON file. Used by the screen recording (demo-scene.html) and the
 // product video (bento-scene.html).
@@ -27,7 +27,7 @@ await page.goto(pathToFileURL(resolve(scene)).href);
 await page.evaluate(() => document.fonts.ready);
 if (await page.evaluate(() => typeof window.ready === "function")) await page.evaluate(() => window.ready());
 
-const ff = spawn("/opt/homebrew/bin/ffmpeg", ["-loglevel", "error", "-y", "-f", "image2pipe", "-framerate", "60", "-c:v", "png", "-i", "-",
+const ff = spawn("/opt/homebrew/bin/ffmpeg", ["-loglevel", "error", "-y", "-f", "image2pipe", "-framerate", process.env.FPS ?? "60", "-c:v", "png", "-i", "-",
   "-c:v", "libx264", "-preset", "slow", "-crf", process.env.CRF ?? "10", "-profile:v", "high", "-pix_fmt", "yuv420p", "-movflags", "+faststart",
   "-vf", "scale=in_color_matrix=bt709:out_color_matrix=bt709,format=yuv420p", "-x264-params", "colorprim=bt709:transfer=bt709:colormatrix=bt709", out], { stdio: ["pipe", "inherit", "inherit"] });
 const done = new Promise((ok, fail) => ff.on("close", (code) => (code === 0 ? ok() : fail(new Error("ffmpeg " + code)))));
