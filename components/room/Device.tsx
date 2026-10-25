@@ -534,6 +534,8 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
   const appTitle = app ? (app.startsWith("project:") ? projects.find((project) => `project:${project.slug}` === app)?.title : app === "about" ? "About me" : APP_TITLES[app as RoomToyId]) : null;
 
   let appBody: ReactNode = null;
+  // a project's way out lives in the screen's top bar, top right, where it is seen without scrolling
+  let appLink: { href: string; title: string } | null = null;
   if (app === "window") appBody = <WindowApp reducedMotion={reduced} />;
   else if (app === "face") appBody = <MirrorApp />;
   else if (app === "kana") appBody = <KanaApp />;
@@ -544,7 +546,10 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
     const slug = app.slice("project:".length);
     const project = projects.find((entry) => entry.slug === slug);
     const item = objectForProject(slug);
-    if (project && item) appBody = <ProjectApp project={project} layer={item.layer} object={item.name} />;
+    if (project && item) {
+      appBody = <ProjectApp project={project} layer={item.layer} object={item.name} />;
+      appLink = { href: project.href, title: project.title };
+    }
   }
 
   const pose = hero ? null : readingPose(progress, turning);
@@ -649,7 +654,13 @@ export function Device({ variant = "hero", posts, projects = [], about, progress
                       {appItem ? <span>{figLabel(appItem.fig)}</span> : null}
                       <b className={styles.appTitle}>{appTitle}</b>
                     </p>
-                    <kbd aria-hidden="true">esc</kbd>
+                    {appLink ? (
+                      <a className={styles.appVisit} data-primary href={appLink.href} {...(appLink.href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})} aria-label={`Visit ${appLink.title}`}>
+                        Visit <span aria-hidden="true">↗</span>
+                      </a>
+                    ) : (
+                      <kbd aria-hidden="true">esc</kbd>
+                    )}
                   </header>
                   <div className={styles.appBody} data-app-body>
                     {appBody}

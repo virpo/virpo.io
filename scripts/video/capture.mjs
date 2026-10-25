@@ -116,8 +116,8 @@ const clips = {
     await stage.close();
   },
   async "tile-writing"(browser) {
-    const stage = await openStage({ browser, viewport: DESKTOP, dsf: 1, path: "/room/writing/" });
-    const rows = await stage.page.$$eval("a[href*='/room/blog/']", (els) => els.map((el) => { const r = el.getBoundingClientRect(); return [r.x + 160, r.y + r.height / 2]; }));
+    const stage = await openStage({ browser, viewport: DESKTOP, dsf: 1, path: "/blog/" });
+    const rows = await stage.page.$$eval("a[href^='/blog/']:not([href='/blog/'])", (els) => els.map((el) => { const r = el.getBoundingClientRect(); return [r.x + 160, r.y + r.height / 2]; }));
     await record(stage, join(work, "tile-writing"), n(150), {
       before: async (i, t) => {
         const a = rows[0];
@@ -130,7 +130,7 @@ const clips = {
   },
   // a post on a phone: the room comes along as a small strip
   async "tile-post-phone"(browser) {
-    const stage = await openStage({ browser, device: IPHONE, dsf: 1.5, path: "/room/blog/weird-use-of-ai-3/", seed: 15 });
+    const stage = await openStage({ browser, device: IPHONE, dsf: 1.5, path: "/blog/weird-use-of-ai-3/", seed: 15 });
     const { page } = stage;
     await stage.preload();
     await record(stage, join(work, "tile-post-phone"), n(150), {
@@ -142,7 +142,7 @@ const clips = {
     await stage.close();
   },
   async "tile-post"(browser) {
-    const stage = await openStage({ browser, viewport: DESKTOP, dsf: 1, path: "/room/blog/weird-use-of-ai-1/" });
+    const stage = await openStage({ browser, viewport: DESKTOP, dsf: 1, path: "/blog/weird-use-of-ai-1/" });
     const { page } = stage;
     const max = await page.evaluate(() => document.documentElement.scrollHeight - innerHeight);
     await stage.preload();
@@ -341,21 +341,23 @@ const clips = {
     await stage.close();
   },
 
-  // mini-Peter reads to the end of a post and waves
+  // the end of a post: you scroll the last stretch and the hydrangea in the margin opens its flowers
   async wave(browser) {
-    const stage = await openStage({ browser, viewport: DESKTOP, dsf: 2, path: "/room/blog/weird-use-of-ai-1/" });
+    const stage = await openStage({ browser, viewport: DESKTOP, dsf: 2, path: "/blog/weird-use-of-ai-1/" });
     const { page } = stage;
     const max = await page.evaluate(() => document.documentElement.scrollHeight - innerHeight);
-    await page.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), max - 420);
-    await stage.preload(max - 420);
+    const from = max - 620;
+    const to = max - 120;
+    await page.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), from);
+    await stage.preload(from);
     for (let i = 0; i < 30; i++) await stage.step();
-    const dock = await stage.box("[data-variant=dock]");
+    const plant = await stage.box('[data-toy="hydrangea"] [role="img"]');
     await record(stage, join(work, "wave"), n(66), {
       before: async (i, t) => {
-        const y = lerp(max - 420, max, ease.inOutCubic(clamp01((t - 0.05) / 0.45)));
+        const y = lerp(from, to, ease.inOutCubic(clamp01((t - 0.05) / 0.55)));
         await page.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), y);
       },
-      info: { dock },
+      info: { plant },
     });
     await stage.close();
   },

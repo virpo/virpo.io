@@ -305,9 +305,6 @@ export function ProjectApp({ project, layer, object }: { project: AppProject; la
           {project.title}
         </p>
         <p className={styles.projectBlurb}>{project.blurb}</p>
-        <a className={styles.primary} data-primary href={project.href} {...external(project.href)}>
-          Visit {project.title} <span aria-hidden="true">↗</span>
-        </a>
       </div>
     </div>
   );

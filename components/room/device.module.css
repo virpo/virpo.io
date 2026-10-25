@@ -296,6 +296,36 @@
   font: 600 1.6cqw/1 var(--font-room-mono), ui-monospace, monospace;
 }
 
+/* a project's link, top right in the bar: the same key as Room, in the knob's orange (.appBar too,
+   so the page's own link colour doesn't win) */
+.appBar .appVisit {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.7cqw;
+  min-height: max(32px, 5.6cqw);
+  padding: 0 1.8cqw;
+  border: 0.22cqw solid var(--ink);
+  border-radius: 1.1cqw;
+  background: var(--orange);
+  color: #fff;
+  box-shadow: 0 0.35cqw 0 var(--ink);
+  font: 700 2.2cqw/1 var(--font-room-sans), system-ui, sans-serif;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 90ms ease, box-shadow 90ms ease;
+}
+
+.appBar .appVisit:active {
+  transform: translateY(0.3cqw);
+  box-shadow: 0 0.05cqw 0 var(--ink);
+}
+
+.appBar .appVisit:focus-visible {
+  outline: 0.3cqw solid var(--orange);
+  outline-offset: 0.4cqw;
+}
+
 .appBack {
   display: inline-flex;
   align-items: center;
@@ -329,7 +359,8 @@
 }
 
 @media (pointer: coarse) {
-  .appBack {
+  .appBack,
+  .appBar .appVisit {
     min-height: 44px;
   }
 }
@@ -1393,6 +1424,10 @@
 
   .appBack {
     min-width: 72px;
+    font-size: max(2.2cqw, 14px);
+  }
+
+  .appBar .appVisit {
     font-size: max(2.2cqw, 14px);
   }
 }

@@ -80,7 +80,7 @@ export async function launch() {
  * opts: { browser, path, viewport, dsf, device, light, seed, time, scrollY }
  */
 export async function openStage(opts) {
-  const { browser, path = "/room/", dsf = 2, device, light = null, seed = 7, time = TOKYO_2105 } = opts;
+  const { browser, path = "/", dsf = 2, device, light = null, seed = 7, time = TOKYO_2105 } = opts;
   const contextOpts = device ? { ...device, deviceScaleFactor: dsf } : { viewport: opts.viewport ?? { width: 1440, height: 900 }, deviceScaleFactor: dsf };
   const context = await browser.newContext({ ...contextOpts, reducedMotion: "no-preference", colorScheme: "light" });
   await context.addInitScript(INIT, { light, seed });
