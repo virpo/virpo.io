@@ -48,7 +48,7 @@ SHEET = [
     (10, "inside the screen"), (100, "the window lifts"), (160, "pull back"), (236, "the wall"),
     (256, "knob"), (290, "d-pad"), (318, "Fig. 06 opens"), (380, "Shinkansen window"), (410, "kana card"),
     (466, "pencil to colour"), (500, "Fig. 12 label"), (525, "TOKYO 21:05"), (572, "tall to wide"),
-    (652, "Peter waves"), (770, "end card"),
+    (652, "the hydrangea opens"), (770, "end card"),
 ]
 
 
