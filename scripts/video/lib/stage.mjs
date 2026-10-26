@@ -6,6 +6,7 @@
 //
 // The device's own pointer tilt is switched off: shots set --tx/--ty themselves on an eased curve,
 // and a drawn pointer stands in for the real one.
+import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { chromium } from "@playwright/test";
@@ -84,6 +85,16 @@ export async function openStage(opts) {
   const contextOpts = device ? { ...device, deviceScaleFactor: dsf } : { viewport: opts.viewport ?? { width: 1440, height: 900 }, deviceScaleFactor: dsf };
   const context = await browser.newContext({ ...contextOpts, reducedMotion: "no-preference", colorScheme: "light" });
   await context.addInitScript(INIT, { light, seed });
+  // HIRES=<dir>: serve the room's pictures from scripts/video/hires.py's 4x copies, same names
+  if (process.env.HIRES) {
+    const root = process.env.HIRES;
+    await context.route(/\/lab\/room\/.+\.(webp|png)(\?.*)?$/, async (route) => {
+      const path = new URL(route.request().url()).pathname;
+      const file = join(root, path);
+      if (existsSync(file)) await route.fulfill({ path: file, contentType: path.endsWith(".png") ? "image/png" : "image/webp" });
+      else await route.continue();
+    });
+  }
   const page = await context.newPage();
   const errors = [];
   page.on("pageerror", (e) => errors.push(String(e)));
