@@ -175,7 +175,7 @@ const stateWord = n => ({ y: "found", self: "ticked", q: "couldn't see", n: "not
 function tileCls(n) {
   if (!lights()) return "tile";
   const s = st(n);
-  return "tile " + (s === "y" ? "on" : s === "self" ? "on self" : s === "q" ? "off q" : "off") + (picked().includes(n) ? " pick" : "");
+  return "tile " + (s === "y" ? "on" : s === "self" ? "on self" : s === "q" ? "off q" : "off") + (picked().includes(n) ? " picked" : "");
 }
 const tierLevels = t => L.slice(t * 10 - 10, t * 10);
 function renderBoard() {

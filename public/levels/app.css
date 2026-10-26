@@ -269,8 +269,8 @@ body[data-mode="mine"] .fan,body[data-mode="pub"] .fan,body[data-mode="chat"] .f
 .tile.off img{opacity:var(--cap-dim);filter:grayscale(1);margin-top:0}
 .tile.off>span{margin-top:0}
 .tile.q{border:1px dashed var(--cap-line)}
-.tile.pick{border:1.5px solid var(--hazard-deep);animation:breathe 2.4s ease-in-out infinite}
-.tile.pick img{opacity:.75;filter:grayscale(.3)}
+.tile.picked{border:1.5px solid var(--hazard-deep);animation:breathe 2.4s ease-in-out infinite}
+.tile.picked img{opacity:.75;filter:grayscale(.3)}
 @keyframes breathe{50%{box-shadow:inset 0 2px 3px rgba(14,13,10,.14),0 0 0 5px var(--glow)}}
 .tile.just{animation:just .32s cubic-bezier(.2,.9,.3,1.4)}
 @keyframes just{from{transform:scale(.82)}}
