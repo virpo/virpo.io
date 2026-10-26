@@ -5,7 +5,7 @@
 --line:rgba(14,13,10,.1);--line-strong:rgba(14,13,10,.18);
 --hazard:#FFD400;--hazard-deep:#D9B300;--hazard-ink:#0E0D0A;
 --key:#FFFFFF;--key-skirt:#E4DED2;--cmd:#0E0D0A;--cmd-fg:#F2EDE2;--bar:rgba(244,240,231,.82);
---tile:#E9E3D6;--tile-ink:#8C8577;--glow:rgba(255,212,0,.5);
+--tile:#E9E3D6;--tile-ink:#8C8577;--glow:rgba(255,212,0,.5);--stamp:#A0583A;--stamp-warn:#B89600;
 /* the keys on the map are printed objects too: their pixel icons are drawn in dark ink for a light cap, so the caps stay
    light in both themes, a little dimmer in the dark */
 --cap:#FFFFFF;--cap-skirt:#E4DED2;--cap-off:#E9E3D6;--cap-ink:#8C8577;--cap-line:rgba(14,13,10,.18);--cap-dim:.45;
@@ -17,12 +17,12 @@
 --sans:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
 --bg:#0E0D0A;--sheet:#15140F;--fg:#F2EDE2;--muted:#9A9488;--faint:#5F5A50;--line:rgba(242,237,226,.09);--line-strong:rgba(242,237,226,.18);
---key:#2A2822;--key-skirt:#0B0A08;--cmd:#050504;--bar:rgba(14,13,10,.8);--tile:#1C1A15;--tile-ink:#6F695E;--glow:rgba(255,212,0,.32);
+--key:#2A2822;--key-skirt:#0B0A08;--cmd:#050504;--bar:rgba(14,13,10,.8);--tile:#1C1A15;--tile-ink:#6F695E;--glow:rgba(255,212,0,.32);--stamp:#D08A63;--stamp-warn:#D9B300;
 --cap:#D9D2C4;--cap-skirt:#8F887B;--cap-off:#A49D90;--cap-ink:#5F5A50;--cap-line:rgba(14,13,10,.5);--cap-dim:.62;
 --lift:0 1px 0 rgba(0,0,0,.4),0 18px 40px -16px rgba(0,0,0,.85);color-scheme:dark}}
 :root[data-theme="dark"]{
 --bg:#0E0D0A;--sheet:#15140F;--fg:#F2EDE2;--muted:#9A9488;--faint:#5F5A50;--line:rgba(242,237,226,.09);--line-strong:rgba(242,237,226,.18);
---key:#2A2822;--key-skirt:#0B0A08;--cmd:#050504;--bar:rgba(14,13,10,.8);--tile:#1C1A15;--tile-ink:#6F695E;--glow:rgba(255,212,0,.32);
+--key:#2A2822;--key-skirt:#0B0A08;--cmd:#050504;--bar:rgba(14,13,10,.8);--tile:#1C1A15;--tile-ink:#6F695E;--glow:rgba(255,212,0,.32);--stamp:#D08A63;--stamp-warn:#D9B300;
 --cap:#D9D2C4;--cap-skirt:#8F887B;--cap-off:#A49D90;--cap-ink:#5F5A50;--cap-line:rgba(14,13,10,.5);--cap-dim:.62;
 --lift:0 1px 0 rgba(0,0,0,.4),0 18px 40px -16px rgba(0,0,0,.85);color-scheme:dark}
 
@@ -400,12 +400,12 @@ body[data-mode="mine"] .fan,body[data-mode="pub"] .fan,body[data-mode="chat"] .f
 .fossils>p{margin:0 0 18px}
 .fossils>.suggest{margin:18px 0 0}
 .fossil-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
-.fossil{border:1px dashed var(--line-strong);border-radius:10px;padding:14px 16px;display:grid;gap:5px;align-content:start}
-.fossil b{font:500 14px var(--mono);overflow-wrap:anywhere;text-decoration:line-through;text-decoration-color:var(--faint)}
-.fossil.endangered b{text-decoration:none}
+.fossil{background:var(--sheet);border-radius:10px;padding:16px 16px 18px;display:grid;gap:6px;align-content:start;min-height:132px}
+.fossil b{font:500 14px var(--mono);overflow-wrap:anywhere}
 .fossil p{margin:0;font-size:13px;color:var(--muted)}
-.fossil .tag{font:600 10px var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--faint)}
-.fossil.endangered .tag{color:var(--hazard-deep)}
+/* an ink stamp says what happened to it */
+.fossil .stamp{justify-self:start;font:600 10.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--stamp);border:1.5px solid currentColor;border-radius:4px;padding:2px 7px;transform:rotate(-4deg);margin:2px 0 6px;opacity:.9}
+.fossil.endangered .stamp{color:var(--stamp-warn);transform:rotate(3deg)}
 
 .notify{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:32px;align-items:center;border-top:1px solid var(--line);margin-top:40px;padding-top:32px}
 .notify h2{font:600 24px/1.15 var(--sans);letter-spacing:-.015em;margin:0 0 6px}

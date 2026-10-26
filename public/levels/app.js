@@ -650,7 +650,7 @@ $("#theme").addEventListener("click", () => {
 });
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", labelTheme);
 labelTheme();
-$("#fossil-grid").innerHTML = D.fossils.map(f => `<div class="fossil ${f.status}"><span class="tag">${f.status} · ${esc(f.era)}</span><b>${esc(f.title)}</b><p>${esc(f.line)}</p></div>`).join("");
+$("#fossil-grid").innerHTML = D.fossils.map(f => `<div class="fossil ${f.status}"><span class="stamp">${f.status} ${esc(f.era)}</span><b>${esc(f.title)}</b><p>${esc(f.line)}</p></div>`).join("");
 $("[data-l0-title]").textContent = D.level0.title + ".";
 $("[data-l0-line]").textContent = D.level0.line;
 if (D.repo) {
