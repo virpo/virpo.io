@@ -342,3 +342,47 @@ await clip("hero", {
     { at: 8.0, dur: 0.75, to: hit("peter") },
   ],
 });
+
+// the same take, but it opens on the knob (plain CSS, sharp at any zoom), whips out to the whole
+// painted room as a train crosses the window, then pulls back as before: no deep zoom into the art
+const screen = '[data-variant] [class$="__screen"]';
+const knob = '[class*="device-module__"][class$="__knob"]';
+await clip("hero2", {
+  aspect: "16x10-4k", frame: { x: 0, y: 0, width: 1440, height: 900 }, length: 11.5, fps: 60, seed: 21,
+  prepare: async (st) => {
+    await st.page.addStyleTag({ content: '[class*="device-module__"][class$="__knobMark"] { transition: none !important; }' });
+    await st.seek(() => !document.querySelector("[data-kind]"), { every: 50 });
+    await st.seek(() => !!document.querySelector('[data-kind="shinkansen"]'), { every: 1000 / 60 });
+  },
+  camera: [[0, knob, 4.4], [0.28, knob, 4.25], [0.62, screen, 1.75], [1.1, screen, 1.7], [1.45, body, 1.3], [3.95, body, 1.3], [4.75, [720, 450], 1.0], [11.5, [720, 450], 1.0]],
+  tilt: (t, p) => {
+    const follow = [(p[0] / VIEW.width - 0.5) * 0.5, (p[1] / VIEW.height - 0.5) * 0.4];
+    const seg = (a, b, t0, t1) => { const u = ease.inOutCubic(clamp01((t - t0) / (t1 - t0))); return [lerp(a[0], b[0], u), lerp(a[1], b[1], u)]; };
+    if (t < 0.28) return [0.38, -0.28];
+    if (t < 0.62) return seg([0.38, -0.28], [0.0, 0.02], 0.28, 0.62);
+    if (t < 1.1) return [0.0, 0.02];
+    if (t < 1.4) return seg([0.0, 0.02], [-0.55, 0.16], 1.1, 1.4);
+    if (t < 1.9) return seg([-0.55, 0.16], [0.32, -0.08], 1.4, 1.9);
+    return seg([0.32, -0.08], follow, 1.9, 2.5);
+  },
+  // the knob turns two notches on the close-up, easing out like the site's own turn
+  each: async (st, t) => {
+    if (t > 0.7) return;
+    const deg = 30 * ease.outCubic(clamp01((t - 0.02) / 0.14)) + 30 * ease.outCubic(clamp01((t - 0.16) / 0.14));
+    await st.page.evaluate((d) => document.querySelector("[data-variant]").style.setProperty("--knob", `${d}deg`), deg);
+  },
+  start: [690, 640],
+  beats: [
+    { at: 0.0, dur: 0.12, to: knob },
+    { at: 0.5, dur: 0.4, to: hit("window") },
+    { at: 1.45, dur: 0.4, to: hit("arcade") },
+    { at: 1.95, dur: 0.35, to: knob }, { at: 2.36, wheel: 60 },
+    { at: 2.55, dur: 0.3, to: hit("kana") }, { at: 2.9, click: true },
+    { at: 3.12, dur: 0.3, to: '[data-app] [class*="__card"]' }, { at: 3.48, click: true },
+    { at: 3.68, dur: 0.25, to: "[data-app-back]" }, { at: 3.97, click: true },
+    { at: 4.05, dur: 0.7, to: title("how-this-room-was-made") },
+    { at: 6.0, dur: 0.5, to: title("weird-use-of-ai-3") },
+    { at: 7.0, dur: 0.4, to: title("weird-use-of-ai-1") },
+    { at: 8.0, dur: 0.75, to: hit("peter") },
+  ],
+});
