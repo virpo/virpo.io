@@ -140,7 +140,9 @@ export function KanaApp() {
         <span className={styles.cardKana} lang="ja">
           {card?.writing ?? "…"}
         </span>
-        <span className={styles.cardReading}>{card ? (revealed ? card.reading : "tap to reveal") : selection ? "All caught up. Come back soon." : ""}</span>
+        <span className={styles.cardReading} data-hint={card && !revealed ? "" : undefined}>
+          {card ? (revealed ? card.reading : "tap to reveal") : selection ? "All caught up. Come back soon." : ""}
+        </span>
         {revealed && card && card.meaning ? <span className={styles.cardMeaning}>{card.meaning}</span> : null}
       </button>
       <div className={styles.kanaBar}>
@@ -164,13 +166,22 @@ export function RadioApp({ moodRadio }: { moodRadio?: AppProject }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const opening = useRef(true);
   const sound = JAPAN_SOUNDS[index];
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
     audio.src = sound.src;
     audio.currentTime = sound.startAt;
-    if (playing) void audio.play().catch(() => setPlaying(false));
+    // it starts playing as soon as it opens (opening it is a click or a key, so the browser allows
+    // sound); if the browser still says no, it waits for the play key
+    if (playing || opening.current) {
+      opening.current = false;
+      void audio.play().then(
+        () => setPlaying(true),
+        () => setPlaying(false),
+      );
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
   useEffect(() => () => audioRef.current?.pause(), []);

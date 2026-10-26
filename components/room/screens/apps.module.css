@@ -162,7 +162,7 @@ button:disabled {
 }
 
 .mirrorFrame {
-  width: 34cqw;
+  width: 46cqw;
   aspect-ratio: 0.8;
   overflow: hidden;
   border: 1.6cqw solid #b98a4e;
@@ -187,8 +187,8 @@ button:disabled {
   inset: 0;
   display: grid;
   grid-template-rows: 1fr auto;
-  gap: 1.6cqw;
-  padding: 2.6cqw 3cqw 2.4cqw;
+  gap: 1.4cqw;
+  padding: 1.8cqw 2.2cqw 2cqw;
   background: #f4ead6;
 }
 
@@ -208,14 +208,30 @@ button:disabled {
 }
 
 .cardKana {
-  font: 500 15cqw/1 "Hiragino Mincho ProN", "Yu Mincho", serif;
+  font: 500 22cqw/1 "Hiragino Mincho ProN", "Yu Mincho", serif;
 }
 
 .cardReading {
   color: #f26a1f;
-  font: 600 2.6cqw/1.1 var(--font-room-mono), ui-monospace, monospace;
+  font: 600 3.4cqw/1.1 var(--font-room-mono), ui-monospace, monospace;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+/* "tap to reveal" breathes, so the card reads as something to press */
+.cardReading[data-hint] {
+  animation: tapHint 1.6s ease-in-out infinite;
+}
+
+@keyframes tapHint {
+  50% {
+    opacity: 0.55;
+    transform: scale(1.08);
+  }
+}
+
+.card:hover .cardReading[data-hint] {
+  animation-duration: 0.9s;
 }
 
 .cardMeaning {
@@ -516,6 +532,7 @@ button:disabled {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .cardReading[data-hint],
   .rideView,
   .figure img,
   .figure::after {
@@ -551,7 +568,12 @@ button:disabled {
   }
 
   .cardReading {
-    font-size: max(2.6cqw, 13px);
+    font-size: max(3.4cqw, 14px);
+  }
+
+  /* the phone's screen is short: the mirror keeps its smaller size so the hint fits under it */
+  .mirrorFrame {
+    width: 34cqw;
   }
 
   .cardMeaning {
