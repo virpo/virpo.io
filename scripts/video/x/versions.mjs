@@ -13,6 +13,9 @@ const out = resolve("output/lab/video/x");
 mkdirSync(out, { recursive: true });
 const story = (n) => `file://${resolve("public/assets/blog/pocket-room/story", n)}.webp`;
 const clip = (name) => ({ dir: `file://${work}/${name}`, n: readdirSync(`${work}/${name}`).filter((f) => f.endsWith(".jpg")).length });
+// the bento tiles, captured at 60 fps by scripts/video/bento.mjs (FPS=60) into .b60 next to the work dir
+const b60 = resolve(work, "../.b60");
+const clip60 = (name) => ({ dir: `file://${b60}/${name}`, n: readdirSync(`${b60}/${name}`).filter((f) => f.endsWith(".jpg")).length });
 const SIZE = { "4x5": [1080, 1350], "1x1": [1080, 1080], "9x16": [1080, 1920], "16x9": [1920, 1080] };
 
 // ---- layer helpers
@@ -172,15 +175,43 @@ const versions = {
     text("Then the whole room<br>got painted at 4.", 5.4, undefined, [40, 60, 1000, 220], { size: 60 }),
     sign(8.4, undefined, [0, 1230, 1080, 80]),
   ] },
+
+  // ------------------------------------------------------------------ V11
+  // "my new website is a pocket device": no overlays, only the site and the cursor
+  v11: { name: "pocket-device", aspect: "16x9", dur: 11.5, fps: 60, ss: 2, world: [[5.0, [0, 0, 1]], [5.6, [0, 0, 0.955]], [7.6, [2.2, -2.6, 0.95]], [9.4, [-1.8, 2.2, 0.955]], [10.2, [0, 0, 1]]], layers: () => {
+    const A = [0, -60, 1920, 1200];
+    const B = [490, 84, 940, 587.5];
+    const chrome = (b) => [b[0], b[1] - 44, b[2], 44];
+    const frame = (b) => [b[0], b[1] - 44, b[2], b[3] + 44];
+    const keys = (f) => [[4.8, f(A)], [5.45, f(B), "io"], [9.6, f(B)], [10.4, f(A), "io"]];
+    const shadow = "0 0 0 1px rgba(60,40,20,.08), 0 2px 6px rgba(60,40,20,.06), 0 34px 70px -34px rgba(60,40,20,.5)";
+    const tiles = [
+      ["knob", [40, 40, 430, 490]], ["peter", [1450, 40, 430, 490]], ["strap", [40, 552, 430, 488]], ["hydrangea", [1450, 552, 430, 488]],
+      ["keys", [490, 692, 300, 348]], ["kana", [810, 692, 300, 348]], ["card", [1130, 692, 300, 348]],
+    ];
+    const tile = ([name, box], k) => ({ type: "seq", ...clip60(name), fps: 60, t0: 5.2 + k * 0.07, t1: 10.05, box, radius: 22, shadow, start: [40, 0, 20, 90, 0, 30, 60][k],
+      in: { type: "pop", dur: 0.45 }, out: { type: "fade", dur: 0.35 } });
+    return [
+      rect({ t0: 0, box: [0, 0, 1920, 1080], color: "#ebe3d5", opacity: [[4.9, 0], [5.5, 1], [9.7, 1], [10.3, 0]], fixed: true }),
+      rect({ t0: 0, box: keys(frame), color: "#faf7f2", radius: 14, shadow, opacity: [[4.8, 0], [5.2, 1], [9.9, 1], [10.4, 0]] }),
+      { type: "seq", ...clip("hero"), fps: 60, t0: 0, box: keys((b) => b), radius: "0 0 14px 14px" },
+      { type: "html", t0: 4.9, t1: 10.35, box: keys(chrome), in: { type: "fade", dur: 0.3 }, out: { type: "fade", dur: 0.25 }, justify: "center", align: "stretch",
+        html: `<div style="position:relative;width:100%;height:100%;background:#f3eee6;border-radius:14px 14px 0 0;border-bottom:1px solid rgba(60,40,20,.08);display:flex;align-items:center;justify-content:center">
+          <span style="position:absolute;left:16px;display:flex;gap:8px"><i style="width:12px;height:12px;border-radius:50%;background:#dcd4c8"></i><i style="width:12px;height:12px;border-radius:50%;background:#dcd4c8"></i><i style="width:12px;height:12px;border-radius:50%;background:#dcd4c8"></i></span>
+          <span style="display:flex;align-items:center;gap:7px;height:26px;padding:0 16px;min-width:360px;justify-content:center;border-radius:8px;background:#e9e2d7;color:#4a433b;font:500 15px/1 Figtree,system-ui,sans-serif;letter-spacing:.01em">
+            <svg viewBox="0 0 12 12" width="11" height="11"><path d="M3.2 5.2V3.8a2.8 2.8 0 1 1 5.6 0v1.4h.6c.4 0 .7.3.7.7v4.2c0 .4-.3.7-.7.7H2.6a.7.7 0 0 1-.7-.7V5.9c0-.4.3-.7.7-.7h.6Zm1.3 0h3V3.8a1.5 1.5 0 0 0-3 0v1.4Z" fill="#6b6259"/></svg>virpo.io</span></div>` },
+      ...tiles.map(tile),
+    ];
+  } },
 };
 
 for (const [id, v] of Object.entries(versions)) {
   if (only.length && !only.includes(id)) continue;
   const [w, h] = SIZE[v.aspect];
   const file = `${work}/${id}.json`;
-  writeFileSync(file, JSON.stringify({ w, h, fps: 30, layers: v.layers() }));
+  writeFileSync(file, JSON.stringify({ w, h, fps: v.fps ?? 30, world: v.world, layers: v.layers() }));
   const dest = `${out}/${id}-${v.name}.mp4`;
-  execFileSync("node", ["scripts/video/director.mjs", "scripts/video/x/edit.html", file, String(Math.round(v.dur * 30)), dest, String(w), String(h)], {
-    stdio: "inherit", env: { ...process.env, SS: "1", FPS: "30", CRF: "15" },
+  execFileSync("node", ["scripts/video/director.mjs", "scripts/video/x/edit.html", file, String(Math.round(v.dur * (v.fps ?? 30))), dest, String(w), String(h)], {
+    stdio: "inherit", env: { ...process.env, SS: String(v.ss ?? 1), FPS: String(v.fps ?? 30), CRF: v.ss ? "10" : "15" },
   });
 }

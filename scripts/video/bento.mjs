@@ -3,17 +3,19 @@
 // on the fake clock (lib/stage.mjs). bento-scene.html lays them out and director.mjs films it.
 // Each lands in <work>/<name>/fNNNN.jpg with meta.json.
 //
-//   node scripts/video/bento.mjs <work dir> [clip]
+//   node scripts/video/bento.mjs <work dir> [clip ...]     (FPS=60 for 60 fps clips)
 //   clips: device, knob, keys, peter, window, kana, card, hydrangea, strap
 import { join } from "node:path";
 import { clamp01, ease, launch, lerp, openStage, record } from "./lib/stage.mjs";
 
 const work = process.argv[2] ?? "output/lab/video/.bento";
-const only = process.argv[3];
+const only = process.argv.slice(3);
 const DESKTOP = { width: 1440, height: 900 };
-const FPS = 30;
+const FPS = Number(process.env.FPS ?? 30);
 const DT = 1000 / FPS;
 const N = 6 * FPS;
+// moments written at 30 fps, at whatever FPS the clips are captured
+const F = (f) => Math.round((f * FPS) / 30);
 const sel = {
   hit: (id) => `[data-hit="${id}"]`,
   screen: '[data-variant] [class$="__screen"]',
@@ -32,7 +34,7 @@ const through = (pts, t) => {
 
 const browser = await launch();
 const clip = async (name, fn) => {
-  if (only && only !== name) return;
+  if (only.length && !only.includes(name)) return;
   const t0 = Date.now();
   await fn();
   console.log(`${name}: ${((Date.now() - t0) / 1000).toFixed(0)} s`);
@@ -65,7 +67,7 @@ await clip("knob", async () => {
   await page.addStyleTag({ content: '[class*="device-module__"][class$="__knobMark"] { transition: none !important; }' });
   const knob = await st.box(sel.knob);
   await page.mouse.move(...centre(knob));
-  const notches = [12, 48, 84, 120, 156];
+  const notches = [12, 48, 84, 120, 156].map(F);
   await record(st, join(work, "knob"), N, {
     dt: DT,
     clip: pad(knob, 150, 110, 70, 60),
@@ -74,7 +76,7 @@ await clip("knob", async () => {
       await st.tilt(0.25 + Math.sin(a) * 0.3, -0.25 + Math.cos(a) * 0.15);
       if (notches.includes(i)) await page.mouse.wheel(0, 60);
       let deg = 0;
-      for (const at of notches) deg += 30 * ease.outCubic(clamp01((i - at) / 6));
+      for (const at of notches) deg += 30 * ease.outCubic(clamp01((i - at) / F(6)));
       await page.evaluate((d) => document.querySelector("[data-variant]").style.setProperty("--knob", `${d}deg`), deg);
     },
   });
@@ -94,7 +96,7 @@ await clip("keys", async () => {
     before: async (i) => {
       const a = (i / N) * Math.PI * 2;
       await st.tilt(-0.35 + Math.sin(a) * 0.2, -0.3 + Math.cos(a) * 0.1);
-      const at = [20, 55, 90, 125];
+      const at = [20, 55, 90, 125].map(F);
       const k = at.indexOf(i);
       if (k >= 0) await page.mouse.click(...keys[k]);
     },
@@ -163,8 +165,8 @@ await clip("kana", async () => {
     before: async (i) => {
       await st.tilt(0.05, 0.04);
       await st.pointer(at[0], at[1], { show: true, hover: true, scale: 1.3 });
-      if (i === 15 || i === 105) await page.mouse.click(...at);
-      if (i === 60 || i === 150) await page.evaluate(() => document.querySelector("[data-app] [data-next]")?.click());
+      if (i === F(15) || i === F(105)) await page.mouse.click(...at);
+      if (i === F(60) || i === F(150)) await page.evaluate(() => document.querySelector("[data-app] [data-next]")?.click());
     },
   });
   await st.close();

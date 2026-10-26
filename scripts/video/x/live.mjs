@@ -11,7 +11,7 @@ const work = process.argv[2] ?? "output/lab/video/.x";
 const only = process.argv.slice(3);
 const FPS = 30;
 const VIEW = { width: 1440, height: 900 };
-const SIZES = { "4x5": [1080, 1350], "1x1": [1080, 1080], "9x16": [1080, 1920], "16x9": [1920, 1080] };
+const SIZES = { "4x5": [1080, 1350], "1x1": [1080, 1080], "9x16": [1080, 1920], "16x9": [1920, 1080], "16x10-4k": [3840, 2400] };
 const HAND = `<svg viewBox="0 0 26 26" width="26" height="26" xmlns="http://www.w3.org/2000/svg"><path d="M9.2 3.4c0-1 .8-1.7 1.7-1.7s1.7.8 1.7 1.7v6.1l.4-.1c.9-.2 1.8.3 2 1.2l.1.3.4-.1c.9-.2 1.8.3 2 1.2l.1.4.3-.1c.9-.1 1.7.5 1.8 1.4.3 2.4.2 4.4-.5 6.3-.9 2.3-2.9 3.7-5.4 3.7h-1.3c-1.8 0-3.4-.9-4.4-2.4l-3.4-5.2c-.5-.8-.3-1.8.5-2.3.8-.5 1.8-.3 2.3.4l1.7 2.4V3.4z" fill="#fff" stroke="#1f1a15" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
 const ARROW = `<svg viewBox="0 0 26 26" width="26" height="26" xmlns="http://www.w3.org/2000/svg"><path d="M3 2 L3 20.5 L7.6 16.4 L10.9 23.6 L14.3 22.1 L11.1 15 L17.4 15 Z" fill="#1f1a15" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
 const CSS = `
@@ -28,6 +28,7 @@ const CSS = `
 async function clip(name, o) {
   if (only.length && !only.includes(name)) return;
   const t0 = Date.now();
+  const FPS = o.fps ?? 30;
   const [W, H] = SIZES[o.aspect];
   const browser = await launch();
   const st = await openStage({ browser, path: o.path ?? "/", viewport: VIEW, dsf: W / o.frame.width, seed: o.seed ?? 41 });
@@ -304,4 +305,40 @@ await clip("deck", {
   tilt: () => [0.1, 0.05],
   start: [900, 640],
   beats: [{ at: 0.4, dur: 0.7, to: hit("deck") }],
+});
+
+// "My new website is a pocket device": one continuous take at 60 fps and 4K. Tight on the window
+// with a train going by, a fast pull back to the device as it swings round, the cursor across the
+// room (arcade, knob, kana card), out to the whole page, then along the posts and over to mini Peter.
+const title = (slug) => `[class*="room-module__"][class$="__textCol"] a[href^="/blog/${slug}"]`;
+await clip("hero", {
+  aspect: "16x10-4k", frame: { x: 0, y: 0, width: 1440, height: 900 }, length: 11.5, fps: 60, seed: 21,
+  prepare: async (st) => {
+    await st.seek(() => !document.querySelector("[data-kind]"), { every: 50 });
+    await st.seek(() => !!document.querySelector('[data-kind="shinkansen"]'), { every: 1000 / 60 });
+    for (let i = 0; i < 24; i++) await st.step(1000 / 60);
+  },
+  camera: [[0, hit("window"), 2.9], [0.8, hit("window"), 2.72], [1.45, body, 1.3], [3.95, body, 1.3], [4.75, [720, 450], 1.0], [11.5, [720, 450], 1.0]],
+  // a little sway on the close-up, a quick swing as it pulls back, then it leans after the pointer
+  tilt: (t, p) => {
+    const follow = [(p[0] / VIEW.width - 0.5) * 0.5, (p[1] / VIEW.height - 0.5) * 0.4];
+    if (t < 0.8) return [0.06, 0.02];
+    if (t < 1.25) { const u = ease.inOutCubic((t - 0.8) / 0.45); return [lerp(0.06, -0.55, u), lerp(0.02, 0.16, u)]; }
+    if (t < 1.9) { const u = ease.inOutCubic((t - 1.25) / 0.65); return [lerp(-0.55, 0.32, u), lerp(0.16, -0.08, u)]; }
+    const u = ease.inOutCubic(clamp01((t - 1.9) / 0.6));
+    return [lerp(0.32, follow[0], u), lerp(-0.08, follow[1], u)];
+  },
+  start: [822, 262],
+  beats: [
+    { at: 0.25, dur: 0.45, to: hit("window") },
+    { at: 1.45, dur: 0.4, to: hit("arcade") },
+    { at: 1.95, dur: 0.35, to: '[class*="device-module__"][class$="__knob"]' }, { at: 2.36, wheel: 60 },
+    { at: 2.55, dur: 0.3, to: hit("kana") }, { at: 2.9, click: true },
+    { at: 3.12, dur: 0.3, to: '[data-app] [class*="__card"]' }, { at: 3.48, click: true },
+    { at: 3.68, dur: 0.25, to: "[data-app-back]" }, { at: 3.97, click: true },
+    { at: 4.05, dur: 0.7, to: title("how-this-room-was-made") },
+    { at: 6.0, dur: 0.5, to: title("weird-use-of-ai-3") },
+    { at: 7.0, dur: 0.4, to: title("weird-use-of-ai-1") },
+    { at: 8.0, dur: 0.75, to: hit("peter") },
+  ],
 });

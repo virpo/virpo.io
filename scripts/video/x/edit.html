@@ -9,7 +9,8 @@
 -->
 <style>
   html, body { margin: 0; overflow: hidden; }
-  #stage { position: absolute; left: 0; top: 0; overflow: hidden; }
+  #stage { position: absolute; left: 0; top: 0; overflow: hidden; perspective: 2400px; }
+  #world { position: absolute; left: 0; top: 0; transform-style: preserve-3d; transform-origin: 0 0; }
   .L { position: absolute; overflow: hidden; }
   .L > img { position: absolute; left: 0; top: 0; max-width: none; }
   .L.html { overflow: visible; display: flex; }
@@ -22,12 +23,14 @@
   .chip.dark { background: #1d1a17; color: #faf7f2; box-shadow: 0 14px 32px -14px rgba(20, 10, 5, .6); }
   .chip.o { background: #e8621c; color: #fff; }
 </style>
-<div id="stage"></div>
+<div id="stage"><div id="world"></div></div>
 <script>
   const D = DATA;
   const FPS = D.fps ?? 30;
   const stage = document.getElementById("stage");
+  const world = document.getElementById("world");
   Object.assign(stage.style, { width: `${D.w}px`, height: `${D.h}px`, background: D.bg ?? "#faf7f2" });
+  Object.assign(world.style, { width: `${D.w}px`, height: `${D.h}px` });
   document.body.style.background = D.bg ?? "#faf7f2";
 
   const ease = {
@@ -97,7 +100,7 @@
       L.el.className = "L";
       L.img = document.createElement("img");
       L.el.appendChild(L.img);
-      if (L.radius) L.el.style.borderRadius = `${L.radius}px`;
+      if (L.radius) L.el.style.borderRadius = typeof L.radius === "string" ? L.radius : `${L.radius}px`;
       if (L.shadow) L.el.style.boxShadow = L.shadow;
     } else if (L.type === "html") {
       L.el = document.createElement("div");
@@ -108,7 +111,8 @@
       L.el = document.createElement("div");
       L.el.className = "L";
       L.el.style.background = L.color ?? "#000";
-      if (L.radius) L.el.style.borderRadius = `${L.radius}px`;
+      if (L.radius) L.el.style.borderRadius = typeof L.radius === "string" ? L.radius : `${L.radius}px`;
+      if (L.shadow) L.el.style.boxShadow = L.shadow;
     } else if (L.type === "pencil" || L.type === "tick") {
       L.el = document.createElementNS(SVGNS, "svg");
       L.el.setAttribute("class", "L");
@@ -117,7 +121,9 @@
       Object.assign(L.path.style, { fill: "none", stroke: L.color ?? "rgba(205, 40, 34, .92)", strokeWidth: L.width ?? 9, strokeLinecap: "round", strokeLinejoin: "round", filter: "drop-shadow(0 1px 0 rgba(120,20,10,.25))" });
       L.el.appendChild(L.path);
     }
-    stage.appendChild(L.el);
+    // fixed layers (a background) stay put behind the scene when it leans
+    if (L.fixed) stage.insertBefore(L.el, world);
+    else world.appendChild(L.el);
   }
 
   window.ready = async () => {
@@ -157,6 +163,11 @@
   window.render = async (frame) => {
     const t = frame / FPS;
     const jobs = [];
+    // the whole scene can lean: world: [[t, [rotateX, rotateY, scale]]] about the middle
+    if (D.world) {
+      const [rx, ry, sc] = at(D.world, t, [0, 0, 1]);
+      world.style.transform = `translate(${D.w / 2}px, ${D.h / 2}px) rotateX(${rx}deg) rotateY(${ry}deg) scale(${sc}) translate(${-D.w / 2}px, ${-D.h / 2}px)`;
+    }
     for (const L of D.layers) {
       const on = t >= (L.t0 ?? 0) && (L.t1 === undefined || t < L.t1);
       L.el.style.display = on ? "" : "none";
@@ -171,7 +182,7 @@
         Object.assign(L.img.style, { left: `${ox - B[0]}px`, top: `${oy - B[1]}px`, width: `${dw}px`, height: `${dh}px` });
         const src = L.type === "img" ? L.src : (() => {
           const speed = L.speed ?? 1;
-          let i = Math.floor((t - (L.t0 ?? 0)) * 30 * speed) + (L.start ?? 0);
+          let i = Math.floor((t - (L.t0 ?? 0)) * (L.fps ?? 30) * speed + 1e-6) + (L.start ?? 0);
           if (L.loop) i = ((i % L.n) + L.n) % L.n;
           i = Math.max(0, Math.min(L.n - 1, i));
           return `${L.dir}/f${String(i).padStart(4, "0")}.jpg`;
