@@ -28,6 +28,7 @@ export function buildRss(posts: PostSummary[]) {
         `      <guid isPermaLink="true">${url}</guid>`,
         `      <description>${escapeXml(post.description)}</description>`,
         `      <pubDate>${post.publishedAt.toUTCString()}</pubDate>`,
+        "      <dc:creator>Peter Hraska</dc:creator>",
         ...post.tags.map((tag) => `      <category>${escapeXml(tag)}</category>`),
         "    </item>",
       ].join("\n");
@@ -37,9 +38,9 @@ export function buildRss(posts: PostSummary[]) {
   const latestPostDate = getLatestPostDate(posts);
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
-    '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
+    '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">',
     "  <channel>",
-    "    <title>virpo · Peter Hraska</title>",
+    "    <title>Peter Hraska (virpo): writing</title>",
     `    <link>${SITE_URL}/blog/</link>`,
     `    <atom:link href="${SITE_URL}/rss.xml" rel="self" type="application/rss+xml" />`,
     "    <description>Short notes from Peter Hraska about making real things.</description>",
@@ -47,6 +48,7 @@ export function buildRss(posts: PostSummary[]) {
       ? [`    <lastBuildDate>${latestPostDate.toUTCString()}</lastBuildDate>`]
       : []),
     "    <language>en</language>",
+    `    <image><url>${SITE_URL}/og/peter.jpg</url><title>Peter Hraska (virpo): writing</title><link>${SITE_URL}/blog/</link></image>`,
     items,
     "  </channel>",
     "</rss>",

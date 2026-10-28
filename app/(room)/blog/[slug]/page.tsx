@@ -9,7 +9,7 @@ import { SiteMark } from "../../../../components/room/SiteMark";
 import { RoomBackKey, roomDate, RoomFooter } from "../../../../components/room/RoomChrome";
 import { roomPostHref } from "../../../../components/room/scene/objects";
 import { getPost, getPostSlugs, getPostSummaries, type PostSource } from "../../../../lib/blog";
-import { absolute, AUTHOR, jsonLd, OG_IMAGE, PERSON, SITE_URL } from "../../../../lib/site";
+import { absolute, AUTHOR, jsonLd, OG_IMAGE, PERSON, RSS_ALTERNATE, SITE_URL } from "../../../../lib/site";
 import { imageDimensions } from "../../../../components/blog/media-dimensions";
 import shell from "../../room.module.css";
 import styles from "./post.module.css";
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: post.title,
       description: post.description,
-      alternates: { canonical: `/blog/${post.slug}/` },
+      alternates: { canonical: `/blog/${post.slug}/`, types: RSS_ALTERNATE },
       authors: [{ name: AUTHOR, url: `${SITE_URL}/` }],
       openGraph: {
         type: "article",
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         modifiedTime: post.updatedAt?.toISOString(),
         authors: [`${SITE_URL}/`],
         tags: post.tags,
-        images: post.socialImage ? [{ url: post.socialImage, alt: post.description, ...imageDimensions[post.socialImage] }] : [OG_IMAGE],
+        images: post.socialImage ? [{ url: post.socialImage, alt: post.title, type: "image/jpeg", ...imageDimensions[post.socialImage] }] : [OG_IMAGE],
       },
       twitter: {
         card: "summary_large_image",
@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         creator: "@virpo",
         title: post.title,
         description: post.description,
-        images: [post.socialImage ?? OG_IMAGE.url],
+        images: [post.socialImage ? { url: post.socialImage, alt: post.title } : { url: OG_IMAGE.url, alt: OG_IMAGE.alt }],
       },
     };
   } catch {
@@ -58,22 +58,39 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export function articleJsonLd(post: Pick<PostSource, "slug" | "title" | "description" | "publishedAt" | "updatedAt" | "socialImage" | "tags">) {
+export function articleJsonLd(post: Pick<PostSource, "slug" | "title" | "description" | "publishedAt" | "updatedAt" | "socialImage" | "tags"> & { source?: string }) {
   const url = `${SITE_URL}/blog/${post.slug}/`;
+  const words = post.source ? post.source.split(/\s+/).filter(Boolean).length : undefined;
   return jsonLd({
     "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: post.title,
-    description: post.description,
-    datePublished: post.publishedAt.toISOString(),
-    dateModified: (post.updatedAt ?? post.publishedAt).toISOString(),
-    mainEntityOfPage: url,
-    url,
-    keywords: post.tags.join(", "),
-    inLanguage: "en",
-    author: PERSON,
-    publisher: { "@id": PERSON["@id"] },
-    image: absolute(post.socialImage ?? OG_IMAGE.url),
+    "@graph": [
+      {
+        "@type": "BlogPosting",
+        "@id": `${url}#post`,
+        isPartOf: { "@id": `${SITE_URL}/blog/#blog` },
+        ...(words ? { wordCount: words } : {}),
+        headline: post.title,
+        description: post.description,
+        datePublished: post.publishedAt.toISOString(),
+        dateModified: (post.updatedAt ?? post.publishedAt).toISOString(),
+        mainEntityOfPage: url,
+        url,
+        keywords: post.tags.join(", "),
+        inLanguage: "en",
+        author: PERSON,
+        publisher: { "@id": PERSON["@id"] },
+        image: absolute(post.socialImage ?? OG_IMAGE.url),
+      },
+      // the breadcrumb shown above the post: Peter Hraska / Writing / this post
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: AUTHOR, item: `${SITE_URL}/` },
+          { "@type": "ListItem", position: 2, name: "Writing", item: `${SITE_URL}/blog/` },
+          { "@type": "ListItem", position: 3, name: post.title, item: url },
+        ],
+      },
+    ],
   });
 }
 

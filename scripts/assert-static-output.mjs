@@ -83,7 +83,9 @@ for (const [file, target] of [["dist/projects/index.html", "/#projects"], ["dist
 
 assertIncludes(homeHtml, 'rel="canonical" href="https://virpo.io/"', homeFile);
 assertIncludes(homeHtml, 'property="og:image" content="https://virpo.io/og/og-image.png"', homeFile);
-assertIncludes(homeHtml, 'property="og:video" content="https://virpo.io/og/room-loop.mp4"', homeFile);
+assertIncludes(homeHtml, 'property="og:video" content="https://virpo.io/og/pocket-device.mp4"', homeFile);
+assertIncludes(homeHtml, 'type="application/rss+xml"', homeFile);
+assertIncludes(await readFile(resolve("dist/llms-full.txt"), "utf8"), "## Gacha prompting", "dist/llms-full.txt");
 assertIncludes(homeHtml, '"@type":"ProfilePage"', homeFile);
 assertExcludes(homeHtml, 'content="noindex', homeFile);
 

@@ -6,6 +6,9 @@ import {
 } from "../lib/blog";
 
 const SITE_URL = "https://virpo.io";
+// pages not driven by posts: bump these when the page changes
+const SKILLS_UPDATED = new Date("2026-10-15");
+const LEVELS_UPDATED = new Date("2026-10-25");
 
 export const dynamic = "force-static";
 
@@ -27,11 +30,13 @@ export function buildSitemap(posts: PostSummary[]): MetadataRoute.Sitemap {
     },
     {
       url: `${SITE_URL}/skills/`,
+      lastModified: SKILLS_UPDATED,
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
       url: `${SITE_URL}/levels/`,
+      lastModified: LEVELS_UPDATED,
       changeFrequency: "monthly",
       priority: 0.7,
     },

@@ -1,4 +1,7 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = { title: "Not found", robots: { index: false } };
 
 // GitHub Pages serves this as 404.html for any path that doesn't exist.
 export default function NotFound() {

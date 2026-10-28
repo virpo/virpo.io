@@ -6,15 +6,15 @@ import { ProjectLogo } from "../../components/room/ProjectLogo";
 import { PROJECT_META, projectLine } from "../../components/room/projects";
 import { roomDate, RoomFooter, RoomSocial } from "../../components/room/RoomChrome";
 import { objectForProject, roomPostHref } from "../../components/room/scene/objects";
-import { getPostSummaries } from "../../lib/blog";
+import { getLatestPostDate, getPostSummaries } from "../../lib/blog";
 import { labAbout, labProjects } from "../../lib/lab/catalog";
-import { jsonLd, OG_IMAGE, OG_VIDEO, PERSON, SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "../../lib/site";
+import { jsonLd, OG_IMAGE, OG_VIDEO, PERSON, RSS_ALTERNATE, SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "../../lib/site";
 import styles from "./room.module.css";
 
 export const metadata: Metadata = {
   title: { absolute: SITE_TITLE },
   description: SITE_DESCRIPTION,
-  alternates: { canonical: "/" },
+  alternates: { canonical: "/", types: RSS_ALTERNATE },
   openGraph: {
     type: "profile",
     url: "/",
@@ -23,8 +23,16 @@ export const metadata: Metadata = {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     images: [OG_IMAGE],
-    // a calm loop of the room, for previews that play video
+    // the pocket-device cut, for previews that play video
     videos: [OG_VIDEO],
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@virpo",
+    creator: "@virpo",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [{ url: OG_IMAGE.url, alt: OG_IMAGE.alt }],
   },
 };
 
@@ -32,8 +40,16 @@ export const metadata: Metadata = {
 const STRUCTURED = {
   "@context": "https://schema.org",
   "@graph": [
-    { "@type": "WebSite", "@id": `${SITE_URL}/#site`, url: `${SITE_URL}/`, name: SITE_NAME, description: SITE_DESCRIPTION, author: { "@id": PERSON["@id"] }, inLanguage: "en" },
-    { "@type": "ProfilePage", "@id": `${SITE_URL}/#profile`, url: `${SITE_URL}/`, name: SITE_TITLE, mainEntity: PERSON },
+    { "@type": "WebSite", "@id": `${SITE_URL}/#site`, url: `${SITE_URL}/`, name: SITE_NAME, alternateName: SITE_TITLE, description: SITE_DESCRIPTION, author: { "@id": PERSON["@id"] }, publisher: { "@id": PERSON["@id"] }, inLanguage: "en" },
+    {
+      "@type": "ProfilePage",
+      "@id": `${SITE_URL}/#profile`,
+      url: `${SITE_URL}/`,
+      name: SITE_TITLE,
+      dateCreated: "2026-10-23",
+      dateModified: (getLatestPostDate(getPostSummaries()) ?? new Date("2026-10-23")).toISOString().slice(0, 10),
+      mainEntity: PERSON,
+    },
   ],
 };
 

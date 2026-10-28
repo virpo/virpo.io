@@ -92,12 +92,12 @@ describe("Pocket Room landing", () => {
     }
   });
 
-  it("is the home page: canonical /, indexable, with a preview image and the room's video loop", () => {
+  it("is the home page: canonical /, indexable, with a preview image and the pocket-device video", () => {
     expect(landingMetadata.alternates?.canonical).toBe("/");
     expect(landingMetadata.robots).toBeUndefined();
     const og = landingMetadata.openGraph as { images?: unknown[]; videos?: { url: string }[] };
     expect(og.images?.length).toBeGreaterThan(0);
-    expect(og.videos?.[0].url).toBe("https://virpo.io/og/room-loop.mp4");
+    expect(og.videos?.[0].url).toBe("https://virpo.io/og/pocket-device.mp4");
     expect(markup).toContain('"@type":"ProfilePage"');
   });
 });

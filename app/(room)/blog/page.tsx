@@ -4,7 +4,7 @@ import type { CSSProperties } from "react";
 import { RoomBackKey, roomDate, RoomFooter } from "../../../components/room/RoomChrome";
 import { roomPostHref } from "../../../components/room/scene/objects";
 import { getPostSummaries } from "../../../lib/blog";
-import { pageMeta } from "../../../lib/site";
+import { jsonLd, pageMeta, PERSON, SITE_URL } from "../../../lib/site";
 import { SiteMark } from "../../../components/room/SiteMark";
 import shell from "../room.module.css";
 
@@ -27,8 +27,29 @@ export default function RoomWritingPage() {
   }
   let index = -1;
 
+  // the blog and its posts, for search and answer engines; each post's own page links back to #blog
+  const structured = jsonLd({
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "@id": `${SITE_URL}/blog/#blog`,
+    url: `${SITE_URL}/blog/`,
+    name: "Writing by Peter Hraska",
+    inLanguage: "en",
+    author: { "@id": PERSON["@id"] },
+    publisher: { "@id": PERSON["@id"] },
+    blogPost: posts.map((post) => ({
+      "@type": "BlogPosting",
+      "@id": `${SITE_URL}/blog/${post.slug}/#post`,
+      headline: post.title,
+      url: `${SITE_URL}/blog/${post.slug}/`,
+      datePublished: post.publishedAt.toISOString(),
+      author: { "@id": PERSON["@id"] },
+    })),
+  });
+
   return (
     <div className={shell.page}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structured }} />
       <main className={shell.writing}>
         <SiteMark current="writing">
           <RoomBackKey />

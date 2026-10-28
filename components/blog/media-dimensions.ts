@@ -2,6 +2,10 @@
 export const imageDimensions: Record<string, { width: number; height: number }> = {
   "/assets/blog/pegboard-sketch.jpg": { width: 1200, height: 1600 },
   "/assets/blog/pegboard-finished.jpg": { width: 1000, height: 1283 },
+  "/assets/blog/social-weird-use-of-ai-1.jpg": { width: 1200, height: 630 },
+  "/assets/blog/social-hackathon.jpg": { width: 1200, height: 630 },
+  "/assets/blog/social-weird-use-of-ai-3.jpg": { width: 1200, height: 630 },
+  "/assets/blog/pocket-room/social-gacha.jpg": { width: 1200, height: 630 },
   "/assets/blog/ai-build-day.png": { width: 1902, height: 994 },
   "/assets/blog/detective-skills.png": { width: 1602, height: 882 },
   "/assets/blog/pocket-room/arcade-after.webp": { width: 462, height: 618 },
