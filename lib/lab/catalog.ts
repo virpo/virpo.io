@@ -16,7 +16,7 @@ const blurbs: Record<string, string> = {
   "Žltá stopa": "Agentic kit for investigative journalists to interrogate public data.",
   "Mood Radio": "A mood-based music picker from 2013. Basically pre-Spotify, still weirdly timeless.",
   "Pegboard Toy": "An ugly sketch and two measurements became a 3D-printed toy for my son.",
-  "AI Build Week": "Twelve hours, tiny teams, and products that earned their first euro.",
+  "AI Build Week": "A week for 20 people to build, launch and validate their own AI-native business. July 2026.",
   "CMUX Deck": "A Stream Deck that shows what each of my coding agents is doing.",
 };
 

@@ -5,6 +5,8 @@ export const SITE_URL = "https://virpo.io";
 export const SITE_NAME = "virpo";
 export const AUTHOR = "Peter Hraska";
 export const SITE_TITLE = "Peter Hraska";
+// the home page's own title, for tabs and search results (other pages read "<page> · Peter Hraska")
+export const HOME_TITLE = "Peter Hraska (virpo): AI, design and odd little tools";
 export const SITE_DESCRIPTION =
   "Peter Hraska builds AI products, odd little tools, physical objects and events. His site is a tiny painted room you can poke at.";
 

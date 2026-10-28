@@ -22,6 +22,7 @@ export function GET() {
     "## Projects",
     "",
     ...projects.map((project) => `- [${project.title}](${new URL(project.href, SITE_URL).toString()}): ${project.blurb}`),
+    "- [AI Build Day](https://buildday.ai/): a 12-hour AI hackathon in Bratislava, 20 September 2025.",
     "- [Bratislava Slush’D](https://bratislavaslushd.com/): the official Slush spin-off in Bratislava, 21 October 2025.",
     "- [Advent of No-Code](https://www.adventofnocode.io/): 24 daily no-code challenges, December 2024.",
     "",

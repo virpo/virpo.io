@@ -8,11 +8,11 @@ import { roomDate, RoomFooter, RoomSocial } from "../../components/room/RoomChro
 import { objectForProject, roomPostHref } from "../../components/room/scene/objects";
 import { getLatestPostDate, getPostSummaries } from "../../lib/blog";
 import { labAbout, labProjects } from "../../lib/lab/catalog";
-import { jsonLd, OG_IMAGE, OG_VIDEO, PERSON, RSS_ALTERNATE, SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL } from "../../lib/site";
+import { jsonLd, OG_IMAGE, OG_VIDEO, PERSON, RSS_ALTERNATE, SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL, HOME_TITLE } from "../../lib/site";
 import styles from "./room.module.css";
 
 export const metadata: Metadata = {
-  title: { absolute: SITE_TITLE },
+  title: { absolute: HOME_TITLE },
   description: SITE_DESCRIPTION,
   alternates: { canonical: "/", types: RSS_ALTERNATE },
   openGraph: {
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     url: "/",
     siteName: SITE_NAME,
     locale: "en_US",
-    title: SITE_TITLE,
+    title: HOME_TITLE,
     description: SITE_DESCRIPTION,
     images: [OG_IMAGE],
     // the pocket-device cut, for previews that play video
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@virpo",
     creator: "@virpo",
-    title: SITE_TITLE,
+    title: HOME_TITLE,
     description: SITE_DESCRIPTION,
     images: [{ url: OG_IMAGE.url, alt: OG_IMAGE.alt }],
   },

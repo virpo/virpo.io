@@ -58,6 +58,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
+// terms a post coins, so answer engines can quote the definition and credit it
+const DEFINED_TERMS: Record<string, { name: string; description: string }> = {
+  "how-this-room-was-made": { name: "Gacha prompting", description: "When in doubt, ask for 10 versions and select the one you like with your own eyes." },
+};
+
 export function articleJsonLd(post: Pick<PostSource, "slug" | "title" | "description" | "publishedAt" | "updatedAt" | "socialImage" | "tags"> & { source?: string }) {
   const url = `${SITE_URL}/blog/${post.slug}/`;
   const words = post.source ? post.source.split(/\s+/).filter(Boolean).length : undefined;
@@ -80,6 +85,7 @@ export function articleJsonLd(post: Pick<PostSource, "slug" | "title" | "descrip
         author: PERSON,
         publisher: { "@id": PERSON["@id"] },
         image: absolute(post.socialImage ?? OG_IMAGE.url),
+        ...(DEFINED_TERMS[post.slug] ? { about: { "@type": "DefinedTerm", ...DEFINED_TERMS[post.slug], url: `${url}#post` } } : {}),
       },
       // the breadcrumb shown above the post: Peter Hraska / Writing / this post
       {

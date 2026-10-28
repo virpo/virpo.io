@@ -1,6 +1,6 @@
-Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <art dir>/projects/ai-build-week.png and print its path.
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out> and print its path.
 
-Attached: style.png (the style to match) and refs/ai-build-week-photo.jpg.
-Paint this real group photo from our AI Build Day event: about sixty participants in front of a screen, many waving, one holding a black flag that reads 'AI Build Day'. Keep every real person where they are, with the same faces, hair, clothes and poses; do not add, remove or invent anyone. Keep the flag. No added text, no headline.
+Attached: style.png (the style to match) and refs/ai-build-week-group.jpg.
+Paint this real group photo from our AI Build Week: about thirty participants in a light room, a back row standing and a front row kneeling and sitting on a blue-grey carpet, one man lying on his side in front, all in black T-shirts with the small white line "Rome wasn't prompted in a day." on the chest. Behind them a black flag with three bold diagonal stripes, red, yellow and light blue, held up on a pole. Keep every real person where they are, with the same faces, hair, clothes and poses; do not add, remove or invent anyone. Keep the flag. No added text, no headline; the T-shirt text may stay tiny and unreadable.
 Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture. Full colour. Not 3D, not vinyl, not a photo, not pixel art.
 Landscape 1536x1024. No border, no frame.
