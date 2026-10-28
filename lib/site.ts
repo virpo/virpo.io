@@ -57,7 +57,7 @@ export const PERSON = {
     "Peter Hraska (virpo) has worked at Slido (part of Cisco) for over ten years, between product, design and engineering. He builds AI products, agent tools, physical objects and events, and writes about making real things with AI agents.",
   email: "mailto:peter@hraska.sk",
   knowsAbout: ["AI agents", "Claude Code", "Product design", "Prompting", "Gacha prompting", "3D printing", "Hackathons"],
-  jobTitle: "Product, design and engineering",
+  jobTitle: "Machine Learning Engineering Technical Leader",
   worksFor: { "@type": "Organization", name: "Slido (part of Cisco)", url: "https://www.slido.com/" },
   sameAs: SAME_AS,
 };

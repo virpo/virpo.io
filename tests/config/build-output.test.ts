@@ -35,7 +35,7 @@ describe("static build-output assertions", () => {
 
   it.each([
     'http-equiv="refresh" content="0; url=${target}"',
-    'property="og:video" content="https://virpo.io/og/room-loop.mp4"',
+    'property="og:video" content="https://virpo.io/og/pocket-device.mp4"',
     '"@type":"ProfilePage"',
     '"@type":"BlogPosting"',
     "dist/llms.txt",
