@@ -24,6 +24,10 @@ const CSS = `
  * A clip: aspect, length, where its frame sits in the viewport (frame: css box, any size with the
  * aspect's ratio), a camera ([t, focus, zoom] keys, focus a selector or [x, y] in page px), and
  * beats for the pointer ({ at, dur, to } moves, { at, click }, { at, key }, { at, wheel }).
+ * zoomBy: "clip" films the camera by cropping each screenshot of an unscaled page at a high density
+ * (dsf) instead of scaling the page: Chrome draws the device's 3D layers at the page's own scale, so
+ * a page scaled up 4x shows their pixels, while a page drawn at 4x density doesn't.
+ * softKnurl blends the knurl's hard stripe edges over a fraction of a degree, so they don't step.
  */
 async function clip(name, o) {
   if (only.length && !only.includes(name)) return;
@@ -31,7 +35,9 @@ async function clip(name, o) {
   const FPS = o.fps ?? 30;
   const [W, H] = SIZES[o.aspect];
   const browser = await launch();
-  const st = await openStage({ browser, path: o.path ?? "/", viewport: VIEW, dsf: W / o.frame.width, seed: o.seed ?? 41 });
+  const byClip = o.zoomBy === "clip";
+  const dsf = o.dsf ?? W / o.frame.width;
+  const st = await openStage({ browser, path: o.path ?? "/", viewport: VIEW, dsf, seed: o.seed ?? 41 });
   const { page } = st;
   await page.addStyleTag({ content: CSS });
   await page.evaluate(([arrow]) => {
@@ -44,6 +50,10 @@ async function clip(name, o) {
     document.getElementById("vcursor")?.remove();
   }, [ARROW]);
   if (o.prepare) await o.prepare(st);
+  if (o.softKnurl)
+    await page.addStyleTag({ content: `
+      [class*="device-module__"][class$="__ring"] { background: linear-gradient(rgb(60 20 0 / calc(0.36 - var(--r) * 0.022)), rgb(60 20 0 / calc(0.36 - var(--r) * 0.022))), repeating-conic-gradient(from var(--knob), #ec6d2c 0deg 2.7deg, #b8471a 3.5deg 5.9deg, #ec6d2c 6.4deg) !important; }
+      [class*="device-module__"][class*="__ringTop"] { background: radial-gradient(circle, transparent 60%, rgba(0, 0, 0, 0.18) 72%, transparent 73%), repeating-conic-gradient(from var(--knob), #ec6d2c 0deg 2.7deg, #b8471a 3.5deg 5.9deg, #ec6d2c 6.4deg) !important; }` });
 
   // a point in page px; boxes measured while the camera is on are mapped back through it
   let live = null;
@@ -71,7 +81,14 @@ async function clip(name, o) {
     }
     return keys[keys.length - 1];
   };
-  const toScreen = ([x, y], f, z) => [C[0] + (x - f[0]) * z, C[1] + (y - f[1]) * z];
+  const toScreen = byClip ? ([x, y]) => [x, y] : ([x, y], f, z) => [C[0] + (x - f[0]) * z, C[1] + (y - f[1]) * z];
+  // in clip mode, the part of the page the camera sees this frame, and how far that is resized
+  let view = o.frame;
+  const camBox = (f, z) => {
+    const w = o.frame.width / z;
+    const h = o.frame.height / z;
+    return { x: f[0] - w / 2, y: f[1] - h / 2, width: w, height: h };
+  };
 
   const beats = o.beats ?? [];
   const state = beats.map(() => ({}));
@@ -79,12 +96,17 @@ async function clip(name, o) {
   let ring = { t: -9, at: pos };
   await record(st, join(work, name), Math.round(o.length * FPS), {
     dt: 1000 / FPS,
-    clip: o.frame,
+    clip: byClip ? { x: 0, y: 0, width: VIEW.width, height: VIEW.height } : o.frame,
+    cropFor: byClip ? () => view : () => null,
+    scaleFor: byClip ? () => W / (view.width * dsf) : () => "device",
     before: async (i, _t) => {
       const t = i / FPS;
       const [, f, z] = cam(t);
-      await page.evaluate(([tx, ty, z]) => (document.body.style.transform = `translate(${tx}px, ${ty}px) scale(${z})`), [C[0] - f[0] * z, C[1] - f[1] * z, z]);
-      live = [f, z];
+      if (byClip) view = camBox(f, z);
+      else {
+        await page.evaluate(([tx, ty, z]) => (document.body.style.transform = `translate(${tx}px, ${ty}px) scale(${z})`), [C[0] - f[0] * z, C[1] - f[1] * z, z]);
+        live = [f, z];
+      }
       if (o.each) await o.each(st, t);
       if (o.tilt) {
         const [tx, ty] = o.tilt(t, pos);
@@ -118,10 +140,10 @@ async function clip(name, o) {
       if (o.cursor !== false) await page.mouse.move(m[0], m[1]);
       const r = toScreen(ring.at, f, z);
       await page.evaluate(
-        ([x, y, show, hand, arrow, age, rx, ry]) => {
+        ([x, y, show, hand, arrow, age, rx, ry, k]) => {
           const c = document.getElementById("xcur");
           c.style.display = show ? "block" : "none";
-          c.style.transform = `translate(${x - 3}px, ${y - 2}px) scale(1.5)`;
+          c.style.transform = `translate(${x - 3}px, ${y - 2}px) scale(${1.5 * k})`;
           const link = document.elementFromPoint(x, y)?.closest("a, button, [data-hit]");
           const want = link ? "hand" : "arrow";
           if (c.dataset.k !== want) {
@@ -131,10 +153,11 @@ async function clip(name, o) {
           const el = document.getElementById("xring");
           if (age < 0.5) {
             el.style.opacity = String(0.95 * (1 - age / 0.5));
-            el.style.transform = `translate(${rx}px, ${ry}px) scale(${0.5 + (age / 0.5) * 1.3})`;
+            el.style.transform = `translate(${rx}px, ${ry}px) scale(${(0.5 + (age / 0.5) * 1.3) * k})`;
           } else el.style.opacity = "0";
         },
-        [m[0], m[1], o.cursor !== false && (!o.cursorFrom || t >= o.cursorFrom), HAND, ARROW, t - ring.t, r[0], r[1]],
+        // the cursor and the click ring keep their size on screen however close the camera is
+        [m[0], m[1], o.cursor !== false && (!o.cursorFrom || t >= o.cursorFrom), HAND, ARROW, t - ring.t, r[0], r[1], byClip ? 1 / z : 1],
       );
     },
   });
@@ -347,7 +370,7 @@ await clip("hero", {
 // painted room as a train crosses the window, then pulls back as before: no deep zoom into the art
 const screen = '[data-variant] [class$="__screen"]';
 const knob = '[class*="device-module__"][class$="__knob"]';
-await clip("hero2", {
+const hero2 = {
   aspect: "16x10-4k", frame: { x: 0, y: 0, width: 1440, height: 900 }, length: 11.5, fps: 60, seed: 21,
   prepare: async (st) => {
     await st.page.addStyleTag({ content: '[class*="device-module__"][class$="__knobMark"] { transition: none !important; }' });
@@ -385,4 +408,8 @@ await clip("hero2", {
     { at: 7.0, dur: 0.4, to: title("weird-use-of-ai-1") },
     { at: 8.0, dur: 0.75, to: hit("peter") },
   ],
-});
+};
+await clip("hero2", hero2);
+// its first 0.8 s again, sharp: the knob close-up and the whip out, drawn at 4x density with the
+// knurl's stripes softened (capture with GPU=1); the edit lays it over hero2 and fades across at 0.75 s
+await clip("hero2hd", { ...hero2, length: Number(process.env.LEN ?? 0.8), zoomBy: "clip", dsf: 12, softKnurl: true });

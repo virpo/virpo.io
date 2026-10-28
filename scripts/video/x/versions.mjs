@@ -178,7 +178,7 @@ const versions = {
 
   // ------------------------------------------------------------------ V11
   // "my new website is a pocket device": no overlays, only the site and the cursor
-  v11: { name: "pocket-device", aspect: "16x9", dur: 11.5, fps: 60, ss: 2, world: [[5.0, [0, 0, 1]], [5.6, [0, 0, 0.955]], [7.6, [2.2, -2.6, 0.95]], [9.4, [-1.8, 2.2, 0.955]], [10.2, [0, 0, 1]]], layers: (hero = "hero") => {
+  v11: { name: "pocket-device", aspect: "16x9", dur: 11.5, fps: 60, ss: 2, world: [[5.0, [0, 0, 1]], [5.6, [0, 0, 0.955]], [7.6, [2.2, -2.6, 0.95]], [9.4, [-1.8, 2.2, 0.955]], [10.2, [0, 0, 1]]], layers: (hero = "hero", hd = null) => {
     const A = [0, -60, 1920, 1200];
     const B = [490, 84, 940, 587.5];
     const chrome = (b) => [b[0], b[1] - 44, b[2], 44];
@@ -195,6 +195,8 @@ const versions = {
       rect({ t0: 0, box: [0, 0, 1920, 1080], color: "#ebe3d5", opacity: [[4.9, 0], [5.5, 1], [9.7, 1], [10.3, 0]], fixed: true }),
       rect({ t0: 0, box: keys(frame), color: "#faf7f2", radius: 14, shadow, opacity: [[4.8, 0], [5.2, 1], [9.9, 1], [10.4, 0]] }),
       { type: "seq", ...clip(hero), fps: 60, t0: 0, box: keys((b) => b), radius: "0 0 14px 14px" },
+      // the opening again, drawn sharp (live.mjs hero2hd), fading into the take at 0.75 s
+      ...(hd ? [{ type: "seq", ...clip(hd), fps: 60, t0: 0, t1: 0.8, box: A, out: { type: "fade", dur: 0.08 } }] : []),
       { type: "html", t0: 4.9, t1: 10.35, box: keys(chrome), in: { type: "fade", dur: 0.3 }, out: { type: "fade", dur: 0.25 }, justify: "center", align: "stretch",
         html: `<div style="position:relative;width:100%;height:100%;background:#f3eee6;border-radius:14px 14px 0 0;border-bottom:1px solid rgba(60,40,20,.08);display:flex;align-items:center;justify-content:center">
           <span style="position:absolute;left:16px;display:flex;gap:8px"><i style="width:12px;height:12px;border-radius:50%;background:#dcd4c8"></i><i style="width:12px;height:12px;border-radius:50%;background:#dcd4c8"></i><i style="width:12px;height:12px;border-radius:50%;background:#dcd4c8"></i></span>
@@ -206,7 +208,7 @@ const versions = {
 };
 
 // V12: V11 opening on the knob instead of deep inside the window
-versions.v12 = { ...versions.v11, name: "pocket-device-knob", layers: () => versions.v11.layers("hero2") };
+versions.v12 = { ...versions.v11, name: "pocket-device-knob", layers: () => versions.v11.layers("hero2", "hero2hd") };
 
 for (const [id, v] of Object.entries(versions)) {
   if (only.length && !only.includes(id)) continue;

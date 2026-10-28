@@ -72,8 +72,10 @@ const CAPTURE_CSS = `
 
 const CURSOR_SVG = `<svg viewBox="0 0 26 26" width="26" height="26" xmlns="http://www.w3.org/2000/svg"><path d="M3 2 L3 20.5 L7.6 16.4 L10.9 23.6 L14.3 22.1 L11.1 15 L17.4 15 Z" fill="#1f1a15" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
 
+// GPU=1: full Chromium on the Mac's GPU (Metal) instead of the headless shell's software renderer,
+// which places the device's 3D layers without smoothing (rotated edges come out stepped up close)
 export async function launch() {
-  return chromium.launch({ args: ["--font-render-hinting=none", "--disable-lcd-text", "--force-color-profile=srgb"] });
+  return chromium.launch({ channel: process.env.GPU ? "chromium" : undefined, args: ["--font-render-hinting=none", "--disable-lcd-text", "--force-color-profile=srgb"] });
 }
 
 /**
