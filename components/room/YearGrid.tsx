@@ -1,89 +1,53 @@
 import type { AiProject } from "../../lib/ai-projects";
 import styles from "../../app/(room)/ai/ai.module.css";
 
-const CELL = 11;
-const GAP = 3;
-const DAY = 86400000;
-const iso = (t: number) => new Date(t).toISOString().slice(0, 10);
+const MONTHS = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
+const NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+/** The id of a month's first card, which its tile scrolls to. */
+export const monthId = (start: string) => `m-${start.slice(0, 7)}`;
 
 /**
- * One GitHub-style grid per year: a column per week, a square per day, at GitHub's size. A day is
- * washed orange while a project is being worked on (deeper when three or more are), and solid orange
- * on the day a project starts; that square links to its card.
+ * A small overview: a row per year, a tile per month, deeper orange the more projects started that
+ * month. A month with projects links to its first card.
  */
 export function YearGrid({ projects, today }: { projects: AiProject[]; today: string }) {
-  const active = new Map<string, string[]>();
-  const starts = new Map<string, AiProject[]>();
-  for (const p of projects) {
-    const a = Date.parse(p.start);
-    const b = Date.parse(p.until ?? p.start);
-    for (let t = a; t <= b; t += DAY) active.set(iso(t), [...(active.get(iso(t)) ?? []), p.title]);
-    starts.set(p.start, [...(starts.get(p.start) ?? []), p]);
-  }
   const first = Number(projects.reduce((m, p) => (p.start < m ? p.start : m), today).slice(0, 4));
   const last = Number(today.slice(0, 4));
   const years = Array.from({ length: last - first + 1 }, (_, i) => last - i);
+  const now = today.slice(0, 7);
 
   return (
-    <div className={styles.grids}>
+    <div className={styles.grid} role="group" aria-label="Projects by month">
+      <span />
+      {MONTHS.map((m, i) => (
+        <span key={i} className={styles.gridMonth} aria-hidden="true">
+          {m}
+        </span>
+      ))}
+      <span />
       {years.map((year) => {
-        const jan1 = Date.UTC(year, 0, 1);
-        const offset = new Date(jan1).getUTCDay();
-        const days = (Date.UTC(year + 1, 0, 1) - jan1) / DAY;
-        const weeks = Math.ceil((days + offset) / 7);
-        const count = projects.filter((p) => p.start.startsWith(String(year))).length;
-        const cells = [];
-        const months = [];
-        for (let d = 0; d < days; d++) {
-          const t = jan1 + d * DAY;
-          const day = iso(t);
-          const col = Math.floor((d + offset) / 7);
-          const row = (d + offset) % 7;
-          if (new Date(t).getUTCDate() === 1) months.push({ col, label: new Date(t).toLocaleString("en", { month: "short", timeZone: "UTC" }) });
-          const x = col * (CELL + GAP);
-          const y = row * (CELL + GAP) + 16;
-          const begun = starts.get(day);
-          const on = active.get(day);
-          const level = begun ? 4 : on ? (on.length >= 3 ? 2 : 1) : 0;
-          const future = day > today;
-          const rect = <rect x={x} y={y} width={CELL} height={CELL} rx={2.5} data-level={future ? "future" : level} />;
-          if (begun) {
-            cells.push(
-              <a key={day} href={`#${begun[0].slug}`}>
-                <title>{`${day}: started ${begun.map((p) => p.title).join(", ")}`}</title>
-                {rect}
-              </a>,
+        const ofYear = projects.filter((p) => p.start.startsWith(String(year)));
+        return [
+          <span key={`${year}-y`} className={styles.gridYear}>
+            {year}
+          </span>,
+          ...NAMES.map((name, i) => {
+            const ym = `${year}-${String(i + 1).padStart(2, "0")}`;
+            const items = projects.filter((p) => p.start.startsWith(ym));
+            const level = items.length === 0 ? 0 : items.length === 1 ? 1 : items.length <= 3 ? 2 : 3;
+            if (ym > now) return <span key={ym} className={styles.tile} data-level="future" />;
+            return items.length ? (
+              <a key={ym} href={`#${monthId(ym)}`} className={styles.tile} data-level={level} title={`${name} ${year}: ${items.map((p) => p.title).join(", ")}`} aria-label={`${name} ${year}: ${items.length} ${items.length === 1 ? "project" : "projects"}`} />
+            ) : (
+              <span key={ym} className={styles.tile} data-level={0} title={`${name} ${year}`} />
             );
-          } else {
-            cells.push(
-              <g key={day}>
-                {on ? <title>{`${day}: ${on.join(", ")}`}</title> : null}
-                {rect}
-              </g>,
-            );
-          }
-        }
-        return (
-          <div key={year} className={styles.gridRow}>
-            <p className={styles.gridYear}>
-              {year} <span>{count ? `${count} ${count === 1 ? "thing" : "things"}` : "nothing yet"}</span>
-            </p>
-            <div className={styles.gridScroll}>
-              <svg className={styles.grid} width={weeks * (CELL + GAP) - GAP} height={7 * (CELL + GAP) - GAP + 16} viewBox={`0 0 ${weeks * (CELL + GAP) - GAP} ${7 * (CELL + GAP) - GAP + 16}`} role="img" aria-label={`${year}: ${count} projects started`}>
-                {months.map((m) => (
-                  <text key={m.label} x={m.col * (CELL + GAP)} y={10} className={styles.gridMonth}>
-                    {m.label}
-                  </text>
-                ))}
-                {cells}
-              </svg>
-            </div>
-          </div>
-        );
+          }),
+          <span key={`${year}-c`} className={styles.gridCount}>
+            {ofYear.length}
+          </span>,
+        ];
       })}
-      <p className={styles.legend} aria-hidden="true">
-        Less <svg viewBox="0 0 53 11"><rect x="0" width="11" height="11" rx="2.5" data-level="0" /><rect x="14" width="11" height="11" rx="2.5" data-level="1" /><rect x="28" width="11" height="11" rx="2.5" data-level="2" /><rect x="42" width="11" height="11" rx="2.5" data-level="4" /></svg> More · a solid square is the day a project started
-      </p>
     </div>
   );
 }

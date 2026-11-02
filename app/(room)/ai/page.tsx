@@ -3,7 +3,7 @@ import { CardsInView } from "../../../components/room/CardsInView";
 import { ProjectLogo } from "../../../components/room/ProjectLogo";
 import { RoomBackKey, RoomFooter } from "../../../components/room/RoomChrome";
 import { SiteMark } from "../../../components/room/SiteMark";
-import { YearGrid } from "../../../components/room/YearGrid";
+import { monthId, YearGrid } from "../../../components/room/YearGrid";
 import { V2SocialIcon } from "../../../components/v2/V2SocialIcon";
 import { aiProjects, type AiProject } from "../../../lib/ai-projects";
 import { jsonLd, pageMeta, PERSON, SITE_URL } from "../../../lib/site";
@@ -134,11 +134,15 @@ export default function AiPage() {
                 {year} <span>{items.length}</span>
               </h2>
               <ul className={shell.projectGrid}>
-                {items.map((project) => (
-                  <li key={project.slug} id={project.slug}>
-                    <Card project={project} />
-                  </li>
-                ))}
+                {items.map((project, i) => {
+                  // the first card of each month carries the month's anchor for the overview
+                  const firstOfMonth = i === 0 || items[i - 1].start.slice(0, 7) !== project.start.slice(0, 7);
+                  return (
+                    <li key={project.slug} id={firstOfMonth ? monthId(project.start) : project.slug}>
+                      <Card project={project} />
+                    </li>
+                  );
+                })}
               </ul>
             </section>
           );

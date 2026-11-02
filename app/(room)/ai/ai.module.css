@@ -31,122 +31,69 @@
   line-height: 1.5;
 }
 
-/* ---- the year grid ---- */
-.grids {
-  display: grid;
-  gap: 1.1rem;
-  margin-bottom: 3.4rem;
-}
-
-.gridRow {
-  display: grid;
-  grid-template-columns: 7.5rem minmax(0, max-content);
-  gap: 1rem;
-  align-items: start;
-}
-
-.gridYear {
-  margin: 0;
-  padding-top: 14px;
-  font-weight: 600;
-  font-size: 1.05rem;
-}
-
-.gridYear span {
-  display: block;
-  margin-top: 2px;
-  color: var(--grey);
-  font: 500 11.5px/1.4 var(--font-room-mono), ui-monospace, monospace;
-}
-
-.gridScroll {
-  min-width: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-/* GitHub's size: an 11px square per day, never stretched; it scrolls on narrow screens */
+/* ---- the overview: a row per year, a small tile per month ---- */
 .grid {
-  display: block;
-  max-width: none;
-  height: auto;
-}
-
-.grid rect,
-.legend rect {
-  fill: #ece4d8;
-}
-
-.grid [data-level="1"],
-.legend [data-level="1"] {
-  fill: #f7d9c2;
-}
-
-.grid [data-level="2"],
-.legend [data-level="2"] {
-  fill: #f1b48a;
-}
-
-.grid [data-level="4"],
-.legend [data-level="4"] {
-  fill: var(--orange);
-}
-
-.grid [data-level="future"] {
-  fill: #f4efe7;
-}
-
-.grid a rect {
-  transition: transform 120ms ease;
-  transform-box: fill-box;
-  transform-origin: center;
-}
-
-.grid a:hover rect,
-.grid a:focus-visible rect {
-  transform: scale(1.35);
-  stroke: var(--ink);
-  stroke-width: 1.2;
+  display: grid;
+  grid-template-columns: auto repeat(12, 16px) auto;
+  gap: 4px;
+  align-items: center;
+  justify-content: start;
+  margin-bottom: 3.2rem;
 }
 
 .gridMonth {
-  fill: var(--grey);
-  font: 500 9px var(--font-room-mono), ui-monospace, monospace;
-}
-
-.legend {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0.2rem 0 0 8.5rem;
   color: var(--grey);
-  font: 500 11.5px/1.4 var(--font-room-mono), ui-monospace, monospace;
+  font: 500 10px/1 var(--font-room-mono), ui-monospace, monospace;
+  text-align: center;
 }
 
-.legend svg {
-  width: 53px;
-  height: 11px;
+.gridYear {
+  padding-right: 10px;
+  color: var(--ink-2);
+  font: 600 12px/1 var(--font-room-mono), ui-monospace, monospace;
 }
 
-@media (max-width: 699px) {
-  .gridRow {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0.2rem;
-  }
+.gridCount {
+  padding-left: 10px;
+  color: var(--grey);
+  font: 500 11px/1 var(--font-room-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
 
-  .gridYear {
-    padding-top: 0;
-  }
+.tile {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: #ece4d8;
+}
 
-  .gridYear span {
-    display: inline;
-    margin-left: 6px;
-  }
+.tile[data-level="1"] {
+  background: #f5c9a8;
+}
 
-  .legend {
-    margin-left: 0;
-    flex-wrap: wrap;
-  }
+.tile[data-level="2"] {
+  background: #ee9b62;
+}
+
+.tile[data-level="3"] {
+  background: var(--orange);
+}
+
+.tile[data-level="future"] {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px #ece4d8;
+}
+
+a.tile {
+  transition: transform 120ms ease;
+}
+
+a.tile:hover,
+a.tile:focus-visible {
+  transform: scale(1.25);
+  outline: 1.5px solid var(--ink);
+  outline-offset: 1px;
 }
 
 /* ---- the cards, year by year ---- */
@@ -172,13 +119,11 @@
   scroll-margin-top: 1.5rem;
 }
 
-.year li:target :global(*) {
-  animation: none;
-}
-
+/* the first card of a month is where its tile in the overview scrolls to */
 .year li:target > * > span:first-child {
   box-shadow: 0 0 0 3px var(--orange), 0 18px 34px -24px rgba(60, 40, 20, 0.5);
 }
+
 
 .blurb {
   color: var(--ink-2);
