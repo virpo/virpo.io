@@ -28,6 +28,7 @@ export function GET() {
     "",
     "## More",
     "",
+    `- [Things I made with AI](${SITE_URL}/ai/): every project since 2023, newest first`,
     `- [Agent skills](${SITE_URL}/skills/): skills for coding agents, free to use`,
     `- [Levels](${SITE_URL}/levels/): what level are you with agents?`,
     `- [Levels, for agents](${SITE_URL}/levels/llms.txt): the 100 tricks as Markdown (${SITE_URL}/levels/levels.md) and the check an agent runs (${SITE_URL}/levels/check.md)`,
