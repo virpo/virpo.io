@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { CardLoops } from "../../../components/room/CardLoops";
-import { CardsInView } from "../../../components/room/CardsInView";
+import { ColourOnScroll } from "../../../components/room/ColourOnScroll";
 import { ProjectLogo } from "../../../components/room/ProjectLogo";
 import { RoomBackKey, RoomFooter } from "../../../components/room/RoomChrome";
 import { SiteMark } from "../../../components/room/SiteMark";
@@ -159,7 +159,7 @@ export default function AiPage() {
         })}
       </main>
       <RoomFooter />
-      <CardsInView />
+      <ColourOnScroll />
       <CardLoops />
     </div>
   );

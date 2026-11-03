@@ -26,7 +26,7 @@ HERE = Path(__file__).parent
 ART = HERE / "art" / "ai"
 OUT = HERE.parents[2] / "public" / "ai"
 # photos of people and objects get the soft pencil, so faces and hardware don't turn eerie
-SOFT = {"enkiplate", "ai-build-day", "product-festival", "blendo-coffee"}
+SOFT = {"enkiplate", "ai-build-day", "product-festival", "blendo-coffee", "dough-press", "moonlit"}
 # where to cut a source that isn't 3:2 (0 top, 0.5 middle, 1 bottom)
 FOCUS = {"enkiplate": 0.45, "tada": 0.4}
 

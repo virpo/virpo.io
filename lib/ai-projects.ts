@@ -27,6 +27,8 @@ export type AiProject = {
   logo?: AiLogo;
   /** private: shown, but without a link */
   private?: boolean;
+  /** hidden: kept here, not shown yet */
+  hidden?: boolean;
 };
 
 const gh = (repo: string): AiLogo => ({ repo: `virpo/${repo}` });
@@ -47,11 +49,11 @@ export const AI_PROJECTS: AiProject[] = [
   { slug: "agent-olympics", title: "Agent Olympics", start: "2026-02-23", until: "2026-02-24", kind: "Agent tool", blurb: "A capture-the-flag for agents: browser, document, spreadsheet, Slack and visual challenges.", href: "https://github.com/virpo/ctf-agent-olympics", card: "ai", logo: gh("ctf-agent-olympics") },
   { slug: "youtldr", title: "YouTLDR", start: "2026-03-30", until: "2026-10-27", kind: "Product", blurb: "A YouTube extension that gives you the answer before the video takes your time.", href: "https://youtldr.com", card: "room" },
   { slug: "pegboard-toy", title: "Pegboard Toy", start: "2026-03-30", until: "2026-04-12", kind: "Hardware", blurb: "A hand sketch and two measurements became a 3D-printed toy for my son.", href: "https://github.com/virpo/pegboard", card: "room" },
-  { slug: "dough-press", title: "Dough Press", start: "2026-04-04", kind: "Hardware", blurb: "A play-dough roller and stamp cube, designed through an agent-to-printer loop.", href: "https://makerworld.com/en/models/3241784", logo: { word: "MakerWorld" } },
+  { slug: "dough-press", title: "Christmas Dough Roller", start: "2026-04-04", kind: "Hardware", blurb: "A play-dough roller with seven Christmas stamps, designed through an agent-to-printer loop. On MakerWorld.", href: "https://makerworld.com/en/models/3518990-christmas-play-dough-roller-7-stamps", card: "ai", logo: { word: "MakerWorld" } },
   { slug: "virpo-pocket-room", title: "virpo.io", start: "2026-04-09", until: "2026-10-28", kind: "Product", blurb: "This website: a painted room in a pocket device, made by asking for ten of everything.", href: "/blog/how-this-room-was-made/", card: "ai", logo: { src: "/ai/logos/virpo.png", word: "virpo.io" } },
   { slug: "japan", title: "Japan knowledge base", start: "2026-04-11", until: "2026-07-17", kind: "Personal", blurb: "Every place for a family trip to Japan, 116 pins from Tokyo to Ishigaki, kept by an agent and now growing into a guide.", card: "ai", private: true, logo: { word: "116 places" } },
   { slug: "prehistoriq-stacks", title: "Prehistoriq Stacks", start: "2026-05-10", kind: "Research", blurb: "How 94 engineers actually use coding agents: tools, models, how they review.", href: "https://prehistoriq.com/stacks", card: "ai", logo: { word: "prehistoriq/stacks", style: "mono" } },
-  { slug: "marketplace-seller-agent", title: "Sell My Stuff", start: "2026-06-11", kind: "Agent tool", blurb: "An agent skill that turns photos of your old things into researched, priced marketplace listings. It sold my guitar.", href: "/skills/#sell-my-stuff", card: "ai", logo: { src: "/ai/logos/agent-skills.png", word: "sell-my-stuff" } },
+  { slug: "marketplace-seller-agent", title: "Sell My Stuff", start: "2026-06-11", kind: "Agent tool", blurb: "An agent skill that turns photos of your old things into researched, priced marketplace listings. Thirteen things sold, €584.", href: "/skills/#sell-my-stuff", card: "ai", loop: true, logo: { src: "/ai/logos/agent-skills.png", word: "sell-my-stuff" } },
   { slug: "cmux-deck", title: "CMUX Deck", start: "2026-06-19", kind: "Hardware", blurb: "A Stream Deck that shows what each of my coding agents is doing.", href: "https://github.com/virpo/cmux-deck", card: "room" },
   { slug: "tada", title: "Tada", start: "2026-07-10", until: "2026-09-04", kind: "Product", blurb: "A disposable camera for events: one shared roll, no retakes, revealed the morning after. On the App Store.", href: "https://apps.apple.com/gb/app/tada-disposable-camera-event/id6790120023", card: "ai", logo: { src: "/ai/logos/tada.png", word: "tada" } },
   { slug: "autoslides", title: "Autoslides", start: "2026-07-17", kind: "Agent tool", blurb: "Presentations built natively by agents, through render-and-review loops.", href: "https://github.com/virpo/autoslides", card: "ai", logo: { src: "/ai/logos/autoslides.png", word: "Autoslides" } },
@@ -66,10 +68,10 @@ export const AI_PROJECTS: AiProject[] = [
   { slug: "plane", title: "The Jumbo Jet", start: "2026-10-10", kind: "For kids", blurb: "An interactive cut-away of a Boeing 747 for children: zoom into the painting and open it up.", href: "https://plane.virpo.io", card: "ai", loop: true, logo: { word: "plane.virpo.io", style: "mono" } },
   { slug: "howthings-work", title: "howthings.work", start: "2026-10-28", kind: "For kids", blurb: "A picture encyclopedia of machines for small children: zoom into a pencil town, into the Jumbo Jet, into the cockpit, and take off.", href: "https://howthings.work", card: "ai", loop: true, logo: { src: "/ai/logos/howthings-work.png", word: "howthings.work" } },
   { slug: "moonlit", title: "Moonlit", start: "2026-10-20", until: "2026-10-26", kind: "For kids", blurb: "Oli’s bedtime library: three little worlds to read aloud, in English and Slovak, with sounds and illustrated books like Nela and the bakery under the duvet.", href: "https://moonlit.virpo.io", card: "ai", logo: { src: "/ai/logos/moonlit.svg", word: "Moonlit" } },
-  { slug: "dojo", title: "Dojo", start: "2026-10-21", until: "2026-10-23", kind: "Product", blurb: "Thirty minutes a day, one practice, and a sensei that learns you.", private: true },
+  { slug: "dojo", title: "Dojo", start: "2026-10-21", until: "2026-10-23", kind: "Product", blurb: "Thirty minutes a day, one practice, and a sensei that learns you.", private: true, hidden: true },
   { slug: "levels", title: "Levels", start: "2026-10-24", until: "2026-10-26", kind: "Agent tool", blurb: "100 levels of working with coding agents. Your agent checks which you do and deals you a card.", href: "/levels/", card: "room" },
   { slug: "enkiplate", title: "Enkiplate", start: "2026-10-24", kind: "Hardware", blurb: "Japanese flashcards on e-paper, with washi, spaced repetition, the weather and your next events.", href: "https://github.com/virpo/enkiplate", card: "ai", logo: gh("enkiplate") },
 ];
 
 /** newest first */
-export const aiProjects = () => [...AI_PROJECTS].sort((a, b) => b.start.localeCompare(a.start));
+export const aiProjects = () => AI_PROJECTS.filter((p) => !p.hidden).sort((a, b) => b.start.localeCompare(a.start));
