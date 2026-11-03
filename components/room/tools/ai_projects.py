@@ -6,12 +6,15 @@ For every source this writes into public/ai/:
 
     <slug>.webp, <slug>-720.webp, <slug>-540.webp                      colour
     <slug>-pencil.webp, <slug>-pencil-720.webp, <slug>-pencil-540.webp  pencil, shown at rest
+    <slug>.mp4                                  for art/ai/loops/<slug>.mp4: a small muted loop, 3:2,
+                                                that plays over the card on hover
 
 The list itself, with dates, words and logos, is lib/ai-projects.ts.
 
     python3 components/room/tools/ai_projects.py
 """
 
+import subprocess
 from pathlib import Path
 
 import numpy as np
@@ -53,6 +56,12 @@ def main() -> None:
         save(colour, slug)
         save(grey, f"{slug}-pencil")
         print(f"{slug:26} done")
+    # loops: cropped to the card's 3:2, 720 px wide, 30 fps, no sound, small enough to autoplay
+    for src in sorted((ART / "loops").glob("*.mp4")):
+        out = OUT / f"{src.stem}.mp4"
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(src), "-vf", "crop='min(iw,ih*3/2)':'min(ih,iw*2/3)',scale=720:480:flags=lanczos,fps=30,format=yuv420p",
+                        "-c:v", "libx264", "-profile:v", "high", "-preset", "slow", "-crf", "27", "-movflags", "+faststart", "-an", str(out)], check=True)
+        print(f"{src.stem:26} loop {out.stat().st_size // 1024} KB")
 
 
 if __name__ == "__main__":

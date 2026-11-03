@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { CardLoops } from "../../../components/room/CardLoops";
 import { CardsInView } from "../../../components/room/CardsInView";
 import { ProjectLogo } from "../../../components/room/ProjectLogo";
 import { RoomBackKey, RoomFooter } from "../../../components/room/RoomChrome";
@@ -49,6 +50,10 @@ function Card({ project }: { project: AiProject }) {
   const base = project.card === "room" ? `/lab/room/projects/${project.slug}` : `/ai/${project.slug}`;
   const art = project.card ? (
     <>
+      {project.loop ? (
+        // the moving version, over the picture; it plays on hover (or when in view on a phone)
+        <video className={styles.loop} src={`/ai/${project.slug}.mp4`} muted loop playsInline preload="none" aria-hidden="true" data-card-loop />
+      ) : null}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img className={shell.projectPencil} src={`${base}-pencil-720.webp`} srcSet={srcSet(`${base}-pencil`)} sizes={CARD_SIZES} alt="" width={1080} height={720} loading="lazy" decoding="async" />
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -122,6 +127,11 @@ export default function AiPage() {
           <p className={styles.thesis}>
             {projects.length} things since 2023, most of them in the last year. Without agents it would have taken me a lifetime. I just worry about the people who will use them for evil.
           </p>
+          <a className={styles.follow} href="https://x.com/virpo" target="_blank" rel="noopener">
+            <V2SocialIcon name="x" />
+            <span>I post what I make with AI on X as I make it.</span>
+            <b>Follow @virpo</b>
+          </a>
         </header>
 
         <YearGrid projects={projects} today={today} />
@@ -150,6 +160,7 @@ export default function AiPage() {
       </main>
       <RoomFooter />
       <CardsInView />
+      <CardLoops />
     </div>
   );
 }

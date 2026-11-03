@@ -1,0 +1,6 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out>
+
+Attached: plate-b.png is the illustration style to match (cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes).
+Paint a funky app logo mark for "Autoslides", a tool where AI agents build presentation slides by themselves: a cheerful red-and-cream shiba inu, head and paws only, popping up from behind a small presentation slide on an easel, holding a pointer stick, the slide showing a tiny orange bar chart. Bold, simple, readable at 32 pixels: a chunky silhouette, thick outlines, few details, flat orange (#e8621c), cream and near-black colours with a light watercolor wash. Centred, filling 80% of the frame. No text, no letters.
+Background: perfectly flat solid magenta (#FF00FF), no shadow on it.
+Square 1024x1024.

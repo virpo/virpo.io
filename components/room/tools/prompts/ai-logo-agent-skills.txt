@@ -1,0 +1,6 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out>
+
+Attached: plate-b.png is the illustration style to match (cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes).
+Paint an app logo mark for "Agent Skills", a free set of skills that make coding agents good at real chores: a small cream toolbox opened, with a few tools sticking out (a wrench, a screwdriver, a pencil) and a tiny friendly robot head peeking out of it, one tool held up like it just learned it. Bold, simple, readable at 32 pixels: a chunky silhouette, thick outlines, few details, flat orange (#e8621c), cream, warm grey and near-black colours with a light watercolor wash. Centred, filling 80% of the frame. No text, no letters.
+Background: perfectly flat solid magenta (#FF00FF), no shadow on it.
+Square 1024x1024.

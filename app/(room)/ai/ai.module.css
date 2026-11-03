@@ -155,3 +155,58 @@ a.tile:focus-visible {
   text-align: center;
   text-wrap: balance;
 }
+
+/* a card's loop sits over its picture and fades in while it plays */
+.loop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+
+[data-project-card]:hover .loop,
+[data-project-card]:focus-visible .loop,
+[data-project-card][data-in-view] .loop {
+  opacity: 1;
+}
+
+/* the line about X under the thesis: one quiet row, the handle in orange */
+.follow {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.7rem;
+  justify-self: start;
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  background: #f1eadf;
+  color: var(--ink-2) !important;
+  font-size: 0.95rem;
+  text-decoration: none !important;
+  transition: background 140ms ease;
+}
+
+.follow svg {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+}
+
+.follow b {
+  color: var(--orange-ink, #b8480f);
+  font-weight: 600;
+}
+
+.follow:hover {
+  background: #ebe1d2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loop {
+    display: none;
+  }
+}
