@@ -56,11 +56,11 @@ def main() -> None:
         save(colour, slug)
         save(grey, f"{slug}-pencil")
         print(f"{slug:26} done")
-    # loops: cropped to the card's 3:2, 720 px wide, 30 fps, no sound, small enough to autoplay
+    # loops: cropped to the card's 3:2, 600 px wide (cards show at ~340 px), 30 fps, no sound, small enough to autoplay
     for src in sorted((ART / "loops").glob("*.mp4")):
         out = OUT / f"{src.stem}.mp4"
-        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(src), "-vf", "crop='min(iw,ih*3/2)':'min(ih,iw*2/3)',scale=720:480:flags=lanczos,fps=30,format=yuv420p",
-                        "-c:v", "libx264", "-profile:v", "high", "-preset", "slow", "-crf", "27", "-movflags", "+faststart", "-an", str(out)], check=True)
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(src), "-vf", "crop='min(iw,ih*3/2)':'min(ih,iw*2/3)',scale=600:400:flags=lanczos,fps=30,format=yuv420p",
+                        "-c:v", "libx264", "-profile:v", "high", "-preset", "slow", "-crf", "29", "-movflags", "+faststart", "-an", str(out)], check=True)
         print(f"{src.stem:26} loop {out.stat().st_size // 1024} KB")
 
 

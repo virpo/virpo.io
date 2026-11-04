@@ -168,16 +168,9 @@ a.tile:focus-visible {
   transition: opacity 240ms ease;
 }
 
-/* the loop shows while it plays: on hover or focus, or (phones) while in view */
-[data-project-card]:hover .loop,
-[data-project-card]:focus-visible .loop {
+/* the loop shows once it is playing */
+.loop[data-playing] {
   opacity: 1;
-}
-
-@media (hover: none) {
-  [data-project-card][data-in-view] .loop {
-    opacity: 1;
-  }
 }
 
 /* colour eases in as each card scrolls into view, a little slower than the hover on the home page */
