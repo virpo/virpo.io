@@ -1,0 +1,22 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out> and print its path.
+
+Attached: style.png (the painted room these icons belong to).
+Each icon is ONE small object painted in exactly the style of style.png: cozy Japanese manga illustration, fine confident black ink outlines, soft watercolor washes, but in bright, vibrant, saturated colours. Make each one a bold simple silhouette that still reads when shown 28 pixels tall: few details, slightly thicker outlines than the room. No background shape behind the object, just the object. Not 3D, not vinyl, not a photo, not pixel art.
+
+The 12 icons, in reading order (row 1 left to right, then row 2, then row 3):
+1. a sleepy crescent moon wearing a nightcap, resting on an open picture book
+2. Leonardo da Vinci's flying machine: one big wooden-framed canvas wing
+3. a white Boeing 747 jumbo jet with a blue tail, seen from the side
+4. a tiny wooden home-office desk with a chair and a pegboard wall behind it
+5. a big round red stopwatch
+6. a packed brown suitcase with a strap and two travel stickers
+7. a paper price tag on a string with a big '€' on it
+8. a gold medal on a ribbon with a tiny friendly robot face on the medal
+9. a small screen with two big googly eyes looking up
+10. a wedge of white sheep cheese in a small wooden bowl
+11. a wooden play-dough rolling pin with star and fir-tree stamps on it, rolling over a strip of green dough
+12. a small white bust of Beethoven wearing big headphones
+
+A sheet of 12 small icons in a grid of 4 columns and 3 rows, evenly spaced, each icon centred in its own cell with generous empty space around it, nothing touching or overlapping. No labels, no text except the € on the price tag, no numbers, no grid lines, no frames. Every icon is drawn at the same visual size and weight, so they look like one set.
+Background: perfectly flat #FF00FF magenta everywhere, no cast shadow and no contact shadow on the background, no pink or magenta anywhere inside the icons themselves.
+Landscape 1536x1024.

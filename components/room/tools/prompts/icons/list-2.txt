@@ -1,0 +1,22 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out> and print its path.
+
+Attached: style.png (the painted room these icons belong to) and icons-1.png (the first sheet of this exact icon set).
+Paint the second sheet of the same set. Match icons-1.png exactly: the same size of each icon, the same outline weight, the same bright vibrant watercolour colours, the same level of detail, the same simple bold silhouettes. Each icon is ONE small object painted in the style of style.png: cozy Japanese manga illustration, fine confident black ink outlines, soft watercolor washes, bright saturated colours. It must still read when shown 28 pixels tall: few details. No background shape behind the object, just the object. Not 3D, not vinyl, not a photo, not pixel art.
+
+The 12 icons, in reading order (row 1 left to right, then row 2, then row 3):
+1. a brass house key on a ring with a small paper tag shaped like a little house
+2. a small red-and-white striped festival tent with a pennant flag on top
+3. an open red toolbox with a wrench and a screwdriver sticking out
+4. a small presentation slide on an easel showing a bar chart, with a shiba inu dog's face peeking over its top edge
+5. a small stack of three chunky stone slabs, the top one carved with a tiny bar chart
+6. a small folded paper map of Japan with a red map pin stuck in it and a tiny Mount Fuji drawn on it
+7. a small cream-coloured handheld device with a round knob, a tiny cozy painted room on its screen
+8. a navy blue captain's hat with a gold anchor badge
+9. a cup of coffee with curls of steam, on a saucer
+10. a crossed hammer and wrench
+11. two speech bubbles side by side, the right one with a gold star on it
+12. a magic wand with a few sparkles
+
+A sheet of 12 small icons in a grid of 4 columns and 3 rows, evenly spaced, each icon centred in its own cell with generous empty space around it, nothing touching or overlapping. No labels, no text, no numbers, no grid lines, no frames. Every icon is drawn at the same visual size and weight as in icons-1.png, so the two sheets look like one set.
+Background: perfectly flat #FF00FF magenta everywhere, no cast shadow and no contact shadow on the background, no pink or magenta anywhere inside the icons themselves.
+Landscape 1536x1024.

@@ -35,6 +35,10 @@ re-explore a rejected direction unless he asks.
     plain cross-fade). No shader, ripple or ink-drop reveal: those were tried and felt
     distracting.
   - Under each card: title, two tags and the years ("Game · Agents · 2026"). No blurb.
+- **List icons** (the line per project under the featured cards): ONE small object per project,
+  painted in the room's ink with bright, saturated watercolour, no background shape, shown at 28 px.
+  Picked in November 2026 over painted tiles, die-cut stickers and flat graphic marks. Keep each a
+  simple object; little scenes (a desk with a lamp and a plant) get busy at 28 px.
 - **Hover labels in the room** say only what you get ("Fig. 07 · Face tracker"), never the object's
   name. Projects whose name explains nothing get their two tags in grey after it.
 - **Favicon**: mini-Peter shouting under the Fushimi Inari torii, on torii orange, matching his X
@@ -60,6 +64,7 @@ re-explore a rejected direction unless he asks.
 | Notebooks, cat, mug, printed part | `notebook-*.webp`, `cat.webp`, `part.webp` | `art/props.png` (on magenta) | `prompts/props.txt` | `art/plate-b.png` | `build.py` |
 | App-screen object cards | `card-<id>.webp` | `art/cards/<id>.png` (on magenta) | `prompts/card-<id>.txt` | plate crop (`cards.py refs`), `plate-b.png` | `cards.py` |
 | Project cards | `projects/<slug>.webp` and `projects/<slug>-pencil.webp` | `art/projects/<slug>.png` (on paper; ai-build-week is the real AI Build Week group photo, `refs/ai-build-week-group.jpg`, the older `refs/ai-build-week-photo.jpg` is from AI Build Day) | `prompts/project-<slug>.txt` | the real screenshot or photo in `art/projects/refs/` (+ `art/plate-b.png` as the style) | `projects.py` |
+| List icons | `public/lab/room/icons/<slug>.webp` (96 px) | `art/icons/list-<n>.png` (12 per sheet, 4 x 3, on magenta) | `prompts/icons/list-<n>.txt` | `art/plate-b.png`, and `art/icons/list-1.png` for every later sheet | `icons.py` |
 | Favicon and X avatar | `brand/icon-{16,32,48,64}.png`, `brand/apple-touch-icon.png`, `output/lab/brand/x-avatar-400.jpg` | `art/brand/favicon-art.png` | `prompts/favicon.txt` | `art/brand/x-avatar.jpg` (the real X avatar), the `peter-wave` sprite | `brand.py` |
 | Margin toys beside a post (hydrangea is the one shown; shiba asleep/awake, walking shiba, strap charm, crane, lucky cat are previews via `?margin=`) | `public/lab/room/margin/*.webp`, positions in `components/room/margin/art.json` | `art/margin/<name>.png` (on magenta; `hydrangea-heads-2.png` supplies one even violet head because head 6 of the first was split blue/violet) | `prompts/margin-<name>.txt` | `art/plate-b.png` + the concept sketch in `art/margin/concepts/` | `margin.py` (bud positions and the cat's coin slot are placed by eye in it) |
 | The handheld's wrist strap (braided cord, aluminium cord lock, thin cord; hangs behind the case) | `public/lab/room/strap.webp`, placed in `components/room/Lanyard.tsx` | `art/strap/strap.png` (on magenta) | `prompts/strap.txt` | `art/strap/strap-now-ref.png` (the vector strap it replaced) | `strap.py` |
@@ -242,6 +247,18 @@ the user before touching files outside the art pipeline.
    1440 and 900 wide, at rest (pencil) and on hover (colour). Twelve featured cards fill 3, 2 and
    1 columns evenly; every other project is one line (emoji, name, about five words, year) in the
    two-column list under them.
+
+## Playbook: a list icon
+
+1. Write `prompts/icons/list-<n>.txt` by copying `list-2.txt` and changing the 12 subjects (one
+   simple object each, in reading order). For a single new project, ask for 12 different takes of
+   that one object and keep the best cell.
+2. Paint: `paint.sh prompts/icons/list-<n>.txt <scratch>/list-<n>-1.png art/plate-b.png
+   art/icons/list-1.png` (two takes in parallel), look at them next to `list-1.png`, copy the keeper
+   to `art/icons/list-<n>.png`.
+3. Add the sheet to `SHEETS` in `icons.py` (slugs in reading order, `None` for cells to skip) and
+   run `python3 components/room/tools/icons.py`. The list picks the icon up by its slug; without one
+   it shows the project's emoji. `icons.py <sheet.png> <dir>` cuts a sheet into a folder to try it.
 
 ## Playbook: the favicon
 

@@ -8,7 +8,7 @@ const IMAGES: Record<string, { src: string; tall?: boolean; word?: string }> = {
   "zlta-stopa": { src: "/lab/room/projects/logos/zlta-stopa.png", tall: true },
   "advent-of-no-code": { src: "/lab/room/projects/logos/advent-of-no-code.png", tall: true, word: "Advent of No-Code" },
   "howthings-work": { src: "/ai/logos/howthings-work.png", word: "howthings.work" },
-  tada: { src: "/ai/logos/tada.png", word: "tada" },
+  tada: { src: "/ai/logos/tada.png", word: "tada.camera" },
 };
 
 /** The project's own mark, small in the bottom-left corner of its card. */

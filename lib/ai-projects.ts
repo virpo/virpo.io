@@ -62,7 +62,7 @@ export const AI_PROJECTS: AiProject[] = [
   { slug: "prehistoriq-stacks", title: "Prehistoriq Stacks", emoji: "📊", short: "How 94 engineers use agents", start: "2026-05-10", kind: "Research", blurb: "How 94 engineers actually use coding agents: tools, models, how they review.", href: "https://prehistoriq.com/stacks", card: "ai", logo: { word: "prehistoriq/stacks", style: "mono" } },
   { slug: "marketplace-seller-agent", title: "Sell My Stuff", emoji: "🏷️", short: "Photos in, priced listings out", start: "2026-06-11", kind: "Agent tool", blurb: "An agent skill that turns photos of your old things into researched, priced marketplace listings. Thirteen things sold, €584.", href: "/skills/#sell-my-stuff", card: "ai", loop: true, logo: { src: "/ai/logos/agent-skills.png", word: "sell-my-stuff" } },
   { slug: "cmux-deck", title: "CMUX Deck", emoji: "🎛️", short: "A Stream Deck for coding agents", start: "2026-06-19", kind: "Hardware", blurb: "A Stream Deck that shows what each of my coding agents is doing.", href: "https://github.com/virpo/cmux-deck", card: "room" },
-  { slug: "tada", title: "Tada", emoji: "📸", short: "A disposable camera for events", start: "2026-07-10", until: "2026-09-04", kind: "Product", blurb: "A disposable camera for events: one shared roll, no retakes, revealed the morning after. On the App Store.", href: "https://apps.apple.com/gb/app/tada-disposable-camera-event/id6790120023", card: "room", logo: { src: "/ai/logos/tada.png", word: "tada" } },
+  { slug: "tada", title: "Tada", emoji: "📸", short: "A disposable camera for events", start: "2026-07-10", until: "2026-09-04", kind: "Product", blurb: "A disposable camera for events: one shared roll, no retakes, revealed the morning after. On the App Store.", href: "https://tada.camera", card: "room", logo: { src: "/ai/logos/tada.png", word: "tada.camera" } },
   { slug: "autoslides", title: "Autoslides", emoji: "🐕", short: "Agents that make their own slides", start: "2026-07-17", kind: "Agent tool", blurb: "Presentations built natively by agents, through render-and-review loops.", href: "https://github.com/virpo/autoslides", card: "ai", logo: { src: "/ai/logos/autoslides.png", word: "Autoslides" } },
   { slug: "agent-skills", title: "Agent Skills", emoji: "🧰", short: "Agent workflows from real projects", start: "2026-07-20", until: "2026-11-01", kind: "Agent tool", blurb: "Opinionated agent workflows forged in real projects.", href: "/skills/", card: "ai", logo: { src: "/ai/logos/agent-skills.png", word: "Agent Skills" } },
   { slug: "product-festival", title: "Product Festival", emoji: "🎪", short: "A demo day with fake investing", start: "2026-07-24", until: "2026-08-03", kind: "Product", blurb: "A QR-powered demo day with feedback, fictional investing and VibeBank.", href: "https://festival.aibuildweek.com", card: "ai", logo: { src: "/ai/logos/product-festival.svg", word: "Product Festival" } },
@@ -82,13 +82,13 @@ export const AI_PROJECTS: AiProject[] = [
 
 /** the painted cards at the top of Projects, in this order (each needs card: "room"; twelve fill 3, 2 and 1 columns evenly) */
 export const FEATURED = [
-  "howthings-work",
   "levels",
   "youtldr",
-  "zlta-stopa",
-  "tada",
-  "cmux-deck",
+  "howthings-work",
   "ai-build-week",
+  "zlta-stopa",
+  "cmux-deck",
+  "tada",
   "enkiplate",
   "pegboard-toy",
   "bratislava-slushd",

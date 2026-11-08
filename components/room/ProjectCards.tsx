@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import type { CSSProperties } from "react";
 import styles from "../../app/(room)/room.module.css";
 import type { AiProject } from "../../lib/ai-projects";
@@ -9,6 +11,8 @@ import { objectForProject } from "./scene/objects";
 const CARD_SIZES = "(max-width: 699px) 92vw, (max-width: 1099px) 46vw, 360px";
 const srcSet = (base: string) => `${base}-540.webp 540w, ${base}-720.webp 720w, ${base}.webp 1080w`;
 const year = (project: AiProject) => project.start.slice(0, 4);
+// the painted list icons (components/room/tools/icons.py); a project without one shows its emoji
+const hasIcon = (slug: string) => existsSync(join(process.cwd(), "public", "lab", "room", "icons", `${slug}.webp`));
 const linkProps = (project: AiProject) => (project.href && !project.private ? { href: project.href, ...(project.href.startsWith("http") ? { target: "_blank", rel: "noopener" } : {}) } : null);
 
 /** A featured project: one clean thing, painted from its real screenshot or photo. Pencil at rest, colour on hover. */
@@ -33,7 +37,7 @@ export function ProjectCard({ project }: { project: AiProject }) {
 }
 
 /**
- * Everything else, one line each: emoji, name, a few words, year. Two columns that fill top to
+ * Everything else, one line each: its painted icon, name, a few words, year. Two columns that fill top to
  * bottom (a grid, so nothing reflows when the peeks appear). Pointing at a line shows its picture.
  */
 export function ProjectList({ projects }: { projects: readonly AiProject[] }) {
@@ -44,8 +48,13 @@ export function ProjectList({ projects }: { projects: readonly AiProject[] }) {
         const art = project.card === "room" ? `/lab/room/projects/${project.slug}` : project.card === "ai" ? `/ai/${project.slug}` : null;
         const inner = (
           <>
-            <span className={styles.moreEmoji} aria-hidden="true">
-              {project.emoji}
+            <span className={styles.moreIcon} aria-hidden="true">
+              {hasIcon(project.slug) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={`/lab/room/icons/${project.slug}.webp`} alt="" width={28} height={28} loading="lazy" decoding="async" />
+              ) : (
+                project.emoji
+              )}
             </span>
             <span className={styles.moreName}>
               <span className={styles.moreTitle}>{project.title}</span> <span className={styles.moreShort}>{project.short}</span>

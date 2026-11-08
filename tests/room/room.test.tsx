@@ -82,9 +82,11 @@ describe("Pocket Room landing", () => {
     // the rest, one line each
     const more = moreProjects();
     expect(more.length + featured.length).toBe(aiProjects().length);
+    // each with its painted icon (components/room/tools/icons.py)
     for (const project of more) {
       expect(markup, project.slug).toContain(project.short);
-      expect(markup, project.slug).toContain(project.emoji);
+      expect(markup, project.slug).toContain(`/lab/room/icons/${project.slug}.webp`);
+      expect(existsSync(resolve(process.cwd(), "public/lab/room/icons", `${project.slug}.webp`)), project.slug).toBe(true);
     }
     expect(markup).toContain("Event · Startups · 2025");
     expect(markup).toContain('href="https://bratislavaslushd.com"');

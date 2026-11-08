@@ -1,10 +1,10 @@
 Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out> and print its path.
 
 Attached: style.png (the style to match) and refs/enkiplate-photo.jpg.
-From the attached photo, paint just the small square white 3D-printed e-paper device, standing on its own, slightly turned, with a little stand behind it. Remove the hand, the drawers and the floor. Keep its grey e-paper screen exactly as in the photo, every word legible:
+From the attached photo, paint the hand holding the small square white 3D-printed e-paper device, exactly as in the photo: the same hand, the same grip, the device tilted the same way. Remove the drawers and the floor behind it. Keep its grey e-paper screen exactly as in the photo, every word legible:
 top-left a rain-cloud icon and '8-13°'; top-right three lines 'Next  Mon 10:00  Coffee break', 'Then  Mon 19:15  Japanese', 'Later  Mon 19:15  Walk';
 in the middle a torn-paper flashcard held by two strips of washi tape with a wave (seigaiha) pattern, showing big 'やま', under it '山', then 'yama', then 'mountain';
 at the bottom three dark buttons: 'missed', 'knew a little', 'knew'.
-Show ONLY this one thing, centred, filling about 70% of the frame, on a plain empty warm off-white watercolor paper background (#F1EADF) with a soft natural shadow under it. Nothing else: no other text, no logos, no background.
+Show ONLY the hand and the device, centred, the device filling about 55% of the frame, on a plain empty warm off-white watercolor paper background (#F1EADF) with a soft natural shadow under it. The hand comes in from the bottom edge of the picture, so the frame edge cuts it at the wrist. Nothing else: no other text, no logos, no background.
 Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture. Full colour. Not 3D, not vinyl, not a photo, not pixel art.
 Landscape 1536x1024. No border, no frame.
