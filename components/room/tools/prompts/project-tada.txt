@@ -1,0 +1,7 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out> and print its path.
+
+Attached: style.png (the style to match) and refs/tada-app.jpg (the Tada app: a disposable camera for events, one shared roll for all the guests, no retakes, the photos develop the morning after).
+Paint the one thing that says it: an iPhone standing upright, slightly turned, its screen showing the Tada camera exactly like the left screen of the reference: a night party under warm string lights, guests dancing with their arms up, a small black counter '19' in the top-right corner (shots left on the roll), a small pill 'chloe & tyler' at the top, and the big glowing red round shutter button at the bottom. Beside the phone, three developed prints fanned out like instant photos, each with a white border, a little party scene and a handwritten name under it: 'nina', 'tomas', 'peter'. On the front print a tiny orange time stamp '08:00 AM'.
+Show ONLY this, centred, filling about 70% of the frame, on a plain empty warm off-white watercolor paper background (#F1EADF) with a soft natural shadow under it. Nothing else: no other text, no logos, no background UI.
+Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture. Full colour. Not 3D, not vinyl, not a photo, not pixel art.
+Landscape 1536x1024. No border, no frame.

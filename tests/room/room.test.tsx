@@ -17,9 +17,11 @@ import RoomWritingPage, { metadata as writingMetadata } from "../../app/(room)/b
 import { LAYERS } from "../../components/room/scene/layers";
 import { nextTrain, readingPose, timeForHour, tokyoClock } from "../../components/room/scene/life";
 import { cycle, hullClip, neighbour, objectById, pickAt, ROOM_OBJECTS, TOY_OBJECTS } from "../../components/room/scene/objects";
+import { projectLine } from "../../components/room/projects";
 import { cardArt } from "../../components/room/screens/Apps";
 import { CARD_ART } from "../../components/room/screens/cards";
 import { getPostSlugs, getPostSummaries } from "../../lib/blog";
+import { aiProjects, featuredProjects, moreProjects } from "../../lib/ai-projects";
 import { labProjects } from "../../lib/lab/catalog";
 
 const html = (node: ReactElement) => renderToStaticMarkup(node);
@@ -65,20 +67,32 @@ describe("Pocket Room landing", () => {
     }
   });
 
-  it("shows every project as a painted card, Bratislava Slush’D included", () => {
-    const cards = markup.match(/\/lab\/room\/projects\/[a-z-]+\.webp/g) ?? [];
-    // each card: the pencil picture at rest and the colour one it fades into
-    expect(cards.filter((src) => src.endsWith("-pencil.webp")).length).toBeGreaterThanOrEqual(8);
-    expect(cards.filter((src) => !src.endsWith("-pencil.webp")).length).toBeGreaterThanOrEqual(8);
-    for (const src of cards) expect(existsSync(resolve(process.cwd(), "public", src.slice(1))), src).toBe(true);
-    expect(markup).toContain("Bratislava Slush’D");
+  it("shows the featured projects as painted cards, then every other project on one line", () => {
+    const featured = featuredProjects();
+    expect(featured).toHaveLength(12);
+    const pictures = markup.match(/\/(?:lab\/room\/projects|ai)\/[a-z-]+(?:-\d+)?\.webp/g) ?? [];
+    // each featured card is painted: the pencil picture at rest and the colour one it fades into, with its two tags and years
+    for (const project of featured) {
+      expect(project.card, project.slug).toBe("room");
+      expect(markup, project.slug).toContain(`/lab/room/projects/${project.slug}-pencil-720.webp`);
+      expect(markup, project.slug).toContain(`/lab/room/projects/${project.slug}-720.webp`);
+      expect(markup, project.slug).toContain(projectLine(project.slug));
+    }
+    for (const src of pictures) expect(existsSync(resolve(process.cwd(), "public", src.slice(1))), src).toBe(true);
+    // the rest, one line each
+    const more = moreProjects();
+    expect(more.length + featured.length).toBe(aiProjects().length);
+    for (const project of more) {
+      expect(markup, project.slug).toContain(project.short);
+      expect(markup, project.slug).toContain(project.emoji);
+    }
     expect(markup).toContain("Event · Startups · 2025");
-    expect(markup).toContain('href="https://bratislavaslushd.com/"');
+    expect(markup).toContain('href="https://bratislavaslushd.com"');
   });
 
-  it("leaves Prehistoriq out of the room for now", () => {
-    expect(markup).not.toContain("Prehistoriq");
-    expect(markup).not.toMatch(/>[^<]*prehistoriq[^<]*</i);
+  it("leaves the Prehistoriq website out of the room for now (its Stacks research is a project)", () => {
+    expect(markup).not.toContain('href="https://prehistoriq.com"');
+    expect(markup).toContain("Prehistoriq Stacks");
   });
 
   it("keeps the Japan toys one click away from the plain list", () => {

@@ -26,8 +26,8 @@ OUT = HERE.parents[2] / "public" / "lab" / "room" / "projects"
 SIZE = (1080, 720)
 WIDTHS = (540, 720)  # extra widths for srcset; the cards show at about 340 CSS px
 
-SLUGS = ["levels", "youtldr", "zlta-stopa", "mood-radio", "pegboard-toy", "ai-build-week", "cmux-deck", "bratislava-slushd", "advent-of-no-code"]
-SOFT = {"pegboard-toy", "ai-build-week", "cmux-deck", "bratislava-slushd"}
+SLUGS = ["levels", "youtldr", "zlta-stopa", "mood-radio", "pegboard-toy", "ai-build-week", "cmux-deck", "bratislava-slushd", "advent-of-no-code", "howthings-work", "tada", "enkiplate"]
+SOFT = {"pegboard-toy", "ai-build-week", "cmux-deck", "bratislava-slushd", "tada"}
 
 PAPER = np.array([0.947, 0.921, 0.876])
 GRAPHITE = {False: np.array([0.27, 0.25, 0.23]), True: np.array([0.36, 0.31, 0.26])}

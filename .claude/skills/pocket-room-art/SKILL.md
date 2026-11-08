@@ -236,11 +236,12 @@ the user before touching files outside the art pipeline.
    people or a dark object, which get a lighter pencil without outlines, or faces turn eerie), its
    two tags and years to `PROJECT_META` in `components/room/projects.ts`, and its logo to
    `components/room/ProjectLogo.tsx` (an SVG or PNG in `public/lab/room/projects/logos/`, or a
-   wordmark). A project that isn't in `lib/lab/catalog.ts` is added on the page itself
-   (`app/room/page.tsx`, like `SLUSHD` and `ADVENT`).
+   wordmark). The Projects section reads `lib/ai-projects.ts`: set the entry's `card: "room"` and
+   put its slug in `FEATURED` (that list's order is the cards' order).
 6. **Ship**: `python3 components/room/tools/projects.py`, then look at the Projects section at
-   1440 and 900 wide, at rest (pencil) and on hover (colour). Nine cards fill three columns; with
-   two columns a GitHub tile rounds off the last row.
+   1440 and 900 wide, at rest (pencil) and on hover (colour). Twelve featured cards fill 3, 2 and
+   1 columns evenly; every other project is one line (emoji, name, about five words, year) in the
+   two-column list under them.
 
 ## Playbook: the favicon
 

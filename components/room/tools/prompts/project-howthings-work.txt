@@ -1,0 +1,7 @@
+Use your image generation tool to create ONE image (do not draw it with code), then copy the resulting PNG to <out> and print its path.
+
+Attached: style.png (the style to match), refs/howthings-work-town.jpg (the site: a whole town drawn in grey pencil, where only the machines are in colour) and refs/howthings-work-jet.jpg (the Jumbo Jet page: a Boeing 747 with its skin cut away).
+Paint what howthings.work does, in one picture: a big round magnifying glass with a wooden handle hovering over a Boeing 747 (white with a blue cheatline and a blue tail, like in the references). Outside the lens the plane is drawn only in fine grey pencil on the paper, like the town on the site. Inside the lens the plane is in full colour and cut away, so you can see how it works: the two pilots in the cockpit, rows of tiny passengers on two decks, suitcases in the cargo hold, the fan of one jet engine. A small round orange '+' badge floats near the lens, like the tap-me dots on the site.
+Show ONLY this one thing, centred, filling about 75% of the frame, on a plain empty warm off-white watercolor paper background (#F1EADF) with a soft natural shadow under it. Nothing else from the page: no navigation, no labels, no other text, no buttons, no logos, no background UI, no town.
+Style: exactly the attached room illustration (style.png): cozy Japanese manga illustration, fine confident black ink outlines, soft warm watercolor washes, subtle paper texture. Full colour inside the lens. Not 3D, not vinyl, not a photo, not pixel art.
+Landscape 1536x1024. No border, no frame.

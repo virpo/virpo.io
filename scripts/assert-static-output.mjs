@@ -7,6 +7,7 @@ const requiredFiles = [
   "dist/404.html",
   "dist/blog/index.html",
   "dist/projects/index.html",
+  "dist/ai/index.html",
   "dist/skills/index.html",
   "dist/blog/weird-use-of-ai-3/index.html",
   "dist/blog/weird-use-of-ai-1/index.html",
@@ -74,8 +75,8 @@ for (const slug of articleSlugs) {
   }
 }
 
-// the old projects page and the old v2 home page are redirects now
-for (const [file, target] of [["dist/projects/index.html", "/#projects"], ["dist/v2/index.html", "/"]]) {
+// the old projects page, /ai and the old v2 home page are redirects now
+for (const [file, target] of [["dist/projects/index.html", "/#projects"], ["dist/ai/index.html", "/#projects"], ["dist/v2/index.html", "/"]]) {
   const html = await readFile(resolve(file), "utf8");
   assertIncludes(html, `http-equiv="refresh" content="0; url=${target}"`, file);
   assertIncludes(html, 'rel="canonical" href="https://virpo.io/"', file);

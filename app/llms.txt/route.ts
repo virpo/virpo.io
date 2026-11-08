@@ -1,5 +1,5 @@
 import { getPostSummaries } from "../../lib/blog";
-import { labProjects } from "../../lib/lab/catalog";
+import { aiProjects } from "../../lib/ai-projects";
 import { SITE_DESCRIPTION, SITE_URL } from "../../lib/site";
 
 export const dynamic = "force-static";
@@ -7,7 +7,7 @@ export const dynamic = "force-static";
 // /llms.txt (llmstxt.org): a plain summary of the site for AI answer engines and agents
 export function GET() {
   const posts = getPostSummaries();
-  const projects = labProjects.filter((project) => project.slug !== "prehistoriq");
+  const projects = aiProjects();
   const body = [
     "# Peter Hraska (virpo)",
     "",
@@ -21,14 +21,15 @@ export function GET() {
     "",
     "## Projects",
     "",
-    ...projects.map((project) => `- [${project.title}](${new URL(project.href, SITE_URL).toString()}): ${project.blurb}`),
-    "- [AI Build Day](https://buildday.ai/): a 12-hour AI hackathon in Bratislava, 20 September 2025.",
-    "- [Bratislava Slush’D](https://bratislavaslushd.com/): the official Slush spin-off in Bratislava, 21 October 2025.",
-    "- [Advent of No-Code](https://www.adventofnocode.io/): 24 daily no-code challenges, December 2024.",
+    `Everything Peter has made, newest first (nearly all of it with AI since 2023). All of it is on the home page: ${SITE_URL}/#projects`,
+    "",
+    ...projects.map((project) => {
+      const name = project.href && !project.private ? `[${project.title}](${new URL(project.href, SITE_URL).toString()})` : `${project.title} (private)`;
+      return `- ${name}, ${project.start.slice(0, 4)}: ${project.blurb}`;
+    }),
     "",
     "## More",
     "",
-    `- [Things I made with AI](${SITE_URL}/ai/): every project since 2023, newest first`,
     `- [Agent skills](${SITE_URL}/skills/): skills for coding agents, free to use`,
     `- [Levels](${SITE_URL}/levels/): what level are you with agents?`,
     `- [Levels, for agents](${SITE_URL}/levels/llms.txt): the 100 tricks as Markdown (${SITE_URL}/levels/levels.md) and the check an agent runs (${SITE_URL}/levels/check.md)`,

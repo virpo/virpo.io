@@ -1,12 +1,14 @@
 import styles from "../../app/(room)/room.module.css";
 import { V2SocialIcon } from "../v2/V2SocialIcon";
 
-const REPOS: Record<string, string> = { "pegboard-toy": "virpo/pegboard", "cmux-deck": "virpo/cmux-deck" };
+const REPOS: Record<string, string> = { "pegboard-toy": "virpo/pegboard", "cmux-deck": "virpo/cmux-deck", enkiplate: "virpo/enkiplate" };
 const IMAGES: Record<string, { src: string; tall?: boolean; word?: string }> = {
   "ai-build-week": { src: "/lab/room/projects/logos/ai-build-week.svg" },
   "bratislava-slushd": { src: "/lab/room/projects/logos/bratislava-slushd.svg", tall: true },
   "zlta-stopa": { src: "/lab/room/projects/logos/zlta-stopa.png", tall: true },
   "advent-of-no-code": { src: "/lab/room/projects/logos/advent-of-no-code.png", tall: true, word: "Advent of No-Code" },
+  "howthings-work": { src: "/ai/logos/howthings-work.png", word: "howthings.work" },
+  tada: { src: "/ai/logos/tada.png", word: "tada" },
 };
 
 /** The project's own mark, small in the bottom-left corner of its card. */

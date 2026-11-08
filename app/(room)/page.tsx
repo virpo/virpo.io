@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Device } from "../../components/room/Device";
 import { CardsInView } from "../../components/room/CardsInView";
-import { ProjectLogo } from "../../components/room/ProjectLogo";
-import { PROJECT_META, projectLine } from "../../components/room/projects";
+import { ProjectCard, ProjectList } from "../../components/room/ProjectCards";
+import { PROJECT_META } from "../../components/room/projects";
 import { roomDate, RoomFooter, RoomSocial } from "../../components/room/RoomChrome";
-import { objectForProject, roomPostHref } from "../../components/room/scene/objects";
+import { roomPostHref } from "../../components/room/scene/objects";
+import { V2SocialIcon } from "../../components/v2/V2SocialIcon";
+import { aiProjects, featuredProjects, moreProjects } from "../../lib/ai-projects";
 import { getLatestPostDate, getPostSummaries } from "../../lib/blog";
 import { labAbout, labProjects } from "../../lib/lab/catalog";
 import { jsonLd, OG_IMAGE, OG_VIDEO, PERSON, RSS_ALTERNATE, SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, SITE_URL, HOME_TITLE } from "../../lib/site";
@@ -36,6 +38,18 @@ export const metadata: Metadata = {
   },
 };
 
+// every project, for search engines and answer engines
+const PROJECT_LIST = {
+  "@type": "ItemList",
+  "@id": `${SITE_URL}/#projects`,
+  name: "Projects by Peter Hraska",
+  itemListElement: aiProjects().map((p, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    item: { "@type": "CreativeWork", name: p.title, description: p.blurb, dateCreated: p.start, ...(p.href && !p.private ? { url: new URL(p.href, SITE_URL).toString() } : {}), creator: { "@id": PERSON["@id"] } },
+  })),
+};
+
 // who this is and what the site is, for search engines and answer engines
 const STRUCTURED = {
   "@context": "https://schema.org",
@@ -50,6 +64,7 @@ const STRUCTURED = {
       dateModified: (getLatestPostDate(getPostSummaries()) ?? new Date("2026-10-23")).toISOString().slice(0, 10),
       mainEntity: PERSON,
     },
+    PROJECT_LIST,
   ],
 };
 
@@ -71,15 +86,12 @@ const ADVENT = {
   blurb: "Build something new every day: 24 days, 10 minutes each, no code. 229 people joined.",
 };
 
-// the cards show three across (about 340 px), two across, or full width on phones
-const CARD_SIZES = "(max-width: 699px) 92vw, (max-width: 1099px) 46vw, 360px";
-const cardSrcSet = (name: string) => `/lab/room/projects/${name}-540.webp 540w, /lab/room/projects/${name}-720.webp 720w, /lab/room/projects/${name}.webp 1080w`;
-
 export default function RoomPage() {
   const posts = getPostSummaries();
   const newest = posts.slice(0, 3);
   const devicePosts = newest.map((post) => ({ slug: post.slug, title: post.title, date: post.publishedAt.toISOString() }));
-  // Prehistoriq stays out of the room for now (Levels still lives on its domain).
+  // the room's objects open these (Prehistoriq stays out of the room for now); the Projects section
+  // below lists everything from lib/ai-projects
   const shown = labProjects
     .filter((project) => project.slug !== "prehistoriq")
     .map((project) => (project.slug === "levels" ? { ...project, blurb: "What level are you with agents? Your agent checks 100 tricks and deals you a card." } : project))
@@ -92,6 +104,8 @@ export default function RoomPage() {
     blurb: project.blurb,
     tags: PROJECT_META[project.slug]?.tags,
   }));
+  const featured = featuredProjects();
+  const more = moreProjects();
 
   return (
     <div className={styles.page}>
@@ -137,35 +151,26 @@ export default function RoomPage() {
         <div className={styles.below}>
           <section className={`${styles.section} ${styles.projectsSection}`} id="projects" aria-labelledby="projects-title">
             <h2 id="projects-title">Projects</h2>
-            {/* one clean thing per project, painted from its real screenshot or photo: pencil at rest, colour on hover */}
+            {/* the few I'd show first, each one clean thing painted from its real screenshot or photo: pencil at rest, colour on hover */}
             <ul className={styles.projectGrid}>
-              {shown.map((project) => {
-                const item = objectForProject(project.slug);
-                return (
-                  <li key={project.slug}>
-                    <a className={styles.projectCard} href={project.href} target="_blank" rel="noreferrer" data-room-target={item?.id} data-project-card>
-                      <span className={styles.projectArt}>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img className={styles.projectPencil} src={`/lab/room/projects/${project.slug}-pencil-720.webp`} srcSet={cardSrcSet(`${project.slug}-pencil`)} sizes={CARD_SIZES} alt="" width={1080} height={720} loading="lazy" decoding="async" />
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img className={styles.projectColour} src={`/lab/room/projects/${project.slug}-720.webp`} srcSet={cardSrcSet(project.slug)} sizes={CARD_SIZES} alt="" width={1080} height={720} loading="lazy" decoding="async" fetchPriority="low" />
-                        <ProjectLogo slug={project.slug} title={project.title} />
-                      </span>
-                      <span className={styles.projectHead}>
-                        <span className={styles.rowTitle}>{project.title}</span>
-                        <span className={styles.projectKind}>{projectLine(project.slug) || project.type}</span>
-                      </span>
-                    </a>
-                  </li>
-                );
-              })}
-              <li className={styles.moreItem}>
-                <a className={styles.moreCard} href="https://github.com/virpo" target="_blank" rel="noreferrer">
-                  <strong>More on GitHub →</strong>
-                  <span>Smaller tools and experiments</span>
-                </a>
-              </li>
+              {featured.map((project) => (
+                <li key={project.slug} id={project.slug}>
+                  <ProjectCard project={project} />
+                </li>
+              ))}
             </ul>
+            <h3 className={styles.moreHead}>{more.length} more, newest first</h3>
+            <ProjectList projects={more} />
+            <p className={styles.projectsEnd}>
+              <a className={styles.follow} href="https://x.com/virpo" target="_blank" rel="noopener">
+                <V2SocialIcon name="x" />
+                <span>I post what I make with AI on X as I make it.</span>
+                <b>Follow @virpo</b>
+              </a>
+              <a className={styles.githubLink} href="https://github.com/virpo" target="_blank" rel="noopener">
+                Smaller things on GitHub <span aria-hidden="true">→</span>
+              </a>
+            </p>
           </section>
 
           <section className={styles.section} id="about" aria-labelledby="about-title" data-room-target="peter">
