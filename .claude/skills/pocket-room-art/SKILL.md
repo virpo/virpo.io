@@ -1,6 +1,6 @@
 ---
 name: pocket-room-art
-description: How every generated image of the Pocket Room (/room/) was made, the decisions on its look, and the playbook for changing or adding art so it matches. Use for ANY image work on the room or its pages - the painted room and its objects, a new project object (e.g. "replace the cat with a new project"), app-screen card art, a Peter pose, the plate, trains or view, the Projects cards under the room (a new project card, repainting one, the pencil versions, logos), the favicon or X avatar - or when touching components/room/tools/ (build.py, cut.py, cards.py, fixes.py, projects.py, brand.py, paint.sh).
+description: How every generated or captured image and video on virpo.io was made (the Pocket Room, project cards, list icons, logos, blog pictures, loops, og images, launch videos), the decisions on its look, and the playbook for changing or adding art so it matches. Use for ANY image work on the room or its pages - the painted room and its objects, a new project object (e.g. "replace the cat with a new project"), app-screen card art, a Peter pose, the plate, trains or view, the Projects cards under the room (a new project card, repainting one, the pencil versions, logos), the favicon or X avatar - or when touching components/room/tools/ (build.py, cut.py, cards.py, fixes.py, projects.py, brand.py, paint.sh).
 ---
 
 # Pocket Room art
@@ -75,6 +75,26 @@ project's site, recoloured to ink (`#2a2118`); their originals are in `art/proje
 
 In every prompt, "style.png" means `art/plate-b.png` and file names like `refs/...` are relative to
 `art/projects/`. `<art dir>` means `components/room/tools/art`.
+
+## Beyond the room: everything else that was generated or captured
+
+Same rule as the room: the source and the prompt or script live in the repo, the shipped files are
+outputs. To change one, change its source and re-run its script.
+
+| What | Ships as | Source (truth) | Made with |
+|---|---|---|---|
+| The picture that peeks above a line of the project list (it was the card on the old /ai page) | `public/ai/<slug>.webp`, `-540`, `-720`, and `-pencil` versions | `art/ai/<slug>.png`: the real screenshot or photo, NOT painted. Two exceptions: `japan.png` is drawn by `ai_japan_map.py` (Natural Earth outline `japan-outline.geojson`, the trip's 116 pins in `japan-pins.json`); `leo.png` is leo.virpo.io's own ink drawing (`leo-ink-v3.webp`, alpha edge eroded and feathered, set on paper) | `ai_projects.py` (`SOFT` and `FOCUS` set the pencil and the crop) |
+| Project loops (a card's moving version; not on the home page now, kept for posts) | `public/ai/<slug>.mp4` (600 x 400, crf 29) | `art/ai/loops/<slug>.mp4`: screen recordings of the live sites made with Playwright (howthings.work zooming from the town into the Jumbo Jet and its cockpit; plane.virpo.io opening up; pracovna.virpo.io building itself; posture-check's eyes) and, for Sell My Stuff, its launch video (`~/Code/personal/bazos/launch-kit/motion-16x9.mp4`) | `ai_projects.py` crops to 3:2 and encodes |
+| Painted logo marks for Autoslides (a shiba behind a slide) and Agent Skills | `public/ai/logos/autoslides.png`, `agent-skills.png` (about 96 px, transparent) | `art/ai/logos/<name>.png` (painted on magenta) | `prompts/ai-logo-<name>.txt` with `paint.sh` and `plate-b.png`; keyed with `cut.magenta_alpha`, trimmed and scaled to 96 px tall |
+| The making-of post's pictures: the manga-strength scale (Stream Deck from barely traced to full manga), the slider, the gacha storyboard | `public/assets/blog/pocket-room/*.webp` and `story/` | `art/blog/` (`manga-deck-original.jpg` is the real photo) | `prompts/blog-manga-*.txt`, `prompts/blog-gacha-storyboard.txt` with `paint.sh` |
+| The making-of post's loops (wave, tilt, reveal, room) | `public/assets/blog/pocket-room/story/loop-*.mp4` and posters | recorded from the built site on a fake clock | `scripts/video/loops.sh` (`loops.mjs`, `lib/stage.mjs`) |
+| Social images of the posts | `public/assets/blog/pocket-room/social*.jpg` (1200 x 630) | `art/og/og-*.png` (2x masters) | composed by hand from the post's art |
+| og:image, og:video and its poster | `public/og/og-image.png`, `pocket-device.mp4`, `pocket-device.jpg`, `room-loop.*` | captured from the built site | `scripts/video/build.sh` (`capture.mjs`, `compose.py`, `finish.py`, `og.py`) |
+| Launch videos: the screen recording, the bento product video, the ten X cuts, the knob cut | `output/lab/video/` (not shipped) | captured from the built site | `scripts/video/demo.sh`, `bento.sh`, `x/versions.mjs` (timelines for `x/edit.html`, rendered by `director.mjs`); each script's header has its steps |
+
+Every capture script needs the static site served first: `npm run build && python3 -m http.server
+4450 -d dist`. Headless Chromium paints with a software renderer that pixelates WebGL and fine
+detail: launch with `channel: "chromium"` (the GPU) for anything that ends up in a video.
 
 ## Style and references
 
